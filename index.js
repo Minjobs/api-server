@@ -31,9 +31,26 @@ app.listen(3000, () => {
   console.log('서버가 3000번 포트에서 실행 중');
 });
 
+//유저 리스트 다 가져오기.
 app.get('/users', (req, res) => {
   db.query('SELECT id, name FROM users', (err, results) => {
     if (err) return res.status(500).json(err);
     res.json(results);
+  });
+});
+
+// POST /users : 새로운 유저 추가
+app.post('/users', (req, res) => {
+  const { name } = req.body;  // 브라우저/앱에서 보낸 데이터
+  if (!name) return res.status(400).json({ error: 'name이 필요합니다.' });
+
+  db.query('INSERT INTO users (name) VALUES (?)', [name], (err, results) => {
+    if (err) return res.status(500).json(err);
+
+    res.json({
+      message: '유저 추가 성공 ✅',
+      id: results.insertId,
+      name
+    });
   });
 });

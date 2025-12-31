@@ -30,3 +30,10 @@ app.get('/', (req, res) => {
 app.listen(3000, () => {
   console.log('서버가 3000번 포트에서 실행 중');
 });
+
+app.get('/users', (req, res) => {
+  db.query('SELECT id, name FROM users', (err, results) => {
+    if (err) return res.status(500).json(err);
+    res.json(results);
+  });
+});

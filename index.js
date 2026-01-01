@@ -1,33 +1,45 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const PORT = 3000;
 
-// JSON 데이터를 읽기 위한 설정
-app.use(express.json());
-// public 폴더 안의 정적 파일(이미지, CSS 등) 허용
-app.use(express.static('public'));
+// 1. 미들웨어 설정
+app.use(express.json()); // JSON 데이터를 주고받기 위함
+app.use(express.static(path.join(__dirname, 'public'))); // public 폴더의 정적 파일(이미지 등) 허용
 
-// [Route 1] 홈 페이지 (상품 목록)
+// [가짜 데이터] 나중에 MySQL DB 연결할 부분입니다.
+const products = [
+    { id: 1, name: "오버핏 블레이저", price: 59000, desc: "홍대 감성의 깔끔한 핏", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
+    { id: 2, name: "나이키 에어포스", price: 129000, desc: "어디에나 잘 어울리는 클래식", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500" }
+];
+
+// --- 라우팅 (페이지 이동) ---
+
+// 2. 홈 페이지 (상품 목록)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'shop.html'));
 });
 
-// [Route 2] 상세 페이지 (주소에 ID가 포함됨)
-// :id는 변수입니다. /product/1, /product/2 모두 이 라우트로 들어옵니다.
+// 3. 상세 페이지 주소 설정
+// 중요: /product/:id 라고 적으면 /product/1, /product/2 모두 이곳으로 옵니다.
 app.get('/product/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'detail.html'));
 });
 
-// [API] 상품 데이터를 주는 통로
+// --- API (데이터 전송) ---
+
+// 4. 특정 상품의 정보만 JSON으로 주는 API
 app.get('/api/products/:id', (req, res) => {
-    const productId = req.params.id;
-    // 실제로는 여기서 DB 조회를 합니다. 일단은 성공 메시지만 보낼게요.
-    res.json({
-        id: productId,
-        name: productId == 1 ? "오버핏 블레이저" : "나이키 에어포스",
-        price: productId == 1 ? 59000 : 129000,
-        desc: "달란트가 추천하는 이번 시즌 최고의 아이템입니다."
-    });
+    const productId = parseInt(req.params.id);
+    const product = products.find(p => p.id === productId);
+
+    if (product) {
+        res.json(product);
+    } else {
+        res.status(404).send("상품을 찾을 수 없습니다.");
+    }
 });
 
-app.listen(3000, () => { console.log('서버 실행 중: http://localhost:3000'); });
+app.listen(PORT, () => {
+    console.log(`달란트 서버가 http://localhost:${PORT} 에서 실행 중입니다!`);
+});

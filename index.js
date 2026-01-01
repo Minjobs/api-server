@@ -1,4 +1,5 @@
 //acode에서 수정함
+//두번째 수정
 require('dotenv').config();
 const mysql = require('mysql2');
 

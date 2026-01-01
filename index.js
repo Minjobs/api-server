@@ -1,58 +1,33 @@
-//acode에서 수정함
-//두번째 수정
-require('dotenv').config();
-const mysql = require('mysql2');
-
-const db = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME
-});
-
-db.connect((err) => {
-  if (err) {
-    console.error('DB 연결 실패:', err);
-    return;
-  }
-  console.log('MySQL 연결 성공 ✅');
-});
-
-require('dotenv').config();
-
 const express = require('express');
+const path = require('path');
 const app = express();
 
+// JSON 데이터를 읽기 위한 설정
 app.use(express.json());
+// public 폴더 안의 정적 파일(이미지, CSS 등) 허용
+app.use(express.static('public'));
 
+// [Route 1] 홈 페이지 (상품 목록)
 app.get('/', (req, res) => {
-  res.send('API 서버 실행 중 🚀');
+    res.sendFile(path.join(__dirname, 'public', 'shop.html'));
 });
 
-app.listen(3000, () => {
-  console.log('서버가 3000번 포트에서 실행 중');
+// [Route 2] 상세 페이지 (주소에 ID가 포함됨)
+// :id는 변수입니다. /product/1, /product/2 모두 이 라우트로 들어옵니다.
+app.get('/product/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'detail.html'));
 });
 
-//유저 리스트 다 가져오기.
-app.get('/users', (req, res) => {
-  db.query('SELECT id, name FROM users', (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
-});
-
-// POST /users : 새로운 유저 추가
-app.post('/users', (req, res) => {
-  const { name } = req.body;  // 브라우저/앱에서 보낸 데이터
-  if (!name) return res.status(400).json({ error: 'name이 필요합니다.' });
-
-  db.query('INSERT INTO users (name) VALUES (?)', [name], (err, results) => {
-    if (err) return res.status(500).json(err);
-
+// [API] 상품 데이터를 주는 통로
+app.get('/api/products/:id', (req, res) => {
+    const productId = req.params.id;
+    // 실제로는 여기서 DB 조회를 합니다. 일단은 성공 메시지만 보낼게요.
     res.json({
-      message: '유저 추가 성공 ✅',
-      id: results.insertId,
-      name
+        id: productId,
+        name: productId == 1 ? "오버핏 블레이저" : "나이키 에어포스",
+        price: productId == 1 ? 59000 : 129000,
+        desc: "달란트가 추천하는 이번 시즌 최고의 아이템입니다."
     });
-  });
 });
+
+app.listen(3000, () => { console.log('서버 실행 중: http://localhost:3000'); });

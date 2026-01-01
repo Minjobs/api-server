@@ -1,3 +1,4 @@
+//acode에서 수정함
 require('dotenv').config();
 const mysql = require('mysql2');
 

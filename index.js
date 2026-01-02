@@ -1,45 +1,61 @@
 const express = require('express');
 const path = require('path');
+const mysql = require('mysql2'); // 설치한 라이브러리 불러오기
 const app = express();
 const PORT = 3000;
 
-// 1. 미들웨어 설정
-app.use(express.json()); // JSON 데이터를 주고받기 위함
-app.use(express.static(path.join(__dirname, 'public'))); // public 폴더의 정적 파일(이미지 등) 허용
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// [가짜 데이터] 나중에 MySQL DB 연결할 부분입니다.
-const products = [
-    { id: 1, name: "오버핏 블레이저", price: 59000, desc: "홍대 감성의 깔끔한 핏", img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
-    { id: 2, name: "나이키 에어포스", price: 129000, desc: "어디에나 잘 어울리는 클래식", img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500" }
-];
+// 1. MySQL 연결 설정 (본인 정보에 맞게 수정 필수!)
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'api_user',            // 보통 root
+    password: 'password123', // MySQL 설치 시 설정한 비밀번호
+    database: 'api_db'  // 사용할 데이터베이스 이름
+});
 
-// --- 라우팅 (페이지 이동) ---
+db.connect((err) => {
+    if (err) {
+        console.error('DB 연결 실패:', err);
+        return;
+    }
+    console.log('MySQL 연결 성공! 🚀');
+});
 
-// 2. 홈 페이지 (상품 목록)
+// --- 페이지 라우팅 ---
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'shop.html'));
 });
 
-// 3. 상세 페이지 주소 설정
-// 중요: /product/:id 라고 적으면 /product/1, /product/2 모두 이곳으로 옵니다.
 app.get('/product/:id', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'detail.html'));
 });
 
-// --- API (데이터 전송) ---
+// --- API (실제 DB에서 데이터 가져오기) ---
 
-// 4. 특정 상품의 정보만 JSON으로 주는 API
+// 2. 전체 상품 목록 API
+app.get('/api/products', (req, res) => {
+    const sql = "SELECT * FROM products"; // 모든 상품 조회 쿼리
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
+});
+
+// 3. 특정 상품 상세 API
 app.get('/api/products/:id', (req, res) => {
-    const productId = parseInt(req.params.id);
-    const product = products.find(p => p.id === productId);
-
-    if (product) {
-        res.json(product);
-    } else {
-        res.status(404).send("상품을 찾을 수 없습니다.");
-    }
+    const sql = "SELECT * FROM products WHERE id = ?"; // 특정 ID 조회 쿼리
+    db.query(sql, [req.params.id], (err, result) => {
+        if (err) return res.status(500).send(err);
+        if (result.length > 0) {
+            res.json(result[0]);
+        } else {
+            res.status(404).send("상품 없음");
+        }
+    });
 });
 
 app.listen(PORT, () => {
-    console.log(`달란트 서버가 http://localhost:${PORT} 에서 실행 중입니다!`);
+    console.log(`서버 실행 중: http://localhost:${PORT}`);
 });

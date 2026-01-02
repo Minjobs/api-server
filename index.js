@@ -12,7 +12,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'api_user',            // 보통 root
     password: 'password123', // MySQL 설치 시 설정한 비밀번호
-    database: 'api_db'  // 사용할 데이터베이스 이름
+    database: 'talent_shop'  // 사용할 데이터베이스 이름
 });
 
 db.connect((err) => {

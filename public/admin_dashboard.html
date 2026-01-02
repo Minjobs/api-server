@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>셀러 대시보드 | 상품관리</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-family: 'Pretendard', sans-serif; margin: 0; background: #f4f7f6; display: flex; }
+        
+        /* 사이드바 */
+        nav { width: 240px; background: #2c3e50; color: white; height: 100vh; padding: 20px; }
+        nav h2 { font-size: 1.2rem; color: #3498db; }
+        nav ul { list-style: none; padding: 0; }
+        nav li { padding: 15px 0; border-bottom: 1px solid #34495e; cursor: pointer; }
+
+        /* 메인 콘텐츠 */
+        main { flex: 1; padding: 30px; overflow-y: auto; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        
+        /* 등록 폼 */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        
+        .btn-submit { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        /* 상품 리스트 표 */
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; }
+        .thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div id="app" style="display: flex; width: 100%;">
+        <nav>
+            <h2>Seller Admin</h2>
+            <ul>
+                <li>홈 / 통계</li>
+                <li style="color: #3498db; font-weight: bold;">상품 관리</li>
+                <li>주문 내역</li>
+                <li>내 쇼핑몰 설정</li>
+            </ul>
+        </nav>
+
+        <main>
+            <h1>상품 관리</h1>
+            
+            <div class="card">
+                <h3>새 상품 등록</h3>
+                <div class="form-group">
+                    <label>상품명</label>
+                    <input type="text" v-model="newProduct.name" placeholder="예: 빈티지 데님 셔츠">
+                </div>
+                <div class="form-group">
+                    <label>판매 가격 (원)</label>
+                    <input type="number" v-model="newProduct.price">
+                </div>
+                <div class="form-group">
+                    <label>상품 설명</label>
+                    <textarea v-model="newProduct.desc" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>이미지 URL</label>
+                    <input type="text" v-model="newProduct.img" placeholder="https://...">
+                </div>
+                <button class="btn-submit" @click="addProduct">상품 등록하기</button>
+            </div>
+
+            <div class="card">
+                <h3>등록된 상품 목록 ({{ products.length }})</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>이미지</th>
+                            <th>상품명</th>
+                            <th>가격</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="p in products" :key="p.id">
+                            <td><img :src="p.img" class="thumb"></td>
+                            <td>{{ p.name }}</td>
+                            <td>{{ p.price.toLocaleString() }}원</td>
+                            <td><button @click="deleteProduct(p.id)" style="color: red; border: none; background: none; cursor: pointer;">삭제</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+        createApp({
+            setup() {
+                const products = ref([]);
+                const newProduct = ref({ name: '', price: 0, desc: '', img: '' });
+
+                const loadProducts = async () => {
+                    const res = await fetch('/api/products');
+                    products.value = await res.json();
+                };
+
+                const addProduct = async () => {
+                    if(!newProduct.value.name) return alert('상품명을 입력하세요.');
+                    
+                    const { name, price, desc, img } = newProduct.value;
+                    const res = await fetch(`/api/admin/add-product?name=${name}&price=${price}&desc=${desc}&img=${img}`);
+                    
+                    if(res.ok) {
+                        alert('상품이 등록되었습니다!');
+                        newProduct.value = { name: '', price: 0, desc: '', img: '' };
+                        loadProducts(); // 목록 새로고침
+                    }
+                };
+
+                onMounted(loadProducts);
+
+                return { products, newProduct, addProduct };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

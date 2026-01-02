@@ -56,6 +56,17 @@ app.get('/api/products/:id', (req, res) => {
     });
 });
 
+// [Admin] 셀러 어드민 로그인 페이지
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin_login.html'));
+});
+
+// [Admin] 셀러 어드민 메인 대시보드 (로그인 후 이동할 곳)
+app.get('/admin/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin_dashboard.html'));
+});
+
+
 app.listen(PORT, () => {
     console.log(`서버 실행 중: http://localhost:${PORT}`);
 });

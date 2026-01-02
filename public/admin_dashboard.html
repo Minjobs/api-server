@@ -2,94 +2,119 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>셀러 대시보드 | 상품관리</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>셀러 어드민 | 모바일 최적화</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Pretendard', sans-serif; margin: 0; background: #f4f7f6; display: flex; }
-        
-        /* 사이드바 */
-        nav { width: 240px; background: #2c3e50; color: white; height: 100vh; padding: 20px; }
-        nav h2 { font-size: 1.2rem; color: #3498db; }
-        nav ul { list-style: none; padding: 0; }
-        nav li { padding: 15px 0; border-bottom: 1px solid #34495e; cursor: pointer; }
+        :root { --primary: #4e73df; --bg: #f8f9fc; --dark: #2e3b4e; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Pretendard', sans-serif; margin: 0; background: var(--bg); color: #333; padding-bottom: 70px; }
 
-        /* 메인 콘텐츠 */
-        main { flex: 1; padding: 30px; overflow-y: auto; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        /* 등록 폼 */
+        /* 헤더: 상단 고정 */
+        header { 
+            position: sticky; top: 0; background: white; z-index: 100;
+            padding: 15px 20px; border-bottom: 1px solid #e3e6f0;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        header h1 { font-size: 18px; margin: 0; color: var(--primary); }
+
+        /* 메인 컨테이너 */
+        .container { padding: 15px; max-width: 1000px; margin: 0 auto; }
+
+        /* 카드 스타일 (반응형 그리드 적용 가능) */
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1); margin-bottom: 20px; }
+        .card h3 { margin-top: 0; font-size: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+
+        /* 입력 폼 최적화 */
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        
-        .btn-submit { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        /* 상품 리스트 표 */
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { background: #f8f9fa; }
-        .thumb { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #4e73df; }
+        input, textarea { 
+            width: 100%; padding: 12px; border: 1px solid #d1d3e2; 
+            border-radius: 8px; font-size: 16px; /* 모바일 줌 방지를 위해 16px 권장 */
+        }
+        .btn-submit { 
+            width: 100%; background: var(--primary); color: white; border: none; 
+            padding: 15px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer;
+        }
+
+        /* 상품 목록: 모바일에서는 리스트 형태, PC에서는 테이블 형태 */
+        .product-item { 
+            display: flex; align-items: center; padding: 12px 0; border-bottom: 1px solid #f1f1f1;
+        }
+        .product-item:last-child { border-bottom: none; }
+        .thumb { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; margin-right: 15px; }
+        .p-info { flex: 1; }
+        .p-info .name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+        .p-info .price { color: #888; font-size: 14px; }
+        .btn-del { color: #e74a3b; border: none; background: none; font-size: 14px; padding: 10px; }
+
+        /* 하단 탭바 (모바일용 사이드바 대체) */
+        .bottom-nav { 
+            position: fixed; bottom: 0; width: 100%; background: white; 
+            display: flex; justify-content: space-around; padding: 10px 0;
+            border-top: 1px solid #e3e6f0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-item { text-align: center; color: #858796; text-decoration: none; font-size: 11px; flex: 1; }
+        .nav-item i { font-size: 20px; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--primary); }
+
+        /* PC/태블릿(폴드 펼침) 화면 처리 */
+        @media (min-width: 768px) {
+            .container { padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+            .card { margin-bottom: 0; }
+            header h1 { font-size: 22px; }
+        }
     </style>
 </head>
 <body>
-    <div id="app" style="display: flex; width: 100%;">
-        <nav>
-            <h2>Seller Admin</h2>
-            <ul>
-                <li>홈 / 통계</li>
-                <li style="color: #3498db; font-weight: bold;">상품 관리</li>
-                <li>주문 내역</li>
-                <li>내 쇼핑몰 설정</li>
-            </ul>
-        </nav>
 
-        <main>
-            <h1>상품 관리</h1>
-            
+    <div id="app">
+        <header>
+            <h1><i class="fa-solid fa-store"></i> Seller Admin</h1>
+            <div style="font-size: 14px; color: #666;">admin님</div>
+        </header>
+
+        <div class="container">
             <div class="card">
-                <h3>새 상품 등록</h3>
+                <h3><i class="fa-solid fa-plus-circle"></i> 새 상품 등록</h3>
                 <div class="form-group">
                     <label>상품명</label>
-                    <input type="text" v-model="newProduct.name" placeholder="예: 빈티지 데님 셔츠">
+                    <input type="text" v-model="newProduct.name" placeholder="상품 이름을 입력하세요">
                 </div>
                 <div class="form-group">
-                    <label>판매 가격 (원)</label>
-                    <input type="number" v-model="newProduct.price">
-                </div>
-                <div class="form-group">
-                    <label>상품 설명</label>
-                    <textarea v-model="newProduct.desc" rows="3"></textarea>
+                    <label>판매가 (원)</label>
+                    <input type="number" v-model="newProduct.price" placeholder="0">
                 </div>
                 <div class="form-group">
                     <label>이미지 URL</label>
                     <input type="text" v-model="newProduct.img" placeholder="https://...">
                 </div>
-                <button class="btn-submit" @click="addProduct">상품 등록하기</button>
+                <button class="btn-submit" @click="addProduct">등록하기</button>
             </div>
 
             <div class="card">
-                <h3>등록된 상품 목록 ({{ products.length }})</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>이미지</th>
-                            <th>상품명</th>
-                            <th>가격</th>
-                            <th>관리</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="p in products" :key="p.id">
-                            <td><img :src="p.img" class="thumb"></td>
-                            <td>{{ p.name }}</td>
-                            <td>{{ p.price.toLocaleString() }}원</td>
-                            <td><button @click="deleteProduct(p.id)" style="color: red; border: none; background: none; cursor: pointer;">삭제</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <h3><i class="fa-solid fa-box"></i> 등록된 상품 ({{ products.length }})</h3>
+                <div v-if="products.length === 0" style="text-align: center; color: #ccc; padding: 40px 0;">
+                    등록된 상품이 없습니다.
+                </div>
+                <div v-for="p in products" :key="p.id" class="product-item">
+                    <img :src="p.img" class="thumb">
+                    <div class="p-info">
+                        <div class="name">{{ p.name }}</div>
+                        <div class="price">{{ p.price.toLocaleString() }}원</div>
+                    </div>
+                    <button class="btn-del" @click="deleteProduct(p.id)">삭제</button>
+                </div>
             </div>
-        </main>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active"><i class="fa-solid fa-chart-line"></i>홈</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-box"></i>상품</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-file-invoice-dollar"></i>주문</a>
+            <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i>설정</a>
+        </nav>
     </div>
 
     <script>
@@ -97,7 +122,7 @@
         createApp({
             setup() {
                 const products = ref([]);
-                const newProduct = ref({ name: '', price: 0, desc: '', img: '' });
+                const newProduct = ref({ name: '', price: null, img: '' });
 
                 const loadProducts = async () => {
                     const res = await fetch('/api/products');
@@ -105,20 +130,19 @@
                 };
 
                 const addProduct = async () => {
-                    if(!newProduct.value.name) return alert('상품명을 입력하세요.');
-                    
-                    const { name, price, desc, img } = newProduct.value;
-                    const res = await fetch(`/api/admin/add-product?name=${name}&price=${price}&desc=${desc}&img=${img}`);
-                    
+                    if(!newProduct.value.name || !newProduct.value.price) {
+                        return alert('상품명과 가격을 입력해 주세요.');
+                    }
+                    const { name, price, img } = newProduct.value;
+                    const res = await fetch(`/api/admin/add-product?name=${encodeURIComponent(name)}&price=${price}&img=${encodeURIComponent(img)}`);
                     if(res.ok) {
-                        alert('상품이 등록되었습니다!');
-                        newProduct.value = { name: '', price: 0, desc: '', img: '' };
-                        loadProducts(); // 목록 새로고침
+                        alert('등록 성공!');
+                        newProduct.value = { name: '', price: null, img: '' };
+                        loadProducts();
                     }
                 };
 
                 onMounted(loadProducts);
-
                 return { products, newProduct, addProduct };
             }
         }).mount('#app');

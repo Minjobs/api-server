@@ -80,27 +80,30 @@
     </div>
 
     <script>
-        const { createApp, ref } = Vue;
+const { createApp, ref, onMounted } = Vue;
 
-        createApp({
-            setup() {
-                // 가짜 데이터 (나중에 API fetch로 바꿀 예정)
-                const products = ref([
-                    { id: 1, name: "오버핏 블레이저", price: 59000, img: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500" },
-                    { id: 2, name: "나이키 에어포스", price: 129000, img: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500" },
-                    { id: 3, name: "클래식 데님 팬츠", price: 45000, img: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500" },
-                    { id: 4, name: "베이직 코튼 티셔츠", price: 19000, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=500" }
-                ]);
+createApp({
+    setup() {
+        const products = ref([]); // 빈 배열로 시작
 
-                // 상세 페이지로 이동 함수
-                const goToDetail = (id) => {
-                    // 서버가 설정한 /product/:id 주소로 이동합니다.
-                    window.location.href = `/product/${id}`;
-                };
-
-                return { products, goToDetail };
+        // 페이지 로드 시 실행
+        onMounted(async () => {
+            try {
+                const res = await fetch('/api/products');
+                products.value = await res.json();
+            } catch (err) {
+                console.error("데이터 로드 실패", err);
             }
-        }).mount('#app');
+        });
+
+        const goToDetail = (id) => {
+            window.location.href = `/product/${id}`;
+        };
+
+        return { products, goToDetail };
+    }
+}).mount('#app');
+
     </script>
 </body>
 </html>

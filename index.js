@@ -66,6 +66,20 @@ app.get('/admin/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin_dashboard.html'));
 });
 
+// [API] 새로운 상품 등록
+app.get('/api/admin/add-product', (req, res) => {
+    // 실제로는 POST를 써야 하지만, 우선 테스트를 위해 GET으로 흐름만 잡습니다.
+    // 나중에 정식으로 바꿀게요!
+    const { name, price, desc, img } = req.query;
+    const sql = "INSERT INTO products (name, price, desc_text, img) VALUES (?, ?, ?, ?)";
+    
+    db.query(sql, [name, price, desc, img], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ message: "상품 등록 성공!", id: result.insertId });
+    });
+});
+
+
 app.listen(PORT, () => {
     console.log(`서버 실행 중: http://localhost:${PORT}`);
 });

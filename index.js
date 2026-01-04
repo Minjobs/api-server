@@ -23,7 +23,7 @@ const mysql = require('mysql2/promise');
 
 // DB 연결 설정
 const db = mysql.createPool({
-    host: 'localhost',
+    host: 'http://43.201.250.81:3000/',
     user: 'api_user',
     password: 'password123',
     database: 'client_db'

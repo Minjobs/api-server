@@ -2,26 +2,31 @@ const express = require('express');
 const path = require('path');
 const mysql = require('mysql2'); // 설치한 라이브러리 불러오기
 const app = express();
-const PORT = 3000;
+// index.js 상단에 추가
+require('dotenv').config(); 
 
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+const express = require('express');
+const mysql = require('mysql2');
+const path = require('path');
 
-// 1. MySQL 연결 설정 (본인 정보에 맞게 수정 필수!)
+const app = express();
+
+// 이제 하드코딩된 정보 대신 process.env를 사용합니다.
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'api_user',            // 보통 root
-    password: 'password123', // MySQL 설치 시 설정한 비밀번호
-    database: 'talent_shop'  // 사용할 데이터베이스 이름
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME
 });
 
 db.connect((err) => {
-    if (err) {
-        console.error('DB 연결 실패:', err);
-        return;
-    }
-    console.log('MySQL 연결 성공! 🚀');
+    if (err) console.error('DB 연결 실패:', err);
+    else console.log('MySQL 연결 성공! (환경 변수 사용 중) 🚀');
 });
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`서버 작동 중: ${PORT}`));
+
 
 // --- 페이지 라우팅 ---
 app.get('/', (req, res) => {

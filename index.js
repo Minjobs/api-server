@@ -18,42 +18,43 @@ app.get('/', (req, res) => {
     res.send(`<a href="${lineAuthUrl}">라인으로 로그인하기</a>`);
 });
 
-// 2. 라인이 코드를 보내주는 Callback 경로
+// ... 앞선 설정 코드 생략 (mysql 라이브러리 추가 필요: npm install mysql2)
+const mysql = require('mysql2/promise');
+
+// DB 연결 설정
+const db = mysql.createPool({
+    host: 'localhost',
+    user: 'root',
+    password: 'password123',
+    database: 'client_db'
+});
+
 app.get('/callback', async (req, res) => {
-    const code = req.query.code; // 라인이 보내준 일회성 코드
-
     try {
-        // [A] 받은 코드로 'Access Token' 요청하기
-        const tokenResponse = await axios.post('https://api.line.me/oauth2/v2.1/token', 
-            new URLSearchParams({
-                grant_type: 'authorization_code',
-                code: code,
-                redirect_uri: process.env.LINE_CALLBACK_URL,
-                client_id: process.env.LINE_CHANNEL_ID,
-                client_secret: process.env.LINE_CHANNEL_SECRET,
-            }).toString(), 
-            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-        );
-
-        const accessToken = tokenResponse.data.access_token;
-
-        // [B] 받은 토큰으로 '사용자 프로필' 가져오기
-        const profileResponse = await axios.get('https://api.line.me/v2/profile', {
+        // 1. 액세스 토큰 및 라인 프로필 가져오기 (이전 코드와 동일)
+        const accessToken = /* 토큰 요청 로직 */;
+        const profile = await axios.get('https://api.line.me/v2/profile', {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
+        
+        const lineUserId = profile.data.userId;
 
-        // 결과 출력 (실무에서는 여기서 DB에 저장하거나 세션을 만듭니다)
-        console.log('사용자 정보:', profileResponse.data);
-        res.json({
-            message: "로그인 성공!",
-            user: profileResponse.data
-        });
+        // 2. DB에서 기존 유저인지 확인
+        const [rows] = await db.execute('SELECT * FROM users WHERE line_user_id = ?', [lineUserId]);
 
+        if (rows.length > 0) {
+            // [A] 기존 회원이면 -> 프로필 페이지로 이동 (데이터 전달)
+            res.redirect(`/profile?userId=${lineUserId}`);
+        } else {
+            // [B] 신규 회원이면 -> 회원가입 페이지로 이동 (라인ID와 기본정보 전달)
+            const initialName = profile.data.displayName;
+            res.redirect(`/signup?lineId=${lineUserId}&name=${encodeURIComponent(initialName)}`);
+        }
     } catch (error) {
-        console.error('로그인 에러:', error.response.data);
-        res.status(500).send('로그인 처리 중 오류 발생');
+        res.status(500).send('처리 중 오류 발생');
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);

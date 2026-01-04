@@ -55,6 +55,52 @@ app.get('/callback', async (req, res) => {
     }
 });
 
+app.get('/signup', (req, res) => {
+    const { lineId, name } = req.query;
+    res.send(`
+        <h1>회원가입</h1>
+        <form action="/signup" method="POST">
+            <input type="hidden" name="lineId" value="${lineId}">
+            <p>닉네임: <input type="text" name="nickname" value="${name}"></p>
+            <p>이메일: <input type="email" name="email"></p>
+            <p>전화번호: <input type="text" name="phone"></p>
+            <button type="submit">회원가입 완료</button>
+        </form>
+    `);
+});
+
+app.use(express.urlencoded({ extended: true })); // POST 데이터 해석용
+
+app.post('/signup', async (req, res) => {
+    const { lineId, nickname, email, phone } = req.body;
+    
+    try {
+        // DB에 저장
+        await db.execute(
+            'INSERT INTO users (line_user_id, nickname, email, phone) VALUES (?, ?, ?, ?)',
+            [lineId, nickname, email, phone]
+        );
+        // 완료 후 프로필로 이동
+        res.redirect(`/profile?userId=${lineId}`);
+    } catch (error) {
+        res.send('회원가입 저장 실패');
+    }
+});
+
+app.get('/profile', async (req, res) => {
+    const userId = req.query.userId;
+    const [rows] = await db.execute('SELECT * FROM users WHERE line_user_id = ?', [userId]);
+    const user = rows[0];
+
+    res.send(`
+        <h1>내 프로필</h1>
+        <p>닉네임: ${user.nickname}</p>
+        <p>이메일: ${user.email}</p>
+        <p>전화번호: ${user.phone}</p>
+        <a href="/">홈으로</a>
+    `);
+});
+
 
 app.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);

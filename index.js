@@ -6,6 +6,15 @@ const app = express();
 
 const PORT = 3000;
 
+const session = require('express-session');
+
+app.use(session({
+    secret: 'my-secret-key', // 암호화에 사용될 키 (나중에 .env로 옮기세요)
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true } // httpOnly는 자바스크립트 탈취 방지
+}));
+
 // 미들웨어 설정
 app.use(express.urlencoded({ extended: true }));
 
@@ -58,7 +67,18 @@ app.get('/callback', async (req, res) => {
         const [rows] = await db.execute('SELECT * FROM users WHERE line_user_id = ?', [lineUserId]);
 
         if (rows.length > 0) {
-            res.redirect(`/profile?userId=${lineUserId}`);
+            // ... 로그인 로직 수행 후
+const lineUserId = profileRes.data.userId;
+
+// URL에 담아 보내는 대신, 세션에 저장합니다.
+req.session.user = {
+    lineId: lineUserId,
+    name: profileRes.data.displayName
+};
+
+// 이제 목적지로 이동할 때 ID를 붙이지 않습니다.
+res.redirect('/profile'); 
+
         } else {
             res.redirect(`/signup?lineId=${lineUserId}&name=${encodeURIComponent(profileRes.data.displayName)}`);
         }
@@ -108,19 +128,28 @@ app.post('/signup', async (req, res) => {
 });
 
 app.get('/profile', async (req, res) => {
-    const userId = req.query.userId;
-    const [rows] = await db.execute('SELECT * FROM users WHERE line_user_id = ?', [userId]);
-    const user = rows[0];
+    // 세션에 정보가 없으면 로그인 안 한 것으로 간주
+    if (!req.session.user) {
+        return res.send('<script>alert("로그인이 필요합니다."); location.href="/";</script>');
+    }
 
-    res.send(`
-        <h1>내 프로필</h1>
-        <p>닉네임: ${user.nickname}</p>
-        <p>이메일: ${user.email}</p>
-        <p>전화번호: ${user.phone}</p>
-        <a href="/">홈으로</a>
-    `);
+    // URL 파라미터(?userId=...)가 아니라 세션에서 꺼내옵니다.
+    const myLineId = req.session.user.lineId;
+
+    try {
+        const [rows] = await db.execute('SELECT * FROM users WHERE line_user_id = ?', [myLineId]);
+        const user = rows[0];
+
+        res.send(`
+            <h1>안전한 내 프로필</h1>
+            <p>닉네임: ${user.nickname}</p>
+            <p>이메일: ${user.email}</p>
+            <p><strong>URL을 보세요. 당신의 ID가 보이지 않습니다!</strong></p>
+        `);
+    } catch (error) {
+        res.status(500).send("데이터 로드 실패");
+    }
 });
-
 
 app.listen(PORT, () => {
     console.log(`서버가 http://localhost:${PORT} 에서 실행 중입니다.`);

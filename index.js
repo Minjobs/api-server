@@ -4,19 +4,27 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const PORT = 3000; // 변수 선언을 위로 올리는 것이 안전합니다.
+const PORT = 3000;
 
-// 1. 정적 파일 서비스 (js, css, 이미지 등)
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// 2. API 라우트 (정적 파일 서비스 뒤, SPA 설정 앞에 위치해야 함)
+// [중요] 정적 파일 서비스를 최상단에 배치
+// 브라우저가 /js/index.js를 요청하면 실제 파일을 찾아줍니다.
+app.use(express.static(path.join(__dirname, 'public')));
+
+// API 라우트
 app.get('/api/check', (req, res) => res.json({ status: "ok" }));
 
-// 3. 모든 경로(*)에 대해 index.html을 반환 (SPA 라우팅 핵심)
-// 이 설정 덕분에 /profile, /home 어디서 새로고침해도 에러가 나지 않습니다.
+// [수정] SPA 라우팅 설정
+// 정적 파일(.js, .css 등)이 아닌 일반 경로 요청일 때만 index.html을 보냅니다.
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    // 요청 경로에 '.'이 없다면(확장자가 없다면) 페이지 요청으로 간주
+    if (!req.path.includes('.')) {
+        res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    } else {
+        // 확장자가 있는데 위 static에서 못 찾은 경우 404
+        res.status(404).send('File Not Found');
+    }
 });
 
 app.listen(PORT, () => {

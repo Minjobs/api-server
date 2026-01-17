@@ -2,18 +2,13 @@
 import { useCounter, useMalls } from './homepage_view_model.js';
 
 export const homepage_view = {
-    setup() {
-        // 실무 방식: 사용할 로직 모듈들을 여기서 조립합니다.
+    emits: ['go-profile'], // 부모에게 보낼 이벤트 선언
+    setup(props, { emit }) {
         const { count, increment, decrement } = useCounter();
         const { malls } = useMalls();
 
-        // 템플릿(HTML)에서 사용할 변수와 함수만 명시적으로 반환
-        return {
-            count,
-            increment,
-            decrement,
-            malls
-        };
+        return { count, increment, decrement, malls, 
+                 goProfile: () => emit('go-profile') }; // 이벤트 발생 함수
     },
     template: `
         <div class="min-h-screen bg-slate-50 flex flex-col items-center p-6 animate__animated animate__fadeIn">

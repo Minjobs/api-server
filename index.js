@@ -1,11 +1,28 @@
-// index.js 수정
-const express = require('express');
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const app = express();
-const path = require('path');
+const PORT = 3000;
 
-// 'public' 폴더 내의 파일들을 자동으로 서빙합니다.
-app.use(express.static('public')); 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-app.listen(3000, () => {
-    console.log('Server is running on http://43.201.250.81:3000');
+// 1. public 폴더를 정적 파일 경로로 지정
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 2. JSON 파싱 (API용)
+app.use(express.json());
+
+// 3. 테스트 API
+app.get('/api/status', (req, res) => {
+    res.json({ status: "running", message: "MallGo Server is Live!" });
+});
+
+app.listen(PORT, () => {
+    console.log(`
+    🚀 MallGo Server Start!
+    URL: http://localhost:${PORT}
+    Root: ${__dirname}
+    `);
 });

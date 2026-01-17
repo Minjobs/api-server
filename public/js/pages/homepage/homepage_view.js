@@ -12,9 +12,9 @@ export const homepage_view = {
     },
     template: `
         <div class="min-h-screen bg-slate-50 flex flex-col items-center p-6 animate__animated animate__fadeIn">
-            <header class="w-full max-w-md flex justify-between items-center mb-10">
-                <h1 class="text-2xl font-black text-indigo-600 tracking-tighter italic">mallgo</h1>
-                <button class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-slate-100">
+           <header class="w-full max-w-md flex justify-between items-center mb-10">
+                <h1 class="text-2xl font-black text-indigo-600 ...">mallgo</h1>
+                <button @click="goProfile" class="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center border border-slate-100 hover:bg-slate-50 transition-colors">
                     👤
                 </button>
             </header>

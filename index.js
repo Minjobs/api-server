@@ -11,7 +11,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/check', (req, res) => res.json({ status: "ok" }));
 
-app.get('(.*)', (req, res) => {
+app.get('/:splat*', (req, res) => {
+    // 확장자가 없는 요청(페이지 이동)일 때만 index.html 반환
     if (!req.path.includes('.')) {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));
     } else {

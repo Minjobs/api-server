@@ -11,7 +11,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/check', (req, res) => res.json({ status: "ok" }));
 
-// [수정 포인트] '*' 대신 '(.*)'를 사용합니다.
 app.get('(.*)', (req, res) => {
     if (!req.path.includes('.')) {
         res.sendFile(path.join(__dirname, 'public', 'index.html'));

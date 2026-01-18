@@ -2,7 +2,7 @@
 import { createApp, ref, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 import { homepage_view } from './pages/homepage/homepage_view.js';
 import { profile_view } from './pages/profile/profile_view.js';
-import { login_view } from './pages/login/login_view.js'; // 로그인 뷰 임포트
+import { login_view } from './pages/loginpage/login_view.js'; // 로그인 뷰 임포트
 
 const RootComponent = {
     components: {

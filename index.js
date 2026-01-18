@@ -26,12 +26,19 @@ app.get('/api/auth/line', (req, res) => {
 });
 
 // 2. 라인 콜백 (라인에서 인증 후 돌아오는 곳)
-// .env의 주소 끝이 /callback 이라면 여기 주소도 /callback 이어야 합니다.
+// index.js 의 /callback 부분 수정
 app.get('/callback', async (req, res) => {
-    const { code } = req.query;
+    const { code, error, error_description } = req.query;
+
+    // 라인에서 에러를 보낸 경우
+    if (error) {
+        console.error('라인 인증 에러:', error_description);
+        return res.status(400).send(`인증 실패: ${error_description}`);
+    }
 
     try {
-        // [A] Access Token 발급 요청
+        console.log('1. 인증 코드 수신:', code);
+
         const tokenRes = await axios.post('https://api.line.me/oauth2/v2.1/token', new URLSearchParams({
             grant_type: 'authorization_code',
             code,
@@ -40,29 +47,30 @@ app.get('/callback', async (req, res) => {
             client_secret: process.env.LINE_CHANNEL_SECRET
         }), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
 
-        // [B] 사용자 프로필 정보 요청
+        console.log('2. 토큰 발급 성공');
+
         const userRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { Authorization: `Bearer ${tokenRes.data.access_token}` }
         });
 
-        const { userId, displayName, pictureUrl } = userRes.data;
+        console.log('3. 유저 정보 획득:', userRes.data.displayName);
 
-        // [C] DB 저장 (이미 있으면 무시, 없으면 삽입 - Upsert 로직)
-        await db.query(`
-            INSERT INTO users (line_id, user_name, profile_img) 
-            VALUES (?, ?, ?) 
-            ON DUPLICATE KEY UPDATE user_name = ?, profile_img = ?`,
-            [userId, displayName, pictureUrl, displayName, pictureUrl]
-        );
-
-        // 로그인 후 메인으로 리다이렉트
-        res.redirect('/'); 
+        // ... DB 저장 및 JWT 발급 로직
+        // (생략)
 
     } catch (err) {
-        console.error('Error:', err.response?.data || err.message);
-        res.status(500).send('Login Failed');
+        // [중요] 에러의 상세 내용을 터미널에 출력합니다.
+        console.error('--- 상세 에러 로그 ---');
+        if (err.response) {
+            console.error('Status:', err.response.status);
+            console.error('Data:', err.response.data);
+        } else {
+            console.error('Message:', err.message);
+        }
+        res.status(500).send('LINE Login Failed (서버 로그를 확인하세요)');
     }
 });
+
 
 // SPA 라우팅 처리
 app.use((req, res, next) => {

@@ -6,7 +6,6 @@ import mysql from 'mysql2/promise';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 
-
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

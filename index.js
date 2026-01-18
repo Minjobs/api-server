@@ -26,50 +26,59 @@ app.get('/api/auth/line', (req, res) => {
 });
 
 // 2. 라인 콜백 (라인에서 인증 후 돌아오는 곳)
-// index.js 의 /callback 부분 수정
 app.get('/callback', async (req, res) => {
-    const { code, error, error_description } = req.query;
+    console.log('--- [STEP 1] 콜백 도달 확인 ---');
+    const { code } = req.query;
+    console.log('수신된 인증 코드:', code);
 
-    // 라인에서 에러를 보낸 경우
-    if (error) {
-        console.error('라인 인증 에러:', error_description);
-        return res.status(400).send(`인증 실패: ${error_description}`);
+    if (!code) {
+        console.log('코드 없음: 라인 인증 실패');
+        return res.status(400).send('인증 코드가 없습니다.');
     }
 
     try {
-        console.log('1. 인증 코드 수신:', code);
-
+        console.log('--- [STEP 2] 라인 토큰 요청 시작 ---');
         const tokenRes = await axios.post('https://api.line.me/oauth2/v2.1/token', new URLSearchParams({
             grant_type: 'authorization_code',
             code,
             redirect_uri: process.env.LINE_CALLBACK_URL,
             client_id: process.env.LINE_CHANNEL_ID,
             client_secret: process.env.LINE_CHANNEL_SECRET
-        }), { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
+        }), { 
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            timeout: 5000 // 5초 안에 응답 안 오면 강제 종료 (무한 로딩 방지)
+        });
 
-        console.log('2. 토큰 발급 성공');
+        console.log('--- [STEP 3] 토큰 획득 성공 ---');
 
         const userRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { Authorization: `Bearer ${tokenRes.data.access_token}` }
         });
 
-        console.log('3. 유저 정보 획득:', userRes.data.displayName);
+        console.log('--- [STEP 4] 유저 정보 획득:', userRes.data.displayName);
 
-        // ... DB 저장 및 JWT 발급 로직
-        // (생략)
+        // JWT 생성 및 쿠키 설정
+        const accessToken = jwt.sign(
+            { id: userRes.data.userId, name: userRes.data.displayName, img: userRes.data.pictureUrl },
+            process.env.JWT_SECRET || 'mallgo_secret',
+            { expiresIn: '7d' }
+        );
+
+        res.cookie('accessToken', accessToken, {
+            httpOnly: true,
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        console.log('--- [STEP 5] 로그인 완료, 리다이렉트 ---');
+        return res.redirect('/'); // 여기서 응답을 보내야 로딩이 끝납니다.
 
     } catch (err) {
-        // [중요] 에러의 상세 내용을 터미널에 출력합니다.
-        console.error('--- 상세 에러 로그 ---');
-        if (err.response) {
-            console.error('Status:', err.response.status);
-            console.error('Data:', err.response.data);
-        } else {
-            console.error('Message:', err.message);
-        }
-        res.status(500).send('LINE Login Failed (서버 로그를 확인하세요)');
+        console.error('--- [ERROR] 에러 발생 ---');
+        console.error(err.response?.data || err.message);
+        return res.status(500).send('로그인 처리 중 오류가 발생했습니다.');
     }
 });
+
 
 
 // SPA 라우팅 처리

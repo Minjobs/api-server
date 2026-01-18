@@ -1,55 +1,43 @@
+// public/js/index.js
 import { createApp, ref, onMounted } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 import { homepage_view } from './pages/homepage/homepage_view.js';
 import { profile_view } from './pages/profile/profile_view.js';
+import { login_view } from './pages/login/login_view.js'; // 로그인 뷰 임포트
 
 const RootComponent = {
     components: {
         'home-page': homepage_view,
-        'profile-page': profile_view
+        'profile-page': profile_view,
+        'login-page': login_view
     },
     setup() {
-        // 초기 경로 설정 (끝에 /가 붙는 경우 등을 대비해 정제)
-        const getPath = () => window.location.pathname;
-        const currentPath = ref(getPath());
+        const currentPath = ref(window.location.pathname);
+        const isLoggedIn = ref(false); // 로그인 상태 관리 (나중에 API로 체크)
 
-        // URL 변경 함수
         const navigateTo = (path) => {
-            if (window.location.pathname !== path) {
-                window.history.pushState({}, '', path);
-                currentPath.value = path;
-                console.log(`Mapsd to: ${path}`);
-            }
+            window.history.pushState({}, '', path);
+            currentPath.value = path;
         };
 
-        // 브라우저 뒤로가기 감지 및 초기화
         onMounted(() => {
             window.onpopstate = () => {
-                currentPath.value = getPath();
+                currentPath.value = window.location.pathname;
             };
-            console.log("MallGo SPA Router 가동 중...");
         });
 
-        return { currentPath, navigateTo };
+        return { currentPath, navigateTo, isLoggedIn };
     },
     template: `
         <div>
-            <home-page 
-                v-if="currentPath === '/' || currentPath === '/home'" 
-                @go-profile="navigateTo('/profile')" 
-            />
+            <login-page v-if="currentPath === '/login'" />
             
-            <profile-page 
-                v-else-if="currentPath === '/profile'" 
-                :onBack="() => navigateTo('/home')" 
-            />
-
-            <div v-else class="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-                <h1 class="text-4xl font-black text-slate-200 mb-4">404</h1>
-                <p class="text-slate-500 mb-8">페이지를 찾을 수 없습니다.</p>
-                <button @click="navigateTo('/home')" class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold">
-                    홈으로 돌아가기
-                </button>
-            </div>
+            <template v-else>
+                <home-page v-if="currentPath === '/' || currentPath === '/home'" 
+                           @go-profile="navigateTo('/profile')" />
+                
+                <profile-page v-if="currentPath === '/profile'" 
+                              :onBack="() => navigateTo('/home')" />
+            </template>
         </div>
     `
 };

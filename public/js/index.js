@@ -10,36 +10,59 @@ const RootComponent = {
         'profile-page': profile_view,
         'login-page': login_view
     },
-    setup() {
-        const currentPath = ref(window.location.pathname);
-        const isLoggedIn = ref(false); // 로그인 상태 관리 (나중에 API로 체크)
+    // public/js/index.js
+setup() {
+    const currentPath = ref(window.location.pathname);
+    const isLoggedIn = ref(false);
+    const user = ref(null);
 
-        const navigateTo = (path) => {
-            window.history.pushState({}, '', path);
-            currentPath.value = path;
-        };
+    // [중요] 로그인 상태를 서버에 확인하는 함수
+    const checkAuth = async () => {
+        try {
+            const res = await fetch('/api/auth/me');
+            const data = await res.json();
+            if (data.isLoggedIn) {
+                isLoggedIn.value = true;
+                user.value = data.user;
+                return true;
+            }
+        } catch (e) { console.error("인증 체크 실패"); }
+        isLoggedIn.value = false;
+        return false;
+    };
 
-        onMounted(() => {
-            window.onpopstate = () => {
-                currentPath.value = window.location.pathname;
-            };
-        });
+    // 프로필 버튼 클릭 시 실행할 로직
+    const handleProfileClick = async () => {
+        const authenticated = await checkAuth(); // 최신 로그인 상태 확인
+        if (authenticated) {
+            navigateTo('/profile');
+        } else {
+            alert('로그인이 필요한 서비스입니다.');
+            navigateTo('/login');
+        }
+    };
 
-        return { currentPath, navigateTo, isLoggedIn };
-    },
-    template: `
-        <div>
-            <login-page v-if="currentPath === '/login'" />
-            
-            <template v-else>
-                <home-page v-if="currentPath === '/' || currentPath === '/home'" 
-                           @go-profile="navigateTo('/profile')" />
-                
-                <profile-page v-if="currentPath === '/profile'" 
-                              :onBack="() => navigateTo('/home')" />
-            </template>
-        </div>
-    `
+    const navigateTo = (path) => {
+        window.history.pushState({}, '', path);
+        currentPath.value = path;
+    };
+
+    onMounted(checkAuth); // 페이지 로드 시 최초 1회 확인
+
+    return { currentPath, navigateTo, isLoggedIn, user, handleProfileClick };
+},
+template: `
+    <div>
+        <login-page v-if="currentPath === '/login'" />
+        
+        <home-page v-if="currentPath === '/' || currentPath === '/home'" 
+                   @go-profile="handleProfileClick" />
+        
+        <profile-page v-if="currentPath === '/profile'" 
+                      :user="user"
+                      :onBack="() => navigateTo('/home')" />
+    </div>
+`
 };
 
 createApp(RootComponent).mount('#app');

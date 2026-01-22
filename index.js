@@ -80,7 +80,18 @@ app.get('/callback', async (req, res) => {
     }
 });
 
+// 서버측 index.js (express)
+app.get('/api/auth/me', (req, res) => {
+    const token = req.cookies.accessToken; // 쿠키에서 JWT 추출
+    if (!token) return res.json({ isLoggedIn: false });
 
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ isLoggedIn: true, user: decoded });
+    } catch (err) {
+        res.json({ isLoggedIn: false });
+    }
+});
 
 // SPA 라우팅 처리
 app.use((req, res, next) => {

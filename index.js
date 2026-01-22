@@ -66,9 +66,12 @@ app.get('/callback', async (req, res) => {
         );
 
         res.cookie('accessToken', accessToken, {
-            httpOnly: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000
-        });
+    httpOnly: true, // JS에서 접근 불가 (보안)
+    secure: false,  // HTTP 환경이므로 false (HTTPS면 true)
+    sameSite: 'lax', // 최근 브라우저 정책 대응
+    path: '/',      // 모든 경로에서 쿠키 사용 가능하도록 설정
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7일
+});
 
         console.log('--- [STEP 5] 로그인 완료, 리다이렉트 ---');
         return res.redirect('/'); // 여기서 응답을 보내야 로딩이 끝납니다.

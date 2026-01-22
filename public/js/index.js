@@ -18,18 +18,25 @@ setup() {
 
     // [중요] 로그인 상태를 서버에 확인하는 함수
     const checkAuth = async () => {
-        try {
-            const res = await fetch('/api/auth/me');
+    try {
+        // [수정] credentials: 'include' 옵션을 추가해야 쿠키를 서버로 보냅니다.
+        const res = await fetch('/api/auth/me', {
+            credentials: 'include' 
+        });
+        
+        if (res.ok) {
             const data = await res.json();
             if (data.isLoggedIn) {
                 isLoggedIn.value = true;
                 user.value = data.user;
                 return true;
             }
-        } catch (e) { console.error("인증 체크 실패"); }
-        isLoggedIn.value = false;
-        return false;
-    };
+        }
+    } catch (e) { console.error("인증 체크 실패", e); }
+    isLoggedIn.value = false;
+    return false;
+};
+
 
     // 프로필 버튼 클릭 시 실행할 로직
     const handleProfileClick = async () => {

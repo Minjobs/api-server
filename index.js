@@ -2,75 +2,84 @@ import express from 'express';
 import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import OpenAI from 'openai'; // OpenAI 라이브러리 추가
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 const port = 3000;
-// ... 이하 로직 동일
 
-
-/**
- * 1. 설정 및 미들웨어
- */
-app.use(express.json()); // JSON 데이터를 읽기 위한 설정
-
-// public 폴더 내의 정적 파일(이미지, CSS 등)을 자동으로 서빙합니다.
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 라인 Messaging API 채널 액세스 토큰 (본인의 토큰으로 교체 필수)
+// --- 설정값 (본인의 것으로 교체하세요) ---
 const LINE_ACCESS_TOKEN = 'iLGaO8NZlJODIJo6RmxWTIdWOmNw/6ckK+dtqViykIKqc9al42E2GAKUSIorh6Mnod/2+XrcuZxWW5RCILcaksUEivG4mEl5ep5BhOtSbfYRiwNCoCkOVmTXswoc+B/9c9S+Fu7FQNjyNkQcsBU0aAdB04t89/1O/w1cDnyilFU=';
+// ------------------------------------
 
-/**
- * 2. 라우팅 (경로 설정)
- */
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-// 사용자가 https://murdoo-k.com/ 에 접속했을 때 index.html을 보여줍니다.
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// 사용자가 사주 정보를 제출했을 때 실행되는 API
 app.post('/api/fortune', async (req, res) => {
     const { userId, birthDate, birthTime, gender } = req.body;
 
-    console.log(`[데이터 수신] ID: ${userId}, 날짜: ${birthDate}, 시간: ${birthTime}, 성별: ${gender}`);
-
+    // 1. 즉시 "분석 중" 메시지 전송 (사용자를 기다리게 하지 않기 위함)
     try {
-        // 라인 Messaging API - Push Message 전송
-        await axios.post('https://api.line.me/v2/bot/message/push', {
-            to: userId,
-            messages: [
-                {
-                    type: 'text',
-                    text: 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮'
-                    // 해석: 당신의 사주를 분석 중입니다. 잠시만 기다려 주세요.
-                }
-            ]
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`
-            }
+        await sendLineMessage(userId, 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮\n(머두 K가 당신의 사주를 분석 중입니다. 잠시만 기다려 주세요.)');
+        res.status(200).json({ status: 'success' }); // 웹창은 바로 닫아줍니다.
+    } catch (err) {
+        console.error('초기 메시지 전송 실패:', err);
+        return res.status(500).json({ status: 'error' });
+    }
+
+    // 2. 배경에서 ChatGPT에게 사주 분석 요청 (비동기 처리)
+    try {
+        const prompt = `
+            You are a professional Thai fortune teller (Mor Doo). 
+            Based on the following information, provide a detailed and mystical fortune-telling in Thai.
+            - Birth Date: ${birthDate}
+            - Birth Time: ${birthTime}
+            - Gender: ${gender}
+            
+            The tone should be encouraging, professional, and slightly mysterious. 
+            Focus on career, love, and health for the near future.
+            Please answer only in Thai language.
+        `;
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o", // 혹은 "gpt-3.5-turbo"
+            messages: [{ role: "system", content: "You are a famous Thai fortune teller named 'Mor Doo K'." },
+                       { role: "user", content: prompt }],
         });
 
-        console.log('라인 메시지 전송 완료!');
-        res.status(200).json({ status: 'success' });
+        const fortuneResult = completion.choices[0].message.content;
+
+        // 3. 분석 완료된 결과를 다시 라인으로 전송
+        await sendLineMessage(userId, `✨ 결과가 도착했습니다! ✨\n\n${fortuneResult}`);
+        console.log(`[분석 완료] 유저 ${userId}에게 사주 결과 전송 완료`);
 
     } catch (error) {
-        console.error('에러 발생:', error.response ? error.response.data : error.message);
-        res.status(500).json({ status: 'error', message: '메시지 전송 실패' });
+        console.error('AI 분석 또는 결과 전송 에러:', error);
+        await sendLineMessage(userId, '죄송합니다. 분석 중에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     }
 });
 
-/**
- * 3. 서버 가동
- */
+// 라인 메시지 전송 함수 (중복 코드 방지)
+async function sendLineMessage(userId, text) {
+    await axios.post('https://api.line.me/v2/bot/message/push', {
+        to: userId,
+        messages: [{ type: 'text', text: text }]
+    }, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`
+        }
+    });
+}
+
 app.listen(port, () => {
-    console.log(`=========================================`);
-    console.log(`머두 K(หมอดู케) 서버 가동 중!`);
-    console.log(`포트 번호: ${port}`);
-    console.log(`파일 경로: ${path.join(__dirname, 'public', 'index.html')}`);
-    console.log(`=========================================`);
+    console.log(`머두 K AI 서버 가동 중 (Port ${port})`);
 });

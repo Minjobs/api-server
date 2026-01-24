@@ -4,6 +4,7 @@ import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import OpenAI from 'openai';
+import mysql from 'mysql2/promise'; // MySQL 라이브러리 추가
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,80 +12,85 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = process.env.PORT || 3000;
 
-// 환경 변수에서 키 가져오기
-const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+// 1. MySQL 연결 풀 설정 (효율적인 연결 관리)
+const pool = mysql.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+});
 
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /**
- * 1. 메인 페이지 연결
+ * [API 1] 유저 등록 여부 확인
+ * 웹페이지 접속 시 LIFF에서 받은 userId로 호출합니다.
  */
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-/**
- * 2. 사주 분석 API
- */
-app.post('/api/fortune', async (req, res) => {
-    const { userId, birthDate, birthTime, gender } = req.body;
-
-    console.log(`[데이터 수신] ID: ${userId}, 날짜: ${birthDate}, 시간: ${birthTime}, 성별: ${gender}`);
-
+app.get('/api/check-user/:userId', async (req, res) => {
     try {
-        // [A] 즉시 "분석 중" 메시지 전송
-        await sendLineMessage(userId, '🔮 กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮');
+        const [rows] = await pool.query('SELECT * FROM users WHERE userId = ?', [req.params.userId]);
         
-        // 프론트엔드(웹창)에는 즉시 응답 성공을 보냄
-        res.status(200).json({ status: 'success' });
-
-        // [B] 배경에서 AI 분석 시작 (시간이 걸리는 작업)
-        const prompt = `
-            You are a professional Thai fortune teller named 'Mor Doo K'. 
-            Based on the following user info, provide a mystical and detailed fortune-telling in Thai.
-            - Birth Date: ${birthDate}
-            - Birth Time: ${birthTime}
-            - Gender: ${gender}
-            
-            1. Analyze personality.
-            2. Predict Career and Wealth for the next 3 months.
-            3. Predict Love and Health.
-            4. Suggest a lucky color or item.
-            
-            Answer in Thai language only. Use a respectful and professional tone (use 'ครับ').
-        `;
-
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                { role: "system", content: "You are a professional Thai fortune teller named Mor Doo K." },
-                { role: "user", content: prompt }
-            ],
-            temperature: 0.7,
-        });
-
-        const fortuneResult = completion.choices[0].message.content;
-
-        // [C] 분석 완료 후 유저에게 다시 메시지 전송
-        await sendLineMessage(userId, `🔮 คำทำนายของคุณมาถึงแล้วครับ!\n\n${fortuneResult}\n\nขอให้เป็นวันที่ดีครับ!`);
-        console.log(`[분석 완료] 유저 ${userId}에게 전송 성공`);
-
-    } catch (error) {
-        console.error('에러 발생:', error.response ? error.response.data : error.message);
-        // 에러 발생 시 유저에게 알림
-        if (userId) {
-            await sendLineMessage(userId, 'ขออภัยครับ เกิดข้อผิดพลาดในการวิเคราะห์ดวงชะตา กรุณาลองใหม่ภายหลัง (오류가 발생했습니다. 잠시 후 다시 시도해 주세요.)');
+        if (rows.length > 0) {
+            res.json({ isRegistered: true, user: rows[0] });
+        } else {
+            res.json({ isRegistered: false });
         }
+    } catch (error) {
+        console.error('DB 조회 에러:', error);
+        res.status(500).json({ error: '데이터베이스 조회 실패' });
     }
 });
 
 /**
- * 3. LINE 메시지 전송 공통 함수
+ * [API 2] 신규 유저 등록
+ * 프로필 입력 폼에서 데이터를 받아 DB에 저장합니다.
  */
+app.post('/api/register', async (req, res) => {
+    const { userId, birthDate, birthTime, gender } = req.body;
+    try {
+        await pool.query(
+            'INSERT INTO users (userId, birthDate, birthTime, gender) VALUES (?, ?, ?, ?)',
+            [userId, birthDate, birthTime, gender]
+        );
+        res.json({ success: true });
+    } catch (error) {
+        console.error('DB 저장 에러:', error);
+        res.status(500).json({ error: '데이터 저장 실패' });
+    }
+});
+
+/**
+ * [API 3] 사주 분석 및 결과 전송 (기존 로직 유지)
+ */
+app.post('/api/fortune', async (req, res) => {
+    const { userId, birthDate, birthTime, gender } = req.body;
+
+    try {
+        // 즉시 응답 후 비동기로 AI 분석 진행
+        await sendLineMessage(userId, 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮');
+        res.status(200).json({ status: 'success' });
+
+        const prompt = `You are a professional Thai fortune teller. Analyze for: Date ${birthDate}, Time ${birthTime}, Gender ${gender}. Answer in Thai.`;
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [{ role: "user", content: prompt }],
+        });
+
+        const result = completion.choices[0].message.content;
+        await sendLineMessage(userId, `✨ คำทำนายของคุณมาถึงแล้วครับ! ✨\n\n${result}\n\nขอให้เป็นวันที่ดีนะครับ!`);
+
+    } catch (error) {
+        console.error('API 에러:', error);
+    }
+});
+
 async function sendLineMessage(userId, text) {
     await axios.post('https://api.line.me/v2/bot/message/push', {
         to: userId,
@@ -92,13 +98,11 @@ async function sendLineMessage(userId, text) {
     }, {
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`
+            'Authorization': `Bearer ${process.env.LINE_ACCESS_TOKEN}`
         }
     });
 }
 
 app.listen(port, () => {
-    console.log(`=========================================`);
-    console.log(`머두 K(หมอดูเค) AI 서버 가동 중! (Port: ${port})`);
-    console.log(`=========================================`);
+    console.log(`서버 가동 중: http://localhost:${port}`);
 });

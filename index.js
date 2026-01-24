@@ -59,7 +59,7 @@ app.post('/api/fortune', async (req, res) => {
         `;
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [
                 { role: "system", content: "You are a professional Thai fortune teller named Mor Doo K." },
                 { role: "user", content: prompt }

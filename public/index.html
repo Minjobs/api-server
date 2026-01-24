@@ -3,18 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MallGo - Startup</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>Ajarn K - LIFF Connection Test</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        /* 폰트나 배경색 등 추가 스타일이 필요하면 여기 작성 */
-        body { font-family: 'Pretendard', sans-serif; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f4f7f6; word-break: break-all; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: #00b900; font-size: 1.2rem; margin-top: 0; }
+        .label { font-weight: bold; color: #555; display: block; margin-top: 10px; }
+        .value { background: #eee; padding: 10px; border-radius: 5px; display: block; margin-top: 5px; font-family: monospace; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
-    
-    <div id="app"></div>
+<body>
+    <div class="card">
+        <h2>사용자 정보 확인</h2>
+        <span class="label">Display Name:</span>
+        <span id="displayName" class="value">불러오는 중...</span>
+        
+        <span class="label">User ID:</span>
+        <span id="userId" class="value">불러오는 중...</span>
+    </div>
 
-    <script type="module" src="/js/index.js"></script>
+    <div class="card">
+        <h2>Access Token (메시지 전송용)</h2>
+        <span id="accessToken" class="value" style="font-size: 0.8rem;">토큰을 생성 중입니다...</span>
+    </div>
+
+    <script>
+        async function initLiff() {
+            try {
+                // YOUR_LIFF_ID를 라인 개발자 콘솔에서 발급받은 ID로 교체하세요.
+                await liff.init({ liffId: "YOUR_LIFF_ID" }); 
+
+                if (!liff.isLoggedIn()) {
+                    liff.login(); // 로그인되어 있지 않으면 라인 로그인 유도
+                } else {
+                    const profile = await liff.getProfile();
+                    const token = liff.getAccessToken();
+
+                    document.getElementById('displayName').innerText = profile.displayName;
+                    document.getElementById('userId').innerText = profile.userId;
+                    document.getElementById('accessToken').innerText = token;
+                }
+            } catch (error) {
+                console.error('LIFF 초기화 에러:', error);
+                document.getElementById('accessToken').innerText = "초기화 실패: " + error.message;
+            }
+        }
+        initLiff();
+    </script>
 </body>
 </html>

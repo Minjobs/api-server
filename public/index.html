@@ -155,52 +155,61 @@
     <script>
         let userData = null;
 
-    // [1] 초기 앱 구동 로직 (가장 먼저 실행됨)
+    // [1] 초기 앱 구동 로직
     async function initApp() {
         // 주문 시전(로딩) 애니메이션 시작
-        Loading.show("กำลังเชื่อมต่อกับสรวงสวรรค์... (천상과 연결 중...) 🔮");
+        Loading.show("กำลังตรวจสอบรหัสผ่านแห่งโชคชะตา... (운명의 암호를 확인 중...) 🔮");
 
         try {
-            // 1. LIFF 초기화
-            await liff.init({ liffId: "2008959346-MSTYfGPt" });
+            // 1. URL 파라미터에서 userId 추출
+            const urlParams = new URLSearchParams(window.location.search);
+            const userIdParam = urlParams.get('userId'); // ?userId=ABC1234 형태
 
-            // 2. [의지 확인 단계] 로그인이 안 되어 있다면 로그인 전용 대문 페이지로 이동
-            if (!liff.isLoggedIn()) {
-                console.log("로그인 정보가 없습니다. 대문으로 이동합니다.");
+            // 2. [의지 확인 및 파라미터 체크] 
+            // 파라미터가 없거나 비어있다면 바로 대문(login.html)으로 보냄
+            if (!userIdParam) {
+                console.log("전달된 유저 아이디가 없습니다. 대문으로 이동합니다.");
                 Loading.hide();
-                window.location.href = "/login.html"; // 따로 만든 로그인 페이지로 리다이렉트
-                return; // 이후 로직 실행 방지
+                window.location.href = "/login.html";
+                return; 
             }
 
-            // 3. 로그인된 상태라면 프로필 정보 가져오기
-            const profile = await liff.getProfile();
-            const userId = profile.userId;
+            // 3. LIFF 초기화 (파라미터가 있을 때만 진행)
+            await liff.init({ liffId: "2008959346-MSTYfGPt" });
 
-            // 4. 서버에서 등록 여부 확인 (MySQL 연동)
-            const response = await fetch(`/api/check-user/${userId}`);
+            // 4. 로그인이 안 되어 있다면 로그인 페이지로 (LIFF 인증 토큰 갱신용)
+            if (!liff.isLoggedIn()) {
+                Loading.hide();
+                liff.login(); 
+                return;
+            }
+
+            // 5. 서버에서 등록 여부 확인 (파라미터로 받은 userId 사용)
+            // 이제 liff.getProfile()을 기다릴 필요 없이 파라미터로 바로 쏩니다.
+            const response = await fetch(`/api/check-user/${userIdParam}`);
             
-            if (!response.ok) throw new Error("서버 응답 오류 (Check API)");
+            if (!response.ok) throw new Error("서버 응답 오류");
             
             const result = await response.json();
-
-            // 서버 통신 완료 후 로딩 숨기기
             Loading.hide();
 
             if (result.isRegistered) {
-                // [가입 유저] 사주 보기 화면 노출
+                // [가입 유저]
                 userData = result.user;
-                document.getElementById('welcome-msg').innerText = `ยินดีต้อนรับ คุณ ${profile.displayName} ครับ`;
+                // 이름은 LIFF 프로필에서 가져와서 반갑게 인사
+                const profile = await liff.getProfile();
+                document.getElementById('welcome-msg').innerText = `สวัสดีครับ คุณ ${profile.displayName}`;
                 document.getElementById('fortune-section').classList.remove('hidden');
             } else {
-                // [미가입 유저] 가입 폼 노출 (userData에 userId만 먼저 저장)
-                userData = { userId: userId };
+                // [미가입 유저]
+                userData = { userId: userIdParam };
                 document.getElementById('profile-section').classList.remove('hidden');
             }
 
         } catch (err) {
             Loading.hide();
-            console.error("Initialization failed", err);
-            alert("เกิดข้อผิดพลาดในการโหลดข้อมูล (데이터 로딩 오류): " + err.message);
+            console.error("Init Error:", err);
+            alert("연결 오류: " + err.message);
         }
     }
 

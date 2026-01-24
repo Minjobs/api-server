@@ -26,15 +26,24 @@
 
     <script>
         async function startRitual() {
-            Loading.show("กำลังเปิดประตูแห่งโชคชะตา... 🔮");
-            try {
-                await liff.init({ liffId: "2008959346-MSTYfGPt" });
-                liff.login(); // 사용자의 의지로 버튼을 눌렀을 때만 로그인 실행
-            } catch (err) {
-                console.error(err);
-                alert("Gate Error: " + err.message);
-            }
+    Loading.show("กำลังล้างข้อมูลเก่า... (기존 정보를 정리 중입니다...) 🔮");
+    try {
+        await liff.init({ liffId: "2008959346-MSTYfGPt" });
+
+        // 이미 로그인 되어 있더라도 토큰이 깨졌을 수 있으므로 
+        // 로그아웃을 먼저 실행해서 찌꺼기를 지웁니다.
+        if (liff.isLoggedIn()) {
+            liff.logout();
         }
+
+        // 그 다음 다시 로그인을 시도합니다.
+        liff.login(); 
+    } catch (err) {
+        console.error(err);
+        alert("Gate Error: " + err.message);
+    }
+}
+
     </script>
 </body>
 </html>

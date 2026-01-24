@@ -1,73 +1,90 @@
+import 'dotenv/config';
 import express from 'express';
 import axios from 'axios';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import OpenAI from 'openai'; // OpenAI 라이브러리 추가
+import OpenAI from 'openai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+// 환경 변수에서 키 가져오기
+const LINE_ACCESS_TOKEN = process.env.LINE_ACCESS_TOKEN;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- 설정값 (본인의 것으로 교체하세요) ---
-const LINE_ACCESS_TOKEN = 'iLGaO8NZlJODIJo6RmxWTIdWOmNw/6ckK+dtqViykIKqc9al42E2GAKUSIorh6Mnod/2+XrcuZxWW5RCILcaksUEivG4mEl5ep5BhOtSbfYRiwNCoCkOVmTXswoc+B/9c9S+Fu7FQNjyNkQcsBU0aAdB04t89/1O/w1cDnyilFU=';
-// ------------------------------------
-
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
-
+/**
+ * 1. 메인 페이지 연결
+ */
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+/**
+ * 2. 사주 분석 API
+ */
 app.post('/api/fortune', async (req, res) => {
     const { userId, birthDate, birthTime, gender } = req.body;
 
-    // 1. 즉시 "분석 중" 메시지 전송 (사용자를 기다리게 하지 않기 위함)
-    try {
-        await sendLineMessage(userId, 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮\n(머두 K가 당신의 사주를 분석 중입니다. 잠시만 기다려 주세요.)');
-        res.status(200).json({ status: 'success' }); // 웹창은 바로 닫아줍니다.
-    } catch (err) {
-        console.error('초기 메시지 전송 실패:', err);
-        return res.status(500).json({ status: 'error' });
-    }
+    console.log(`[데이터 수신] ID: ${userId}, 날짜: ${birthDate}, 시간: ${birthTime}, 성별: ${gender}`);
 
-    // 2. 배경에서 ChatGPT에게 사주 분석 요청 (비동기 처리)
     try {
+        // [A] 즉시 "분석 중" 메시지 전송
+        await sendLineMessage(userId, 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮\n(머두 K가 당신의 사주를 분석 중입니다. 잠시만 기다려 주세요.)');
+        
+        // 프론트엔드(웹창)에는 즉시 응답 성공을 보냄
+        res.status(200).json({ status: 'success' });
+
+        // [B] 배경에서 AI 분석 시작 (시간이 걸리는 작업)
         const prompt = `
-            You are a professional Thai fortune teller (Mor Doo). 
-            Based on the following information, provide a detailed and mystical fortune-telling in Thai.
+            You are a professional Thai fortune teller named 'Mor Doo K'. 
+            Based on the following user info, provide a mystical and detailed fortune-telling in Thai.
             - Birth Date: ${birthDate}
             - Birth Time: ${birthTime}
             - Gender: ${gender}
             
-            The tone should be encouraging, professional, and slightly mysterious. 
-            Focus on career, love, and health for the near future.
-            Please answer only in Thai language.
+            1. Analyze personality.
+            2. Predict Career and Wealth for the next 3 months.
+            3. Predict Love and Health.
+            4. Suggest a lucky color or item.
+            
+            Answer in Thai language only. Use a respectful and professional tone (use 'ครับ').
         `;
 
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o", // 혹은 "gpt-3.5-turbo"
-            messages: [{ role: "system", content: "You are a famous Thai fortune teller named 'Mor Doo K'." },
-                       { role: "user", content: prompt }],
+            model: "gpt-4o",
+            messages: [
+                { role: "system", content: "You are a professional Thai fortune teller named Mor Doo K." },
+                { role: "user", content: prompt }
+            ],
+            temperature: 0.7,
         });
 
         const fortuneResult = completion.choices[0].message.content;
 
-        // 3. 분석 완료된 결과를 다시 라인으로 전송
-        await sendLineMessage(userId, `✨ 결과가 도착했습니다! ✨\n\n${fortuneResult}`);
-        console.log(`[분석 완료] 유저 ${userId}에게 사주 결과 전송 완료`);
+        // [C] 분석 완료 후 유저에게 다시 메시지 전송
+        await sendLineMessage(userId, `🔮 결과가 도착했습니다!\n\n${fortuneResult}\n\nขอให้เป็นวันที่ดีครับ! (좋은 하루 되세요!)`);
+        console.log(`[분석 완료] 유저 ${userId}에게 전송 성공`);
 
     } catch (error) {
-        console.error('AI 분석 또는 결과 전송 에러:', error);
-        await sendLineMessage(userId, '죄송합니다. 분석 중에 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        console.error('에러 발생:', error.response ? error.response.data : error.message);
+        // 에러 발생 시 유저에게 알림
+        if (userId) {
+            await sendLineMessage(userId, 'ขออภัยครับ เกิดข้อผิดพลาดในการวิเคราะห์ดวงชะตา กรุณาลองใหม่ภายหลัง (오류가 발생했습니다. 잠시 후 다시 시도해 주세요.)');
+        }
     }
 });
 
-// 라인 메시지 전송 함수 (중복 코드 방지)
+/**
+ * 3. LINE 메시지 전송 공통 함수
+ */
 async function sendLineMessage(userId, text) {
     await axios.post('https://api.line.me/v2/bot/message/push', {
         to: userId,
@@ -81,5 +98,7 @@ async function sendLineMessage(userId, text) {
 }
 
 app.listen(port, () => {
-    console.log(`머두 K AI 서버 가동 중 (Port ${port})`);
+    console.log(`=========================================`);
+    console.log(`머두 K(หมอดูเค) AI 서버 가동 중! (Port: ${port})`);
+    console.log(`=========================================`);
 });

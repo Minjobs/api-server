@@ -70,7 +70,7 @@ app.post('/api/fortune', async (req, res) => {
         const fortuneResult = completion.choices[0].message.content;
 
         // [C] 분석 완료 후 유저에게 다시 메시지 전송
-        await sendLineMessage(userId, `🔮 결과가 도착했습니다!\n\n${fortuneResult}\n\nขอให้เป็นวันที่ดีครับ! (좋은 하루 되세요!)`);
+        await sendLineMessage(userId, `🔮 คำทำนายของคุณมาถึงแล้วครับ!\n\n${fortuneResult}\n\nขอให้เป็นวันที่ดีครับ!`);
         console.log(`[분석 완료] 유저 ${userId}에게 전송 성공`);
 
     } catch (error) {

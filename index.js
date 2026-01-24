@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // 라인 개발자 콘솔에서 발급받은 액세스 토큰
-const LINE_ACCESS_TOKEN = 'YOUR_CHANNEL_ACCESS_TOKEN';
+const LINE_ACCESS_TOKEN = 'iLGaO8NZlJODIJo6RmxWTIdWOmNw/6ckK+dtqViykIKqc9al42E2GAKUSIorh6Mnod/2+XrcuZxWW5RCILcaksUEivG4mEl5ep5BhOtSbfYRiwNCoCkOVmTXswoc+B/9c9S+Fu7FQNjyNkQcsBU0aAdB04t89/1O/w1cDnyilFU=';
 
 app.post('/api/fortune', async (req, res) => {
     const { userId, birthDate, birthTime, gender } = req.body;

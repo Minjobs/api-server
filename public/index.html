@@ -46,17 +46,17 @@
     </div>
 
     <script>
+        let userProfile = null;
+
         async function initLiff() {
             try {
-                // 머두 K님의 LIFF ID 적용
                 await liff.init({ liffId: "2008959346-MSTYfGPt" });
                 if (!liff.isLoggedIn()) {
                     liff.login();
                 } else {
-                    const profile = await liff.getProfile();
-                    // 태국어로 "안녕하세요 (이름)님, 만나서 반갑습니다" 출력
-                    document.getElementById('welcome-msg').innerText = `คุณ ${profile.displayName} ยินดีที่ได้รู้จักครับ`;
-                    document.getElementById('userId').innerText = profile.userId;
+                    userProfile = await liff.getProfile();
+                    document.getElementById('welcome-msg').innerText = `คุณ ${userProfile.displayName} ยินดีที่ได้รู้จักครับ`;
+                    document.getElementById('userId').innerText = userProfile.userId;
                 }
             } catch (error) {
                 console.error("LIFF 초기화 실패", error);
@@ -66,25 +66,35 @@
         document.getElementById('fortune-form').onsubmit = async (e) => {
             e.preventDefault();
             
-            const birthDate = document.getElementById('birthDate').value;
-            const birthTime = document.getElementById('birthTime').value;
-            const gender = document.getElementById('gender').value;
+            if (!userProfile) {
+                alert("LINE 로그인 정보가 없습니다.");
+                return;
+            }
+
+            const data = {
+                userId: userProfile.userId,
+                birthDate: document.getElementById('birthDate').value,
+                birthTime: document.getElementById('birthTime').value,
+                gender: document.getElementById('gender').value
+            };
 
             try {
-                // 사용자가 확인을 누르면 채팅방에 전송될 메시지 (태국어)
-                await liff.sendMessages([{
-                    type: 'text',
-                    text: 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮'
-                }]);
+                // [핵심] 서버의 /api/fortune 엔드포인트로 데이터를 보냅니다.
+                const response = await fetch('/api/fortune', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
 
-                // 성공 메시지 창 (필요 없으면 삭제 가능)
-                alert("ข้อมูลถูกส่งเรียบร้อยแล้ว!"); 
-                
-                // LIFF 창 닫기
-                liff.closeWindow(); 
+                if (response.ok) {
+                    alert("정보가 전송되었습니다! 채팅창을 확인해주세요.");
+                    liff.closeWindow(); // 창 닫기
+                } else {
+                    throw new Error('서버 응답 오류');
+                }
             } catch (error) {
-                console.error("메시지 전송 실패", error);
-                alert("เกิดข้อผิดพลาด กรุณาลองใหม่ (오류 발생, 다시 시도해주세요)");
+                console.error("데이터 전송 실패", error);
+                alert("오류가 발생했습니다. 다시 시도해주세요.");
             }
         };
 

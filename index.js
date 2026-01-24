@@ -37,7 +37,7 @@ app.post('/api/fortune', async (req, res) => {
 
     try {
         // [A] 즉시 "분석 중" 메시지 전송
-        await sendLineMessage(userId, 'กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮\n(머두 K가 당신의 사주를 분석 중입니다. 잠시만 기다려 주세요.)');
+        await sendLineMessage(userId, '🔮 กำลังวิเคราะห์ดวงชะตาของคุณ โปรดรอสักครู่ครับ 🔮');
         
         // 프론트엔드(웹창)에는 즉시 응답 성공을 보냄
         res.status(200).json({ status: 'success' });

@@ -4,27 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>หมอดู K - บริการตรวจดวงชะตา</title>
+    
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    
+    <link rel="stylesheet" href="/css/loading.css">
+    <script src="/js/loading.js"></script>
+
     <style>
-        :root { --main-gold: #D4AF37; --bg-navy: #0A192F; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-navy); color: white; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: auto; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--main-gold); }
-        h1 { color: var(--main-gold); font-size: 1.5rem; margin-bottom: 20px; }
-        .input-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 1rem; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: linear-gradient(45deg, #D4AF37, #F9D976); border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 20px; }
+        :root {
+            --main-gold: #D4AF37;
+            --light-gold: #F9D976;
+            --bg-navy: #0A192F;
+            --glass-white: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg-navy);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            background: var(--glass-white);
+            padding: 40px 30px;
+            border-radius: 24px;
+            border: 1px solid var(--main-gold);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--main-gold);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* 입력 그룹 스타일 */
+        .input-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: var(--light-gold);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: rgba(255, 255, 255, 0.07);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--main-gold);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* 버튼 스타일 */
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(45deg, var(--main-gold), var(--light-gold));
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* 화면 전환용 클래스 */
         .hidden { display: none; }
-        #loading { font-size: 1.2rem; color: var(--main-gold); margin-top: 50px; }
+
+        #welcome-msg {
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="loading">กำลังโหลด... (로딩 중...)</div>
 
+    <div class="container">
         <div id="profile-section" class="hidden">
             <h1>🔮 ลงทะเบียนโปรไฟล์</h1>
-            <p>กรุณากรอกข้อมูลเพื่อเริ่มทำนายดวงครับ</p>
+            <p>ยินดีต้อนรับ! กรุณากรอกข้อมูลเพื่อเริ่มการทำนายดวงชะตาของคุณ</p>
+            
             <form id="register-form">
                 <div class="input-group">
                     <label>วันเดือนปีเกิด (생년월일)</label>
@@ -42,25 +139,31 @@
                         <option value="other">อื่นๆ (기타)</option>
                     </select>
                 </div>
-                <button type="submit">บันทึกโปรไฟล์ (프로필 저장)</button>
+                <button type="submit">บันทึกและเริ่มดูดวง (저장 및 시작)</button>
             </form>
         </div>
 
         <div id="fortune-section" class="hidden">
-            <h1>🔮 ดูดวงกับ หมอดู K</h1>
-            <p id="welcome-msg"></p>
-            <p style="font-size: 0.9rem; color: #888;">ข้อมูลของคุณถูกบันทึกแล้ว คุณสามารถดูดวงได้ทันที</p>
-            <button onclick="getFortune()">ดูดวงตอนนี้ (운세 보기)</button>
+            <h1>✨ หมอดู K (Mor Doo K)</h1>
+            <div id="welcome-msg">สวัสดีครับ</div>
+            <p>ดวงดาวกำลังรอที่จะบอกโชคชะตาให้คุณทราบ กดปุ่มด้านล่างเพื่อรับคำทำนายได้ทันทีครับ</p>
+            
+            <button onclick="getFortune()">ตรวจดวงชะตาตอนนี้ (운세 확인하기)</button>
         </div>
     </div>
 
     <script>
         let userData = null;
 
+        // 초기 앱 구동 로직
         async function initApp() {
+            // 로딩 애니메이션 시작
+            Loading.show("กำลังเชื่อมต่อกับสรวงสวรรค์... 🔮");
+
             try {
                 // 1. LIFF 초기화
                 await liff.init({ liffId: "2008959346-MSTYfGPt" });
+
                 if (!liff.isLoggedIn()) {
                     liff.login();
                     return;
@@ -69,31 +172,36 @@
                 const profile = await liff.getProfile();
                 const userId = profile.userId;
 
-                // 2. 서버에서 유저 확인
+                // 2. 서버에서 등록 여부 확인
                 const response = await fetch(`/api/check-user/${userId}`);
                 const result = await response.json();
 
-                document.getElementById('loading').classList.add('hidden');
+                // 서버 통신 완료 후 로딩 숨기기
+                Loading.hide();
 
                 if (result.isRegistered) {
-                    // 가입된 유저
+                    // [가입 유저] 사주 보기 화면 노출
                     userData = result.user;
+                    document.getElementById('welcome-msg').innerText = `ยินดีต้อนรับ คุณ ${profile.displayName} ครับ`;
                     document.getElementById('fortune-section').classList.remove('hidden');
-                    document.getElementById('welcome-msg').innerText = `สวัสดีครับ คุณ ${profile.displayName}`;
                 } else {
-                    // 신규 유저
+                    // [미가입 유저] 가입 폼 노출
                     userData = { userId };
                     document.getElementById('profile-section').classList.remove('hidden');
                 }
+
             } catch (err) {
-                console.error(err);
-                alert("เกิดข้อผิดพลาดในการ 연결 (연결 오류)");
+                Loading.hide();
+                console.error("Initialization failed", err);
+                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล (데이터 로딩 오류)");
             }
         }
 
-        // 회원가입 제출
+        // 1. 프로필 등록 요청
         document.getElementById('register-form').onsubmit = async (e) => {
             e.preventDefault();
+            Loading.show("กำลังบันทึกข้อมูลของคุณ...");
+
             const payload = {
                 userId: userData.userId,
                 birthDate: document.getElementById('regBirthDate').value,
@@ -101,34 +209,48 @@
                 gender: document.getElementById('regGender').value
             };
 
-            const res = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
 
-            if (res.ok) {
-                alert("บันทึกข้อมูลสำเร็จ! (저장 성공)");
-                location.reload(); // 새로고침해서 사주 섹션으로 이동
+                if (res.ok) {
+                    alert("ลงทะเบียนเรียบร้อยแล้วครับ! (등록 완료)");
+                    location.reload(); // 새로고침하여 사주 섹션으로 진입
+                }
+            } catch (err) {
+                Loading.hide();
+                alert("การลงทะเบียนล้มเหลว (등록 실패)");
             }
         };
 
-        // 사주 보기 버튼 클릭
+        // 2. 사주 분석 요청
         async function getFortune() {
             if (!userData) return;
-            
-            const res = await fetch('/api/fortune', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(userData)
-            });
 
-            if (res.ok) {
-                alert("ระบบกำลังส่งคำทำนายไปที่ LINE ครับ (메시지를 보냈습니다)");
-                liff.closeWindow();
+            Loading.show("กำลังพยากรณ์ดวงชะตาด้วย AI... 🔮");
+
+            try {
+                const res = await fetch('/api/fortune', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                if (res.ok) {
+                    Loading.hide();
+                    alert("ส่งคำทำนายไปใน LINE เรียบร้อยแล้วครับ! (결과를 전송했습니다)");
+                    liff.closeWindow(); // LIFF 창 닫기
+                }
+            } catch (err) {
+                Loading.hide();
+                alert("เกิดข้อผิดพลาดในการทำนาย (분석 오류)");
             }
         }
 
+        // 앱 실행
         initApp();
     </script>
 </body>

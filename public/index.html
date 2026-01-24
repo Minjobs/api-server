@@ -1,78 +1,54 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>หมอดู K - ข้อมูลดวงชะตา</title>
+    <title>Ajarn K - LIFF Connection Test</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        :root { --main-gold: #D4AF37; --bg-navy: #0A192F; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-navy); color: white; margin: 0; padding: 20px; text-align: center; }
-        .container { max-width: 500px; margin: auto; background: rgba(255, 255, 255, 0.05); padding: 30px; border-radius: 20px; border: 1px solid var(--main-gold); }
-        h1 { color: var(--main-gold); font-size: 1.5rem; margin-bottom: 20px; }
-        .input-group { text-align: left; margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: #ccc; }
-        input, select { width: 100%; padding: 12px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; font-size: 1rem; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: linear-gradient(45deg, #D4AF37, #F9D976); border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 20px; }
-        #user-info { margin-top: 20px; font-size: 0.8rem; color: #888; }
+        body { font-family: -apple-system, sans-serif; padding: 20px; background-color: #f4f7f6; word-break: break-all; }
+        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h2 { color: #00b900; font-size: 1.2rem; margin-top: 0; }
+        .label { font-weight: bold; color: #555; display: block; margin-top: 10px; }
+        .value { background: #eee; padding: 10px; border-radius: 5px; display: block; margin-top: 5px; font-family: monospace; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔮 ข้อมูลส่วนตัวของคุณ</h1>
-        <p id="welcome-msg">ยินดีต้อนรับคุณ...</p>
-
-        <form id="fortune-form">
-            <div class="input-group">
-                <label>วันเดือนปีเกิด (생년월일)</label>
-                <input type="date" id="birthDate" required>
-            </div>
-            <div class="input-group">
-                <label>เวลาเกิด (태어난 시간)</label>
-                <input type="time" id="birthTime">
-            </div>
-            <div class="input-group">
-                <label>เพศ (성별)</label>
-                <select id="gender">
-                    <option value="male">ชาย (남성)</option>
-                    <option value="female">หญิง (여성)</option>
-                    <option value="other">อื่นๆ (기타)</option>
-                </select>
-            </div>
-            <button type="submit">ดูดวงตอนนี้ (운세 보기)</button>
-        </form>
+    <div class="card">
+        <h2>사용자 정보 확인</h2>
+        <span class="label">Display Name:</span>
+        <span id="displayName" class="value">불러오는 중...</span>
         
-        <div id="user-info">LINE ID: <span id="userId">---</span></div>
+        <span class="label">User ID:</span>
+        <span id="userId" class="value">불러오는 중...</span>
+    </div>
+
+    <div class="card">
+        <h2>Access Token (메시지 전송용)</h2>
+        <span id="accessToken" class="value" style="font-size: 0.8rem;">토큰을 생성 중입니다...</span>
     </div>
 
     <script>
         async function initLiff() {
-            await liff.init({ liffId: "YOUR_LIFF_ID" });
-            if (!liff.isLoggedIn()) {
-                liff.login();
-            } else {
-                const profile = await liff.getProfile();
-                document.getElementById('welcome-msg').innerText = `คุณ ${profile.displayName} ยินดีที่ได้รู้จักครับ`;
-                document.getElementById('userId').innerText = profile.userId;
+            try {
+                // YOUR_LIFF_ID를 라인 개발자 콘솔에서 발급받은 ID로 교체하세요.
+                await liff.init({ liffId: "2008959346-MSTYfGPt" }); 
+
+                if (!liff.isLoggedIn()) {
+                    liff.login(); // 로그인되어 있지 않으면 라인 로그인 유도
+                } else {
+                    const profile = await liff.getProfile();
+                    const token = liff.getAccessToken();
+
+                    document.getElementById('displayName').innerText = profile.displayName;
+                    document.getElementById('userId').innerText = profile.userId;
+                    document.getElementById('accessToken').innerText = token;
+                }
+            } catch (error) {
+                console.error('LIFF 초기화 에러:', error);
+                document.getElementById('accessToken').innerText = "초기화 실패: " + error.message;
             }
         }
-
-        document.getElementById('fortune-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const data = {
-                date: document.getElementById('birthDate').value,
-                time: document.getElementById('birthTime').value,
-                gender: document.getElementById('gender').value
-            };
-            
-            // 여기서 서버로 데이터를 보내거나 메시지를 전송합니다.
-            await liff.sendMessages([{
-                type: 'text',
-                text: `[입력완료] ${data.date} / ${data.time} / ${data.gender}`
-            }]);
-            liff.closeWindow();
-        };
-
         initLiff();
     </script>
 </body>

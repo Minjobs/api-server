@@ -155,76 +155,114 @@
     <script>
         let userData = null;
 
-        // 초기 앱 구동 로직
-        async function initApp() {
-            // 로딩 애니메이션 시작
-            Loading.show("กำลังเชื่อมต่อกับสรวงสวรรค์... 🔮");
+    // [1] 초기 앱 구동 로직 (가장 먼저 실행됨)
+    async function initApp() {
+        // 주문 시전(로딩) 애니메이션 시작
+        Loading.show("กำลังเชื่อมต่อกับสรวงสวรรค์... (천상과 연결 중...) 🔮");
 
-            try {
-                // 1. LIFF 초기화
-                await liff.init({ liffId: "2008959346-MSTYfGPt" });
+        try {
+            // 1. LIFF 초기화
+            await liff.init({ liffId: "2008959346-MSTYfGPt" });
 
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                    return;
-                }
-
-                const profile = await liff.getProfile();
-                const userId = profile.userId;
-
-                // 2. 서버에서 등록 여부 확인
-                const response = await fetch(`/api/check-user/${userId}`);
-                const result = await response.json();
-
-                // 서버 통신 완료 후 로딩 숨기기
+            // 2. [의지 확인 단계] 로그인이 안 되어 있다면 로그인 전용 대문 페이지로 이동
+            if (!liff.isLoggedIn()) {
+                console.log("로그인 정보가 없습니다. 대문으로 이동합니다.");
                 Loading.hide();
-
-                if (result.isRegistered) {
-                    // [가입 유저] 사주 보기 화면 노출
-                    userData = result.user;
-                    document.getElementById('welcome-msg').innerText = `ยินดีต้อนรับ คุณ ${profile.displayName} ครับ`;
-                    document.getElementById('fortune-section').classList.remove('hidden');
-                } else {
-                    // [미가입 유저] 가입 폼 노출
-                    userData = { userId };
-                    document.getElementById('profile-section').classList.remove('hidden');
-                }
-
-            } catch (err) {
-                Loading.hide();
-                console.error("Initialization failed", err);
-                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล (데이터 로딩 오류)");
+                window.location.href = "/login.html"; // 따로 만든 로그인 페이지로 리다이렉트
+                return; // 이후 로직 실행 방지
             }
+
+            // 3. 로그인된 상태라면 프로필 정보 가져오기
+            const profile = await liff.getProfile();
+            const userId = profile.userId;
+
+            // 4. 서버에서 등록 여부 확인 (MySQL 연동)
+            const response = await fetch(`/api/check-user/${userId}`);
+            
+            if (!response.ok) throw new Error("서버 응답 오류 (Check API)");
+            
+            const result = await response.json();
+
+            // 서버 통신 완료 후 로딩 숨기기
+            Loading.hide();
+
+            if (result.isRegistered) {
+                // [가입 유저] 사주 보기 화면 노출
+                userData = result.user;
+                document.getElementById('welcome-msg').innerText = `ยินดีต้อนรับ คุณ ${profile.displayName} ครับ`;
+                document.getElementById('fortune-section').classList.remove('hidden');
+            } else {
+                // [미가입 유저] 가입 폼 노출 (userData에 userId만 먼저 저장)
+                userData = { userId: userId };
+                document.getElementById('profile-section').classList.remove('hidden');
+            }
+
+        } catch (err) {
+            Loading.hide();
+            console.error("Initialization failed", err);
+            alert("เกิดข้อผิดพลาดในการโหลดข้อมูล (데이터 로딩 오류): " + err.message);
         }
+    }
 
-        // 1. 프로필 등록 요청
-        document.getElementById('register-form').onsubmit = async (e) => {
-            e.preventDefault();
-            Loading.show("กำลังบันทึกข้อมูลของคุณ...");
+    // [2] 프로필 등록 요청 처리
+    document.getElementById('register-form').onsubmit = async (e) => {
+        e.preventDefault();
+        Loading.show("กำลังบันทึกข้อมูลของคุณ... (정보 저장 중...)");
 
-            const payload = {
-                userId: userData.userId,
-                birthDate: document.getElementById('regBirthDate').value,
-                birthTime: document.getElementById('regBirthTime').value,
-                gender: document.getElementById('regGender').value
-            };
-
-            try {
-                const res = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (res.ok) {
-                    alert("ลงทะเบียนเรียบร้อยแล้วครับ! (등록 완료)");
-                    location.reload(); // 새로고침하여 사주 섹션으로 진입
-                }
-            } catch (err) {
-                Loading.hide();
-                alert("การลงทะเบียนล้มเหลว (등록 실패)");
-            }
+        const payload = {
+            userId: userData.userId,
+            birthDate: document.getElementById('regBirthDate').value,
+            birthTime: document.getElementById('regBirthTime').value,
+            gender: document.getElementById('regGender').value
         };
+
+        try {
+            const res = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                Loading.hide();
+                alert("ลงทะเบียนเรียบร้อยแล้วครับ! (등록이 완료되었습니다!)");
+                location.reload(); // 새로고침하여 사주 섹션으로 자동 진입
+            } else {
+                throw new Error("서버 저장 실패");
+            }
+        } catch (err) {
+            Loading.hide();
+            console.error("Registration failed", err);
+            alert("การลงทะเบียนล้มเหลว (등록에 실패했습니다)");
+        }
+    };
+
+    // [3] 사주 분석 요청 처리 (AI 연동)
+    async function getFortune() {
+        if (!userData) return;
+
+        Loading.show("กำลังพยากรณ์ดวงชะตาด้วย AI... (AI가 운명을 분석 중...) 🔮");
+
+        try {
+            const res = await fetch('/api/fortune', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            if (res.ok) {
+                Loading.hide();
+                alert("ส่งคำทำนายไปใน LINE เรียบร้อยแล้วครับ! (결과를 라인으로 전송했습니다!)");
+                liff.closeWindow(); // 성공 시 LIFF 창 닫기
+            } else {
+                throw new Error("운세 분석 서버 오류");
+            }
+        } catch (err) {
+            Loading.hide();
+            console.error("Fortune API failed", err);
+            alert("เกิดข้อผิดพลาดในการทำนาย (분석 중 오류가 발생했습니다)");
+        }
+    }
 
         // 2. 사주 분석 요청
         async function getFortune() {

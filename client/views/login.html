@@ -1,20 +1,42 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>หมอดู K - ทางเข้า</title>
-    <link rel="stylesheet" href="/css/loading.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>머두 K - 신전 입장</title>
     <link rel="stylesheet" href="/css/common.css">
 </head>
 <body>
-    <div class="container">
-        <h1>✨ หมอดู K</h1>
-        <p>운명의 문을 열고 입장해 주세요.</p>
-        <button id="loginBtn">เปิดประตูแห่งโชคชะตา (입장하기)</button>
+    <div class="shrine-container">
+        <div class="stars"></div>
+
+        <div class="content">
+            <header>
+                <div class="main-icon">✨</div>
+                <h1>머두 K 신전</h1>
+                <p class="subtitle">Enter the Destiny</p>
+            </header>
+
+            <main class="login-section">
+                <p class="welcome-msg">운명의 문이 당신을 기다립니다.<br>라인으로 로그인하여 신전에 입장하세요.</p>
+                
+                <a href="/api/auth/line" id="lineLoginBtn" class="line-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" class="line-logo">
+                    <span>LINE으로 로그인하기</span>
+                </a>
+            </main>
+
+            <footer class="footer">
+                <p>© 2026 Meodu K. All rights reserved.</p>
+            </footer>
+        </div>
+
+        <div id="loadingOverlay" class="overlay hidden">
+            <div class="spinner"></div>
+            <p>신전의 문을 여는 중...</p>
+        </div>
     </div>
 
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <script src="/js/core/loading.js"></script>
     <script src="/js/pages/login.js"></script>
 </body>
 </html>

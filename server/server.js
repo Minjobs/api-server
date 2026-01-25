@@ -19,7 +19,7 @@ app.use(express.static('client/public'));
 
 app.use('/', viewRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/user',userRoutes);
+//app.use('/api/user',userRoutes);
 
 // [중요] 모든 라우트(viewRoutes 등) 뒤에 위치해야 합니다.
 app.use((req, res) => {

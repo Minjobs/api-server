@@ -76,8 +76,8 @@ export const handleCallback = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 
         });
 
-        console.log('✅ [완료] 쿠키 발급 및 /home 리다이렉트');
-        res.redirect('/home');
+        console.log('✅ [완료] 쿠키 발급 및 /리다이렉트');
+        res.redirect('/');
 
     } catch (err) {
         console.error('❌ 인증 에러:', err.response?.data || err.message);

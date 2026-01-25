@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     console.log("🔮 วิหารกำลังดึงข้อมูลดวงดาวของคุณ...");
 
-    const API_KEY = 'meodu-k-secret-key-2026'; // .env 설정값과 일치해야 함
+    const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j'; // .env 설정값과 일치해야 함
 
     try {
         // 프로필 정보 요청

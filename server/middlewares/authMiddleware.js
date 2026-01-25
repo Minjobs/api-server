@@ -8,7 +8,7 @@ export const verifyToken = (req, res, next) => {
         '/js', 
         '/api/auth/login', 
         '/api/auth/line', // 👈 라인 로그인 시작 경로 추가!
-        'api/auth/callback'
+        '/api/auth/callback'
     ];
     
     // 만약 콜백 경로가 /api/auth/line/callback 이라면 

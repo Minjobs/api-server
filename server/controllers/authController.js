@@ -48,13 +48,14 @@ export const handleCallback = async (req, res) => {
 
         // 4. 머두 K 전용 JWT 발행 및 쿠키 저장
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        // handleCallback 내부 수정
-res.cookie('auth_token', token, { 
-    httpOnly: true, 
-    secure: true,      // HTTPS를 사용한다면 true (필수)
-    sameSite: 'lax',   // 타 사이트 리다이렉트 시 쿠키 전달을 위해 필요
-    path: '/',         // 모든 경로에서 쿠키에 접근 가능하도록 설정
-    maxAge: 7 * 24 * 60 * 60 * 1000 
+// handleCallback.js 내 쿠키 설정 부분
+res.cookie('auth_token', token, {
+    httpOnly: true,     // JS로 쿠키 탈취 방지 (보안)
+    secure: true,       // https 환경이라면 반드시 true여야 함
+    sameSite: 'lax',    // 라인 서버에서 우리 서버로 리다이렉트될 때 쿠키 전달 보장
+    domain: '.murdoo-k.com', // 👈 앞에 .을 붙이면 www 유무와 상관없이 작동합니다.
+    path: '/',          // 모든 경로(/home, /profile 등)에서 이 쿠키를 읽을 수 있게 함
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7일 유지
 });
 
         // 5. 로그인 성공 후 홈으로 이동!

@@ -1,5 +1,6 @@
 import express from 'express';
-import { verifyApiKey } from '../middlewares/apiKeyMiddleware.js';
+import {getProfile} from '../controllers/userController.js';
+import {verifyToken, verifyApiKey } from '../middlewares/apiKeyMiddleware.js';
 import * as userController from '../controllers/userController.js';
 
 const router = express.Router();
@@ -9,5 +10,6 @@ router.use(verifyApiKey);
 
 router.get('/profile', userController.getProfile);
 router.post('/use-coin', userController.useCoin);
+router.get('/profile', verifyToken, verifyApiKey, getProfile);
 
 export default router;

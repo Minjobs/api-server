@@ -5,20 +5,165 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MEODU K - บันทึกแห่งโชคชะตา</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css">
+    
+    <style>
+        :root {
+            --emerald: #2ecc71;
+            --gold: #f1c40f;
+            --dark-bg: #090a0f;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: #fff;
+            font-family: 'Niramit', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- 마법진 배경 애니메이션 --- */
+        .magic-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            z-index: -1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .magic-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid var(--emerald);
+            border-radius: 50%;
+        }
+
+        .ring-1 { width: 90%; height: 90%; border-style: double; border-width: 6px; animation: rotateCW 50s linear infinite; }
+        .ring-2 { width: 70%; height: 70%; border-style: dashed; border-color: var(--gold); animation: rotateCCW 35s linear infinite; }
+        .ring-3 { width: 45%; height: 45%; border-style: dotted; animation: rotateCW 20s linear infinite; }
+
+        @keyframes rotateCW { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes rotateCCW { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
+
+        /* --- 레이아웃 스타일 --- */
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .logo {
+            font-family: 'Cinzel Decorative', cursive;
+            color: var(--gold);
+            font-size: 1.8rem;
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+        }
+
+        #logoutBtn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #888;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.3s;
+        }
+
+        #logoutBtn:hover { border-color: var(--gold); color: var(--gold); }
+
+        /* --- 카드 및 폼 스타일 --- */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(46, 204, 113, 0.2);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        h2 { color: var(--gold); text-align: center; font-size: 1.8rem; margin: 0 0 10px 0; font-weight: 700; }
+        .subtitle { text-align: center; color: var(--emerald); margin-bottom: 35px; font-weight: 300; font-size: 1rem; }
+
+        .field { margin-bottom: 25px; }
+        label { display: block; font-size: 0.85rem; color: var(--emerald); margin-bottom: 10px; font-weight: 500; }
+
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus, select:focus { border-color: var(--emerald); background: rgba(255, 255, 255, 0.12); }
+
+        /* 생년월일 드롭다운 그룹 */
+        .dob-group { display: grid; grid-template-columns: 1fr 1.5fr 1.2fr; gap: 10px; }
+
+        /* 시간 입력 및 체크박스 */
+        .time-container { position: relative; }
+        .unknown-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: #aaa; font-size: 0.8rem; cursor: pointer; }
+        .unknown-wrapper input { width: auto; }
+
+        /* 성별 선택 (태국 문화 반영) */
+        select option { background: #1a1b26; color: #fff; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, var(--emerald), var(--gold));
+            border: none;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.4s;
+            box-shadow: 0 10px 20px rgba(46, 204, 113, 0.2);
+        }
+
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(46, 204, 113, 0.4); }
+
+        footer { text-align: center; margin-top: 40px; color: #555; font-size: 0.8rem; }
+    </style>
 </head>
 <body>
-    <div class="magic-sphere">
-        <div class="magic-ring outer"></div>
-        <div class="magic-ring middle"></div>
-        <div class="magic-ring inner"></div>
-        <div class="magic-runes">✨ 🔮 🌙 ☀️ 🌟 🌀 🕯️ 🕯️ 🌀 🌟 ☀️ 🌙 🔮 ✨</div>
+
+    <div class="magic-background">
+        <div class="magic-ring ring-1"></div>
+        <div class="magic-ring ring-2"></div>
+        <div class="magic-ring ring-3"></div>
     </div>
 
     <div class="container">
         <header>
             <div class="logo">✨ MEODU K</div>
-            <button id="logoutBtn">ออกจากวิหาร</button>
+            <button id="logoutBtn" onclick="location.href='/api/auth/logout'">ออกจากวิหาร</button>
         </header>
 
         <main>
@@ -38,19 +183,41 @@
                         </div>
                     </div>
 
-                    <div class="input-row">
-                        <div class="field">
-                            <label>วันเดือนปีเกิด (Date of Birth)</label>
-                            <input type="date" id="birthDate" required>
+                    <div class="field">
+                        <label>วันเดือนปีเกิด (Date of Birth)</label>
+                        <div class="dob-group">
+                            <select id="birthDay" required>
+                                <option value="" disabled selected>วันที่</option>
+                            </select>
+                            <select id="birthMonth" required>
+                                <option value="" disabled selected>เดือน</option>
+                                <option value="01">มกราคม (Jan)</option>
+                                <option value="02">กุมภาพันธ์ (Feb)</option>
+                                <option value="03">มีนาคม (Mar)</option>
+                                <option value="04">เมษายน (Apr)</option>
+                                <option value="05">พฤษภาคม (May)</option>
+                                <option value="06">มิถุนายน (Jun)</option>
+                                <option value="07">กรกฎาคม (Jul)</option>
+                                <option value="08">สิงหาคม (Aug)</option>
+                                <option value="09">กันยายน (Sep)</option>
+                                <option value="10">ตุลาคม (Oct)</option>
+                                <option value="11">พฤศจิกายน (Nov)</option>
+                                <option value="12">ธันวาคม (Dec)</option>
+                            </select>
+                            <select id="birthYear" required>
+                                <option value="" disabled selected>ปี (ค.ศ.)</option>
+                            </select>
                         </div>
-                        <div class="field">
-                            <label>เวลาเกิด (Birth Time)</label>
-                            <div class="time-wrapper">
-                                <input type="time" id="birthTime">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="unknownTime"> <span>ไม่ทราบเวลา</span>
-                                </label>
-                            </div>
+                    </div>
+
+                    <div class="field">
+                        <label>เวลาเกิด (Birth Time)</label>
+                        <div class="time-container">
+                            <input type="time" id="birthTime">
+                            <label class="unknown-wrapper">
+                                <input type="checkbox" id="unknownTime">
+                                <span>ไม่ทราบเวลา (ไม่ระบุ)</span>
+                            </label>
                         </div>
                     </div>
 
@@ -64,7 +231,7 @@
                             <option value="ladyboy">กะเทย (Kathoey)</option>
                             <option value="gay">เกย์ (Gay)</option>
                             <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
-                            <option value="non-binary">อื่นๆ / ไม่ระบุ (Other)</option>
+                            <option value="other">อื่นๆ / ไม่ระบุ (Other)</option>
                         </select>
                     </div>
 
@@ -72,8 +239,81 @@
                 </form>
             </section>
         </main>
+
+        <footer>
+            <p>© 2026 MEODU K. บันทึกแห่งโชคชะตาที่ถูกลิขิต</p>
+        </footer>
     </div>
 
-    <script src="/js/pages/home.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const daySelect = document.getElementById('birthDay');
+            const yearSelect = document.getElementById('birthYear');
+            const unknownTimeCheck = document.getElementById('unknownTime');
+            const birthTimeInput = document.getElementById('birthTime');
+            const birthDaySelect = document.getElementById('birthDay');
+            const birthMonthSelect = document.getElementById('birthMonth');
+            const birthYearSelect = document.getElementById('birthYear');
+
+            // 1. 날짜 드롭다운 생성 (1-31)
+            for (let i = 1; i <= 31; i++) {
+                const val = i < 10 ? `0${i}` : i;
+                daySelect.add(new Option(i, val));
+            }
+
+            // 2. 연도 드롭다운 생성 (현재~1900)
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear; i >= 1900; i--) {
+                yearSelect.add(new Option(i, i));
+            }
+
+            // 3. 시간 모름 체크박스 로직
+            unknownTimeCheck.addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                birthTimeInput.disabled = isChecked;
+                birthDaySelect.disabled = isChecked;
+                birthMonthSelect.disabled = isChecked;
+                birthYearSelect.disabled = isChecked;
+                if (isChecked) {
+                    birthTimeInput.style.opacity = '0.3';
+                    [birthDaySelect, birthMonthSelect, birthYearSelect].forEach(el => el.style.opacity = '0.3');
+                } else {
+                    birthTimeInput.style.opacity = '1';
+                    [birthDaySelect, birthMonthSelect, birthYearSelect].forEach(el => el.style.opacity = '1');
+                }
+            });
+
+            // 4. 폼 제출 로직
+            document.getElementById('fortuneForm').addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                let finalDate, finalTime;
+
+                if (unknownTimeCheck.checked) {
+                    // 승민님이 요청하신 '모름' 데이터 특수값
+                    finalDate = '2777-07-07';
+                    finalTime = '07:07';
+                } else {
+                    const y = birthYearSelect.value;
+                    const m = birthMonthSelect.value;
+                    const d = birthDaySelect.value;
+                    finalDate = `${y}-${m}-${d}`;
+                    finalTime = birthTimeInput.value || '00:00';
+                }
+
+                const userData = {
+                    realName: document.getElementById('realName').value,
+                    nickName: document.getElementById('nickName').value,
+                    birthDate: finalDate,
+                    birthTime: finalTime,
+                    gender: document.getElementById('gender').value
+                };
+
+                console.log('🔮 Sending Data to Stars:', userData);
+                alert('วิเคราะห์ดวงชะตาจากดวงดาวเรียบร้อยแล้ว...');
+                // 여기에 fetch('/api/fortune', ...) 코드를 추가하면 됩니다.
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,10 +1,17 @@
-import jwt from 'jsonwebtoken';
-
 export const verifyToken = (req, res, next) => {
     const token = req.cookies.auth_token;
 
-    // 1. 검사 제외 대상 (로그인 페이지, 정적 자산, 로그인 API)
-    const publicPaths = ['/login', '/css', '/js', '/api/auth/login'];
+    // 1. 검사 제외 대상 수정
+    const publicPaths = [
+        '/login', 
+        '/css', 
+        '/js', 
+        '/api/auth/login', 
+        '/api/auth/line' // 👈 라인 로그인 시작 경로 추가!
+    ];
+    
+    // 만약 콜백 경로가 /api/auth/line/callback 이라면 
+    // .startsWith('/api/auth/line') 덕분에 같이 통과됩니다.
     const isPublic = publicPaths.some(path => req.path.startsWith(path));
 
     if (isPublic) return next();
@@ -16,12 +23,10 @@ export const verifyToken = (req, res, next) => {
     }
 
     try {
-        // 3. 토큰 검증
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // 다음 로직에서 사용할 수 있게 저장
+        req.user = decoded;
         next();
     } catch (err) {
-        // 토큰이 가짜거나 만료된 경우 쿠키 삭제 후 로그인 이동
         res.clearCookie('auth_token');
         return res.redirect('/login');
     }

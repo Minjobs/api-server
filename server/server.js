@@ -16,8 +16,6 @@ app.use(cookieParser());
 app.use(express.static('client/public'));
 
 // 1. 로그인 관련 및 API 라우트를 검문소 앞에 배치하거나 
-// 2. 검문소를 거치게 하되, 404는 모든 라우트 실패 시 작동하게 합니다.
-app.use(verifyToken);
 
 app.use('/', viewRoutes);
 app.use('/api/auth', authRoutes);

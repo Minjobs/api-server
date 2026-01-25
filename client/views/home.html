@@ -1,64 +1,77 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>머두 K - 운명의 기록</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Noto+Serif+KR:wght@300;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/common.css">
+    <title>MEODU K - บันทึกแห่งโชคชะตา</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
-    <div class="background-magic-circle"></div>
+    <div class="magic-sphere">
+        <div class="magic-ring outer"></div>
+        <div class="magic-ring middle"></div>
+        <div class="magic-ring inner"></div>
+        <div class="magic-runes">✨ 🔮 🌙 ☀️ 🌟 🌀 🕯️ 🕯️ 🌀 🌟 ☀️ 🌙 🔮 ✨</div>
+    </div>
 
-    <div class="shrine-main">
-        <header class="home-header">
+    <div class="container">
+        <header>
             <div class="logo">✨ MEODU K</div>
-            <button id="logoutBtn" class="logout-link">신전 나가기</button>
+            <button id="logoutBtn">ออกจากวิหาร</button>
         </header>
 
-        <main class="home-content">
-            <section class="fortune-card">
-                <div class="card-header">
-                    <h2 class="welcome-text">운명의 실타래를 풀 시간</h2>
-                    <p class="status-msg">여행자님의 별의 지도를 그려주세요.</p>
-                </div>
+        <main>
+            <section class="glass-card">
+                <h2>เปิดประตูแห่งโชคชะตา</h2>
+                <p class="subtitle">กรุณาระบุรหัสแห่งดวงดาวของคุณ</p>
 
-                <form id="fortuneForm" class="input-group">
-                    <div class="field">
-                        <label for="userName">이름</label>
-                        <input type="text" id="userName" placeholder="이름을 입력하세요" required>
+                <form id="fortuneForm">
+                    <div class="input-row">
+                        <div class="field">
+                            <label>ชื่อจริง (Real Name)</label>
+                            <input type="text" id="realName" placeholder="กรอกชื่อจริง" required>
+                        </div>
+                        <div class="field">
+                            <label>ชื่อเล่น (Nickname)</label>
+                            <input type="text" id="nickName" placeholder="กรอกชื่อเล่น" required>
+                        </div>
                     </div>
 
-                    <div class="field-row">
+                    <div class="input-row">
                         <div class="field">
-                            <label for="birthDate">생년월일</label>
+                            <label>วันเดือนปีเกิด (Date of Birth)</label>
                             <input type="date" id="birthDate" required>
                         </div>
                         <div class="field">
-                            <label for="birthTime">태어난 시간</label>
-                            <input type="time" id="birthTime" value="00:00">
+                            <label>เวลาเกิด (Birth Time)</label>
+                            <div class="time-wrapper">
+                                <input type="time" id="birthTime">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="unknownTime"> <span>ไม่ทราบเวลา</span>
+                                </label>
+                            </div>
                         </div>
                     </div>
 
                     <div class="field">
-                        <label>성별</label>
-                        <div class="gender-selection">
-                            <input type="radio" name="gender" value="male" id="male" checked>
-                            <label for="male">남성</label>
-                            <input type="radio" name="gender" value="female" id="female">
-                            <label for="female">여성</label>
-                        </div>
+                        <label>เพศ (Gender Identity)</label>
+                        <select id="gender" required>
+                            <option value="" disabled selected>เลือกเพศ</option>
+                            <option value="male">ชาย (Male)</option>
+                            <option value="female">หญิง (Female)</option>
+                            <option value="tom">ทอม (Tom)</option>
+                            <option value="ladyboy">กะเทย (Kathoey)</option>
+                            <option value="gay">เกย์ (Gay)</option>
+                            <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
+                            <option value="non-binary">อื่นๆ / ไม่ระบุ (Other)</option>
+                        </select>
                     </div>
 
-                    <button type="submit" class="action-btn">운세보기</button>
+                    <button type="submit" class="submit-btn">ดูดวงตอนนี้</button>
                 </form>
             </section>
         </main>
-
-        <footer class="home-footer">
-            <p>© 2026 Meodu K. 신비로운 운명의 기록.</p>
-        </footer>
     </div>
 
     <script src="/js/pages/home.js"></script>

@@ -46,17 +46,17 @@ app.get('/login', (req, res) => {
 
 // 프로필 가입 페이지
 app.get('/profile', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+    res.sendFile(path.join(__dirname, 'public', 'profile_view.html'));
 });
 
 // 홈(사주 서비스) 페이지
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'home.html'));
+    res.sendFile(path.join(__dirname, 'public', 'home_view.html'));
 });
 
 // 결제 페이지
 app.get('/payment', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'payment.html'));
+    res.sendFile(path.join(__dirname, 'public', 'payment_view.html'));
 });
 
 // --- [5. API 엔드포인트] ---

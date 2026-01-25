@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import querystring from 'querystring';
 
 export const redirectToLine = (req, res) => {
+  console.log("로그인 시작");
     const baseURL = 'https://access.line.me/oauth2/v2.1/authorize';
     const params = new URLSearchParams({
         response_type: 'code',
@@ -20,6 +21,7 @@ export const redirectToLine = (req, res) => {
 
 
 export const handleCallback = async (req, res) => {
+  console.log('콜백 받음.');
     const { code } = req.query; // 라인이 보내준 일회용 코드
 
     try {

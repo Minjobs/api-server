@@ -1,59 +1,132 @@
-/* 신전 테마 핵심 스타일 */
-.shrine-container {
-    background: radial-gradient(circle at center, #1e1e2f 0%, #0a0a0c 100%);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #ffffff;
-    overflow: hidden;
-    position: relative;
+:root {
+    --emerald: #50c878;
+    --gold: #ffd700;
+    --glass: rgba(255, 255, 255, 0.05);
 }
 
-.line-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    background-color: #06C755;
-    color: white;
-    text-decoration: none;
-    padding: 16px 32px;
-    border-radius: 50px; /* 둥근 버튼 */
-    font-weight: 700;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(6, 199, 85, 0.4);
+body {
+    background-color: #090a0f;
+    font-family: 'Noto Serif KR', serif;
+    overflow-x: hidden;
 }
 
-.line-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(6, 199, 85, 0.6);
-    background-color: #05b34c;
-}
-
-/* 로딩 오버레이 스타일 */
-.overlay {
+/* 배경 마법진 효과 */
+.background-magic-circle {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.8);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    border: 2px dashed var(--emerald);
+    border-radius: 50%;
+    opacity: 0.1;
+    z-index: -1;
+    animation: rotateCircle 60s linear infinite;
+}
+
+@keyframes rotateCircle {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.shrine-main {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+}
+
+.home-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    z-index: 999;
-}
-.hidden { display: none; }
-
-.spinner {
-    border: 4px solid rgba(255, 255, 255, 0.1);
-    border-left-color: #06C755;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 15px;
+    padding: 20px 0;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.logo {
+    font-family: 'Cinzel Decorative', cursive;
+    font-size: 1.5rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
+
+.fortune-card {
+    background: var(--glass);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(80, 200, 120, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.card-header { text-align: center; margin-bottom: 30px; }
+.welcome-text { color: var(--gold); font-size: 1.4rem; margin-bottom: 10px; }
+.status-msg { color: #888; font-size: 0.9rem; }
+
+/* 입력 폼 스타일 */
+.input-group .field { margin-bottom: 20px; }
+label { display: block; color: var(--emerald); font-size: 0.85rem; margin-bottom: 8px; font-weight: 600; }
+
+input[type="text"], input[type="date"], input[type="time"] {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 12px;
+    color: #fff;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--emerald);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+/* 성별 선택 버튼 스타일 */
+.gender-selection {
+    display: flex;
+    gap: 10px;
+}
+.gender-selection input { display: none; }
+.gender-selection label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    color: #ccc;
+    transition: 0.3s;
+}
+.gender-selection input:checked + label {
+    background: var(--emerald);
+    color: #000;
+    border-color: var(--emerald);
+}
+
+.action-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(45deg, var(--emerald), var(--gold));
+    border: none;
+    border-radius: 15px;
+    color: #000;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(80, 200, 120, 0.3);
+}
+
+.logout-link { background: none; border: none; color: #555; cursor: pointer; }

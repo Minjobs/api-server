@@ -1,6 +1,6 @@
 import express from 'express';
 import * as userController from '../controllers/userController.js';
-import { verifyApiKey } from '../middlewares/userMiddlewear.js'; // 파일명 확인!
+import { verifyApiKey } from '../middlewares/apiKeyMiddleware.js'; // 파일명 확인!
 import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();

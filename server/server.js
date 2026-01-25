@@ -1,23 +1,22 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import path from 'path';
 import 'dotenv/config';
 
 import { verifyToken } from './middlewares/authMiddleware.js';
 import viewRoutes from './routes/viewRoutes.js';
-import apiRoutes from './routes/apiRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
-const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'client/public')));
+app.use(express.static('client/public'));
 
-// [핵심] 모든 요청은 검문소(미들웨어)를 먼저 통과함
+// 검문소 미들웨어 (이전에 만든 것과 동일)
 app.use(verifyToken);
 
+// 라우트 연결
 app.use('/', viewRoutes);
-app.use('/api', apiRoutes);
+app.use('/api/auth', authRoutes); // /api/auth/line, /api/auth/callback
 
-app.listen(3000, () => console.log("✨ Murdoo K 서버 가동 중..."));
+app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중..."));

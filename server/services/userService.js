@@ -14,7 +14,7 @@ export const handleUserLogin = async (userId, displayName, isFriend) => {
             // [신규 유저] 최초 등록 (기본 코인 1개)
             await db.execute(
                 `INSERT INTO users (line_user_id, display_name, coins) VALUES (?, ?, ?)`,
-                [userId, displayName, 1]
+                [userId, displayName, 0]
             );
             isNew = true;
         }

@@ -19,6 +19,20 @@ export const redirectToLine = (req, res) => {
     res.redirect(`${baseURL}?${params.toString()}`);
 };
 
+export const logout = (req, res) => {
+    // 1. 쿠키 삭제 (설정할 때와 동일한 도메인/경로 옵션을 주는 것이 안전합니다)
+    res.clearCookie('auth_token', {
+        path: '/',
+        domain: '.murdoo-k.com' // 쿠키 설정 시 domain을 넣었다면 여기서도 똑같이 맞춰야 삭제됩니다.
+    });
+
+    console.log('👋 로그아웃 완료: 쿠키를 삭제하고 로그인 페이지로 이동합니다.');
+    
+    // 2. 로그인 페이지로 리다이렉트
+    res.redirect('/login');
+};
+
+
 // [중요] JWT_SECRET이 없으면 서버 실행 단계에서 미리 에러를 내주는 것이 좋습니다.
 const SECRET = process.env.JWT_SECRET;
 

@@ -104,7 +104,7 @@ export const handleCallback = async (req, res) => {
         });
 
         console.log(`✅ 로그인 대성공: ${displayName} (신규 유저: ${userResult.isNew})`);
-        res.redirect('/home');
+        res.redirect('/');
 
     } catch (err) {
         console.error('❌ 최종 로그인 처리 실패:', err.response?.data || err.message);

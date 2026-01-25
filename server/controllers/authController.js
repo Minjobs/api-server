@@ -48,7 +48,14 @@ export const handleCallback = async (req, res) => {
 
         // 4. 머두 K 전용 JWT 발행 및 쿠키 저장
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
-        res.cookie('auth_token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+        // handleCallback 내부 수정
+res.cookie('auth_token', token, { 
+    httpOnly: true, 
+    secure: true,      // HTTPS를 사용한다면 true (필수)
+    sameSite: 'lax',   // 타 사이트 리다이렉트 시 쿠키 전달을 위해 필요
+    path: '/',         // 모든 경로에서 쿠키에 접근 가능하도록 설정
+    maxAge: 7 * 24 * 60 * 60 * 1000 
+});
 
         // 5. 로그인 성공 후 홈으로 이동!
         res.redirect('/home');

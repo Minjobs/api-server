@@ -18,74 +18,69 @@ export const redirectToLine = (req, res) => {
     res.redirect(`${baseURL}?${params.toString()}`);
 };
 
+// [중요] JWT_SECRET이 없으면 서버 실행 단계에서 미리 에러를 내주는 것이 좋습니다.
+const SECRET = process.env.JWT_SECRET;
+
 export const handleCallback = async (req, res) => {
     console.log('--- [1] LINE 콜백 진입 ---');
-    const { code } = req.query; 
-
-    if (!code) {
-        console.error('❌ 인증 코드가 없습니다.');
-        return res.status(400).send('인증 코드가 누락되었습니다.');
+    
+    // 디버깅용: Secret이 제대로 로드되었는지 확인 (보안상 길이나 일부만 출력)
+    if (!SECRET) {
+        console.error('❌ 에러: JWT_SECRET이 환경 변수에 설정되지 않았습니다!');
+        return res.status(500).send('서버 설정 오류');
     }
 
+    const { code } = req.query; 
+    if (!code) return res.status(400).send('인증 코드가 없습니다.');
+
     try {
-        // [2] 액세스 토큰 교환 (URLSearchParams 방식 사용으로 invalid_request 해결)
-        console.log('--- [2] 토큰 교환 시도 중... ---');
-        
-        const params = new URLSearchParams();
-        params.append('grant_type', 'authorization_code');
-        params.append('code', code);
-        params.append('redirect_uri', process.env.LINE_CALLBACK_URL);
-        params.append('client_id', process.env.LINE_CHANNEL_ID);
-        params.append('client_secret', process.env.LINE_CHANNEL_SECRET);
+        // [2] 액세스 토큰 교환
+        const params = new URLSearchParams({
+            grant_type: 'authorization_code',
+            code,
+            redirect_uri: process.env.LINE_CALLBACK_URL,
+            client_id: process.env.LINE_CHANNEL_ID,
+            client_secret: process.env.LINE_CHANNEL_SECRET
+        });
 
         const tokenResponse = await axios.post('https://api.line.me/oauth2/v2.1/token', 
-            params.toString(), // 문자열로 변환하여 전송
+            params.toString(), 
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
         const { access_token } = tokenResponse.data;
-        console.log('✅ [3] 토큰 교환 성공!');
 
-        // [4] 유저 프로필 가져오기
-        console.log('--- [4] 프로필 정보 요청 중... ---');
+        // [3] 프로필 정보 획득
         const profileRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
         
-        const userId = profileRes.data.userId;
-        const userName = profileRes.data.displayName; // 사용자 이름도 가져올 수 있습니다.
-        console.log(`✅ [5] 프로필 획득 성공 (ID: ${userId}, Name: ${userName})`);
+        const { userId, displayName } = profileRes.data;
+        console.log(`✅ [프로필 획득] Name: ${displayName}`);
 
-        // [6] 머두 K 전용 JWT 발행
+        // [4] 토큰 발행 (반드시 .env의 SECRET 사용)
+        // 여기서 쓰이는 SECRET이 미들웨어의 jwt.verify(token, process.env.JWT_SECRET)과 같아야 합니다.
         const token = jwt.sign(
-            { userId, name: userName }, 
-            process.env.JWT_SECRET, 
+            { userId, name: displayName }, 
+            SECRET, 
             { expiresIn: '7d' }
         );
 
-        // [7] 쿠키 설정 (도메인 및 보안 옵션 최적화)
+        // [5] 쿠키 설정
         res.cookie('auth_token', token, {
-            httpOnly: true,     // 보안: JS 접근 불가
-            secure: true,       // HTTPS 환경 필수
-            sameSite: 'lax',    // 리다이렉트 시 쿠키 유지
-            domain: '.murdoo-k.com', // 도메인 앞에 점(.) 확인
-            path: '/',          // 모든 경로에서 사용 가능
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7일
+            httpOnly: true,
+            secure: true, // HTTPS 사용 시 true
+            sameSite: 'lax',
+            domain: '.murdoo-k.com', 
+            path: '/',
+            maxAge: 7 * 24 * 60 * 60 * 1000 
         });
 
-        console.log('✅ [6] 쿠키 설정 완료, /home으로 이동합니다.');
-        
-        // [8] 최종 이동
+        console.log('✅ [완료] 쿠키 발급 및 /home 리다이렉트');
         res.redirect('/home');
 
     } catch (err) {
-        // 상세 에러 로깅
-        console.error('❌ 에러 발생 지점:', err.response?.data || err.message);
-        
-        if (err.response) {
-            console.error('상세 에러 내용:', JSON.stringify(err.response.data, null, 2));
-        }
-        
-        res.status(500).send('인증 과정에서 오류가 발생했습니다.');
+        console.error('❌ 인증 에러:', err.response?.data || err.message);
+        res.status(500).send('인증 실패');
     }
 };

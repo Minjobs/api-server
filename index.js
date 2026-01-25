@@ -46,7 +46,7 @@ app.get('/login', (req, res) => {
 
 // 프로필 가입 페이지
 app.get('/profile', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'profile_view.html'));
+    res.sendFile(path.join(__dirname, 'public/pages/profile', 'profile_view.html'));
 });
 
 // 홈(사주 서비스) 페이지

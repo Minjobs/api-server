@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>머두 K - 신전 내부</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+    <div class="shrine-main">
+        <header class="home-header">
+            <div class="logo">✨ 머두 K</div>
+            <button id="logoutBtn" class="logout-link">신전 나가기</button>
+        </header>
+
+        <main class="home-content">
+            <section class="profile-card">
+                <div class="profile-img-wrapper">
+                    <img src="/api/user/profile-image" alt="Profile" id="userImg" class="profile-img">
+                </div>
+                <h2 class="welcome-text">반갑습니다, <span id="userName">여행자</span>님</h2>
+                <p class="status-msg">당신의 별자리가 오늘 유난히 빛납니다.</p>
+            </section>
+
+            <section class="fortune-section">
+                <h3>📜 오늘의 신탁</h3>
+                <div class="fortune-box">
+                    <p id="fortuneText">신전의 기운을 모으는 중입니다...</p>
+                </div>
+                <button class="action-btn" onclick="getFortune()">운세 복채 내기</button>
+            </section>
+
+            <section class="line-link-section">
+                <p>더 자세한 운명은 일대일 상담으로 확인하세요.</p>
+                <a href="https://line.me/R/ti/p/@내_아이디" target="_blank" class="line-chat-btn">
+                    머두 K와 1:1 대화하기
+                </a>
+            </section>
+        </main>
+
+        <footer class="home-footer">
+            <p>© 2026 Meodu K. 신비로운 운명의 기록.</p>
+        </footer>
+    </div>
+
+    <script src="/js/pages/home.js"></script>
+</body>
+</html>

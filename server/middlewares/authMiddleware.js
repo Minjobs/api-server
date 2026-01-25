@@ -18,7 +18,7 @@ export const verifyToken = (req, res, next) => {
             // 토큰이 진짜 유효한지 검사
             jwt.verify(token, process.env.JWT_SECRET);
             // 유효하다면 로그인 페이지 대신 홈으로 강제 이동
-            return res.redirect('/home');
+            return res.redirect('/');
         } catch (err) {
             // 토큰이 가짜거나 만료되었다면 쿠키를 지우고 로그인 페이지를 보여줌
             res.clearCookie('auth_token');

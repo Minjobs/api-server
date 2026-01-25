@@ -1,0 +1,63 @@
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 5%;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.profile-card {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.profile-img-wrapper {
+    width: 100px; height: 100px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    padding: 3px;
+    background: linear-gradient(45deg, #ffd700, #ff8c00); /* 황금빛 테두리 */
+}
+
+.profile-img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #222;
+}
+
+.fortune-section {
+    margin: 40px auto;
+    max-width: 500px;
+    padding: 0 20px;
+}
+
+.fortune-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    margin: 20px 0;
+    min-height: 100px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ffd700; /* 금색 글씨 */
+}
+
+.action-btn, .line-chat-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+    text-align: center;
+}
+
+.action-btn { background: #4a4e69; color: white; margin-bottom: 10px; }
+.line-chat-btn { background: #06C755; color: white; }
+
+.logout-link { background: none; border: none; color: #888; cursor: pointer; font-size: 0.9rem; }

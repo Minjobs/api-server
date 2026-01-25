@@ -6,6 +6,7 @@ import 'dotenv/config';
 import { verifyToken } from './middlewares/authMiddleware.js';
 import viewRoutes from './routes/viewRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 const __dirname = path.resolve(); // 👈 ES 모듈에서 __dirname 설정
@@ -20,6 +21,7 @@ app.use(verifyToken);
 
 app.use('/', viewRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/user',userRoutes);
 
 // [중요] 모든 라우트(viewRoutes 등) 뒤에 위치해야 합니다.
 app.use((req, res) => {

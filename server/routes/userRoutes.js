@@ -1,18 +1,17 @@
 import express from 'express';
 import * as userController from '../controllers/userController.js';
-import { verifyApiKey } from '../middlewares/apiKeyMiddleware.js'; // เช็คชื่อไฟล์ให้ถูกนะครับ
-// ถ้า verifyToken อยู่ใน authMiddleware ให้ import มาด้วย
-import { verifyToken } from '../middlewares/authMiddleware.js'; 
+import { verifyApiKey } from '../middlewares/userMiddlewear.js'; // 파일명 확인!
+import { verifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// ใช้ verifyApiKey กับทุก request ใน router นี้
+// 모든 유저 API에 API Key 보안 적용
 router.use(verifyApiKey);
 
-// ดึงข้อมูล Profile (ต้องผ่านทั้ง API Key และ Token)
+// 1. 프로필 조회 (GET /api/user/profile)
 router.get('/profile', verifyToken, userController.getProfile);
 
-// หักเหรียญ
+// 2. 코인 사용 (POST /api/user/use-coin)
 router.post('/use-coin', verifyToken, userController.useCoin);
 
 export default router;

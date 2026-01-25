@@ -3,39 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>머두 K - 신전 내부</title>
+    <title>머두 K - 운명의 기록</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Noto+Serif+KR:wght@300;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/home.css">
 </head>
 <body>
+    <div class="background-magic-circle"></div>
+
     <div class="shrine-main">
         <header class="home-header">
-            <div class="logo">✨ 머두 K</div>
+            <div class="logo">✨ MEODU K</div>
             <button id="logoutBtn" class="logout-link">신전 나가기</button>
         </header>
 
         <main class="home-content">
-            <section class="profile-card">
-                <div class="profile-img-wrapper">
-                    <img src="/api/user/profile-image" alt="Profile" id="userImg" class="profile-img">
+            <section class="fortune-card">
+                <div class="card-header">
+                    <h2 class="welcome-text">운명의 실타래를 풀 시간</h2>
+                    <p class="status-msg">여행자님의 별의 지도를 그려주세요.</p>
                 </div>
-                <h2 class="welcome-text">반갑습니다, <span id="userName">여행자</span>님</h2>
-                <p class="status-msg">당신의 별자리가 오늘 유난히 빛납니다.</p>
-            </section>
 
-            <section class="fortune-section">
-                <h3>📜 오늘의 신탁</h3>
-                <div class="fortune-box">
-                    <p id="fortuneText">신전의 기운을 모으는 중입니다...</p>
-                </div>
-                <button class="action-btn" onclick="getFortune()">운세 복채 내기</button>
-            </section>
+                <form id="fortuneForm" class="input-group">
+                    <div class="field">
+                        <label for="userName">이름</label>
+                        <input type="text" id="userName" placeholder="이름을 입력하세요" required>
+                    </div>
 
-            <section class="line-link-section">
-                <p>더 자세한 운명은 일대일 상담으로 확인하세요.</p>
-                <a href="https://line.me/R/ti/p/@내_아이디" target="_blank" class="line-chat-btn">
-                    머두 K와 1:1 대화하기
-                </a>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="birthDate">생년월일</label>
+                            <input type="date" id="birthDate" required>
+                        </div>
+                        <div class="field">
+                            <label for="birthTime">태어난 시간</label>
+                            <input type="time" id="birthTime" value="00:00">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>성별</label>
+                        <div class="gender-selection">
+                            <input type="radio" name="gender" value="male" id="male" checked>
+                            <label for="male">남성</label>
+                            <input type="radio" name="gender" value="female" id="female">
+                            <label for="female">여성</label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="action-btn">운세보기</button>
+                </form>
             </section>
         </main>
 

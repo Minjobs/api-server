@@ -1,30 +1,40 @@
 import jwt from 'jsonwebtoken';
 
+/**
+ * 인증이 필요 없는 공개 경로 목록
+ * 정적 파일(css, js) 및 로그인 관련 경로 포함
+ */
+const PUBLIC_PATHS = [
+    '/login',
+    '/api/auth/line',
+    '/api/auth/callback',
+    '/css',
+    '/js',
+    '/favicon.ico'
+];
+
 export const verifyToken = (req, res, next) => {
-    const publicPaths = ['/login', '/css', '/js', '/api/auth/line', '/api/auth/callback', '/favicon.ico'];
-    const isPublic = publicPaths.some(path => req.path.startsWith(path));
+    // 1. 공개 경로 확인 (startsWith를 사용하여 하위 경로까지 포괄)
+    const isPublic = PUBLIC_PATHS.some(path => req.path.startsWith(path));
     if (isPublic) return next();
 
-    // 1. 서버가 쿠키를 아예 받았는지 확인
-    console.log(`--- [검문] ${req.path} 접속 시도 ---`);
-    console.log('받은 쿠키 전체:', req.cookies);
-
+    // 2. 쿠키에서 토큰 추출
     const token = req.cookies?.auth_token;
 
+    // 3. 토큰이 없는 경우 로그인 페이지로 강제 이동
     if (!token) {
-        console.log('❌ 결과: 쿠키(auth_token)가 아예 없습니다. 로그인 페이지로 보냅니다.');
         return res.redirect('/login');
     }
 
     try {
-        // 2. 토큰 검증 시도
+        // 4. 토큰 검증 및 유저 정보 복호화
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // 5. 다음 미들웨어나 라우터에서 사용할 수 있도록 req 객체에 저장
         req.user = decoded;
-        console.log('✅ 결과: 인증 성공! 유저 ID:', decoded.userId);
         next();
     } catch (err) {
-        // 3. 왜 검증에 실패했는지 에러 메시지 출력
-        console.log('❌ 결과: 토큰 검증 실패! 이유:', err.message);
+        // 6. 토큰이 유효하지 않은 경우 (만료, 위조 등) 쿠키 삭제 후 로그인 이동
         res.clearCookie('auth_token');
         return res.redirect('/login');
     }

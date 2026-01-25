@@ -1,5 +1,5 @@
 /**
- * login.js - 머두 K 로그인 페이지 로직
+ * login.js - 머두 K 로그인 페이지 로직 (수정본)
  */
 document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('lineLoginBtn');
@@ -7,14 +7,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (loginBtn) {
         loginBtn.addEventListener('click', (e) => {
-            // 1. 버튼 여러 번 클릭 방지 및 로딩 표시
-            // 실제로 페이지가 이동하기 전 찰나의 순간에 "입장 중"임을 알립니다.
+            // 1. 기본 이동 동작을 일단 막습니다.
+            e.preventDefault();
+
+            // 2. 로딩 표시를 띄웁니다.
             if (loadingOverlay) {
                 loadingOverlay.classList.remove('hidden');
             }
 
-            // 참고: <a> 태그의 href로 인해 자동으로 /api/auth/line으로 이동합니다.
-            console.log("운명의 문으로 이동 중...");
+            // 3. 0.1초 뒤에 명시적으로 API 경로로 이동시킵니다.
+            const targetUrl = e.currentTarget.getAttribute('href');
+            console.log("운명의 문으로 이동 중: ", targetUrl);
+            
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 100); 
         });
     }
 });

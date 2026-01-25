@@ -1,6 +1,7 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
 import querystring from 'querystring';
+import * as userService from '../services/userService.js';
 
 export const redirectToLine = (req, res) => {
   console.log("로그인 시작");
@@ -22,20 +23,15 @@ export const redirectToLine = (req, res) => {
 const SECRET = process.env.JWT_SECRET;
 
 export const handleCallback = async (req, res) => {
-    console.log('--- [1] LINE 콜백 진입 ---');
-    
-    // 디버깅용: Secret이 제대로 로드되었는지 확인 (보안상 길이나 일부만 출력)
-    if (!SECRET) {
-        console.error('❌ 에러: JWT_SECRET이 환경 변수에 설정되지 않았습니다!');
-        return res.status(500).send('서버 설정 오류');
+    const { code } = req.query;
+
+    if (!code) {
+        return res.status(400).send('Authorization code is missing');
     }
 
-    const { code } = req.query; 
-    if (!code) return res.status(400).send('인증 코드가 없습니다.');
-
     try {
-        // [2] 액세스 토큰 교환
-        const params = new URLSearchParams({
+        // 1. LINE 액세스 토큰 발급 요청
+        const tokenParams = new URLSearchParams({
             grant_type: 'authorization_code',
             code,
             redirect_uri: process.env.LINE_CALLBACK_URL,
@@ -43,44 +39,51 @@ export const handleCallback = async (req, res) => {
             client_secret: process.env.LINE_CHANNEL_SECRET
         });
 
-        const tokenResponse = await axios.post('https://api.line.me/oauth2/v2.1/token', 
-            params.toString(), 
+        const tokenRes = await axios.post('https://api.line.me/oauth2/v2.1/token', 
+            tokenParams.toString(), 
             { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
         );
 
-        const { access_token } = tokenResponse.data;
+        const { access_token } = tokenRes.data;
 
-        // [3] 프로필 정보 획득
+        // 2. LINE 유저 프로필 정보 가져오기
         const profileRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
-        
         const { userId, displayName } = profileRes.data;
-        console.log(`✅ [프로필 획득] Name: ${displayName}`);
 
-        // [4] 토큰 발행 (반드시 .env의 SECRET 사용)
-        // 여기서 쓰이는 SECRET이 미들웨어의 jwt.verify(token, process.env.JWT_SECRET)과 같아야 합니다.
+        // 3. LINE 친구 추가 상태 확인 (보상 지급용)
+        const friendshipRes = await axios.get('https://api.line.me/friendship/v1/status', {
+            headers: { 'Authorization': `Bearer ${access_token}` }
+        });
+        const isFriend = friendshipRes.data.friendFlag; // true 또는 false
+
+        // 4. [Service Layer] DB 저장 및 이벤트 로직 실행
+        // (가입 처리 + 친구 추가 보상 체크를 한 번에 수행)
+        const userResult = await userService.handleUserLogin(userId, displayName, isFriend);
+
+        // 5. JWT 토큰 생성
         const token = jwt.sign(
             { userId, name: displayName }, 
-            SECRET, 
+            process.env.JWT_SECRET, 
             { expiresIn: '7d' }
         );
 
-        // [5] 쿠키 설정
+        // 6. 쿠키 설정 (보안 옵션 적용)
         res.cookie('auth_token', token, {
             httpOnly: true,
-            secure: true, // HTTPS 사용 시 true
+            secure: true, // HTTPS 환경 필수
             sameSite: 'lax',
-            domain: '.murdoo-k.com', 
+            domain: '.murdoo-k.com', // 서브도메인 간 공유 시 설정
             path: '/',
-            maxAge: 7 * 24 * 60 * 60 * 1000 
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7일
         });
 
-        console.log('✅ [완료] 쿠키 발급 및 /리다이렉트');
-        res.redirect('/');
+        console.log(`✅ 유저 로그인 완료: ${displayName} (신규여부: ${userResult.isNew})`);
+        res.redirect('/home');
 
     } catch (err) {
-        console.error('❌ 인증 에러:', err.response?.data || err.message);
-        res.status(500).send('인증 실패');
+        console.error('❌ LINE 로그인 처리 실패:', err.response?.data || err.message);
+        res.status(500).send('Authentication Error');
     }
 };

@@ -1,27 +1,53 @@
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
+import querystring from 'querystring';
 
-export const login = async (req, res) => {
-    const { accessToken } = req.body;
+export const redirectToLine = (req, res) => {
+    // 1. 라인 로그인 화면으로 보내기 위한 URL 생성
+    const baseURL = 'https://access.line.me/oauth2/v2.1/authorize';
+    const params = querystring.stringify({
+        response_type: 'code',
+        client_id: process.env.LINE_CHANNEL_ID,
+        redirect_uri: process.env.LINE_CALLBACK_URL,
+        state: 'random_state_string', // 보안을 위해 무작위 문자열 권장
+        scope: 'profile openid'
+    });
+    res.redirect(`${baseURL}?${params}`);
+};
+
+export const handleCallback = async (req, res) => {
+    const { code } = req.query; // 라인이 보내준 일회용 코드
+
     try {
-        // 1. LINE 서버에 토큰 확인 요청
+        // 2. 코드를 액세스 토큰으로 교환
+        const tokenResponse = await axios.post('https://api.line.me/oauth2/v2.1/token', 
+            querystring.stringify({
+                grant_type: 'authorization_code',
+                code,
+                redirect_uri: process.env.LINE_CALLBACK_URL,
+                client_id: process.env.LINE_CHANNEL_ID,
+                client_secret: process.env.LINE_CHANNEL_SECRET
+            }), 
+            { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+        );
+
+        const { access_token } = tokenResponse.data;
+
+        // 3. 토큰으로 유저 프로필 가져오기
         const profileRes = await axios.get('https://api.line.me/v2/profile', {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
+            headers: { 'Authorization': `Bearer ${access_token}` }
         });
         
         const userId = profileRes.data.userId;
 
-        // 2. JWT 발급 (7일 유효)
+        // 4. 머두 K 전용 JWT 발행 및 쿠키 저장
         const token = jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        res.cookie('auth_token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-        // 3. 쿠키에 저장
-        res.cookie('auth_token', token, { 
-            httpOnly: true, 
-            maxAge: 7 * 24 * 60 * 60 * 1000 
-        });
-
-        res.json({ success: true, userId });
+        // 5. 로그인 성공 후 홈으로 이동!
+        res.redirect('/home');
     } catch (err) {
-        res.status(401).json({ error: '인증에 실패했습니다.' });
+        console.error('라인 로그인 실패:', err.response?.data || err.message);
+        res.status(500).send('인증 과정에서 오류가 발생했습니다.');
     }
 };

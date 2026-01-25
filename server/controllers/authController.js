@@ -3,22 +3,20 @@ import jwt from 'jsonwebtoken';
 import querystring from 'querystring';
 
 export const redirectToLine = (req, res) => {
-    console.log("ID:", process.env.LINE_CHANNEL_ID); // 확인용
-    console.log("URL:", process.env.LINE_CALLBACK_URL); // 확인용
-
     const baseURL = 'https://access.line.me/oauth2/v2.1/authorize';
-    const params = querystring.stringify({
+    const params = new URLSearchParams({
         response_type: 'code',
         client_id: process.env.LINE_CHANNEL_ID,
         redirect_uri: process.env.LINE_CALLBACK_URL,
         state: 'random_state_string',
-        scope: 'profile openid'
+        scope: 'profile openid',
+        // 👇 이 한 줄을 추가하세요!
+        bot_prompt: 'aggressive' // 'normal' 또는 'aggressive' 사용 가능
     });
-    
-    const finalURL = `${baseURL}?${params}`;
-    console.log("최종 리다이렉트 URL:", finalURL);
-    res.redirect(finalURL);
+
+    res.redirect(`${baseURL}?${params.toString()}`);
 };
+
 
 
 export const handleCallback = async (req, res) => {

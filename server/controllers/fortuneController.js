@@ -28,20 +28,20 @@ export const analyzeFortune = async (req, res) => {
             [Operational Guidelines]
             1. Language: MUST write the final content in Thai.
             2. Tone: Use a mystical, professional, and insightful tone that provides deep enlightenment to the user.
-            3. Length: Each sector's content MUST be extremely detailed, with a minimum of 500 characters, ensuring the user feels the value of the paid service.
+            3. Length: Each sector's content MUST be extremely detailed, with a minimum of 1000 characters, ensuring the user feels the value of the paid service.
             4. Pronoun: Always address the user as "คุณ" (You).
             5. Content: Harmoniously blend the logical analysis of Korean Saju with the spiritual insights of Thai Astrology.
             6. Format: Strictly adhere to the JSON structure provided below.
 
             [JSON Structure]
             {
-                "summary": "One-line personality summary (Max 100 characters in Thai)",
-                "outward": "Detailed astrological analysis of external traits (Min 500 characters in Thai)",
-                "inward": "Detailed astrological analysis of inner psyche (Min 500 characters in Thai)",
-                "strengths": "Detailed astrological analysis of strengths (Min 500 characters in Thai)",
-                "weaknesses": "Detailed astrological analysis of weaknesses (Min 500 characters in Thai)",
-                "cautions": "Detailed analysis of situations/mindsets to be careful of (Min 500 characters in Thai)",
-                "boosters": "Detailed guide on lucky elements, colors, and items (Min 500 characters in Thai)"
+                "summary": "One-line personality summary (Max 200 characters in Thai)",
+                "outward": "Detailed astrological analysis of external traits (Min 1000 characters in Thai)",
+                "inward": "Detailed astrological analysis of inner psyche (Min 1000 characters in Thai)",
+                "strengths": "Detailed astrological analysis of strengths (Min 1000 characters in Thai)",
+                "weaknesses": "Detailed astrological analysis of weaknesses (Min 1000 characters in Thai)",
+                "cautions": "Detailed analysis of situations/mindsets to be careful of (Min 1000 characters in Thai)",
+                "boosters": "Detailed guide on lucky elements, colors, and items (Min 1000 characters in Thai)"
             }
         `;
 

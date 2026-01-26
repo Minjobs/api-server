@@ -16,5 +16,10 @@ router.get('/profile', verifyToken, (req, res) => res.sendFile(path.join(__dirna
 router.get(['/personality', '/wealth', '/romance'], (req, res) => {
     res.sendFile(path.join(__dirname, 'client/views/input-form.html'));
 });
+// 결과 페이지 URL 처리: /result/무작위ID
+router.get('/result/:id', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/views/result.html'));
+});
+
 
 export default router;

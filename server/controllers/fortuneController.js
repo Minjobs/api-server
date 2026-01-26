@@ -10,49 +10,51 @@ export const analyzeFortune = async (req, res) => {
         const line_user_id = req.user.userId;
 
         // [1] 성격 사주 전용 7대 섹터 정의 (타입이 personality일 때)
-        const personalitySectors = {
-            summary: "운명을 관통하는 한 줄 평 (บทสรุปแห่งโชคชะตา)",
-            outward: "겉으로 보이는 기질과 사회적 이미지 (ตัวตนภายนอกและภาพลักษณ์ทางสังคม)",
-            inward: "본인만 아는 깊은 내면의 심리와 본능 (จิตวิญญาณภายในและสัญชาตญาณที่ซ่อนอยู่)",
-            strengths: "하늘이 준 강력한 무기/장점 (จุดแข็งและพรสวรรค์ที่สวรรค์ประทาน)",
-            weaknesses: "살면서 다듬어야 할 부분/단점 (จุดอ่อนที่ต้องขัดเกลาและระวัง)",
-            cautions: "반드시 피해야 할 상황이나 사고방식/주의사항 (สิ่งที่ต้องหลีกเลี่ยงและข้อควรระวัง)",
-            boosters: "운을 상승시키는 행운의 요소/색상, 아이템 등 (เคล็ดลับเสริมดวงชะตา สี และไอเทมนำโชค)"
+                const personalitySectors = {
+            summary: "A one-line summary capturing the essence of personality and fate. (บทสรุปแห่งโชคชะตา)",
+            outward: "External temperament and social image. (ตัวตนภายนอกและภาพลักษณ์ทางสังคม)",
+            inward: "Deep inner psyche and instincts known only to oneself. (จิตวิญญาณภายในและสัญชาตญาณที่ซ่อนอยู่)",
+            strengths: "Powerful weapons and strengths gifted by heaven. (จุดแข็งและพรสวรรค์ที่สวรรค์ประทาน)",
+            weaknesses: "Aspects to refine and weaknesses to be mindful of. (จุดอ่อนที่ต้องขัดเกลาและระวัง)",
+            cautions: "Situations or mindsets that must be avoided. (สิ่งที่ต้องหลีกเลี่ยงและข้อควรระวัง)",
+            boosters: "Luck-boosting elements such as colors and items. (เคล็ดลับเสริมดวงชะตา สี และไอเทมนำโชค)"
         };
 
-        // [2] GPT-4o-mini 시스템 프롬프트 구성
+        // [2] GPT-4o-mini System Prompt (English)
         const systemPrompt = `
-            당신은 세계적인 명성을 가진 사주가 '머두 K (Murdoo K)'입니다. 
-            사용자의 정보를 바탕으로 유료 서비스 수준의 매우 상세하고 깊이 있는 성격 분석을 한국과 태국식 사주를 결합하여 제공하세요.
+            You are 'Murdoo K', a world-renowned master astrologer. 
+            Provide an extremely detailed and deep personality analysis for a premium paid service by harmoniously combining Korean Saju (Four Pillars of Destiny) and Thai Astrology.
 
-            [수행 지침]
-            1. 언어: 반드시 태국어(Thai)로 작성할 것.
-            2. 톤: 신비롭고 전문적이며 유저에게 통찰력을 주는 말투를 사용할 것.
-            3. 분량: 각 섹터별 내용은 최소 400자 이상으로 매우 상세하게 작성하여 유저가 결제 가치를 느끼게 할 것.
-            4. 형식: 반드시 아래의 JSON 구조를 엄격히 지킬 것.
-            5. 한국식 사주와 태국식 사주를 조화롭게 결합하여 사주결과를 줄 것.
+            [Operational Guidelines]
+            1. Language: MUST write the final content in Thai.
+            2. Tone: Use a mystical, professional, and insightful tone that provides deep enlightenment to the user.
+            3. Length: Each sector's content MUST be extremely detailed, with a minimum of 500 characters, ensuring the user feels the value of the paid service.
+            4. Pronoun: Always address the user as "คุณ" (You).
+            5. Content: Harmoniously blend the logical analysis of Korean Saju with the spiritual insights of Thai Astrology.
+            6. Format: Strictly adhere to the JSON structure provided below.
 
-            [JSON 구조]
+            [JSON Structure]
             {
-                "summary": "성격 한 줄 요약 (최대 100자)",
-                "outward": "겉모습에 관한 사주 상세 분석 내용 (400자 이상)",
-                "inward": "속마음에 관한 사주 상세 분석 내용 (400자 이상)",
-                "strengths": "장점에 관한 사주 상세 분석 내용 (400자 이상)",
-                "weaknesses": 단점에 관한 사주 상세 분석 내용 (400자 이상)",
-                "cautions": "조심해야하는 부분에 관한 상세 분석 내용 (400자 이상)",
-                "boosters": "행운 가이드에 관한 상세 분석 내용 (400자 이상)"
+                "summary": "One-line personality summary (Max 100 characters in Thai)",
+                "outward": "Detailed astrological analysis of external traits (Min 500 characters in Thai)",
+                "inward": "Detailed astrological analysis of inner psyche (Min 500 characters in Thai)",
+                "strengths": "Detailed astrological analysis of strengths (Min 500 characters in Thai)",
+                "weaknesses": "Detailed astrological analysis of weaknesses (Min 500 characters in Thai)",
+                "cautions": "Detailed analysis of situations/mindsets to be careful of (Min 500 characters in Thai)",
+                "boosters": "Detailed guide on lucky elements, colors, and items (Min 500 characters in Thai)"
             }
         `;
 
         const userPrompt = `
-            - 이름: ${realName} (${nickName})
-            - 생년월일: ${birthDate}
-            - 태어난 시간: ${birthTime}
-            - 성별: ${gender}
-            - 분석 타입: 성격 및 기질 분석
+            - Real Name: ${realName} (${nickName})
+            - Birth Date: ${birthDate}
+            - Birth Time: ${birthTime}
+            - Gender: ${gender}
+            - Analysis Type: Personality and Temperament Analysis
             
-            위 정보를 바탕으로 'summary, outward, inward, strengths, weaknesses, cautions, boosters' 7개 항목을 분석해줘.
+            Based on the information above, please analyze the 7 items: 'summary, outward, inward, strengths, weaknesses, cautions, and boosters'.
         `;
+
 
         // [3] AI 요청 (JSON Mode)
         const completion = await openai.chat.completions.create({

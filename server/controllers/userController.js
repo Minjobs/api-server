@@ -5,16 +5,17 @@ export const getProfile = async (req, res) => {
         const userId = req.user.userId;
         console.log(`🔍 [Profile API] 요청 유저 ID: ${userId}`);
 
+        // ✨ profile_img 컬럼을 추가했습니다.
         const [rows] = await db.execute(
             `SELECT display_name, real_name, user_nickname, 
-                    birth_date, birth_time, gender, 
+                    profile_img, birth_date, birth_time, gender, 
                     coins, total_readings 
              FROM users WHERE line_user_id = ?`,
             [userId]
         );
 
-        // ✨ 핵심: DB에서 가져온 데이터를 터미널에 출력
         if (rows.length > 0) {
+            // ✨ 이제 로그에도 프로필 이미지 URL이 찍힐 겁니다.
             console.log('✅ DB에서 가져온 유저 데이터:', JSON.stringify(rows[0], null, 2));
             res.json(rows[0]);
         } else {

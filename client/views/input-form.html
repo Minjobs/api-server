@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - วิเคราะห์ดวงชะตา</title>
+    <title>MURDOO K - วิเคราะห์ดวงชะตาเกาหลีและไทย</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
+        /* --- 기본 테마 및 배경 --- */
         body {
             margin: 0; padding: 0;
             background-color: #0a0a12;
@@ -41,24 +42,22 @@
         }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* [입력 섹션 스타일] */
-        #inputSection { transition: opacity 0.5s ease; }
+        /* --- 섹션 전환 애니메이션 --- */
+        .fade-out { opacity: 0; transform: translateY(-20px); transition: all 0.5s ease; }
+        .hidden { display: none !important; }
+        .visible-flex { display: flex !important; }
 
+        /* --- 입력 폼 스타일 --- */
         .intro-section { text-align: center; margin-bottom: 30px; }
         .intro-tagline {
             background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
-            padding: 10px; font-weight: 500; color: #fff; margin-bottom: 15px;
+            padding: 10px; font-weight: 500; margin-bottom: 15px;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
             border-bottom: 1px solid rgba(255, 215, 0, 0.3);
             font-size: 0.9rem;
         }
 
-        #pageTitle {
-            font-family: 'Cinzel Decorative';
-            color: #ffd700; font-size: 2.2rem; margin: 10px 0;
-            letter-spacing: 2px;
-        }
-
+        #pageTitle { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 2.2rem; margin: 10px 0; }
         #pageDesc { color: #aaa; font-size: 0.95rem; line-height: 1.6; }
 
         .glass-card {
@@ -73,79 +72,51 @@
         label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; }
 
         input, select {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.08);
+            width: 100%; background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 15px; padding: 14px;
-            color: white; font-size: 1rem; box-sizing: border-box; outline: none;
+            border-radius: 15px; padding: 14px; color: white;
+            font-size: 1rem; box-sizing: border-box; outline: none;
         }
-        input:focus, select:focus { border-color: #ffd700; background: rgba(255, 255, 255, 0.12); }
 
         .dropdown-group { display: flex; gap: 10px; }
         .dropdown-group select { flex: 1; }
 
-        .unknown-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
         .unknown-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #888; padding: 6px 16px; border-radius: 20px;
-            font-size: 0.75rem; cursor: pointer; transition: 0.3s;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #888; padding: 6px 16px; border-radius: 20px; font-size: 0.75rem;
+            cursor: pointer; margin-top: 10px; transition: 0.3s;
         }
-        .unknown-btn.active { background: #ffd700; color: #000; border-color: #ffd700; font-weight: 700; }
+        .unknown-btn.active { background: #ffd700; color: #000; font-weight: 700; }
 
         .submit-btn {
-            width: 100%;
-            background: linear-gradient(45deg, #ffd700, #ffae00);
-            color: #000; border: none; padding: 18px;
-            border-radius: 20px; font-weight: 700; font-size: 1.1rem;
-            margin-top: 25px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
-            transition: all 0.3s;
+            width: 100%; background: linear-gradient(45deg, #ffd700, #ffae00);
+            color: #000; border: none; padding: 18px; border-radius: 20px;
+            font-weight: 700; font-size: 1.1rem; margin-top: 25px; cursor: pointer;
         }
 
-        /* [로딩 섹션 스타일] */
+        /* --- 신비로운 로딩 화면 스타일 --- */
         #loadingSection {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 60px 20px;
-            animation: fadeIn 0.8s ease;
+            display: none; flex-direction: column; align-items: center;
+            justify-content: center; text-align: center; padding: 80px 20px;
         }
 
-        .orb-wrapper {
-            position: relative;
-            width: 150px; height: 150px;
-            margin-bottom: 40px;
-        }
-
+        .orb-wrapper { position: relative; width: 140px; height: 140px; margin-bottom: 40px; }
         .orb {
-            width: 100%; height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(15px);
-            animation: pulse 2s infinite ease-in-out;
+            width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.5) 0%, transparent 70%);
+            filter: blur(15px); animation: pulse 2s infinite ease-in-out;
         }
-
         .mystic-spinner {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            border: 3px solid transparent;
-            border-top: 3px solid #ffd700;
-            border-radius: 50%;
-            animation: spin 1.2s linear infinite;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border: 3px solid transparent; border-top: 3px solid #ffd700;
+            border-radius: 50%; animation: spin 1.2s linear infinite;
         }
-
-        .loading-title { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.8rem; margin-bottom: 15px; }
-        .loading-desc { color: #888; font-size: 1rem; line-height: 1.6; letter-spacing: 1px; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { transform: scale(0.8); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
 
-        .hidden { display: none !important; }
-        .visible-flex { display: flex !important; }
+        .loading-title { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.6rem; margin-bottom: 10px; }
+        .loading-desc { color: #888; font-size: 0.95rem; line-height: 1.6; }
 
         footer { text-align: center; margin-top: 40px; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
     </style>
@@ -207,9 +178,7 @@
                             <select id="birthHour" required><option value="" disabled selected>ชั่วโมง</option></select>
                             <select id="birthMin" required><option value="" disabled selected>นาที</option></select>
                         </div>
-                        <div class="unknown-row">
-                            <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลาเกิด</button>
-                        </div>
+                        <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลาเกิด</button>
                     </div>
                     <div class="field">
                         <label>เพศ (Gender Identity)</label>
@@ -224,7 +193,7 @@
                             <option value="other">อื่นๆ (Other)</option>
                         </select>
                     </div>
-                    <button type="submit" class="submit-btn" id="submitBtn">ดูผลทำนายของคุณ</button>
+                    <button type="submit" class="submit-btn" id="submitBtn">วิเคราะห์ดวงชะตาของคุณ</button>
                 </form>
             </div>
         </main>
@@ -256,43 +225,28 @@
             const loadingSection = document.getElementById('loadingSection');
             const form = document.getElementById('fortuneForm');
 
-            // [1] 제목 및 설명 설정
+            // [1] 타이틀 설정
             const config = {
-                personality: { title: "Personality", desc: "วิเคราะห์ตัวตนที่แท้จริงของคุณ จุดแข็ง จุดอ่อน และนิสัยที่ถูกลิขิตไว้โดยดวงดาว" },
-                wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงิน โชคลาภ และโอกาสแห่งความมั่งคั่งที่จะเข้ามาในชีวิตคุณ" },
-                romance: { title: "Romance", desc: "ค้นหาเส้นทางแห่งความรัก ลักษณะคู่ครองที่สมพงษ์ และดวงเนื้อคู่ของคุณ" }
+                personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงและจุดแข็งที่ซ่อนอยู่ของคุณ" },
+                wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและโอกาสแห่งความมั่งคั่ง" },
+                romance: { title: "Romance", desc: "ตามหาเนื้อคู่และเส้นทางความรักที่ฟ้าลิขิต" }
             };
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // [2] 프로필 로드
-            try {
-                const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
-                if (res.ok) {
-                    const user = await res.json();
-                    document.getElementById('userProfileImg').src = user.profile_img || document.getElementById('userProfileImg').src;
-                }
-            } catch (e) { console.error(e); }
-
-            // [3] 드롭다운 옵션 생성
+            // [2] 드롭다운 데이터 생성
             const daySel = document.getElementById('birthDay');
             const yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour');
             const minSel = document.getElementById('birthMin');
 
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
-            for(let i=new Date().getFullYear(); i>=1900; i--) yearSel.add(new Option(i, i));
+            for(let i=2026; i>=1900; i--) yearSel.add(new Option(i, i));
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
-            // [4] 태국어 경고 메시지
-            form.querySelectorAll('input, select').forEach(el => {
-                el.addEventListener('invalid', (e) => e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"));
-                el.addEventListener('input', (e) => e.target.setCustomValidity(""));
-            });
-
-            // [5] 시간 모름 버튼
+            // [3] 시간 모름 토글
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -304,7 +258,13 @@
                 if(isTimeUnknown) { hourSel.selectedIndex = 0; minSel.selectedIndex = 0; }
             });
 
-            // [6] 제출 및 로딩 제어
+            // [4] 커스텀 유효성 경고 (태국어)
+            form.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('invalid', (e) => e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"));
+                el.addEventListener('input', (e) => e.target.setCustomValidity(""));
+            });
+
+            // [5] 제출 및 로딩 제어
             let isSubmitting = false;
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -319,11 +279,12 @@
                     gender: document.getElementById('gender').value
                 };
 
-                // 로딩 화면으로 전환 및 데이터 초기화
+                // 화면 전환 및 데이터 초기화
                 isSubmitting = true;
                 inputSection.classList.add('hidden');
                 loadingSection.classList.add('visible-flex');
                 
+                // 데이터 완전 세탁 (클리어)
                 form.reset();
                 document.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
 
@@ -337,15 +298,10 @@
 
                     if (response.ok && result.resultId) {
                         window.location.href = `/result/${result.resultId}`;
-                    } else {
-                        throw new Error('Analysis failed');
-                    }
+                    } else { throw new Error(); }
                 } catch (err) {
-                    console.error("Error:", err);
-                    alert("ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ โปรดลองใหม่อีกครั้ง");
-                    isSubmitting = false;
-                    inputSection.classList.remove('hidden');
-                    loadingSection.classList.remove('visible-flex');
+                    alert("เกิดข้อผิดพลาด โปรดลองใหม่อีกครั้ง");
+                    location.reload(); // 실패 시 폼 복구
                 }
             });
         });

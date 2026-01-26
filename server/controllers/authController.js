@@ -65,13 +65,13 @@ export const handleCallback = async (req, res) => {
 
         const { access_token } = tokenRes.data;
 
-        // [B] 프로필 정보 획득
+        // [B] 프로필 정보 획득 (이미지 URL 포함)
         const profileRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
-        const { userId, displayName } = profileRes.data;
+        const { userId, displayName, pictureUrl } = profileRes.data;
 
-        // [C] 친구 추가 상태 확인 (에러 방어 로직 적용)
+        // [C] 친구 추가 상태 확인
         let isFriend = false;
         try {
             const friendshipRes = await axios.get('https://api.line.me/friendship/v1/status', {
@@ -79,16 +79,16 @@ export const handleCallback = async (req, res) => {
             });
             isFriend = friendshipRes.data.friendFlag;
         } catch (friendErr) {
-            // 40007 에러 등이 나더라도 로그인은 중단하지 않습니다.
-            console.warn('⚠️ 친구 상태 확인 불가 (봇 연결 확인 필요):', friendErr.response?.data?.message || friendErr.message);
+            console.warn('⚠️ 친구 상태 확인 불가:', friendErr.response?.data?.message || friendErr.message);
         }
 
-        // [D] DB 저장 및 이벤트 처리
-        const userResult = await userService.handleUserLogin(userId, displayName, isFriend);
+        // [D] DB 저장 (profile_img라는 이름으로 pictureUrl 저장)
+        // userService 내부에서 profile_img 컬럼을 업데이트하도록 구현되어야 합니다.
+        const userResult = await userService.handleUserLogin(userId, displayName, pictureUrl, isFriend);
 
-        // [E] JWT 생성
+        // [E] JWT 생성 (최소화: userId만 포함)
         const token = jwt.sign(
-            { userId, name: displayName }, 
+            { userId }, 
             process.env.JWT_SECRET, 
             { expiresIn: '7d' }
         );
@@ -96,14 +96,16 @@ export const handleCallback = async (req, res) => {
         // [F] 쿠키 설정
         res.cookie('auth_token', token, {
             httpOnly: true,
-            secure: true,
+            secure: true, // 배포 시 HTTPS 필수
             sameSite: 'lax',
-            domain: '.murdoo-k.com',
+            domain: '.murdoo-k.com', // 실제 도메인에 맞게 수정
             path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        console.log(`✅ 로그인 대성공: ${displayName} (신규 유저: ${userResult.isNew})`);
+        console.log(`✅ 로그인 및 DB 저장 완료: ${displayName}`);
+        
+        // 로그인 완료 후 홈으로 리다이렉트
         res.redirect('/');
 
     } catch (err) {

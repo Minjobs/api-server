@@ -1,10 +1,12 @@
 <style>
     #loadingSection {
         display: flex; flex-direction: column; align-items: center;
-        justify-content: center; text-align: center; padding: 80px 20px;
+        justify-content: center; text-align: center; padding: 60px 20px;
         animation: fadeIn 0.8s ease;
     }
-    .orb-wrapper { position: relative; width: 150px; height: 150px; margin-bottom: 40px; }
+
+    /* 신비로운 구슬과 스피너 */
+    .orb-wrapper { position: relative; width: 130px; height: 130px; margin-bottom: 25px; }
     .orb {
         width: 100%; height: 100%; border-radius: 50%;
         background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
@@ -15,9 +17,33 @@
         border: 3px solid transparent; border-top: 3px solid #ffd700;
         border-radius: 50%; animation: spin 1.2s linear infinite;
     }
-    .loading-title { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.8rem; margin-bottom: 15px; }
-    #dynamicText { color: #fff; font-size: 1.1rem; transition: opacity 0.5s ease; min-height: 1.5em; }
-    .loading-subtext { color: #555; font-size: 0.85rem; margin-top: 25px; }
+
+    /* 퍼센트 텍스트 */
+    #percentCount {
+        font-family: 'Cinzel Decorative', serif;
+        color: #ffd700; font-size: 1.8rem; font-weight: 700;
+        margin-bottom: 10px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+
+    /* 동적 분석 문구 */
+    #dynamicText {
+        color: #fff; font-size: 1.1rem; min-height: 1.5em;
+        transition: opacity 0.5s ease; font-weight: 500;
+    }
+
+    /* 황금빛 매직 게이지 */
+    .gauge-container {
+        width: 250px; height: 6px; background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px; margin: 30px 0; overflow: hidden; position: relative;
+    }
+    .gauge-fill {
+        width: 0%; height: 100%;
+        background: linear-gradient(90deg, #ffd700, #ffae00);
+        box-shadow: 0 0 15px #ffd700;
+        transition: width 0.6s cubic-bezier(0.1, 0.5, 0.5, 1);
+    }
+
+    .loading-subtext { color: #555; font-size: 0.85rem; letter-spacing: 1px; line-height: 1.6; }
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
@@ -29,35 +55,72 @@
         <div class="orb"></div>
         <div class="mystic-spinner"></div>
     </div>
-    <h2 class="loading-title">Reading Destiny</h2>
-    <div id="dynamicText">กำลังเตรียมการ...</div>
-    <p class="loading-subtext">มหาเทพกำลังเปิดบันทึกโชคชะตาของคุณ</p>
+
+    <div id="percentCount">0%</div>
+    <div id="dynamicText">เริ่มการวิเคราะห์...</div>
+
+    <div class="gauge-container">
+        <div class="gauge-fill" id="gaugeFill"></div>
+    </div>
+
+    <p class="loading-subtext">
+        มหาเทพกำลังเปิดบันทึกโชคชะตาของคุณ <br>
+        ดวงดาวกำลังโคจรเพื่อค้นหาคำตอบ...
+    </p>
 </div>
 
 <script>
-    // 이 스크립트는 주입되는 즉시 실행될 것입니다.
     (function() {
         const messages = [
             "กำลังวิเคราะห์ชื่อของคุณ...",        // 이름 분석 중
             "ตรวจสอบชื่อเล่นและตัวตน...",      // 닉네임 분석 중
-            "วิเคราะห์วันเดือนปีเกิดของคุณ...",   // 생년월일 분석 중
+            "วิเคราะห์วันเดือนปีเกิดและดวงดาว...", // 생년월일 분석 중
             "กำลังจับคู่ชื่อและโชคชะตา...",      // 이름과 생년월일 매칭 중
-            "เปิดคัมภีร์มหาเทพ..."            // 신의 기록 오픈 중
+            "ถอดรหัสบันทึกมหาเทพ...",         // 신의 기록 해독 중
+            "เรียบเรียงคำทำนายส่วนบุคคล..."     // 개인 점괘 정리 중
         ];
-        const el = document.getElementById('dynamicText');
-        let idx = 0;
 
-        const interval = setInterval(() => {
-            idx++;
-            if (messages[idx] && el) {
-                el.style.opacity = 0;
+        const textEl = document.getElementById('dynamicText');
+        const percentEl = document.getElementById('percentCount');
+        const gaugeEl = document.getElementById('gaugeFill');
+        
+        let progress = 0;
+        let msgIdx = 0;
+
+        // 1. 문구 변경 타이머 (5초마다)
+        const msgInterval = setInterval(() => {
+            msgIdx++;
+            if (messages[msgIdx] && textEl) {
+                textEl.style.opacity = 0;
                 setTimeout(() => {
-                    el.innerText = messages[idx];
-                    el.style.opacity = 1;
+                    textEl.innerText = messages[msgIdx];
+                    textEl.style.opacity = 1;
                 }, 500);
             } else {
-                clearInterval(interval);
+                clearInterval(msgInterval);
             }
-        }, 4000);
+        }, 5000);
+
+        // 2. 가짜 퍼센트 카운트 (비선형: 99%까지 AI가 고민하는 척)
+        const updateProgress = () => {
+            if (progress < 99) {
+                // 초반에는 조금 빠르게, 80% 이후부터는 아주 신중하게 증가
+                let increment = progress < 70 ? Math.random() * 4 : Math.random() * 0.5;
+                progress += increment;
+                
+                if (progress > 99) progress = 99;
+
+                percentEl.innerText = Math.floor(progress) + "%";
+                gaugeEl.style.width = progress + "%";
+
+                // 다음 업데이트 간격도 랜덤하게 주어 생동감 부여
+                setTimeout(updateProgress, Math.random() * 600 + 300);
+            }
+        };
+
+        updateProgress();
+
+        // 팁: 부모창(input-form)에서 결과가 도착하면 
+        // 페이지가 이동되기 때문에 100% 연출은 자연스럽게 생략됩니다.
     })();
 </script>

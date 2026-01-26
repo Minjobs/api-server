@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
     <style>
-        /* [추가] 프로필 섹션 스타일 */
+        /* [แก้ไข] สไตล์ส่วนหัวและปุ่มโปรไฟล์ */
         header {
             display: flex;
             justify-content: space-between;
@@ -18,17 +18,24 @@
         .user-nav {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
+        /* ทำให้คอนเทนเนอร์รูปภาพเป็นปุ่มที่คลิกได้ */
         .profile-container {
             width: 42px;
             height: 42px;
             border-radius: 50%;
             overflow: hidden;
-            border: 2px solid #ffd700; /* 신비로운 황금빛 테두리 */
+            border: 2px solid #ffd700; 
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
             background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .profile-container:hover {
+            transform: scale(1.1);
         }
 
         .profile-container img {
@@ -37,20 +44,23 @@
             object-fit: cover;
         }
 
-        #logoutBtn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #eee;
-            padding: 7px 15px;
+        /* สไตล์ปุ่มโปรไฟล์ใหม่ */
+        #profileBtn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            color: #ffd700;
+            padding: 7px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.85rem;
+            font-weight: 500;
             transition: all 0.3s;
         }
 
-        #logoutBtn:hover {
-            background: rgba(255, 70, 70, 0.2);
-            border-color: #ff4444;
+        #profileBtn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            border-color: #ffd700;
         }
     </style>
 </head>
@@ -67,10 +77,10 @@
         <header>
             <div class="logo">✨ MURDOO K</div>
             <div class="user-nav">
-                <div class="profile-container">
+                <div class="profile-container" onclick="location.href='/profile'">
                     <img id="userProfileImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile">
                 </div>
-                <button id="logoutBtn" onclick="location.href='/api/auth/logout'">로그아웃</button>
+                <button id="profileBtn" onclick="location.href='/profile'">โปรไฟล์ (Profile)</button>
             </div>
         </header>
 
@@ -96,7 +106,18 @@
                         <div class="dropdown-group dob-group">
                             <select id="birthDay" required><option value="" disabled selected>วันที่</option></select>
                             <select id="birthMonth" required><option value="" disabled selected>เดือน</option>
-                                <option value="01">มกราคม (Jan)</option><option value="12">ธันวาคม (Dec)</option>
+                                <option value="01">มกราคม (Jan)</option>
+                                <option value="02">กุมภาพันธ์ (Feb)</option>
+                                <option value="03">มีนาคม (Mar)</option>
+                                <option value="04">เมษายน (Apr)</option>
+                                <option value="05">พฤษภาคม (May)</option>
+                                <option value="06">มิถุนายน (Jun)</option>
+                                <option value="07">กรกฎาคม (Jul)</option>
+                                <option value="08">สิงหาคม (Aug)</option>
+                                <option value="09">กันยายน (Sep)</option>
+                                <option value="10">ตุลาคม (Oct)</option>
+                                <option value="11">พฤศจิกายน (Nov)</option>
+                                <option value="12">ธันวาคม (Dec)</option>
                             </select>
                             <select id="birthYear" required><option value="" disabled selected>ปี (ค.ศ.)</option></select>
                         </div>
@@ -114,8 +135,14 @@
                     <div class="field">
                         <label>เพศ (Gender Identity)</label>
                         <select id="gender" required>
-                            <option value="" disabled selected>선택</option>
-                            <option value="male">ชาย (Male)</option><option value="female">หญิง (Female)</option>
+                            <option value="" disabled selected>เลือกเพศ</option>
+                            <option value="male">ชาย (Male)</option>
+                            <option value="female">หญิง (Female)</option>
+                            <option value="tom">ทอม (Tom)</option>
+                            <option value="ladyboy">กะเทย (Kathoey)</option>
+                            <option value="gay">เกย์ (Gay)</option>
+                            <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
+                            <option value="other">อื่นๆ (Other)</option>
                         </select>
                     </div>
 
@@ -133,49 +160,44 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const profileImg = document.getElementById('userProfileImg');
             
-            // [1] 유저 데이터 가져오기 함수
-            // [1] 유저 데이터 가져오기 함수 수정
-const initUser = async () => {
-    try {
-        const res = await fetch('/api/user/profile', {
-            method: 'GET',
-            headers: {
-                // [중요] 실제 서버의 API KEY를 여기에 넣으세요
-                'x-api-key': 'your_actual_api_key_here',
-                'Content-Type': 'application/json'
-            }
-        });
+            // [1] ฟังก์ชันดึงข้อมูลโปรไฟล์
+            const initUser = async () => {
+                try {
+                    const res = await fetch('/api/user/profile', {
+                        method: 'GET',
+                        headers: {
+                            // [สำคัญ] ใส่ API KEY ของคุณที่นี่
+                            'x-api-key': 'your_actual_api_key_here',
+                            'Content-Type': 'application/json'
+                        }
+                    });
 
-        if (res.ok) {
-            const user = await res.json();
-            
-            // 구글 기본 아바타 느낌의 공식 이미지 URL입니다.
-            const googleDefaultAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+                    if (res.ok) {
+                        const user = await res.json();
+                        
+                        // ใช้ Google Default Avatar หากไม่มีรูปโปรไฟล์
+                        const googleDefaultAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
 
-            // 1. profile_img가 null, undefined, 혹은 빈 값일 때 구글 아바타 사용
-            profileImg.src = user.profile_img || googleDefaultAvatar;
+                        profileImg.src = user.profile_img || googleDefaultAvatar;
 
-            // 2. 혹시 사진 주소가 있어도 로딩에 실패할 경우(에러)를 대비한 안전장치
-            profileImg.onerror = () => {
-                profileImg.src = googleDefaultAvatar;
-                profileImg.onerror = null; // 무한 루프 방지
+                        // ป้องกันรูปภาพโหลดเสีย
+                        profileImg.onerror = () => {
+                            profileImg.src = googleDefaultAvatar;
+                            profileImg.onerror = null;
+                        };
+
+                    } else {
+                        console.error('인증 실패 혹은 API Key 불일치');
+                        window.location.href = '/login';
+                    }
+                } catch (err) {
+                    console.error('User Load Error:', err);
+                }
             };
 
-        } else {
-            console.error('인증 실패 혹은 API Key 불일치');
-            window.location.href = '/login';
-        }
-    } catch (err) {
-        console.error('User Load Error:', err);
-    }
-};
-
-
-
-            // 실행
             await initUser();
 
-            // --- 기존 폼 로직 (드롭다운 생성 등) ---
+            // --- ส่วนของฟอร์ม (Dropdown Generation) ---
             const form = document.getElementById('fortuneForm');
             const daySel = document.getElementById('birthDay');
             const yearSel = document.getElementById('birthYear');
@@ -206,7 +228,6 @@ const initUser = async () => {
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                // ... 폼 제출 로직 동일 ...
                 alert('วิเคราะห์ดวงชะตาของคุณเรียบร้อยแล้ว...');
             });
         });

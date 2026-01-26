@@ -26,7 +26,7 @@ export const analyzeFortune = async (req, res) => {
             Provide an extremely detailed and deep personality analysis for a premium paid service by harmoniously combining Korean Saju (Four Pillars of Destiny) and Thai Astrology.
 
             [Operational Guidelines]
-            1. Language: MUST write the final content in Thai.
+            1. Language: MUST write the final content ONLY in Thai.
             2. Tone: Use a mystical, professional, and insightful tone that provides deep enlightenment to the user.
             3. Length: Each sector's content MUST be extremely detailed, with a minimum of 1000 characters, ensuring the user feels the value of the paid service.
             4. Pronoun: Always address the user as "คุณ" (You).

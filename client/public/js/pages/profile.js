@@ -1,71 +1,94 @@
-// profile.js
-
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log("🔮 วิหารกำลังดึงข้อมูลดวงดาวของคุณ...");
-
-    const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j'; // .env 설정값과 일치해야 함
-
-    try {
-        // 프로필 정보 요청
-        const response = await fetch('/api/user/profile', {
-            method: 'GET',
-            headers: {
-                'x-api-key': API_KEY,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            renderProfile(data);
-        } else if (response.status === 401 || response.status === 403) {
-            alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่ (세션 만료)');
-            window.location.href = '/login';
-        } else {
-            throw new Error('Failed to fetch profile');
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEODU K - ข้อมูลของท่าน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/profile.css">
+    <style>
+        /* 코인 섹션 아래 버튼을 위한 추가 스타일 */
+        .history-link-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ffd700, #ffae00);
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: 0.3s;
         }
+        .history-link-btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        
+        /* 인포 그리드 간격 조정 */
+        .info-grid { margin-top: 30px; }
+    </style>
+    <script src="/js/pages/profile.js" defer></script>
+</head>
+<body>
 
-    } catch (err) {
-        console.error('❌ Profile Load Error:', err);
-        showErrorState();
-    }
-});
+    <div class="magic-background">
+        <div class="magic-ring ring-1"></div>
+        <div class="magic-ring ring-2"></div>
+        <div class="magic-ring ring-3"></div>
+    </div>
 
-/**
- * 데이터를 화면 요소에 뿌려주는 함수
- */
-function renderProfile(data) {
-    // 텍스트 내용 업데이트 (데이터가 없으면 태국어로 '정보 없음' 표시)
-    document.getElementById('userCoins').textContent = `${data.coins || 0} COINS`;
-    document.getElementById('displayName').textContent = data.display_name || '-';
-    document.getElementById('realName').textContent = data.real_name || 'ยังไม่มีข้อมูล';
-    document.getElementById('birthDate').textContent = data.birth_date || 'ยังไม่มีข้อมูล';
-    document.getElementById('birthTime').textContent = data.birth_time || 'ยังไม่มีข้อมูล';
-    document.getElementById('gender').textContent = formatGender(data.gender);
-    document.getElementById('totalReadings').textContent = `${data.total_readings || 0} ครั้ง`;
-}
+    <div class="container">
+        <header>
+            <div class="logo">✨ MEODU K</div>
+            <button class="back-btn" onclick="location.href='/'">← กลับหน้าหลัก</button>
+        </header>
 
-/**
- * 성별 영문 값을 태국어로 변환해주는 헬퍼
- */
-function formatGender(gender) {
-    const genderMap = {
-        'male': 'ชาย (Male)',
-        'female': 'หญิง (Female)',
-        'tom': 'ทอม (Tom)',
-        'ladyboy': 'กะเทย (Kathoey)',
-        'gay': 'เกย์ (Gay)',
-        'lesbian': 'เลสเบี้ยน (Lesbian)',
-        'other': 'อื่นๆ (Other)'
-    };
-    return genderMap[gender] || 'ยังไม่มีข้อมูล';
-}
+        <main>
+            <section class="glass-card">
+                <h2>ข้อมูลโชคชะตา</h2>
+                <p class="subtitle">เส้นทางดาวที่ถูกบันทึกไว้ในวิหาร</p>
 
-/**
- * 에러 발생 시 UI 처리
- */
-function showErrorState() {
-    const values = document.querySelectorAll('.value');
-    values.forEach(el => el.textContent = 'Error');
-    alert('ไม่สามารถโหลดข้อมูลได้ กรุณาลองใหม่ภายหลัง');
-}
+                <div class="coin-section">
+                    <span class="coin-icon">🔮</span>
+                    <div class="coin-details">
+                        <div class="label">เหรียญคงเหลือ (My Coins)</div>
+                        <div class="value" id="userCoins">--</div>
+                    </div>
+                </div>
+
+                <button class="history-link-btn" onclick="location.href='/history'">
+                    📜 ดูประวัติการทำนายดวง (My Fortune History)
+                </button>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="label">ชื่อที่ใช้ในวิหาร (Line Name)</div>
+                        <div class="value" id="displayName">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="label">จำนวนครั้งที่ดูดวง (Total Readings)</div>
+                        <div class="value" id="totalReadings">0 ครั้ง</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="action-btn primary" onclick="location.href='/'">
+                        ไปดูดวงเพิ่ม (ดูดวงใหม่)
+                    </button>
+                    <button class="action-btn secondary" onclick="location.href='/api/auth/logout'">
+                        ออกจากวิหาร (Logout)
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2026 MEODU K. ลิขิตแห่งดวงดาว</p>
+        </footer>
+    </div>
+</body>
+</html>

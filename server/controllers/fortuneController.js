@@ -9,53 +9,81 @@ export const analyzeFortune = async (req, res) => {
         const { type, realName, nickName, birthDate, birthTime, gender } = req.body;
         const line_user_id = req.user.userId;
 
-        // [A] 카테고리별 맞춤 프롬프트
-        const promptTemplates = {
-            personality: `Analyze personality for ${realName}, born ${birthDate} ${birthTime}. Format: Summary(1 line) then Content. Language: Thai.`,
-            wealth: `Analyze wealth luck for ${realName}, born ${birthDate}. Format: Summary(1 line) then Content. Language: Thai.`,
-            romance: `Analyze love life for ${realName}, gender ${gender}, born ${birthDate}. Format: Summary(1 line) then Content. Language: Thai.`
+        // [1] 머두 K님이 요청하신 섹터 명칭 그대로 정의
+        const configs = {
+            personality: {
+                // 이 Key들이 그대로 JSON 데이터의 필드명이 됩니다.
+                sectors: [
+                    "outward_features", // 겉으로 보이는 특징
+                    "inward_features",  // 내면의 특징
+                    "strengths",       // 장점
+                    "weaknesses",      // 단점
+                    "cautions"         // 조심해야할 점
+                ],
+                instruction: "วิเคราะห์ลักษณะภายนอก, ลักษณะภายใน, จุดแข็ง, จุดอ่อน และสิ่งที่ควรระวัง"
+            },
+            // 재물과 연애는 섹터 이름이 다를 수 있으므로 확장 가능하게 배치
+            wealth: {
+                sectors: ["cash_flow", "career_luck", "lucky_timing", "wealth_tips"],
+                instruction: "วิเคราะห์การไหลเวียนของเงิน, ดวงการงาน, ช่วงเวลาโชคลาภ และเคล็ดลับความรวย"
+            },
+            romance: {
+                sectors: ["love_style", "soulmate_type", "romance_timing", "love_advice"],
+                instruction: "วิเคราะห์สไตล์ความรัก, ลักษณะเนื้อคู่, ช่วงเวลาพบรัก และคำแนะนำความรัก"
+            }
         };
 
-        // [B] OpenAI 호출
+        const config = configs[type] || configs.personality;
+
+        // [2] GPT-4o-mini 전용 시스템 프롬프트 (JSON 틀 고정)
+        const systemPrompt = `
+            You are 'Murdoo K', a master astrologer. 
+            Provide a very detailed analysis in Thai.
+            
+            RULES:
+            1. Response MUST be a JSON object.
+            2. Each sector content MUST be at least 400 characters long (Detailed enough for a paid service).
+            3. Use professional and mystical tone.
+
+            JSON Structure:
+            {
+                "summary": "요약본 (One impactful line)",
+                ${config.sectors.map(s => `"${s}": "분석 내용 (Min 400 chars)"`).join(",\n")}
+            }
+        `;
+
+        const userPrompt = `
+            Name: ${realName} (${nickName}), Birth: ${birthDate} ${birthTime}, Gender: ${gender}
+            Type: ${type}. Please perform a deep analysis: ${config.instruction}.
+        `;
+
+        // [3] AI 요청
         const completion = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: "You are 'Murdoo K', a master of Korean & Thai astrology." },
-                { role: "user", content: promptTemplates[type] }
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
             ],
+            response_format: { type: "json_object" }
         });
 
-        const fullResponse = completion.choices[0].message.content;
-        const [summary, ...contentParts] = fullResponse.split('\n');
-        const content = contentParts.join('\n').trim();
-        const resultId = uuidv4(); // 무작위 PK 생성
+        const fortuneData = JSON.parse(completion.choices[0].message.content);
+        const resultId = uuidv4();
 
-        // [C] DB 저장
+        // [4] DB 저장 (detail_data 컬럼에 요약을 제외한 나머지 객체 삽입)
+        const { summary, ...details } = fortuneData;
+
         await db.execute(
-            `INSERT INTO fortune_results (result_id, line_user_id, fortune_type, summary, content) 
-             VALUES (?, ?, ?, ?, ?)`,
-            [resultId, line_user_id, type, summary.substring(0, 255), content]
+            `INSERT INTO fortune_results 
+            (result_id, line_user_id, fortune_type, summary_text, detail_data) 
+            VALUES (?, ?, ?, ?, ?)`,
+            [resultId, line_user_id, type, summary, JSON.stringify(details)]
         );
 
         res.json({ resultId });
 
     } catch (err) {
-        console.error('❌ 분석 에러:', err);
+        console.error('❌ 분석 오류:', err);
         res.status(500).json({ error: 'Failed to analyze fortune' });
-    }
-};
-
-export const getFortuneResult = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [rows] = await db.execute(
-            `SELECT * FROM fortune_results WHERE result_id = ? AND line_user_id = ?`,
-            [id, req.user.userId] // 본인 결과만 보게끔 보안 강화
-        );
-
-        if (rows.length === 0) return res.status(404).json({ error: 'Result not found' });
-        res.json(rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: 'Database error' });
     }
 };

@@ -6,7 +6,6 @@
     <title>MURDOO K - ผลทำนายดวงชะตาของคุณ</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 기존 디자인 테마 유지 */
         body {
             margin: 0; padding: 0;
             background-color: #0a0a12;
@@ -25,118 +24,69 @@
 
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 0;
-        }
-
-        .logo { 
-            font-family: 'Cinzel Decorative'; 
-            color: #ffd700; font-size: 1.2rem; cursor: pointer;
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        .profile-container {
-            width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
-            border: 2px solid #ffd700; cursor: pointer;
-        }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
+        .logo { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.2rem; cursor: pointer; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+        .profile-container { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #ffd700; cursor: pointer; }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 결과 카드 스타일 */
-        .result-card {
+        /* 결과 상단 요약 카드 */
+        .summary-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: 30px;
-            padding: 35px 25px;
-            margin-top: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            animation: slideUp 0.8s ease-out;
+            padding: 30px 20px;
+            margin-top: 10px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .fortune-type { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 0.8rem; letter-spacing: 4px; margin-bottom: 15px; opacity: 0.8; }
+        .fortune-summary { font-size: 1.4rem; font-weight: 700; line-height: 1.5; color: #fff; }
+
+        /* 상세 섹션 리스트 */
+        #detailsList { margin-top: 25px; display: flex; flex-direction: column; gap: 20px; }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid #ffd700;
+            border-radius: 15px;
+            padding: 20px;
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
         }
 
-        .fortune-type {
-            font-family: 'Cinzel Decorative';
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .detail-label {
             color: #ffd700;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .fortune-summary {
-            font-size: 1.3rem;
             font-weight: 700;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 30px;
-            line-height: 1.4;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .fortune-content {
+        .detail-text {
             font-size: 1.05rem;
-            line-height: 1.9;
-            color: #ddd;
-            white-space: pre-wrap; /* AI가 준 줄바꿈 유지 */
+            line-height: 1.8;
+            color: #ccc;
+            white-space: pre-wrap;
             text-align: justify;
         }
 
-        /* 버튼 섹션 */
-        .action-group {
-            margin-top: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .btn {
-            padding: 16px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            text-align: center;
-            transition: 0.3s;
-            text-decoration: none;
-        }
-
-        .btn-main {
-            background: linear-gradient(45deg, #ffd700, #ffae00);
-            color: #000;
-            border: none;
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .btn-sub {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
+        .action-group { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; }
+        .btn { padding: 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; text-align: center; transition: 0.3s; text-decoration: none; border: none; }
+        .btn-main { background: linear-gradient(45deg, #ffd700, #ffae00); color: #000; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3); }
+        .btn-sub { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
         .btn:hover { transform: translateY(-3px); opacity: 0.9; }
 
         footer { text-align: center; margin-top: 50px; color: #444; font-size: 0.8rem; padding-bottom: 30px; }
 
-        /* 로딩 애니메이션 */
-        #loadingOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0a0a12; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 1000;
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 3px solid rgba(255, 215, 0, 0.2);
-            border-top: 3px solid #ffd700; border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a12; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255, 215, 0, 0.2); border-top: 3px solid #ffd700; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        
         .hidden { display: none !important; }
     </style>
 </head>
@@ -144,7 +94,7 @@
 
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; color: #ffd700; letter-spacing: 1px;">กำลังเปิดคำทำนาย...</p>
+        <p style="margin-top: 20px; color: #ffd700;">กำลังเปิดบันทึกโชคชะตา...</p>
     </div>
 
     <div class="magic-background"></div>
@@ -153,22 +103,21 @@
         <header>
             <div class="logo" onclick="location.href='/'">✨ MURDOO K</div>
             <div class="profile-container" onclick="location.href='/profile'">
-                <img id="userProfileImg" src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="Profile">
+                <img id="userProfileImg" src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png">
             </div>
         </header>
 
         <main>
-            <div class="result-card">
-                <div class="fortune-type" id="fortuneType">Destiny</div>
-                <div class="fortune-summary" id="fortuneSummary">กำลังเตรียมคำทำนาย...</div>
-                <div class="fortune-content" id="fortuneContent">
-                    คำทำนายของคุณกำลังถูกดึงมาจากดวงดาว...
-                </div>
+            <div class="summary-card">
+                <div class="fortune-type" id="fortuneType">...</div>
+                <div class="fortune-summary" id="fortuneSummary">เตรียมรับคำทำนาย...</div>
+            </div>
 
-                <div class="action-group">
-                    <button class="btn btn-main" onclick="location.href='/'">ดูดวงหัวข้ออื่น (다른 사주 보기)</button>
-                    <button class="btn btn-sub" onclick="shareResult()">แชร์คำทำนาย (결과 공유하기)</button>
-                </div>
+            <div id="detailsList"></div>
+
+            <div class="action-group">
+                <button class="btn btn-main" onclick="location.href='/'">ดูดวงอื่นต่อ (다른 사주 보기)</button>
+                <button class="btn btn-sub" onclick="shareResult()">แชร์ผลทำนาย (결과 공유하기)</button>
             </div>
         </main>
 
@@ -178,67 +127,75 @@
     </div>
 
     <script>
+        // 섹터 키값에 따른 태국어 레이블 매핑 (GOP 작전 지침)
+        const labelMap = {
+            outward_features: "🎭 ลักษณะภายนอก (특징)",
+            inward_features: "🧠 ลักษณะภายใน (내면)",
+            strengths: "🌟 จุดแข็งของคุณ (장점)",
+            weaknesses: "⚠️ จุดที่ควรปรับปรุง (단점)",
+            cautions: "🚫 ข้อควรระวัง (조심할 점)",
+            cash_flow: "💰 การไหลเวียนของเงิน (재물운)",
+            career_luck: "💼 ดวงการงาน (직장운)",
+            lucky_timing: "📅 ช่วงเวลาโชคดี (행운의 시기)",
+            wealth_tips: "💡 เคล็ดลับดึงดูดทรัพย์ (재물 팁)",
+            love_style: "❤️ สไตล์ความรัก (연애 스타일)",
+            soulmate_type: "👩‍❤️‍👨 ลักษณะเนื้อคู่ (인연)",
+            romance_timing: "🏹 จังหวะพบรัก (연애 시기)",
+            love_advice: "💌 คำแนะนำความรัก (연애 조언)"
+        };
+
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const loadingOverlay = document.getElementById('loadingOverlay');
-            
-            // 1. URL에서 resultId 추출 (/result/abcd-1234 -> abcd-1234)
             const resultId = window.location.pathname.split('/').pop();
 
-            // 2. 유저 프로필 초기화 (헤더용)
-            const initUser = async () => {
-                try {
-                    const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
-                    if (res.ok) {
-                        const user = await res.json();
-                        document.getElementById('userProfileImg').src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
-                    }
-                } catch (e) { console.error(e); }
-            };
-
-            // 3. 사주 결과 데이터 가져오기
-            const loadResult = async () => {
-                try {
-                    const res = await fetch(`/api/fortune/result/${resultId}`, {
-                        headers: { 'x-api-key': API_KEY }
-                    });
-                    
-                    if (res.ok) {
-                        const data = await res.json();
-                        
-                        document.getElementById('fortuneType').innerText = data.fortune_type;
-                        document.getElementById('fortuneSummary').innerText = data.summary;
-                        document.getElementById('fortuneContent').innerText = data.content;
-                        
-                        // 데이터 로드 완료 후 로딩창 제거
-                        setTimeout(() => {
-                            loadingOverlay.classList.add('hidden');
-                        }, 500);
-                    } else {
-                        document.getElementById('fortuneSummary').innerText = "ไม่พบข้อมูล";
-                        document.getElementById('fortuneContent').innerText = "ขออภัย ไม่พบข้อมูลคำทำนายที่คุณ 요청";
-                        loadingOverlay.classList.add('hidden');
-                    }
-                } catch (err) {
-                    console.error("Fetch Error:", err);
-                    loadingOverlay.classList.add('hidden');
+            try {
+                // 1. 프로필 정보 로드
+                const profileRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
+                if (profileRes.ok) {
+                    const user = await profileRes.json();
+                    document.getElementById('userProfileImg').src = user.profile_img;
                 }
-            };
 
-            await initUser();
-            await loadResult();
+                // 2. 사주 결과 로드
+                const res = await fetch(`/api/fortune/result/${resultId}`, { headers: { 'x-api-key': API_KEY } });
+                const data = await res.json();
+
+                if (res.ok) {
+                    document.getElementById('fortuneType').innerText = data.fortune_type.toUpperCase();
+                    document.getElementById('fortuneSummary').innerText = data.summary;
+
+                    const listContainer = document.getElementById('detailsList');
+                    
+                    // JSON 내의 각 섹터를 루프 돌며 카드 생성
+                    Object.entries(data.details).forEach(([key, value], index) => {
+                        const item = document.createElement('div');
+                        item.className = 'detail-item';
+                        item.style.animationDelay = `${(index + 1) * 0.2}s`; // 순차적으로 등장
+
+                        const label = labelMap[key] || key.replace('_', ' ').toUpperCase();
+                        
+                        item.innerHTML = `
+                            <div class="detail-label">${label}</div>
+                            <div class="detail-text">${value}</div>
+                        `;
+                        listContainer.appendChild(item);
+                    });
+
+                    setTimeout(() => loadingOverlay.classList.add('hidden'), 800);
+                }
+            } catch (err) {
+                console.error(err);
+                loadingOverlay.classList.add('hidden');
+            }
         });
 
-        // 결과 공유 함수 (임시)
         function shareResult() {
             if (navigator.share) {
-                navigator.share({
-                    title: 'MURDOO K - คำทำนายของฉัน',
-                    url: window.location.href
-                }).catch(console.error);
+                navigator.share({ title: 'MURDOO K - ดวงชะตาของฉัน', url: window.location.href });
             } else {
-                alert("คัดลอกลิงก์แล้ว! (링크가 복사되었습니다)");
                 navigator.clipboard.writeText(window.location.href);
+                alert("คัดลอกลิงก์เรียบร้อยแล้ว!");
             }
         }
     </script>

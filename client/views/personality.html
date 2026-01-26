@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MURDOO K - วิเคราะห์ตัวตน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 배경 및 폰트 (Home.html과 통일) */
+        body {
+            margin: 0; padding: 0;
+            background-color: #0a0a12;
+            color: white;
+            font-family: 'Niramit', sans-serif;
+            min-height: 100vh;
+        }
+
+        .magic-background {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+        }
+
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; margin-bottom: 20px;
+        }
+
+        .logo { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.2rem; cursor: pointer; }
+
+        .profile-container {
+            width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+            border: 2px solid #ffd700; cursor: pointer;
+        }
+        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 입력 카드 스타일 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 { font-family: 'Cinzel Decorative'; color: #ffd700; text-align: center; margin-top: 0; }
+        p.desc { text-align: center; color: #aaa; font-size: 0.9rem; margin-bottom: 30px; }
+
+        .field { margin-bottom: 20px; }
+        label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; }
+
+        input, select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+            outline: none;
+        }
+        input:focus, select:focus { border-color: #ffd700; }
+
+        .dropdown-group { display: flex; gap: 10px; }
+        .dropdown-group select { flex: 1; }
+
+        /* 시간 모름 버튼 */
+        .unknown-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .unknown-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ccc;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .unknown-btn.active { background: #ffd700; color: #000; border-color: #ffd700; }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ffd700, #ffae00);
+            color: #000;
+            border: none;
+            padding: 15px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="magic-background"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo" onclick="location.href='/'">✨ MURDOO K</div>
+            <div class="profile-container" onclick="location.href='/profile'">
+                <img id="userProfileImg" src="" alt="Profile">
+            </div>
+        </header>
+
+        <main>
+            <div class="glass-card">
+                <h2>Personality</h2>
+                <p class="desc">วิเคราะห์ตัวตนผ่านดวงดาว (성격 분석)</p>
+
+                <form id="personalityForm">
+                    <div class="field">
+                        <label>ชื่อจริง (Name)</label>
+                        <input type="text" id="realName" placeholder="ระบุชื่อจริง" required>
+                    </div>
+                    <div class="field">
+                        <label>ชื่อเล่น (Nickname)</label>
+                        <input type="text" id="nickName" placeholder="ระบุชื่อเล่น" required>
+                    </div>
+
+                    <div class="field">
+                        <label>วันเดือนปีเกิด (Date of Birth)</label>
+                        <div class="dropdown-group">
+                            <select id="birthDay" required></select>
+                            <select id="birthMonth" required>
+                                <option value="01">ม.ค. (Jan)</option>
+                                <option value="02">ก.พ. (Feb)</option>
+                                <option value="03">มี.ค. (Mar)</option>
+                                <option value="04">เม.ย. (Apr)</option>
+                                <option value="05">พ.ค. (May)</option>
+                                <option value="06">มิ.ย. (Jun)</option>
+                                <option value="07">ก.ค. (Jul)</option>
+                                <option value="08">ส.ค. (Aug)</option>
+                                <option value="09">ก.ย. (Sep)</option>
+                                <option value="10">ต.ค. (Oct)</option>
+                                <option value="11">พ.ย. (Nov)</option>
+                                <option value="12">ธ.ค. (Dec)</option>
+                            </select>
+                            <select id="birthYear" required></select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>เวลาเกิด (Birth Time)</label>
+                        <div class="dropdown-group" id="timeSelectors">
+                            <select id="birthHour" required></select>
+                            <select id="birthMin" required></select>
+                        </div>
+                        <div class="unknown-row">
+                            <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลา (시간 모름)</button>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>เพศ (Gender Identity)</label>
+                        <select id="gender" required>
+                            <option value="" disabled selected>เลือกเพศ</option>
+                            <option value="male">ชาย (Male)</option>
+                            <option value="female">หญิง (Female)</option>
+                            <option value="tom">ทอม (Tom)</option>
+                            <option value="ladyboy">กะเทย (Ladyboy)</option>
+                            <option value="gay">เกย์ (Gay)</option>
+                            <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
+                            <option value="other">อื่นๆ (Other)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="submit-btn">วิเคราะห์เลย</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const profileImg = document.getElementById('userProfileImg');
+            const daySel = document.getElementById('birthDay');
+            const yearSel = document.getElementById('birthYear');
+            const hourSel = document.getElementById('birthHour');
+            const minSel = document.getElementById('birthMin');
+            const unknownBtn = document.getElementById('unknownTimeBtn');
+            const form = document.getElementById('personalityForm');
+
+            let isTimeUnknown = false;
+
+            // [1] 유저 프로필 로드
+            const initUser = async () => {
+                try {
+                    const res = await fetch('/api/user/profile', {
+                        headers: { 'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j' }
+                    });
+                    if (res.ok) {
+                        const user = await res.json();
+                        profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+                    }
+                } catch (e) { console.error(e); }
+            };
+            await initUser();
+
+            // [2] 드롭다운 옵션 생성
+            for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
+            const curYear = new Date().getFullYear();
+            for(let i=curYear; i>=1900; i--) yearSel.add(new Option(i, i));
+            for(let i=0; i<24; i++) hourSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
+            for(let i=0; i<60; i++) minSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
+
+            // [3] 시간 모름 버튼 토글
+            unknownBtn.addEventListener('click', () => {
+                isTimeUnknown = !isTimeUnknown;
+                unknownBtn.classList.toggle('active');
+                hourSel.disabled = isTimeUnknown;
+                minSel.disabled = isTimeUnknown;
+                if(isTimeUnknown) {
+                    hourSel.style.opacity = '0.3';
+                    minSel.style.opacity = '0.3';
+                } else {
+                    hourSel.style.opacity = '1';
+                    minSel.style.opacity = '1';
+                }
+            });
+
+            // [4] 폼 제출
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const birthTime = isTimeUnknown ? "unknown" : `${hourSel.value}:${minSel.value}`;
+                const data = {
+                    type: 'personality',
+                    realName: document.getElementById('realName').value,
+                    nickName: document.getElementById('nickName').value,
+                    birthDate: `${yearSel.value}-${document.getElementById('birthMonth').value}-${daySel.value}`,
+                    birthTime: birthTime,
+                    gender: document.getElementById('gender').value
+                };
+
+                console.log("🔮 분석 요청 데이터:", data);
+                alert("วิเคราะห์ข้อมูลของคุณแล้ว... (분석 페이지로 이동 예정)");
+                // window.location.href = '/result?type=personality&data=' + btoa(JSON.stringify(data));
+            });
+        });
+    </script>
+</body>
+</html>

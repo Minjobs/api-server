@@ -105,7 +105,7 @@
 
         /* [로딩 섹션 스타일] */
         #loadingSection {
-            display: none; /* 기본 숨김 */
+            display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
@@ -140,7 +140,6 @@
         .loading-title { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.8rem; margin-bottom: 15px; }
         .loading-desc { color: #888; font-size: 1rem; line-height: 1.6; letter-spacing: 1px; }
 
-        /* [애니메이션 공통] */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -188,6 +187,15 @@
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">มกราคม (Jan)</option>
                                 <option value="02">กุมภาพันธ์ (Feb)</option>
+                                <option value="03">มีนาคม (Mar)</option>
+                                <option value="04">เมษายน (Apr)</option>
+                                <option value="05">พฤษภาคม (May)</option>
+                                <option value="06">มิถุนายน (Jun)</option>
+                                <option value="07">กรกฎาคม (Jul)</option>
+                                <option value="08">สิงหาคม (Aug)</option>
+                                <option value="09">กันยายน (Sep)</option>
+                                <option value="10">ตุลาคม (Oct)</option>
+                                <option value="11">พฤศจิกายน (Nov)</option>
                                 <option value="12">ธันวาคม (Dec)</option>
                             </select>
                             <select id="birthYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
@@ -209,6 +217,10 @@
                             <option value="" disabled selected>เลือกเพศ</option>
                             <option value="male">ชาย (Male)</option>
                             <option value="female">หญิง (Female)</option>
+                            <option value="tom">ทอม (Tom)</option>
+                            <option value="ladyboy">กะเทย (Kathoey)</option>
+                            <option value="gay">เกย์ (Gay)</option>
+                            <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
                             <option value="other">อื่นๆ (Other)</option>
                         </select>
                     </div>
@@ -244,7 +256,7 @@
             const loadingSection = document.getElementById('loadingSection');
             const form = document.getElementById('fortuneForm');
 
-            // [1] 초기 텍스트 및 프로필 설정
+            // [1] 제목 및 설명 설정
             const config = {
                 personality: { title: "Personality", desc: "วิเคราะห์ตัวตนที่แท้จริงของคุณ จุดแข็ง จุดอ่อน และนิสัยที่ถูกลิขิตไว้โดยดวงดาว" },
                 wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงิน โชคลาภ และโอกาสแห่งความมั่งคั่งที่จะเข้ามาในชีวิตคุณ" },
@@ -254,7 +266,7 @@
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // 프로필 로드
+            // [2] 프로필 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -263,18 +275,24 @@
                 }
             } catch (e) { console.error(e); }
 
-            // [2] 드롭다운 옵션 생성
+            // [3] 드롭다운 옵션 생성
             const daySel = document.getElementById('birthDay');
             const yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour');
             const minSel = document.getElementById('birthMin');
 
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
-            for(let i=2026; i>=1900; i--) yearSel.add(new Option(i, i));
+            for(let i=new Date().getFullYear(); i>=1900; i--) yearSel.add(new Option(i, i));
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
-            // [3] 시간 모름 토글
+            // [4] 태국어 경고 메시지
+            form.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('invalid', (e) => e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"));
+                el.addEventListener('input', (e) => e.target.setCustomValidity(""));
+            });
+
+            // [5] 시간 모름 버튼
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -286,14 +304,12 @@
                 if(isTimeUnknown) { hourSel.selectedIndex = 0; minSel.selectedIndex = 0; }
             });
 
-            // [4] 제출 및 로딩 제어
+            // [6] 제출 및 로딩 제어
             let isSubmitting = false;
-
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (isSubmitting) return;
 
-                // 1. 데이터 먼저 확보
                 const payload = {
                     type: type,
                     realName: document.getElementById('realName').value,
@@ -303,12 +319,11 @@
                     gender: document.getElementById('gender').value
                 };
 
-                // 2. 화면 전환 (On/Off)
+                // 로딩 화면으로 전환 및 데이터 초기화
                 isSubmitting = true;
                 inputSection.classList.add('hidden');
                 loadingSection.classList.add('visible-flex');
-
-                // 3. 입력창 즉시 초기화
+                
                 form.reset();
                 document.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
 
@@ -318,22 +333,18 @@
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                         body: JSON.stringify(payload)
                     });
-
                     const result = await response.json();
 
                     if (response.ok && result.resultId) {
-                        // 결과 페이지로 리다이렉트
                         window.location.href = `/result/${result.resultId}`;
                     } else {
                         throw new Error('Analysis failed');
                     }
                 } catch (err) {
                     console.error("Error:", err);
-                    alert("เกิดข้อผิดพลาดในการวิเคราะห์ โปรดลองใหม่อีกครั้ง");
-                    // 실패 시 다시 폼으로 복구
+                    alert("ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ โปรดลองใหม่อีกครั้ง");
                     isSubmitting = false;
                     inputSection.classList.remove('hidden');
-                    loadingSection.classList.remove('hidden');
                     loadingSection.classList.remove('visible-flex');
                 }
             });

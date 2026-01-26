@@ -25,7 +25,6 @@
 
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
-        /* 헤더 스타일 */
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 0;
@@ -44,7 +43,7 @@
         }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 인트로 섹션 (Hook) */
+        /* 인트로 섹션 */
         .intro-section { text-align: center; margin-bottom: 30px; }
 
         .intro-tagline {
@@ -103,6 +102,10 @@
             border-radius: 20px; font-weight: 700; font-size: 1.1rem;
             margin-top: 25px; cursor: pointer;
             box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+            transition: all 0.3s;
+        }
+        .submit-btn:disabled {
+            background: #444; color: #888; cursor: not-allowed; box-shadow: none;
         }
 
         footer { text-align: center; margin-top: 40px; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
@@ -199,11 +202,9 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // [1] 페이지 타입 판별 (URL 경로 기준)
             const path = window.location.pathname;
             const type = path.split('/').pop() || 'personality';
 
-            // [2] 카테고리별 태국어 텍스트 설정
             const config = {
                 personality: {
                     title: "Personality",
@@ -223,7 +224,6 @@
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // [3] 유저 프로필 초기화
             const profileImg = document.getElementById('userProfileImg');
             const initUser = async () => {
                 try {
@@ -238,7 +238,6 @@
             };
             await initUser();
 
-            // [4] 드롭다운 옵션 생성 (일, 년, 시, 분)
             const daySel = document.getElementById('birthDay');
             const yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour');
@@ -250,7 +249,6 @@
             for(let i=0; i<24; i++) { let v = i < 10 ? `0${i}` : i; hourSel.add(new Option(v, v)); }
             for(let i=0; i<60; i++) { let v = i < 10 ? `0${i}` : i; minSel.add(new Option(v, v)); }
 
-            // [5] 태국어 커스텀 경고 메시지 (Custom Validity)
             const form = document.getElementById('fortuneForm');
             const setThaiValidation = (el) => {
                 el.addEventListener('invalid', (e) => e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"));
@@ -258,7 +256,6 @@
             };
             form.querySelectorAll('input, select').forEach(el => setThaiValidation(el));
 
-            // [6] 시간 모름 로직
             let isTimeUnknown = false;
             const unknownBtn = document.getElementById('unknownTimeBtn');
             unknownBtn.addEventListener('click', () => {
@@ -273,9 +270,17 @@
                 }
             });
 
-            // [7] 폼 제출
-            form.addEventListener('submit', (e) => {
+            // [변경 포인트] 폼 제출 로직 서버 연동
+            form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                const submitBtn = document.getElementById('submitBtn');
+                const originalText = submitBtn.innerText;
+                
+                // 1. 로딩 상태 표시
+                submitBtn.innerText = "⏳ กำลังวิเคราะห์ดวงชะตา...";
+                submitBtn.disabled = true;
+
                 const payload = {
                     type: type,
                     realName: document.getElementById('realName').value,
@@ -284,10 +289,32 @@
                     birthTime: isTimeUnknown ? "unknown" : `${hourSel.value}:${minSel.value}`,
                     gender: document.getElementById('gender').value
                 };
-                
-                console.log("Submit Payload:", payload);
-                // 분석 페이지로 이동 (데이터는 Base64 인코딩하여 전달)
-                window.location.href = `/result?type=${type}&data=${btoa(encodeURIComponent(JSON.stringify(payload)))}`;
+
+                try {
+                    // 2. 서버에 AI 분석 요청 (POST)
+                    const response = await fetch('/api/fortune/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.resultId) {
+                        // 3. 성공 시 결과 페이지로 이동 (Primary Key 포함)
+                        window.location.href = `/result/${result.resultId}`;
+                    } else {
+                        throw new Error(result.error || 'การวิเคราะห์ล้มเหลว');
+                    }
+                } catch (err) {
+                    console.error("Analysis Error:", err);
+                    alert("ขออภัย เกิดข้อผิดพลาดในการวิเคราะห์ โปรดลองใหม่อีกครั้ง");
+                    submitBtn.innerText = originalText;
+                    submitBtn.disabled = false;
+                }
             });
         });
     </script>

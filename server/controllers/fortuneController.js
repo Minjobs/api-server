@@ -4,12 +4,6 @@ import db from '../config/db.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-import { v4 as uuidv4 } from 'uuid';
-import OpenAI from 'openai';
-import db from '../config/db.js';
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-
 export const analyzeFortune = async (req, res) => {
     try {
         const { type, realName, nickName, birthDate, birthTime, gender } = req.body;

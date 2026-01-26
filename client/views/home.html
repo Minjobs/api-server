@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
     <style>
-        /* [แก้ไข] สไตล์ส่วนหัวและปุ่มโปรไฟล์ */
+        /* [수정] 헤더 및 프로필 전용 스타일 */
         header {
             display: flex;
             justify-content: space-between;
@@ -18,49 +18,32 @@
         .user-nav {
             display: flex;
             align-items: center;
-            gap: 12px;
         }
 
-        /* ทำให้คอนเทนเนอร์รูปภาพเป็นปุ่มที่คลิกได้ */
+        /* 프로필 사진 컨테이너: 이제 유일한 내비게이션 요소입니다 */
         .profile-container {
-            width: 42px;
-            height: 42px;
+            width: 48px; /* 크기를 약간 키워 존재감을 줬습니다 */
+            height: 48px;
             border-radius: 50%;
             overflow: hidden;
             border: 2px solid #ffd700; 
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
             background: rgba(255, 255, 255, 0.1);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: all 0.3s ease;
         }
 
+        /* 호버 시 신비로운 광채 효과 */
         .profile-container:hover {
             transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            border-color: #fff;
         }
 
         .profile-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* สไตล์ปุ่มโปรไฟล์ใหม่ */
-        #profileBtn {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: #ffd700;
-            padding: 7px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        #profileBtn:hover {
-            background: rgba(255, 215, 0, 0.2);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-            border-color: #ffd700;
         }
     </style>
 </head>
@@ -77,10 +60,9 @@
         <header>
             <div class="logo">✨ MURDOO K</div>
             <div class="user-nav">
-                <div class="profile-container" onclick="location.href='/profile'">
+                <div class="profile-container" onclick="location.href='/profile'" title="내 프로필 보기">
                     <img id="userProfileImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile">
                 </div>
-                <button id="profileBtn" onclick="location.href='/profile'">โปรไฟล์ (Profile)</button>
             </div>
         </header>
 
@@ -108,16 +90,16 @@
                             <select id="birthMonth" required><option value="" disabled selected>เดือน</option>
                                 <option value="01">มกราคม (Jan)</option>
                                 <option value="02">กุมภาพันธ์ (Feb)</option>
-                                <option value="03">มีนาคม (Mar)</option>
-                                <option value="04">เมษายน (Apr)</option>
-                                <option value="05">พฤษภาคม (May)</option>
-                                <option value="06">มิถุนายน (Jun)</option>
-                                <option value="07">กรกฎาคม (Jul)</option>
-                                <option value="08">สิงหาคม (Aug)</option>
-                                <option value="09">กันยายน (Sep)</option>
-                                <option value="10">ตุลาคม (Oct)</option>
-                                <option value="11">พฤศจิกายน (Nov)</option>
-                                <option value="12">ธันวาคม (Dec)</option>
+                                <option value="03">미나คม (Mar)</option>
+                                <option value="04">메사욘 (Apr)</option>
+                                <option value="05">프르사파콤 (May)</option>
+                                <option value="06">미투나욘 (Jun)</option>
+                                <option value="07">가라가다콤 (Jul)</option>
+                                <option value="08">싱하콤 (Aug) </option>
+                                <option value="09">깐야욘 (Sep)</option>
+                                <option value="10">뚤라콤 (Oct)</option>
+                                <option value="11">프르스찌까욘 (Nov)</option>
+                                <option value="12">탄와콤 (Dec)</option>
                             </select>
                             <select id="birthYear" required><option value="" disabled selected>ปี (ค.ศ.)</option></select>
                         </div>
@@ -135,14 +117,14 @@
                     <div class="field">
                         <label>เพศ (Gender Identity)</label>
                         <select id="gender" required>
-                            <option value="" disabled selected>เลือกเพศ</option>
+                            <option value="" disabled selected>선택</option>
                             <option value="male">ชาย (Male)</option>
                             <option value="female">หญิง (Female)</option>
                             <option value="tom">ทอม (Tom)</option>
                             <option value="ladyboy">กะเทย (Kathoey)</option>
                             <option value="gay">เกย์ (Gay)</option>
-                            <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
-                            <option value="other">อื่นๆ (Other)</option>
+                            <option value="lesbian">เล스비언 (Lesbian)</option>
+                            <option value="other">기타 (Other)</option>
                         </select>
                     </div>
 
@@ -160,13 +142,13 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const profileImg = document.getElementById('userProfileImg');
             
-            // [1] ฟังก์ชันดึงข้อมูลโปรไฟล์
+            // [1] 유저 데이터 및 프로필 이미지 초기화
             const initUser = async () => {
                 try {
                     const res = await fetch('/api/user/profile', {
                         method: 'GET',
                         headers: {
-                            // [สำคัญ] ใส่ API KEY ของคุณที่นี่
+                            // [주의] 실제 서버 API KEY를 사용하세요
                             'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j',
                             'Content-Type': 'application/json'
                         }
@@ -174,20 +156,16 @@
 
                     if (res.ok) {
                         const user = await res.json();
-                        
-                        // ใช้ Google Default Avatar หากไม่มีรูปโปรไฟล์
                         const googleDefaultAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
 
                         profileImg.src = user.profile_img || googleDefaultAvatar;
 
-                        // ป้องกันรูปภาพโหลดเสีย
                         profileImg.onerror = () => {
                             profileImg.src = googleDefaultAvatar;
                             profileImg.onerror = null;
                         };
-
                     } else {
-                        console.error('인증 실패 혹은 API Key 불일치');
+                        console.error('인증 실패');
                         window.location.href = '/login';
                     }
                 } catch (err) {
@@ -197,7 +175,7 @@
 
             await initUser();
 
-            // --- ส่วนของฟอร์ม (Dropdown Generation) ---
+            // --- 폼 로직: 드롭다운 생성 ---
             const form = document.getElementById('fortuneForm');
             const daySel = document.getElementById('birthDay');
             const yearSel = document.getElementById('birthYear');
@@ -214,6 +192,7 @@
             for (let i = 0; i < 24; i++) hourSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
             for (let i = 0; i < 60; i++) minSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
 
+            // 시간 모름 버튼
             unknownBtn.addEventListener('click', () => {
                 isTimeUnknown = !isTimeUnknown;
                 const controls = [daySel, monthSel, yearSel, hourSel, minSel];
@@ -228,7 +207,7 @@
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                alert('วิเคราะห์ดวงชะตาของคุณเรียบร้อยแล้ว...');
+                alert('위대한 운명의 분석이 시작되었습니다...');
             });
         });
     </script>

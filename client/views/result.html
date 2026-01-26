@@ -6,31 +6,21 @@
     <title>MURDOO K - ผลทำนายดวงชะตาของคุณ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Sarabun:wght@300;400;500;600&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-gold: #b8860b;
-            --dark-gold: #8b6508;
-            --bg-bright: #f8f9fa;
-            --card-white: #ffffff;
-            --text-main: #2d3436;
-            --text-sub: #636e72;
-        }
-
+        /* --- [1] 전체 배경: 다시 다크 테마로 --- */
         body {
             margin: 0; padding: 0;
-            background-color: var(--bg-bright);
-            color: var(--text-main);
-            /* 태국어 가독성 표준 Sarabun 폰트 적용 */
+            background-color: #0a0a12;
+            color: white;
             font-family: 'Sarabun', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* 밝고 고급스러운 그라데이션 배경 */
         .magic-background {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
         }
 
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
@@ -38,31 +28,30 @@
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
         .logo { 
             font-family: 'Cinzel Decorative'; 
-            color: var(--primary-gold); font-size: 1.2rem; cursor: pointer;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            color: #ffd700; font-size: 1.2rem; cursor: pointer;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
         .profile-container { 
             width: 42px; height: 42px; border-radius: 50%; overflow: hidden; 
-            border: 2px solid var(--primary-gold); cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border: 2px solid #ffd700; cursor: pointer;
         }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 결과 상단 요약 카드 (밝게 변경) */
+        /* --- [2] 결과 박스: 화이트로 돋보이게 --- */
         .summary-card {
-            background: var(--card-white);
-            border: 1px solid rgba(184, 134, 11, 0.2);
+            background: #ffffff; /* 흰색 박스 */
             border-radius: 30px;
             padding: 35px 25px;
             margin-top: 10px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            color: #222; /* 텍스트는 어둡게 */
         }
 
         .fortune-type { 
             font-family: 'Kanit'; 
-            color: var(--primary-gold); 
+            color: #b8860b; 
             font-size: 0.8rem; 
             letter-spacing: 3px; 
             margin-bottom: 15px; 
@@ -74,30 +63,28 @@
             font-size: 1.35rem; 
             font-weight: 700; 
             line-height: 1.5; 
-            color: var(--text-main); 
+            color: #222; 
         }
 
         /* 상세 섹션 리스트 */
         #detailsList { margin-top: 25px; display: flex; flex-direction: column; gap: 20px; }
 
         .detail-item {
-            background: var(--card-white);
-            border-left: 5px solid var(--primary-gold);
+            background: #ffffff; /* 흰색 박스 */
+            border-left: 5px solid #ffd700;
             border-radius: 18px;
             padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
-            border-top: 1px solid #f1f1f1;
-            border-right: 1px solid #f1f1f1;
-            border-bottom: 1px solid #f1f1f1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             animation: fadeIn 0.7s ease-out forwards;
             opacity: 0;
+            color: #333; /* 텍스트는 어둡게 */
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .detail-label {
             font-family: 'Kanit';
-            color: var(--dark-gold);
+            color: #b8860b;
             font-weight: 600;
             font-size: 1.05rem;
             margin-bottom: 12px;
@@ -107,37 +94,37 @@
         }
 
         .detail-text {
-            /* 띄어쓰기 문제를 해결하기 위해 left 정렬 유지 */
-            text-align: left; 
-            font-size: 0.95rem; /* 글자 크기 약간 줄임 */
-            line-height: 1.8; /* 태국어 가독성을 위해 줄간격 확보 */
-            color: var(--text-sub);
+            text-align: left; /* 태국어 띄어쓰기 꼬임 방지 */
+            font-size: 0.95rem; /* 글자 크기 최적화 */
+            line-height: 1.8; 
+            color: #555;
             white-space: pre-wrap;
             word-break: break-word;
         }
 
+        /* 버튼 및 기타 요소 */
         .action-group { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; }
         .btn { padding: 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; text-align: center; transition: 0.3s; text-decoration: none; border: none; font-family: 'Kanit'; }
         
         .btn-main { 
-            background: linear-gradient(45deg, var(--primary-gold), var(--dark-gold)); 
-            color: #fff; 
-            box-shadow: 0 5px 20px rgba(184, 134, 11, 0.3); 
+            background: linear-gradient(45deg, #ffd700, #ffae00); 
+            color: #000; 
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3); 
         }
         
         .btn-sub { 
-            background: #f1f2f6; 
-            color: var(--text-sub); 
-            border: 1px solid #dfe4ea;
+            background: rgba(255, 255, 255, 0.1); 
+            color: #fff; 
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .btn:hover { transform: translateY(-3px); opacity: 0.95; }
+        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
 
-        footer { text-align: center; margin-top: 50px; color: #a4b0be; font-size: 0.8rem; padding-bottom: 40px; }
+        footer { text-align: center; margin-top: 50px; color: #444; font-size: 0.8rem; padding-bottom: 40px; }
 
-        /* 로딩 오버레이 (밝은색 버전) */
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .spinner { width: 45px; height: 45px; border: 3px solid #f1f1f1; border-top: 3px solid var(--primary-gold); border-radius: 50%; animation: spin 1s linear infinite; }
+        /* 로딩창도 다시 다크하게 */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a12; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        .spinner { width: 45px; height: 45px; border: 3px solid rgba(255, 215, 0, 0.2); border-top: 3px solid #ffd700; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
     </style>
@@ -146,7 +133,7 @@
 
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; color: var(--primary-gold); font-family: 'Kanit';">กำลังเปิดบันทึกโชคชะตาของคุณ...</p>
+        <p style="margin-top: 20px; color: #ffd700; font-family: 'Kanit';">กำลังเปิดบันทึกโชคชะตา...</p>
     </div>
 
     <div class="magic-background"></div>
@@ -168,28 +155,24 @@
             <div id="detailsList"></div>
 
             <div class="action-group">
-                <button class="btn btn-main" onclick="location.href='/'">ดูดวงอื่นต่อ (다른 사주 보기)</button>
-                <button class="btn btn-sub" onclick="shareResult()">แชร์ผลทำนาย (결과 공유하기)</button>
+                <button class="btn btn-main" onclick="location.href='/'">ดูดวงอื่นต่อ</button>
+                <button class="btn btn-sub" onclick="shareResult()">แชร์ผลทำนาย</button>
             </div>
         </main>
 
         <footer>
-            <p>© 2026 MURDOO K. ลิขิตแห่งดวงดาวที่ถูกจารึก</p>
+            <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตาที่ถูกลิขิต</p>
         </footer>
     </div>
 
     <script>
-        // 최신 백엔드 7개 섹터 키값 반영
         const labelMap = {
-            outward: "🎭 ลักษณะภายนอก (성격)",
-            inward: "🧠 ภายในจิตใจ (내면)",
-            strengths: "🌟 จุดแข็งของคุณ (장점)",
-            weaknesses: "⚠️ จุดที่ควรปรับปรุง (단점)",
-            cautions: "🚫 ข้อควรระวัง (주의사항)",
-            boosters: "✨ เคล็ดลับเสริมดวง (행운 가이드)",
-            // 기존 키값 호환용 (혹시 몰라서 유지)
-            outward_features: "🎭 ลักษณะภายนอก (특징)",
-            inward_features: "🧠 ลักษณะภายใน (내면)",
+            outward: "🎭 ลักษณะภายนอก",
+            inward: "🧠 ภายในจิตใจ",
+            strengths: "🌟 จุดแข็งของคุณ",
+            weaknesses: "⚠️ จุดที่ควรปรับปรุง",
+            cautions: "🚫 ข้อควรระวัง",
+            boosters: "✨ เคล็ดลับเสริมดวง"
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -239,7 +222,7 @@
 
         function shareResult() {
             if (navigator.share) {
-                navigator.share({ title: 'MURDOO K - ดวงชะตาของฉัน', url: window.location.href });
+                navigator.share({ title: 'MURDOO K', url: window.location.href });
             } else {
                 navigator.clipboard.writeText(window.location.href);
                 alert("คัดลอกลิงก์เรียบร้อยแล้ว!");

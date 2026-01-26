@@ -6,6 +6,35 @@
     <title>MEODU K - ข้อมูลของท่าน</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/profile.css">
+    <style>
+        /* 히스토리 버튼 스타일 */
+        .history-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #ffd700, #ffae00);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .history-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        }
+        .info-grid { margin-top: 30px; }
+        
+        /* 로직 에러 방지를 위해 요소는 유지하되 UI에서 숨김 처리 */
+        .hidden-field { display: none !important; }
+    </style>
     <script src="/js/pages/profile.js" defer></script>
 </head>
 <body>
@@ -35,27 +64,33 @@
                     </div>
                 </div>
 
+                <button class="history-btn" onclick="location.href='/history'">
+                    📜 ดูประวัติโชคชะตา (Fortune History)
+                </button>
+
                 <div class="info-grid">
                     <div class="info-item">
                         <div class="label">ชื่อที่ใช้ในวิหาร (Line Name)</div>
                         <div class="value" id="displayName">-</div>
                     </div>
-                    <div class="info-item">
+
+                    <div class="info-item hidden-field">
                         <div class="label">ชื่อจริง (Real Name)</div>
                         <div class="value" id="realName">-</div>
                     </div>
-                    <div class="info-item">
+                    <div class="info-item hidden-field">
                         <div class="label">วันเดือนปีเกิด (Birth Date)</div>
                         <div class="value" id="birthDate">-</div>
                     </div>
-                    <div class="info-item">
+                    <div class="info-item hidden-field">
                         <div class="label">เวลาเกิด (Birth Time)</div>
                         <div class="value" id="birthTime">-</div>
                     </div>
-                    <div class="info-item">
+                    <div class="info-item hidden-field">
                         <div class="label">เพศ (Gender)</div>
                         <div class="value" id="gender">-</div>
                     </div>
+
                     <div class="info-item">
                         <div class="label">จำนวนครั้งที่ดูดวง (Total Readings)</div>
                         <div class="value" id="totalReadings">0 ครั้ง</div>
@@ -63,10 +98,7 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="action-btn primary" onclick="location.href='/'">
-                        แก้ไขข้อมูล / ดูดวงใหม่
-                    </button>
-                    <button class="action-btn secondary" onclick="location.href='/api/auth/logout'">
+                    <button class="action-btn secondary" style="width: 100%;" onclick="location.href='/api/auth/logout'">
                         ออกจากวิหาร (Logout)
                     </button>
                 </div>

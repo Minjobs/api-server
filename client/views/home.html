@@ -3,48 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - บันทึกแห่งโชคชะตา</title>
+    <title>MURDOO K - 선택의 문</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css">
     <style>
-        /* [수정] 헤더 및 프로필 전용 스타일 */
+        /* 카테고리 선택 카드 스타일 */
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 215, 0, 0.15);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-card h3 {
+            font-family: 'Cinzel Decorative', cursive;
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .category-card p {
+            color: #ccc;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* 프로필 이미지 스타일 유지 */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
         }
-
-        .user-nav {
-            display: flex;
-            align-items: center;
-        }
-
-        /* 프로필 사진 컨테이너: 이제 유일한 내비게이션 요소입니다 */
         .profile-container {
-            width: 48px; /* 크기를 약간 키워 존재감을 줬습니다 */
-            height: 48px;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #ffd700; 
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            background: rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
+            width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+            border: 2px solid #ffd700; cursor: pointer; transition: all 0.3s;
         }
-
-        /* 호버 시 신비로운 광채 효과 */
-        .profile-container:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
-            border-color: #fff;
-        }
-
-        .profile-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .profile-container:hover { transform: scale(1.1); box-shadow: 0 0 15px #ffd700; }
+        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -52,7 +74,6 @@
     <div class="magic-background">
         <div class="magic-ring ring-1"></div>
         <div class="magic-ring ring-2"></div>
-        <div class="magic-ring ring-3"></div>
         <div class="magic-runes">✨ 🔮 🌙 ☀️ 🌟 🌀 🕯️ 🌀 🌟 ☀️ 🌙 🔮 ✨</div>
     </div>
 
@@ -60,77 +81,37 @@
         <header>
             <div class="logo">✨ MURDOO K</div>
             <div class="user-nav">
-                <div class="profile-container" onclick="location.href='/profile'" title="내 프로필 보기">
+                <div class="profile-container" onclick="location.href='/profile'">
                     <img id="userProfileImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile">
                 </div>
             </div>
         </header>
 
         <main>
-            <section class="glass-card">
-                <h2>เปิดประตูแห่งโชคชะตา</h2>
-                <p class="subtitle">กรุณาระบุรหัสแห่งดวงดาวของคุณ</p>
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 style="font-family: 'Cinzel Decorative'; color: white; font-size: 2rem;">Choose Your Destiny</h2>
+                <p style="color: #aaa;">알고 싶은 운명의 갈래를 선택해 주세요.</p>
+            </div>
 
-                <form id="fortuneForm">
-                    <div class="input-row">
-                        <div class="field">
-                            <label>ชื่อจริง (Real Name)</label>
-                            <input type="text" id="realName" placeholder="กรอกชื่อจริง" required>
-                        </div>
-                        <div class="field">
-                            <label>ชื่อเล่น (Nickname)</label>
-                            <input type="text" id="nickName" placeholder="กรอกชื่อเล่น" required>
-                        </div>
-                    </div>
+            <div class="category-grid">
+                <div class="category-card" onclick="location.href='/personality'">
+                    <span class="category-icon">🎭</span>
+                    <h3>Personality</h3>
+                    <p>당신의 영혼이 가진 색깔과<br>타고난 성질을 분석합니다.</p>
+                </div>
 
-                    <div class="field">
-                        <label>วันเดือนปีเกิด (Date of Birth)</label>
-                        <div class="dropdown-group dob-group">
-                            <select id="birthDay" required><option value="" disabled selected>วันที่</option></select>
-                            <select id="birthMonth" required><option value="" disabled selected>เดือน</option>
-                                <option value="01">มกราคม (Jan)</option>
-                                <option value="02">กุมภาพันธ์ (Feb)</option>
-                                <option value="03">미나คม (Mar)</option>
-                                <option value="04">메사욘 (Apr)</option>
-                                <option value="05">프르사파콤 (May)</option>
-                                <option value="06">미투나욘 (Jun)</option>
-                                <option value="07">가라가다콤 (Jul)</option>
-                                <option value="08">싱하콤 (Aug) </option>
-                                <option value="09">깐야욘 (Sep)</option>
-                                <option value="10">뚤라콤 (Oct)</option>
-                                <option value="11">프르스찌까욘 (Nov)</option>
-                                <option value="12">탄와콤 (Dec)</option>
-                            </select>
-                            <select id="birthYear" required><option value="" disabled selected>ปี (ค.ศ.)</option></select>
-                        </div>
-                    </div>
+                <div class="category-card" onclick="location.href='/wealth'">
+                    <span class="category-icon">💰</span>
+                    <h3>Wealth</h3>
+                    <p>흘러가는 금전의 흐름과<br>당신에게 찾아올 부의 기회를 포착합니다.</p>
+                </div>
 
-                    <div class="field">
-                        <label>เวลาเกิด (Birth Time)</label>
-                        <div class="dropdown-group time-group">
-                            <select id="birthHour" required><option value="" disabled selected>ชั่วโมง</option></select>
-                            <select id="birthMin" required><option value="" disabled selected>นาที</option></select>
-                            <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลา</button>
-                        </div>
-                    </div>
-
-                    <div class="field">
-                        <label>เพศ (Gender Identity)</label>
-                        <select id="gender" required>
-                            <option value="" disabled selected>선택</option>
-                            <option value="male">ชาย (Male)</option>
-                            <option value="female">หญิง (Female)</option>
-                            <option value="tom">ทอม (Tom)</option>
-                            <option value="ladyboy">กะเทย (Kathoey)</option>
-                            <option value="gay">เกย์ (Gay)</option>
-                            <option value="lesbian">เล스비언 (Lesbian)</option>
-                            <option value="other">기타 (Other)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="submit-btn">ดูดวงตอนนี้</button>
-                </form>
-            </section>
+                <div class="category-card" onclick="location.href='/romance'">
+                    <span class="category-icon">❤️</span>
+                    <h3>Romance</h3>
+                    <p>운명의 실타래가 향하는 곳,<br>당신의 사랑과 인연을 확인하세요.</p>
+                </div>
+            </div>
         </main>
 
         <footer>
@@ -141,74 +122,21 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const profileImg = document.getElementById('userProfileImg');
-            
-            // [1] 유저 데이터 및 프로필 이미지 초기화
             const initUser = async () => {
                 try {
                     const res = await fetch('/api/user/profile', {
-                        method: 'GET',
-                        headers: {
-                            // [주의] 실제 서버 API KEY를 사용하세요
-                            'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j',
-                            'Content-Type': 'application/json'
-                        }
+                        headers: { 'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j' }
                     });
-
                     if (res.ok) {
                         const user = await res.json();
-                        const googleDefaultAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
-
-                        profileImg.src = user.profile_img || googleDefaultAvatar;
-
-                        profileImg.onerror = () => {
-                            profileImg.src = googleDefaultAvatar;
-                            profileImg.onerror = null;
-                        };
+                        const googleAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+                        profileImg.src = user.profile_img || googleAvatar;
                     } else {
-                        console.error('인증 실패');
                         window.location.href = '/login';
                     }
-                } catch (err) {
-                    console.error('User Load Error:', err);
-                }
+                } catch (err) { console.error(err); }
             };
-
             await initUser();
-
-            // --- 폼 로직: 드롭다운 생성 ---
-            const form = document.getElementById('fortuneForm');
-            const daySel = document.getElementById('birthDay');
-            const yearSel = document.getElementById('birthYear');
-            const hourSel = document.getElementById('birthHour');
-            const minSel = document.getElementById('birthMin');
-            const monthSel = document.getElementById('birthMonth');
-            const unknownBtn = document.getElementById('unknownTimeBtn');
-
-            let isTimeUnknown = false;
-
-            for (let i = 1; i <= 31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
-            const currentYear = new Date().getFullYear();
-            for (let i = currentYear; i >= 1900; i--) yearSel.add(new Option(i, i));
-            for (let i = 0; i < 24; i++) hourSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
-            for (let i = 0; i < 60; i++) minSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
-
-            // 시간 모름 버튼
-            unknownBtn.addEventListener('click', () => {
-                isTimeUnknown = !isTimeUnknown;
-                const controls = [daySel, monthSel, yearSel, hourSel, minSel];
-                if (isTimeUnknown) {
-                    unknownBtn.classList.add('active');
-                    controls.forEach(el => { el.selectedIndex = 0; el.disabled = true; el.style.opacity = '0.3'; });
-                } else {
-                    unknownBtn.classList.remove('active');
-                    controls.forEach(el => { el.disabled = false; el.style.opacity = '1'; });
-                }
-            });
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                alert('위대한 운명의 분석이 시작되었습니다...');
-            });
         });
     </script>
 </body>

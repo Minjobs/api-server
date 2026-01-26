@@ -87,3 +87,38 @@ export const analyzeFortune = async (req, res) => {
         res.status(500).json({ error: 'Failed to analyze fortune' });
     }
 };
+
+// 특정 결과 조회 컨트롤러
+export const getFortuneResult = async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // result_id로 데이터 조회
+        const [rows] = await db.execute(
+            `SELECT * FROM fortune_results WHERE result_id = ?`, 
+            [id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Result not found' });
+        }
+
+        const result = rows[0];
+
+        // MySQL의 JSON 타입은 이미 객체로 반환될 수도 있지만, 
+        // 환경에 따라 문자열일 수 있으므로 체크 후 파싱합니다.
+        if (typeof result.detail_data === 'string') {
+            result.detail_data = JSON.parse(result.detail_data);
+        }
+
+        // 프론트엔드에 필요한 데이터만 정제해서 전송
+        res.json({
+            fortune_type: result.fortune_type,
+            summary: result.summary_text,
+            details: result.detail_data // 성격, 재물 등 타입에 따른 JSON 객체
+        });
+    } catch (err) {
+        console.error('❌ 결과 조회 실패:', err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};

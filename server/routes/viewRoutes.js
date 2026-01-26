@@ -6,7 +6,7 @@ const router = express.Router();
 const __dirname = path.resolve();
 
 // 🔓 누구나 접근 가능
-router.get('/',verifyToken ,(req, res) => res.sendFile(path.join(__dirname, 'client/views/home.html')));
+router.get('/',(req, res) => res.sendFile(path.join(__dirname, 'client/views/home.html')));
 router.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'client/views/login.html')));
 
 // 🔐 로그인한 사람만 접근 가능 (verifyToken 추가)

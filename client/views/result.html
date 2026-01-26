@@ -4,88 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MURDOO K - ผลทำนายดวงชะตาของคุณ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Sarabun:wght@300;400;500;600&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-gold: #b8860b;
+            --dark-gold: #8b6508;
+            --bg-bright: #f8f9fa;
+            --card-white: #ffffff;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+        }
+
         body {
             margin: 0; padding: 0;
-            background-color: #0a0a12;
-            color: white;
-            font-family: 'Niramit', sans-serif;
+            background-color: var(--bg-bright);
+            color: var(--text-main);
+            /* 태국어 가독성 표준 Sarabun 폰트 적용 */
+            font-family: 'Sarabun', sans-serif;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
+        /* 밝고 고급스러운 그라데이션 배경 */
         .magic-background {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
         }
 
         .container { max-width: 500px; margin: 0 auto; padding: 20px; }
 
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
-        .logo { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.2rem; cursor: pointer; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-        .profile-container { width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 2px solid #ffd700; cursor: pointer; }
-        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* 결과 상단 요약 카드 */
-        .summary-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            border-radius: 30px;
-            padding: 30px 20px;
-            margin-top: 10px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .logo { 
+            font-family: 'Cinzel Decorative'; 
+            color: var(--primary-gold); font-size: 1.2rem; cursor: pointer;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
-        .fortune-type { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 0.8rem; letter-spacing: 4px; margin-bottom: 15px; opacity: 0.8; }
-        .fortune-summary { font-size: 1.4rem; font-weight: 700; line-height: 1.5; color: #fff; }
+        .profile-container { 
+            width: 42px; height: 42px; border-radius: 50%; overflow: hidden; 
+            border: 2px solid var(--primary-gold); cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 결과 상단 요약 카드 (밝게 변경) */
+        .summary-card {
+            background: var(--card-white);
+            border: 1px solid rgba(184, 134, 11, 0.2);
+            border-radius: 30px;
+            padding: 35px 25px;
+            margin-top: 10px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        }
+
+        .fortune-type { 
+            font-family: 'Kanit'; 
+            color: var(--primary-gold); 
+            font-size: 0.8rem; 
+            letter-spacing: 3px; 
+            margin-bottom: 15px; 
+            font-weight: 500;
+        }
+        
+        .fortune-summary { 
+            font-family: 'Kanit';
+            font-size: 1.35rem; 
+            font-weight: 700; 
+            line-height: 1.5; 
+            color: var(--text-main); 
+        }
 
         /* 상세 섹션 리스트 */
         #detailsList { margin-top: 25px; display: flex; flex-direction: column; gap: 20px; }
 
         .detail-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 4px solid #ffd700;
-            border-radius: 15px;
-            padding: 20px;
-            animation: fadeIn 0.6s ease-out forwards;
+            background: var(--card-white);
+            border-left: 5px solid var(--primary-gold);
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            border-top: 1px solid #f1f1f1;
+            border-right: 1px solid #f1f1f1;
+            border-bottom: 1px solid #f1f1f1;
+            animation: fadeIn 0.7s ease-out forwards;
             opacity: 0;
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         .detail-label {
-            color: #ffd700;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
+            font-family: 'Kanit';
+            color: var(--dark-gold);
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .detail-text {
-            font-size: 1.05rem;
-            line-height: 1.8;
-            color: #ccc;
+            /* 띄어쓰기 문제를 해결하기 위해 left 정렬 유지 */
+            text-align: left; 
+            font-size: 0.95rem; /* 글자 크기 약간 줄임 */
+            line-height: 1.8; /* 태국어 가독성을 위해 줄간격 확보 */
+            color: var(--text-sub);
             white-space: pre-wrap;
-            text-align: justify;
+            word-break: break-word;
         }
 
         .action-group { margin-top: 40px; display: flex; flex-direction: column; gap: 15px; }
-        .btn { padding: 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; text-align: center; transition: 0.3s; text-decoration: none; border: none; }
-        .btn-main { background: linear-gradient(45deg, #ffd700, #ffae00); color: #000; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3); }
-        .btn-sub { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
-        .btn:hover { transform: translateY(-3px); opacity: 0.9; }
+        .btn { padding: 18px; border-radius: 20px; font-weight: 700; font-size: 1rem; cursor: pointer; text-align: center; transition: 0.3s; text-decoration: none; border: none; font-family: 'Kanit'; }
+        
+        .btn-main { 
+            background: linear-gradient(45deg, var(--primary-gold), var(--dark-gold)); 
+            color: #fff; 
+            box-shadow: 0 5px 20px rgba(184, 134, 11, 0.3); 
+        }
+        
+        .btn-sub { 
+            background: #f1f2f6; 
+            color: var(--text-sub); 
+            border: 1px solid #dfe4ea;
+        }
+        
+        .btn:hover { transform: translateY(-3px); opacity: 0.95; }
 
-        footer { text-align: center; margin-top: 50px; color: #444; font-size: 0.8rem; padding-bottom: 30px; }
+        footer { text-align: center; margin-top: 50px; color: #a4b0be; font-size: 0.8rem; padding-bottom: 40px; }
 
-        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a12; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .spinner { width: 50px; height: 50px; border: 3px solid rgba(255, 215, 0, 0.2); border-top: 3px solid #ffd700; border-radius: 50%; animation: spin 1s linear infinite; }
+        /* 로딩 오버레이 (밝은색 버전) */
+        #loadingOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        .spinner { width: 45px; height: 45px; border: 3px solid #f1f1f1; border-top: 3px solid var(--primary-gold); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .hidden { display: none !important; }
     </style>
@@ -94,7 +146,7 @@
 
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="margin-top: 20px; color: #ffd700;">กำลังเปิดบันทึกโชคชะตา...</p>
+        <p style="margin-top: 20px; color: var(--primary-gold); font-family: 'Kanit';">กำลังเปิดบันทึกโชคชะตาของคุณ...</p>
     </div>
 
     <div class="magic-background"></div>
@@ -122,26 +174,22 @@
         </main>
 
         <footer>
-            <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตาที่ถูกลิขิต</p>
+            <p>© 2026 MURDOO K. ลิขิตแห่งดวงดาวที่ถูกจารึก</p>
         </footer>
     </div>
 
     <script>
-        // 섹터 키값에 따른 태국어 레이블 매핑 (GOP 작전 지침)
+        // 최신 백엔드 7개 섹터 키값 반영
         const labelMap = {
-            outward_features: "🎭 ลักษณะภายนอก (특징)",
-            inward_features: "🧠 ลักษณะภายใน (내면)",
+            outward: "🎭 ลักษณะภายนอก (성격)",
+            inward: "🧠 ภายในจิตใจ (내면)",
             strengths: "🌟 จุดแข็งของคุณ (장점)",
             weaknesses: "⚠️ จุดที่ควรปรับปรุง (단점)",
-            cautions: "🚫 ข้อควรระวัง (조심할 점)",
-            cash_flow: "💰 การไหลเวียนของเงิน (재물운)",
-            career_luck: "💼 ดวงการงาน (직장운)",
-            lucky_timing: "📅 ช่วงเวลาโชคดี (행운의 시기)",
-            wealth_tips: "💡 เคล็ดลับดึงดูดทรัพย์ (재물 팁)",
-            love_style: "❤️ สไตล์ความรัก (연애 스타일)",
-            soulmate_type: "👩‍❤️‍👨 ลักษณะเนื้อคู่ (인연)",
-            romance_timing: "🏹 จังหวะพบรัก (연애 시기)",
-            love_advice: "💌 คำแนะนำความรัก (연애 조언)"
+            cautions: "🚫 ข้อควรระวัง (주의사항)",
+            boosters: "✨ เคล็ดลับเสริมดวง (행운 가이드)",
+            // 기존 키값 호환용 (혹시 몰라서 유지)
+            outward_features: "🎭 ลักษณะภายนอก (특징)",
+            inward_features: "🧠 ลักษณะภายใน (내면)",
         };
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -154,7 +202,7 @@
                 const profileRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (profileRes.ok) {
                     const user = await profileRes.json();
-                    document.getElementById('userProfileImg').src = user.profile_img;
+                    document.getElementById('userProfileImg').src = user.profile_img || document.getElementById('userProfileImg').src;
                 }
 
                 // 2. 사주 결과 로드
@@ -167,11 +215,10 @@
 
                     const listContainer = document.getElementById('detailsList');
                     
-                    // JSON 내의 각 섹터를 루프 돌며 카드 생성
                     Object.entries(data.details).forEach(([key, value], index) => {
                         const item = document.createElement('div');
                         item.className = 'detail-item';
-                        item.style.animationDelay = `${(index + 1) * 0.2}s`; // 순차적으로 등장
+                        item.style.animationDelay = `${(index + 1) * 0.15}s`;
 
                         const label = labelMap[key] || key.replace('_', ' ').toUpperCase();
                         
@@ -182,7 +229,7 @@
                         listContainer.appendChild(item);
                     });
 
-                    setTimeout(() => loadingOverlay.classList.add('hidden'), 800);
+                    setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
                 }
             } catch (err) {
                 console.error(err);

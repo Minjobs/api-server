@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - วิเคราะห์ตัวตน</title>
+    <title>MURDOO K - วิเคราะห์ตัวตนตามศาสตร์เกาหลีและไทย</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* 기본 배경 및 폰트 (Home.html과 통일) */
         body {
             margin: 0; padding: 0;
             background-color: #0a0a12;
             color: white;
             font-family: 'Niramit', sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .magic-background {
@@ -26,79 +26,116 @@
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 0; margin-bottom: 20px;
+            padding: 20px 0;
         }
 
-        .logo { font-family: 'Cinzel Decorative'; color: #ffd700; font-size: 1.2rem; cursor: pointer; }
+        .logo { 
+            font-family: 'Cinzel Decorative'; 
+            color: #ffd700; 
+            font-size: 1.2rem; 
+            cursor: pointer;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
 
         .profile-container {
-            width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+            width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
             border: 2px solid #ffd700; cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* 입력 카드 스타일 */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* ส่วนคำโปรย (Hook Section) */
+        .intro-section {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s ease-out;
         }
 
-        h2 { font-family: 'Cinzel Decorative'; color: #ffd700; text-align: center; margin-top: 0; }
-        p.desc { text-align: center; color: #aaa; font-size: 0.9rem; margin-bottom: 30px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .field { margin-bottom: 20px; }
-        label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; }
+        .intro-section h2 {
+            font-family: 'Cinzel Decorative';
+            color: #ffd700;
+            font-size: 2rem;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .intro-tagline {
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+            padding: 10px;
+            font-weight: 500;
+            color: #fff;
+            margin-bottom: 15px;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .intro-desc {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .field { margin-bottom: 22px; }
+        label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.5px; }
 
         input, select {
             width: 100%;
             background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 14px;
             color: white;
             font-size: 1rem;
             box-sizing: border-box;
             outline: none;
+            transition: 0.3s;
         }
-        input:focus, select:focus { border-color: #ffd700; }
+        input:focus, select:focus { border-color: #ffd700; background: rgba(255, 255, 255, 0.12); }
 
         .dropdown-group { display: flex; gap: 10px; }
         .dropdown-group select { flex: 1; }
 
-        /* 시간 모름 버튼 */
-        .unknown-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+        .unknown-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
         .unknown-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ccc;
-            padding: 5px 15px;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #888;
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 0.75rem;
             cursor: pointer;
             transition: 0.3s;
         }
-        .unknown-btn.active { background: #ffd700; color: #000; border-color: #ffd700; }
+        .unknown-btn.active { background: #ffd700; color: #000; border-color: #ffd700; font-weight: 700; }
 
         .submit-btn {
             width: 100%;
             background: linear-gradient(45deg, #ffd700, #ffae00);
             color: #000;
             border: none;
-            padding: 15px;
-            border-radius: 15px;
+            padding: 18px;
+            border-radius: 20px;
             font-weight: 700;
             font-size: 1.1rem;
-            margin-top: 20px;
+            margin-top: 25px;
             cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
             transition: 0.3s;
         }
-        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); }
+        .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5); }
 
-        .hidden { display: none; }
+        footer { text-align: center; margin-top: 40px; color: #444; font-size: 0.8rem; padding-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -109,20 +146,27 @@
         <header>
             <div class="logo" onclick="location.href='/'">✨ MURDOO K</div>
             <div class="profile-container" onclick="location.href='/profile'">
-                <img id="userProfileImg" src="" alt="Profile">
+                <img id="userProfileImg" src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="Profile">
             </div>
         </header>
 
         <main>
-            <div class="glass-card">
+            <section class="intro-section">
+                <div class="intro-tagline">ศาสตร์แห่งโชคชะตา เกาหลี 🇰🇷 + ไทย 🇹🇭</div>
                 <h2>Personality</h2>
-                <p class="desc">วิเคราะห์ตัวตนผ่านดวงดาว (성격 분석)</p>
+                <p class="intro-desc">
+                    เปิดประตูความลับแห่งดวงดาว เพื่อค้นพบตัวตนที่แท้จริงของคุณ <br>
+                    วิเคราะห์จุดแข็ง จุดอ่อน และนิสัยที่ถูกลิขิตไว้ตั้งแต่วันแรกที่ลืมตาดูโลก
+                </p>
+            </section>
 
+            <div class="glass-card">
                 <form id="personalityForm">
                     <div class="field">
                         <label>ชื่อจริง (Name)</label>
-                        <input type="text" id="realName" placeholder="ระบุชื่อจริง" required>
+                        <input type="text" id="realName" placeholder="ระบุชื่อจริงของคุณ" required>
                     </div>
+
                     <div class="field">
                         <label>ชื่อเล่น (Nickname)</label>
                         <input type="text" id="nickName" placeholder="ระบุชื่อเล่น" required>
@@ -131,33 +175,42 @@
                     <div class="field">
                         <label>วันเดือนปีเกิด (Date of Birth)</label>
                         <div class="dropdown-group">
-                            <select id="birthDay" required></select>
-                            <select id="birthMonth" required>
-                                <option value="01">ม.ค. (Jan)</option>
-                                <option value="02">ก.พ. (Feb)</option>
-                                <option value="03">มี.ค. (Mar)</option>
-                                <option value="04">เม.ย. (Apr)</option>
-                                <option value="05">พ.ค. (May)</option>
-                                <option value="06">มิ.ย. (Jun)</option>
-                                <option value="07">ก.ค. (Jul)</option>
-                                <option value="08">ส.ค. (Aug)</option>
-                                <option value="09">ก.ย. (Sep)</option>
-                                <option value="10">ต.ค. (Oct)</option>
-                                <option value="11">พ.ย. (Nov)</option>
-                                <option value="12">ธ.ค. (Dec)</option>
+                            <select id="birthDay" required>
+                                <option value="" disabled selected>วันที่</option>
                             </select>
-                            <select id="birthYear" required></select>
+                            <select id="birthMonth" required>
+                                <option value="" disabled selected>เดือน</option>
+                                <option value="01">มกราคม (Jan)</option>
+                                <option value="02">กุมภาพันธ์ (Feb)</option>
+                                <option value="03">มีนาคม (Mar)</option>
+                                <option value="04">เมษายน (Apr)</option>
+                                <option value="05">พฤษภาคม (May)</option>
+                                <option value="06">มิถุนายน (Jun)</option>
+                                <option value="07">กรกฎาคม (Jul)</option>
+                                <option value="08">สิงหาคม (Aug)</option>
+                                <option value="09">กันยายน (Sep)</option>
+                                <option value="10">ตุลาคม (Oct)</option>
+                                <option value="11">พฤศจิกายน (Nov)</option>
+                                <option value="12">ธันวาคม (Dec)</option>
+                            </select>
+                            <select id="birthYear" required>
+                                <option value="" disabled selected>ปี ค.ศ.</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="field">
                         <label>เวลาเกิด (Birth Time)</label>
                         <div class="dropdown-group" id="timeSelectors">
-                            <select id="birthHour" required></select>
-                            <select id="birthMin" required></select>
+                            <select id="birthHour" required>
+                                <option value="" disabled selected>ชั่วโมง</option>
+                            </select>
+                            <select id="birthMin" required>
+                                <option value="" disabled selected>นาที</option>
+                            </select>
                         </div>
                         <div class="unknown-row">
-                            <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลา (시간 모름)</button>
+                            <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลาเกิด</button>
                         </div>
                     </div>
 
@@ -168,17 +221,21 @@
                             <option value="male">ชาย (Male)</option>
                             <option value="female">หญิง (Female)</option>
                             <option value="tom">ทอม (Tom)</option>
-                            <option value="ladyboy">กะเทย (Ladyboy)</option>
+                            <option value="ladyboy">กะเทย (Kathoey)</option>
                             <option value="gay">เกย์ (Gay)</option>
                             <option value="lesbian">เลสเบี้ยน (Lesbian)</option>
                             <option value="other">อื่นๆ (Other)</option>
                         </select>
                     </div>
 
-                    <button type="submit" class="submit-btn">วิเคราะห์เลย</button>
+                    <button type="submit" class="submit-btn">ดูผลทำนายของคุณ</button>
                 </form>
             </div>
         </main>
+
+        <footer>
+            <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตาที่ถูกลิขิต</p>
+        </footer>
     </div>
 
     <script>
@@ -193,7 +250,6 @@
 
             let isTimeUnknown = false;
 
-            // [1] 유저 프로필 로드
             const initUser = async () => {
                 try {
                     const res = await fetch('/api/user/profile', {
@@ -207,20 +263,41 @@
             };
             await initUser();
 
-            // [2] 드롭다운 옵션 생성
-            for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
-            const curYear = new Date().getFullYear();
-            for(let i=curYear; i>=1900; i--) yearSel.add(new Option(i, i));
-            for(let i=0; i<24; i++) hourSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
-            for(let i=0; i<60; i++) minSel.add(new Option(i < 10 ? `0${i}` : i, i < 10 ? `0${i}` : i));
+            // ตัวเลือก วัน (1-31)
+            for(let i=1; i<=31; i++) {
+                const val = i < 10 ? `0${i}` : i;
+                daySel.add(new Option(i, val));
+            }
 
-            // [3] 시간 모름 버튼 토글
+            // ตัวเลือก ปี (ปัจจุบันย้อนกลับไปถึง 1900)
+            const curYear = new Date().getFullYear();
+            for(let i=curYear; i>=1900; i--) {
+                yearSel.add(new Option(i, i));
+            }
+
+            // ตัวเลือก ชั่วโมง และ นาที
+            for(let i=0; i<24; i++) {
+                const val = i < 10 ? `0${i}` : i;
+                hourSel.add(new Option(val, val));
+            }
+            for(let i=0; i<60; i++) {
+                const val = i < 10 ? `0${i}` : i;
+                minSel.add(new Option(val, val));
+            }
+
             unknownBtn.addEventListener('click', () => {
                 isTimeUnknown = !isTimeUnknown;
                 unknownBtn.classList.toggle('active');
+                
+                // สลับสถานะช่องเวลา
                 hourSel.disabled = isTimeUnknown;
                 minSel.disabled = isTimeUnknown;
+                hourSel.required = !isTimeUnknown;
+                minSel.required = !isTimeUnknown;
+
                 if(isTimeUnknown) {
+                    hourSel.selectedIndex = 0;
+                    minSel.selectedIndex = 0;
                     hourSel.style.opacity = '0.3';
                     minSel.style.opacity = '0.3';
                 } else {
@@ -229,23 +306,22 @@
                 }
             });
 
-            // [4] 폼 제출
-            form.addEventListener('submit', async (e) => {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
                 
-                const birthTime = isTimeUnknown ? "unknown" : `${hourSel.value}:${minSel.value}`;
-                const data = {
+                const payload = {
                     type: 'personality',
                     realName: document.getElementById('realName').value,
                     nickName: document.getElementById('nickName').value,
                     birthDate: `${yearSel.value}-${document.getElementById('birthMonth').value}-${daySel.value}`,
-                    birthTime: birthTime,
+                    birthTime: isTimeUnknown ? "00:00" : `${hourSel.value}:${minSel.value}`,
+                    isTimeUnknown: isTimeUnknown,
                     gender: document.getElementById('gender').value
                 };
 
-                console.log("🔮 분석 요청 데이터:", data);
-                alert("วิเคราะห์ข้อมูลของคุณแล้ว... (분석 페이지로 이동 예정)");
-                // window.location.href = '/result?type=personality&data=' + btoa(JSON.stringify(data));
+                console.log("Submit Data:", payload);
+                alert("กำลังนำทางคุณไปยังหน้าวิเคราะห์ดวงชะตา...");
+                // TODO: window.location.href = `/result/personality?data=${btoa(JSON.stringify(payload))}`;
             });
         });
     </script>

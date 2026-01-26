@@ -44,7 +44,6 @@
         }
         .profile-container img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* ส่วนคำโปรย (Hook Section) */
         .intro-section {
             text-align: center;
             margin-bottom: 30px;
@@ -87,7 +86,7 @@
         }
 
         .field { margin-bottom: 22px; }
-        label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; letter-spacing: 0.5px; }
+        label { display: block; color: #ffd700; font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; }
 
         input, select {
             width: 100%;
@@ -156,7 +155,7 @@
                 <h2>Personality</h2>
                 <p class="intro-desc">
                     เปิดประตูความลับแห่งดวงดาว เพื่อค้นพบตัวตนที่แท้จริงของคุณ <br>
-                    วิเคราะห์จุดแข็ง จุดอ่อน และนิสัยที่ถูกลิขิตไว้ตั้งแต่วันแรกที่ลืมตาดูโลก
+                    วิเคราะห์จุดแข็ง จุดอ่อน และนิสัยที่ถูกลิขิตไว้โดยดวงดาว
                 </p>
             </section>
 
@@ -250,6 +249,7 @@
 
             let isTimeUnknown = false;
 
+            // [1] 프로필 로드
             const initUser = async () => {
                 try {
                     const res = await fetch('/api/user/profile', {
@@ -263,19 +263,15 @@
             };
             await initUser();
 
-            // ตัวเลือก วัน (1-31)
+            // [2] 드롭다운 생성
             for(let i=1; i<=31; i++) {
                 const val = i < 10 ? `0${i}` : i;
                 daySel.add(new Option(i, val));
             }
-
-            // ตัวเลือก ปี (ปัจจุบันย้อนกลับไปถึง 1900)
             const curYear = new Date().getFullYear();
             for(let i=curYear; i>=1900; i--) {
                 yearSel.add(new Option(i, i));
             }
-
-            // ตัวเลือก ชั่วโมง และ นาที
             for(let i=0; i<24; i++) {
                 const val = i < 10 ? `0${i}` : i;
                 hourSel.add(new Option(val, val));
@@ -285,11 +281,24 @@
                 minSel.add(new Option(val, val));
             }
 
+            // [3] 태국어 커스텀 경고 메시지 설정 (Validation Popup)
+            const setThaiValidity = (el) => {
+                el.addEventListener('invalid', function(e) {
+                    e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
+                });
+                el.addEventListener('input', function(e) {
+                    e.target.setCustomValidity("");
+                });
+            };
+
+            // 모든 input과 select에 적용
+            form.querySelectorAll('input, select').forEach(el => setThaiValidity(el));
+
+            // [4] 시간 모름 로직
             unknownBtn.addEventListener('click', () => {
                 isTimeUnknown = !isTimeUnknown;
                 unknownBtn.classList.toggle('active');
                 
-                // สลับสถานะช่องเวลา
                 hourSel.disabled = isTimeUnknown;
                 minSel.disabled = isTimeUnknown;
                 hourSel.required = !isTimeUnknown;
@@ -298,6 +307,8 @@
                 if(isTimeUnknown) {
                     hourSel.selectedIndex = 0;
                     minSel.selectedIndex = 0;
+                    hourSel.setCustomValidity(""); // 경고 제거
+                    minSel.setCustomValidity(""); 
                     hourSel.style.opacity = '0.3';
                     minSel.style.opacity = '0.3';
                 } else {
@@ -308,20 +319,7 @@
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
-                const payload = {
-                    type: 'personality',
-                    realName: document.getElementById('realName').value,
-                    nickName: document.getElementById('nickName').value,
-                    birthDate: `${yearSel.value}-${document.getElementById('birthMonth').value}-${daySel.value}`,
-                    birthTime: isTimeUnknown ? "00:00" : `${hourSel.value}:${minSel.value}`,
-                    isTimeUnknown: isTimeUnknown,
-                    gender: document.getElementById('gender').value
-                };
-
-                console.log("Submit Data:", payload);
-                alert("กำลังนำทางคุณไปยังหน้าวิเคราะห์ดวงชะตา...");
-                // TODO: window.location.href = `/result/personality?data=${btoa(JSON.stringify(payload))}`;
+                alert("วิเคราะห์ข้อมูลของคุณแล้ว...");
             });
         });
     </script>

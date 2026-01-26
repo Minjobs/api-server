@@ -65,13 +65,15 @@ export const handleCallback = async (req, res) => {
 
         const { access_token } = tokenRes.data;
 
-        // [B] 프로필 정보 획득 (이미지 URL 포함)
+        // [B] 프로필 정보 획득 (pictureUrl 추출 포함)
         const profileRes = await axios.get('https://api.line.me/v2/profile', {
             headers: { 'Authorization': `Bearer ${access_token}` }
         });
+        
+        // 라인에서 제공하는 pictureUrl을 명확히 가져옵니다.
         const { userId, displayName, pictureUrl } = profileRes.data;
 
-        // [C] 친구 추가 상태 확인
+        // [C] 친구 추가 상태 확인 (에러 방어 로직 적용)
         let isFriend = false;
         try {
             const friendshipRes = await axios.get('https://api.line.me/friendship/v1/status', {
@@ -79,14 +81,14 @@ export const handleCallback = async (req, res) => {
             });
             isFriend = friendshipRes.data.friendFlag;
         } catch (friendErr) {
+            // 친구 상태 확인 실패 시 경고 로그만 남기고 로그인은 계속 진행합니다.
             console.warn('⚠️ 친구 상태 확인 불가:', friendErr.response?.data?.message || friendErr.message);
         }
 
-        // [D] DB 저장 (profile_img라는 이름으로 pictureUrl 저장)
-        // userService 내부에서 profile_img 컬럼을 업데이트하도록 구현되어야 합니다.
+        // [D] DB 저장 (pictureUrl을 profile_img로 저장하도록 userService 호출)
         const userResult = await userService.handleUserLogin(userId, displayName, pictureUrl, isFriend);
 
-        // [E] JWT 생성 (최소화: userId만 포함)
+        // [E] JWT 생성 (요청하신 대로 userId만 포함하여 최소화)
         const token = jwt.sign(
             { userId }, 
             process.env.JWT_SECRET, 
@@ -94,18 +96,20 @@ export const handleCallback = async (req, res) => {
         );
 
         // [F] 쿠키 설정
+        // domain 설정은 실제 운영 환경(.murdoo-k.com)에 맞춰져 있습니다.
+        // 로컬 테스트 시 쿠키가 안 구워진다면 domain 부분을 주석 처리하고 테스트하세요.
         res.cookie('auth_token', token, {
             httpOnly: true,
-            secure: true, // 배포 시 HTTPS 필수
+            secure: true, // HTTPS 필수
             sameSite: 'lax',
-            domain: '.murdoo-k.com', // 실제 도메인에 맞게 수정
+            domain: '.murdoo-k.com', 
             path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        console.log(`✅ 로그인 및 DB 저장 완료: ${displayName}`);
+        console.log(`✅ 로그인 및 데이터 동기화 완료: ${displayName}`);
         
-        // 로그인 완료 후 홈으로 리다이렉트
+        // 최종 목적지로 유저를 인도합니다.
         res.redirect('/');
 
     } catch (err) {

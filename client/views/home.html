@@ -140,15 +140,27 @@ const initUser = async () => {
         const res = await fetch('/api/user/profile', {
             method: 'GET',
             headers: {
-                // 여기에 서버(.env)에 설정된 것과 동일한 API Key를 넣으세요.
-                'x-api-key': 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j', 
+                // [중요] 실제 서버의 API KEY를 여기에 넣으세요
+                'x-api-key': 'your_actual_api_key_here',
                 'Content-Type': 'application/json'
             }
         });
 
         if (res.ok) {
             const user = await res.json();
-            profileImg.src = user.profile_img || '/img/default-avatar.png';
+            
+            // 구글 기본 아바타 느낌의 공식 이미지 URL입니다.
+            const googleDefaultAvatar = 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+
+            // 1. profile_img가 null, undefined, 혹은 빈 값일 때 구글 아바타 사용
+            profileImg.src = user.profile_img || googleDefaultAvatar;
+
+            // 2. 혹시 사진 주소가 있어도 로딩에 실패할 경우(에러)를 대비한 안전장치
+            profileImg.onerror = () => {
+                profileImg.src = googleDefaultAvatar;
+                profileImg.onerror = null; // 무한 루프 방지
+            };
+
         } else {
             console.error('인증 실패 혹은 API Key 불일치');
             window.location.href = '/login';
@@ -157,6 +169,7 @@ const initUser = async () => {
         console.error('User Load Error:', err);
     }
 };
+
 
 
             // 실행

@@ -18,7 +18,7 @@ app.use(express.static('client/public'));
 
 // 1. 로그인 관련 및 API 라우트를 검문소 앞에 배치하거나 
 
-app.use('/', viewRoutes);
+//app.use('/', viewRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/user',userRoutes);
 app.use('/api/fortune', fortuneRoutes); // /api/fortune/analyze 등으로 접속 가능

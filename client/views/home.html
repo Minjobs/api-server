@@ -10,8 +10,8 @@
             --wood-frame: #8b5a2b; 
             --wood-panel: #d4a76a; 
             --hanji-paper: #fdfaf1; 
-            --capsule-red: #e74c3c; /* 좀 더 밝고 선명한 빨강 */
-            --capsule-shadow: #a32f2f; /* 그림자색 */
+            --capsule-red: #c0392b; /* 기본 빨강 */
+            --capsule-dark: #8a1c1c; /* 어두운 빨강 (그림자 역할) */
             --ink-black: #1a1a1a;
         }
 
@@ -108,42 +108,29 @@
             color: #444; letter-spacing: 2px;
         }
 
-        /* --- [GOP 핵심 수정] 무작위로 꽉 찬 리얼 캡슐 창 --- */
+        /* --- [GOP 핵심 수정] 그라데이션 없이 빨간 공이 꽉 찬 느낌 --- */
         .window-section {
             flex: 1;
-            background-color: #3a0000; /* 아주 어두운 배경으로 깊이감 표현 */
+            /* 배경을 아주 어두운 빨강으로 채워 빈틈을 메움 */
+            background-color: #4a0a0a;
             border-left: 3px solid var(--wood-frame);
             position: relative;
             overflow: hidden;
-            
-            /* 캡슐의 입체감을 살리는 그라데이션 정의 (빛반사-중간톤-그림자-투명) */
-            --capsule-look: radial-gradient(circle at 30% 30%, var(--capsule-red) 10%, var(--capsule-shadow) 50%, rgba(0,0,0,0.7) 70%, transparent 72%);
 
-            /* 3개의 레이어를 겹쳐서 밀도 표현 */
-            background-image: 
-                var(--capsule-look),
-                var(--capsule-look),
-                var(--capsule-look);
+            /* SVG 패턴을 사용하여 단색 원들이 겹쳐 쌓인 느낌 구현 */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='14' fill='%238a1c1c'/%3E%3Ccircle cx='10' cy='10' r='12' fill='%23c0392b'/%3E%3Ccircle cx='50' cy='10' r='13' fill='%23c0392b'/%3E%3Ccircle cx='10' cy='50' r='13' fill='%23c0392b'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23c0392b'/%3E%3Ccircle cx='30' cy='5' r='10' fill='%23e74c3c'/%3E%3Ccircle cx='5' cy='30' r='11' fill='%23e74c3c'/%3E%3Ccircle cx='55' cy='30' r='11' fill='%23e74c3c'/%3E%3Ccircle cx='30' cy='55' r='10' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='20' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='40' cy='20' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='40' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='40' cy='40' r='9' fill='%23e74c3c'/%3E%3C/svg%3E");
             
-            /* 서로 다른 크기로 설정하여 불규칙성 부여 */
-            background-size: 
-                48px 48px, /* 앞쪽 큰 캡슐 */
-                43px 43px, /* 중간 캡슐 */
-                52px 52px; /* 뒤쪽 다른 크기 캡슐 */
+            /* 패턴을 작게 반복시켜 조밀하게 만듦 */
+            background-size: 50px 50px;
             
-            /* 소수(Prime number)를 이용한 불규칙한 위치 오프셋으로 정렬 깨뜨리기 */
-            background-position: 
-                7px 13px,   /* Layer 1 position */
-                23px 37px,  /* Layer 2 position */
-                41px 19px;  /* Layer 3 position */
-
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.9); /* 깊은 내부 그림자 */
+            /* 내부 그림자로 깊이감 추가 */
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.7);
         }
 
-        /* 유리창 반사광을 더 강하게 */
+        /* 유리창 반사광은 유지하여 창문 느낌을 냄 */
         .window-section::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 45%, rgba(255,255,255,0.2) 80%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(255,255,255,0.1) 80%);
             pointer-events: none;
         }
         /* --------------------------------------------------- */

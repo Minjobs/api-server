@@ -3,331 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>머두 K - 전통 운세 뽑기</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Cinzel+Decorative:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>머두 K - 정갈한 운세 뽑기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --wood-roof: #5d4037;
-            --wood-frame: #8b5a2b;
-            --wood-panel: #d4a76a;
-            --hanji-bg: #f8f5e9;
-            --ink-color: #2c2c2c;
-            --metal-dark: #3e2723;
-            --capsule-red: #c0392b;
-            --capsule-shadow: #8a1c1c;
-            --accent-gold: #d4af37;
+            --hanji-bg: #fdfcf0;   /* 깨끗한 한지색 */
+            --ink-black: #2c2c2c;  /* 먹색 */
+            --point-red: #d32f2f;  /* 포인트 레드 (낙관색) */
+            --accent-gold: #b8860b;/* 포인트 골드 */
+            --card-white: #ffffff; /* 카드 배경 */
+            --border-color: #e0d9c1;/* 은은한 테두리 */
         }
 
         body {
             margin: 0; padding: 0;
             background-color: var(--hanji-bg);
+            /* 은은한 한지 패턴 오버레이 */
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
             font-family: 'Noto Sans KR', sans-serif;
-            color: var(--ink-color);
+            color: var(--ink-black);
             min-height: 100vh;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        .roof-header {
+        /* --- [헤더: 심플 & 클린] --- */
+        header {
             width: 100%;
-            max-width: 500px; /* 모바일 사이즈에 맞춰 조정 */
-            background-color: var(--wood-roof);
-            background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            padding: 20px 0 15px;
-            border-bottom: 5px solid var(--wood-frame);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            position: relative;
-            z-index: 10;
-            border-radius: 0 0 15px 15px;
-            margin-bottom: -10px;
-        }
-
-        .header-content {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 0 20px;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+            background: rgba(253, 252, 240, 0.8);
+            backdrop-filter: blur(5px);
+            position: sticky; top: 0; z-index: 100;
         }
 
         .logo {
             font-family: 'Nanum Myeongjo', serif;
-            color: #fff;
-            font-size: 1.5rem; font-weight: 800;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            display: flex; align-items: center; gap: 8px;
+            font-size: 1.4rem; font-weight: 800;
+            letter-spacing: -1px;
+            display: flex; align-items: center; gap: 6px;
         }
-        .logo::after {
-            content: '運';
-            display: inline-block;
-            font-family: 'Gowun Batang', serif;
-            background: #cc0000; color: #fff;
-            padding: 2px 5px; border-radius: 4px;
-            font-size: 0.8rem;
-            box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        .logo-seal {
+            background: var(--point-red); color: #fff;
+            font-size: 0.75rem; padding: 2px 4px;
+            border-radius: 2px; line-height: 1;
         }
 
-        .user-nav { display: flex; align-items: center; gap: 10px; }
-
-        .profile-box {
+        .user-nav { display: flex; align-items: center; gap: 12px; }
+        .profile-circle {
             width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-            border: 2px solid var(--accent-gold); cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color); cursor: pointer;
         }
-        .profile-box img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
 
         #loginBtn {
-            background: var(--wood-frame); color: #fff; border: 1px solid var(--wood-roof);
-            padding: 6px 12px; border-radius: 4px; cursor: pointer;
-            font-family: 'Noto Sans KR'; font-weight: 700; font-size: 0.9rem;
-            box-shadow: 0 2px 0 var(--wood-roof);
-            transition: 0.2s;
+            background: none; border: 1px solid var(--ink-black);
+            padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 500; transition: 0.3s;
         }
-        #loginBtn:active { transform: translateY(2px); box-shadow: none; }
+        #loginBtn:hover { background: var(--ink-black); color: #fff; }
 
-        .kiosk-body {
-            width: 95%; max-width: 480px; /* 모바일 화면에 맞게 조정 */
-            background-color: var(--wood-panel);
-            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border-left: 6px solid var(--wood-frame);
-            border-right: 6px solid var(--wood-frame);
-            padding: 30px 15px 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            position: relative;
-            display: flex; flex-direction: column; align-items: center;
-        }
-
-        .kiosk-body::before, .kiosk-body::after {
-            content: ''; position: absolute;
-            width: 30px; height: 30px;
-            background: var(--metal-dark);
-            background-image: radial-gradient(circle at 50% 50%, #5d4037 10%, transparent 15%),
-                              linear-gradient(45deg, transparent 48%, #2c1e19 48%, #2c1e19 52%, transparent 52%);
-            background-size: 100% 100%, 8px 8px;
-            border: 2px solid #2c1e19;
-            box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-        }
-        .kiosk-body::before { top: 8px; left: -3px; border-radius: 0 0 8px 0; }
-        .kiosk-body::after { top: 8px; right: -3px; border-radius: 0 0 0 8px; }
-
-        .main-sign {
-            background: var(--hanji-bg);
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
-            border: 3px solid var(--wood-frame);
-            padding: 8px 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        /* --- [메인 섹션] --- */
+        .container {
+            width: 100%; max-width: 500px;
+            padding: 20px; box-sizing: border-box;
             text-align: center;
-            position: relative;
-            width: 80%;
         }
-        .main-sign::before, .main-sign::after {
-            content: ''; position: absolute; top: -12px;
-            width: 8px; height: 20px; background: var(--metal-dark);
+
+        /* 오늘의 운세 타이틀 (한지 띠지 컨셉) */
+        .main-sign {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            padding: 15px 20px;
+            margin-bottom: 35px;
             border-radius: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            position: relative;
         }
-        .main-sign::before { left: 15px; } .main-sign::after { right: 15px; }
+        .main-sign::before {
+            content: ''; position: absolute; left: 50%; top: -10px;
+            transform: translateX(-50%); width: 40px; height: 1px;
+            background: var(--accent-gold);
+        }
 
         .main-sign h2 {
-            font-family: 'Gowun Batang', serif; font-size: 1.3rem;
-            margin: 0; color: var(--ink-color); font-weight: 800;
+            font-family: 'Gowun Batang', serif;
+            font-size: 1.25rem; margin: 0;
+            font-weight: 700; color: var(--ink-black);
         }
 
-        /* 가로 2개씩 배치되도록 그리드 설정 */
+        /* --- [가챠 그리드: 2열 배치] --- */
         .gacha-grid {
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px; width: 100%;
         }
 
-        .machine-unit {
-            background: var(--wood-panel);
-            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 2px solid var(--wood-frame);
-            border-radius: 2px;
+        .machine-card {
+            background: var(--card-white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
             display: flex; flex-direction: column;
-            box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
-            position: relative; cursor: pointer;
-            transition: transform 0.2s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .machine-unit:hover { transform: translateY(-2px); }
+        .machine-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
 
-        .label-section {
-            display: flex; height: 110px;
-            border-bottom: 2px solid var(--wood-frame);
+        /* 라벨 & 윈도우 섹션 */
+        .machine-top {
+            display: flex; height: 120px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .hanji-strip {
+        .hanji-label {
             flex: 0 0 35%;
-            background: var(--hanji-bg);
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
-            border-right: 2px solid var(--wood-frame);
+            background: #fdfdf8;
+            border-right: 1px solid #f0f0f0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 8px 4px;
-            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+            padding: 10px 4px;
         }
-
         .hanja-main {
             font-family: 'Nanum Myeongjo'; font-size: 1.6rem;
-            font-weight: 800; color: var(--ink-color); margin-bottom: 4px;
+            font-weight: 800; color: var(--point-red); margin-bottom: 4px;
         }
-        .thai-title {
+        .text-sub {
             writing-mode: vertical-rl; text-orientation: upright;
-            font-family: 'Noto Sans KR'; font-size: 0.8rem; font-weight: 700;
-            color: #555; letter-spacing: 1px;
+            font-size: 0.75rem; font-weight: 600; color: #777;
+            letter-spacing: 1px;
         }
 
-        .window-section {
-            flex: 1; background-color: #4a0a0a; position: relative; overflow: hidden;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='9' fill='%238a1c1c'/%3E%3Ccircle cx='7' cy='7' r='8' fill='%23c0392b'/%3E%3Ccircle cx='33' cy='7' r='8.5' fill='%23c0392b'/%3E%3Ccircle cx='7' cy='33' r='8.5' fill='%23c0392b'/%3E%3Ccircle cx='33' cy='33' r='8' fill='%23c0392b'/%3E%3Ccircle cx='20' cy='3' r='6.5' fill='%23e74c3c'/%3E%3Ccircle cx='3' cy='20' r='7' fill='%23e74c3c'/%3E%3Ccircle cx='37' cy='20' r='7' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='37' r='6.5' fill='%23e74c3c'/%3E%3Ccircle cx='13' cy='13' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='27' cy='13' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='13' cy='27' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='27' cy='27' r='6' fill='%23e74c3c'/%3E%3C/svg%3E");
-            background-size: 35px 35px;
-            box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
+        /* 캡슐 윈도우 (지그재그 꽉 찬 공) */
+        .machine-window {
+            flex: 1; background-color: #5a0000;
+            position: relative; overflow: hidden;
+            background-image: radial-gradient(circle closest-side, var(--point-red) 90%, transparent 91%),
+                              radial-gradient(circle closest-side, #a00000 90%, transparent 91%);
+            background-size: 34px 30px;
+            background-position: 0 0, 17px 15px;
         }
-        .window-section::after {
+        .machine-window::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%, rgba(255,255,255,0.1) 80%);
-            pointer-events: none;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
         }
 
-        .dial-section {
-            padding: 10px 0;
+        /* 하단 다이얼 섹션 */
+        .machine-bottom {
+            padding: 15px 0;
             display: flex; flex-direction: column; align-items: center;
-            background: rgba(0,0,0,0.1);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            background: #fff;
         }
 
         .metal-dial {
-            width: 45px; height: 45px;
-            background: radial-gradient(circle, #eee 10%, #999 100%);
-            border: 2px solid #444; border-radius: 50%;
+            width: 50px; height: 50px;
+            background: radial-gradient(circle, #f5f5f5 10%, #ccc 100%);
+            border: 1px solid #aaa; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             position: relative;
-            box-shadow: 0 3px 0 #222, inset 0 2px 3px rgba(0,0,0,0.4);
         }
-        .dial-knob {
+        .dial-inner {
             width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .dial-knob::before {
-            content: ''; width: 80%; height: 8px;
-            background: linear-gradient(to bottom, #555, #222);
-            border-radius: 4px; box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+        .dial-inner::before {
+            content: ''; width: 75%; height: 4px;
+            background: #666; border-radius: 2px;
         }
         .rotating { transform: rotate(360deg); }
 
-        .spin-hint {
-            margin-top: 5px; font-size: 0.65rem; font-weight: 700;
-            color: var(--wood-roof);
+        .btn-hint {
+            margin-top: 8px; font-size: 0.7rem; font-weight: 600;
+            color: #999; letter-spacing: -0.5px;
         }
 
-        .kiosk-footer {
-            width: 95%; max-width: 480px;
-            background-color: var(--wood-frame);
-            background-image: 
-                linear-gradient(45deg, transparent 48%, #5d4037 48%, #5d4037 52%, transparent 52%),
-                linear-gradient(-45deg, transparent 48%, #5d4037 48%, #5d4037 52%, transparent 52%);
-            background-size: 24px 24px;
-            border-top: 4px solid var(--wood-roof);
-            padding: 15px 0;
-            text-align: center;
-            color: rgba(255,255,255,0.7);
-            font-size: 0.75rem;
-            box-shadow: inset 0 5px 10px rgba(0,0,0,0.3);
-            border-radius: 0 0 4px 4px;
+        footer {
+            margin-top: auto; padding: 40px 20px;
+            text-align: center; color: #bbb; font-size: 0.75rem;
         }
 
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <header class="roof-header">
-        <div class="header-content">
-            <div class="logo">머두 K 운세</div>
-            <div class="user-nav">
-                <div class="profile-box hidden" id="profileBox" onclick="location.href='/profile'">
-                    <img id="userProfileImg" src="" alt="프로필">
-                </div>
-                <button id="loginBtn" class="hidden" onclick="location.href='/login'">로그인</button>
+
+    <header>
+        <div class="logo">
+            머두 <span class="logo-seal">運</span> K
+        </div>
+        <div class="user-nav">
+            <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
+                <img id="userProfileImg" src="" alt="프로필">
             </div>
+            <button id="loginBtn" class="hidden" onclick="location.href='/login'">로그인</button>
         </div>
     </header>
 
-    <main class="kiosk-body">
+    <main class="container">
         <div class="main-sign">
             <h2>오늘의 운세를 뽑아보세요</h2>
         </div>
 
         <div class="gacha-grid">
-            <div class="machine-unit" onclick="handleGacha(this, 'personality')">
-                <div class="label-section">
-                    <div class="hanji-strip">
+            <div class="machine-card" onclick="handleGacha(this, 'personality')">
+                <div class="machine-top">
+                    <div class="hanji-label">
                         <div class="hanja-main">性</div>
-                        <div class="thai-title">성격운</div>
+                        <div class="text-sub">성격운</div>
                     </div>
-                    <div class="window-section"></div>
+                    <div class="machine-window"></div>
                 </div>
-                <div class="dial-section">
+                <div class="machine-bottom">
                     <div class="metal-dial">
-                        <div class="dial-knob"></div>
+                        <div class="dial-inner"></div>
                     </div>
-                    <span class="spin-hint">돌리기</span>
+                    <span class="btn-hint">돌리기</span>
                 </div>
             </div>
 
-            <div class="machine-unit" onclick="handleGacha(this, 'wealth')">
-                <div class="label-section">
-                    <div class="hanji-strip">
+            <div class="machine-card" onclick="handleGacha(this, 'wealth')">
+                <div class="machine-top">
+                    <div class="hanji-label">
                         <div class="hanja-main">財</div>
-                        <div class="thai-title">재물운</div>
+                        <div class="text-sub">재물운</div>
                     </div>
-                    <div class="window-section"></div>
+                    <div class="machine-window"></div>
                 </div>
-                <div class="dial-section">
+                <div class="machine-bottom">
                     <div class="metal-dial">
-                        <div class="dial-knob"></div>
+                        <div class="dial-inner"></div>
                     </div>
-                    <span class="spin-hint">돌리기</span>
+                    <span class="btn-hint">돌리기</span>
                 </div>
             </div>
 
-            <div class="machine-unit" onclick="handleGacha(this, 'romance')">
-                <div class="label-section">
-                    <div class="hanji-strip">
+            <div class="machine-card" onclick="handleGacha(this, 'romance')">
+                <div class="machine-top">
+                    <div class="hanji-label">
                         <div class="hanja-main">愛</div>
-                        <div class="thai-title">연애운</div>
+                        <div class="text-sub">연애운</div>
                     </div>
-                    <div class="window-section"></div>
+                    <div class="machine-window"></div>
                 </div>
-                <div class="dial-section">
+                <div class="machine-bottom">
                     <div class="metal-dial">
-                        <div class="dial-knob"></div>
+                        <div class="dial-inner"></div>
                     </div>
-                    <span class="spin-hint">돌리기</span>
+                    <span class="btn-hint">돌리기</span>
                 </div>
             </div>
 
-            <div class="machine-unit" style="opacity: 0.7; cursor: default;">
-                <div class="label-section">
-                    <div class="hanji-strip" style="background: #e0e0e0;">
-                        <div class="hanja-main" style="color:#999">運</div>
-                        <div class="thai-title" style="color:#999">준비중</div>
+            <div class="machine-card" style="opacity: 0.5; cursor: default;">
+                <div class="machine-top">
+                    <div class="hanji-label">
+                        <div class="hanja-main" style="color:#ccc">運</div>
+                        <div class="text-sub">준비중</div>
                     </div>
-                    <div class="window-section" style="filter: grayscale(1);"></div>
+                    <div class="machine-window" style="filter: grayscale(1);"></div>
                 </div>
-                <div class="dial-section">
-                    <div class="metal-dial" style="background: #ccc; border-color: #999; cursor: default;">
-                        <div class="dial-knob" style="opacity: 0.5;"></div>
+                <div class="machine-bottom">
+                    <div class="metal-dial" style="background:#eee;">
+                        <div class="dial-inner" style="opacity:0.3;"></div>
                     </div>
-                    <span class="spin-hint" style="color:#999">준비중</span>
+                    <span class="btn-hint">준비중</span>
                 </div>
             </div>
         </div>
     </main>
 
-    <footer class="kiosk-footer">
-        <p>© 2026 머두 K. 당신의 운명을 점쳐드립니다.</p>
+    <footer>
+        © 2026 MURDOO K. 당신의 소중한 운명을 기록합니다.
     </footer>
 
     <script>
@@ -345,17 +297,13 @@
                     const user = await res.json();
                     profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
                     profileBox.classList.remove('hidden');
-                    loginBtn.classList.add('hidden');
                     isLoggedIn = true;
                 } else {
                     loginBtn.classList.remove('hidden');
-                    profileBox.classList.add('hidden');
                     isLoggedIn = false;
                 }
             } catch (err) {
-                console.error("로그인 상태 확인 실패:", err);
                 loginBtn.classList.remove('hidden');
-                profileBox.classList.add('hidden');
                 isLoggedIn = false;
             }
         });
@@ -368,7 +316,7 @@
                 return;
             }
 
-            const knob = machineEl.querySelector('.dial-knob');
+            const knob = machineEl.querySelector('.dial-inner');
             knob.classList.add('rotating');
 
             setTimeout(() => {

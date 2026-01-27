@@ -3,289 +3,300 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - 전통 가챠 사주</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@800&family=Cinzel+Decorative:wght@700&family=Kanit:wght@300;600&display=swap" rel="stylesheet">
+    <title>MURDOO K - 전통 운세 상점</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Cinzel+Decorative:wght@700&family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --wood-body: #d2b48c;
-            --wood-dark: #8b4513;
-            --capsule-red: #e74c3c;
-            --capsule-shadow: #c0392b;
-            --capsule-deep: #922b21;
-            --metal-face: #bdc3c7;
-            --metal-shadow: #7f8c8d;
-            --hanji-bg: #f5ecd9; /* 한지 배경색 */
-            --ink-color: #2c2c2c; /* 먹물색 */
+            --wood-frame: #8b5a2b; /* 깊은 원목색 */
+            --wood-panel: #d4a76a; /* 밝은 원목색 */
+            --hanji-paper: #fdfaf1; /* 한지 띠지 색 */
+            --capsule-red: #cc0000;
+            --ink-black: #1a1a1a;
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #1a1a1a;
+            background-color: #1e1e1e;
             font-family: 'Gowun Batang', serif;
             color: #333;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        .magic-background {
+        /* 배경: 한지 질감 오버레이 */
+        .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: #fdfaf5;
+            background: #f4f1ea;
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
         }
 
-        .container { max-width: 580px; margin: 0 auto; padding: 20px 8px; }
+        /* 컨테이너: 좌우 여백 최소화 (와이드 모드) */
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 10px 5px; 
+        }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 5px; border-bottom: 2px solid var(--wood-dark);
-            margin-bottom: 30px;
+            padding: 15px 10px; border-bottom: 2px solid var(--wood-frame);
+            margin-bottom: 25px;
         }
 
         .logo {
             font-family: 'Cinzel Decorative', cursive;
-            color: var(--wood-dark); font-size: 1.5rem; font-weight: bold;
+            color: var(--wood-frame); font-size: 1.4rem; font-weight: bold;
         }
 
-        .user-nav { display: flex; align-items: center; gap: 12px; }
+        .user-nav { display: flex; align-items: center; gap: 10px; }
 
-        .profile-container {
-            width: 42px; height: 42px; border-radius: 8px; overflow: hidden;
-            border: 2px solid var(--wood-dark); cursor: pointer;
+        .profile-box {
+            width: 40px; height: 40px; border-radius: 5px; overflow: hidden;
+            border: 2px solid var(--wood-frame); cursor: pointer;
         }
-        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-box img { width: 100%; height: 100%; object-fit: cover; }
 
         #loginBtn {
-            background: var(--wood-dark); color: white; border: none;
-            padding: 8px 16px; border-radius: 6px; cursor: pointer;
-            font-family: 'Kanit'; font-weight: 600;
+            background: var(--wood-frame); color: white; border: none;
+            padding: 8px 14px; border-radius: 4px; cursor: pointer;
+            font-family: 'Kanit'; font-weight: 500;
         }
 
         .main-title { text-align: center; margin-bottom: 30px; }
         .main-title h2 { 
-            font-family: 'Nanum Myeongjo'; font-size: 1.8rem; 
-            margin: 0; color: #2c3e50; text-shadow: 1px 1px 0px #fff;
+            font-family: 'Nanum Myeongjo'; font-size: 1.7rem; 
+            margin: 0; color: #2c3e50; border-bottom: 4px double var(--wood-frame);
+            display: inline-block; padding-bottom: 5px;
         }
 
+        /* --- [GOP 핵심] 사진 속 가판대 구조 재현 --- */
         .gacha-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 25px 10px; padding-bottom: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 10px;
         }
 
-        .gacha-machine {
-            background: var(--wood-body);
+        .machine-unit {
+            background: var(--wood-panel);
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 5px solid var(--wood-dark);
-            border-radius: 10px 10px 25px 25px; 
-            padding: 15px 5px 25px 5px;
+            border: 4px solid var(--wood-frame);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 0 50px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; align-items: center;
-            cursor: pointer; transition: transform 0.2s;
         }
-        .gacha-machine:hover { transform: translateY(-3px); }
 
-        .gacha-display {
-            width: 94%; height: 140px;
-            background-color: var(--capsule-deep);
-            border: 4px inset #ccc; border-radius: 6px;
-            margin-bottom: 18px; position: relative; overflow: hidden;
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.5);
-            
-            background-image: 
-                radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
-                radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
-                radial-gradient(circle at center, var(--capsule-shadow) 45%, var(--capsule-deep) 60%, transparent 65%);
-            background-size: 55px 55px, 47px 49px, 43px 43px;
-            background-position: 15px 10px, 0px 0px, 25px 25px;
+        /* 상단: 세로형 한지 라벨 섹션 */
+        .label-section {
+            display: flex;
+            height: 180px;
+            border-bottom: 3px solid var(--wood-frame);
+        }
+
+        /* 한지 띠지 */
+        .hanji-strip {
+            flex: 1;
+            background: var(--hanji-paper);
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
+            margin: 0 10px;
+            border-left: 1px solid rgba(0,0,0,0.1);
+            border-right: 1px solid rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding-top: 10px;
+            justify-content: center;
+            padding: 10px 0;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
-        .gacha-display::after {
+
+        .hanja-main {
+            font-family: 'Nanum Myeongjo'; font-size: 2.5rem;
+            font-weight: 800; color: var(--ink-black); margin-bottom: 5px;
+        }
+        .thai-title {
+            writing-mode: vertical-rl; /* 세로 쓰기 느낌 */
+            font-family: 'Kanit'; font-size: 0.9rem; font-weight: 700;
+            color: #444; letter-spacing: 2px;
+        }
+
+        /* 캡슐 윈도우 */
+        .window-section {
+            flex: 1;
+            background: #111;
+            border-left: 3px solid var(--wood-frame);
+            position: relative;
+            overflow: hidden;
+            /* 리얼한 캡슐 스택 */
+            background-image: 
+                radial-gradient(circle at 30% 80%, var(--capsule-red) 22px, #900 24px, transparent 25px),
+                radial-gradient(circle at 70% 85%, var(--capsule-red) 20px, #900 22px, transparent 23px),
+                radial-gradient(circle at 50% 60%, var(--capsule-red) 23px, #900 25px, transparent 26px),
+                radial-gradient(circle at 20% 40%, var(--capsule-red) 20px, #900 22px, transparent 23px),
+                radial-gradient(circle at 80% 30%, var(--capsule-red) 21px, #900 23px, transparent 24px),
+                radial-gradient(circle at 50% 10%, var(--capsule-red) 19px, #900 21px, transparent 22px);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .window-section::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.2) 85%);
-            pointer-events: none;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
         }
 
-        /* [GOP 핵심] 한지 느낌의 종이 라벨 */
-        .hanji-sign {
-            background-color: var(--hanji-bg);
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); /* 한지 질감 */
-            border: 1px solid #d4c4a7;
-            padding: 8px 12px;
-            text-align: center;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            width: 70%;
+        /* 하단: 금속 다이얼 섹션 */
+        .dial-section {
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0,0,0,0.05);
         }
 
-        /* 먹물 글씨 스타일 */
-        .hanja-label {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 2.0rem;
-            color: var(--ink-color);
-            margin: 0 0 5px 0;
-            font-weight: 800;
-        }
-        .thai-sub {
-            font-family: 'Gowun Batang', serif;
-            font-size: 0.85rem;
-            color: var(--ink-color);
-            margin: 0;
-            font-weight: 600;
-        }
-        
-        /* [GOP 핵심] 가챠 머신 아이콘 */
-        .gacha-icon {
-            width: 40px;
-            height: 40px;
-            margin-bottom: 5px;
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
-            z-index: 1;
+        .metal-dial {
+            width: 80px; height: 80px;
+            background: radial-gradient(circle, #eee 20%, #999 100%);
+            border: 4px solid #555; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; cursor: pointer;
+            box-shadow: 0 5px 0 #333, inset 0 2px 5px rgba(0,0,0,0.5);
+            transition: 0.2s;
         }
 
-        .control-panel {
-            width: 90px; height: 90px;
-            background: radial-gradient(circle, #ecf0f1 30%, var(--metal-face) 70%);
-            border: 4px solid #7f8c8d; border-radius: 50%;
+        .dial-knob {
+            width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            position: relative;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.5);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .knob-inner {
-            width: 100%; height: 100%; position: relative;
-            display: flex; align-items: center; justify-content: center;
-            transition: transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1);
+
+        /* 다이얼 가로 손잡이 */
+        .dial-knob::before {
+            content: ''; width: 85%; height: 14px;
+            background: #333; border-radius: 7px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
-        .dial-grip {
-            width: 70%; height: 70%;
-            background: linear-gradient(135deg, #ffffff 0%, var(--metal-face) 50%, var(--metal-shadow) 100%);
-            border-radius: 50%; position: absolute;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.8);
-            display: flex; align-items: center; justify-content: center;
+
+        /* 동전 구멍 */
+        .dial-knob::after {
+            content: ''; width: 6px; height: 20px;
+            background: #000; position: absolute; top: 15%;
+            border-radius: 2px;
         }
-        .dial-grip::after {
-            content: ''; width: 60%; height: 8px;
-            background: #555; border-radius: 4px;
-            box-shadow: inset 0 2px 3px rgba(0,0,0,0.6);
-        }
-        .coin-slot {
-            width: 6px; height: 26px; background: #2c3e50;
-            position: absolute; top: 5%; border-radius: 3px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.3);
-            z-index: 5;
-        }
+
         .rotating { transform: rotate(360deg); }
 
-        .hint-text {
-            font-size: 0.75rem; color: #8b4513; margin-top: 15px;
-            font-weight: bold; letter-spacing: -0.5px;
+        .spin-hint {
+            margin-top: 10px; font-size: 0.75rem; font-weight: bold;
+            color: var(--wood-frame); letter-spacing: -0.5px;
         }
+
         .hidden { display: none !important; }
+
         footer {
-            text-align: center; margin-top: 40px; padding-bottom: 30px;
-            font-size: 0.8rem; color: #999;
+            text-align: center; margin-top: 40px; padding: 20px;
+            font-size: 0.8rem; color: #888;
         }
     </style>
 </head>
 <body>
-    <div class="magic-background"></div>
+    <div class="bg-overlay"></div>
     <div class="container">
         <header>
-            <div class="logo">✨ MURDOO K</div>
+            <div class="logo">MURDOO K</div>
             <div class="user-nav">
-                <div class="profile-container hidden" id="profileBox" onclick="location.href='/profile'">
+                <div class="profile-box hidden" id="profileBox" onclick="location.href='/profile'">
                     <img id="userProfileImg" src="" alt="Profile">
                 </div>
-                <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
+                <button id="loginBtn" class="hidden" onclick="location.href='/login'">Log In</button>
             </div>
         </header>
+
         <main>
             <div class="main-title">
-                <h2>วิหารกาชาเกาหลี (가챠 사주)</h2>
+                <h2>วิหารกาชา (Ancient Gacha)</h2>
             </div>
+
             <div class="gacha-grid">
-                <div class="gacha-machine" onclick="handleGachaClick(this, 'personality')">
-                    <div class="gacha-display">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="gacha-icon" alt="Personality">
-                        <div class="hanji-sign">
-                            <div class="hanja-label">性</div>
-                            <div class="thai-sub">ตัวตนของคุณ</div>
+                <div class="machine-unit" onclick="handleGacha(this, 'personality')">
+                    <div class="label-section">
+                        <div class="hanji-strip">
+                            <div class="hanja-main">性</div>
+                            <div class="thai-title">ตัวตน</div>
                         </div>
+                        <div class="window-section"></div>
                     </div>
-                    <div class="control-panel">
-                        <div class="knob-inner">
-                            <div class="coin-slot"></div>
-                            <div class="dial-grip"></div>
+                    <div class="dial-section">
+                        <div class="metal-dial">
+                            <div class="dial-knob"></div>
                         </div>
+                        <span class="spin-hint">หมุนเพื่อสุ่ม (หมุน)</span>
                     </div>
-                    <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
-                </div>
-                
-                <div class="gacha-machine" onclick="handleGachaClick(this, 'wealth')">
-                    <div class="gacha-display">
-                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" class="gacha-icon" alt="Wealth">
-                        <div class="hanji-sign">
-                            <div class="hanja-label">財</div>
-                            <div class="thai-sub">ดวงการเงิน</div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <div class="knob-inner">
-                            <div class="coin-slot"></div>
-                            <div class="dial-grip"></div>
-                        </div>
-                    </div>
-                    <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
                 </div>
 
-                <div class="gacha-machine" onclick="handleGachaClick(this, 'romance')">
-                    <div class="gacha-display">
-                        <img src="https://cdn-icons-png.flaticon.com/512/2904/2904861.png" class="gacha-icon" alt="Romance">
-                        <div class="hanji-sign">
-                            <div class="hanja-label">愛</div>
-                            <div class="thai-sub">ดวงความรัก</div>
+                <div class="machine-unit" onclick="handleGacha(this, 'wealth')">
+                    <div class="label-section">
+                        <div class="hanji-strip">
+                            <div class="hanja-main">財</div>
+                            <div class="thai-title">การเงิน</div>
                         </div>
+                        <div class="window-section"></div>
                     </div>
-                    <div class="control-panel">
-                        <div class="knob-inner">
-                            <div class="coin-slot"></div>
-                            <div class="dial-grip"></div>
+                    <div class="dial-section">
+                        <div class="metal-dial">
+                            <div class="dial-knob"></div>
                         </div>
+                        <span class="spin-hint">หมุนเพื่อสุ่ม (หมุน)</span>
                     </div>
-                    <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
                 </div>
 
-                <div class="gacha-machine" style="opacity: 0.7; cursor: default;" onclick="event.stopPropagation();">
-                    <div class="gacha-display" style="filter: grayscale(1);">
-                        <div class="hanji-sign" style="background-color: #e0e0e0; border-color: #ccc;">
-                            <div class="hanja-label" style="color: #888;">運</div>
-                            <div class="thai-sub" style="color: #888;">เร็วๆ นี้...</div>
+                <div class="machine-unit" onclick="handleGacha(this, 'romance')">
+                    <div class="label-section">
+                        <div class="hanji-strip">
+                            <div class="hanja-main">愛</div>
+                            <div class="thai-title">ความรัก</div>
                         </div>
+                        <div class="window-section"></div>
                     </div>
-                    <div class="control-panel" style="background: #999; border-color: #777;">
-                        <div class="knob-inner">
-                            <div class="coin-slot" style="background: #666;"></div>
-                            <div class="dial-grip" style="background: linear-gradient(135deg, #ccc, #777);"></div>
+                    <div class="dial-section">
+                        <div class="metal-dial">
+                            <div class="dial-knob"></div>
                         </div>
+                        <span class="spin-hint">หมุนเพื่อสุ่ม (หมุน)</span>
                     </div>
-                    <span class="hint-text" style="color: #777;">잠겨있음</span>
+                </div>
+
+                <div class="machine-unit" style="opacity: 0.6; cursor: default;">
+                    <div class="label-section">
+                        <div class="hanji-strip" style="background: #e0e0e0;">
+                            <div class="hanja-main" style="color:#999">運</div>
+                            <div class="thai-title" style="color:#999">ดวงดี</div>
+                        </div>
+                        <div class="window-section" style="filter: grayscale(1);"></div>
+                    </div>
+                    <div class="dial-section">
+                        <div class="metal-dial" style="background: #ccc; cursor: default;">
+                            <div class="dial-knob"></div>
+                        </div>
+                        <span class="spin-hint" style="color:#999">เร็วๆ นี้...</span>
+                    </div>
                 </div>
             </div>
         </main>
-        <footer><p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p></footer>
+
+        <footer>
+            <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตาที่ถูกจารึก</p>
+        </footer>
     </div>
+
     <script>
         let isLoggedIn = false;
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+
         document.addEventListener('DOMContentLoaded', async () => {
             const profileBox = document.getElementById('profileBox');
             const loginBtn = document.getElementById('loginBtn');
             const profileImg = document.getElementById('userProfileImg');
+            
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -302,18 +313,22 @@
                 isLoggedIn = false;
             }
         });
-        function handleGachaClick(machineElement, category) {
+
+        function handleGacha(machineEl, category) {
             if (!isLoggedIn) {
-                if(confirm("กรุณาเข้าสู่ระบบก่อนหมุนกาชา (로그인 후 이용 가능합니다)")) {
+                if(confirm("로그인 후 이용 가능합니다. 로그인 페이지로 이동할까요?")) {
                     window.location.href = '/login';
                 }
                 return;
             }
-            const knobInner = machineElement.querySelector('.knob-inner');
-            knobInner.classList.add('rotating');
+
+            // 다이얼 회전 애니메이션
+            const knob = machineEl.querySelector('.dial-knob');
+            knob.classList.add('rotating');
+
             setTimeout(() => {
                 window.location.href = `/${category}`;
-            }, 650);
+            }, 700);
         }
     </script>
 </body>

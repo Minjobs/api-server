@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - 전통 운세 상점</title>
+    <title>MURDOO K - 전통 가챠 상점</title>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Cinzel+Decorative:wght@700&family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --wood-frame: #8b5a2b; /* 깊은 원목색 */
-            --wood-panel: #d4a76a; /* 밝은 원목색 */
-            --hanji-paper: #fdfaf1; /* 한지 띠지 색 */
+            --wood-frame: #8b5a2b; 
+            --wood-panel: #d4a76a; 
+            --hanji-paper: #fdfaf1; 
             --capsule-red: #cc0000;
+            --capsule-shadow: #990000;
+            --capsule-deep: #660000;
             --ink-black: #1a1a1a;
         }
 
@@ -23,7 +25,6 @@
             overflow-x: hidden;
         }
 
-        /* 배경: 한지 질감 오버레이 */
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -31,7 +32,6 @@
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
         }
 
-        /* 컨테이너: 좌우 여백 최소화 (와이드 모드) */
         .container { 
             max-width: 600px; 
             margin: 0 auto; 
@@ -70,7 +70,6 @@
             display: inline-block; padding-bottom: 5px;
         }
 
-        /* 가판대 그리드 */
         .gacha-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -89,14 +88,12 @@
             cursor: pointer;
         }
 
-        /* 상단: 세로형 한지 라벨 섹션 */
         .label-section {
             display: flex;
             height: 180px;
             border-bottom: 3px solid var(--wood-frame);
         }
 
-        /* 한지 띠지 */
         .hanji-strip {
             flex: 1;
             background: var(--hanji-paper);
@@ -122,29 +119,36 @@
             color: #444; letter-spacing: 2px;
         }
 
-        /* 캡슐 윈도우 */
+        /* --- [GOP 핵심 수정] 빈틈없이 꽉 찬 캡슐 창 --- */
         .window-section {
             flex: 1;
-            background: #111;
+            background-color: var(--capsule-deep); /* 기본 배경색을 어두운 빨강으로 깔아서 빈틈 방지 */
             border-left: 3px solid var(--wood-frame);
             position: relative;
             overflow: hidden;
+            
+            /* 4중 레이어 캡슐 타일링: 무작위성을 위해 오프셋과 사이즈를 다르게 조절 */
             background-image: 
-                radial-gradient(circle at 30% 80%, var(--capsule-red) 22px, #900 24px, transparent 25px),
-                radial-gradient(circle at 70% 85%, var(--capsule-red) 20px, #900 22px, transparent 23px),
-                radial-gradient(circle at 50% 60%, var(--capsule-red) 23px, #900 25px, transparent 26px),
-                radial-gradient(circle at 20% 40%, var(--capsule-red) 20px, #900 22px, transparent 23px),
-                radial-gradient(circle at 80% 30%, var(--capsule-red) 21px, #900 23px, transparent 24px),
-                radial-gradient(circle at 50% 10%, var(--capsule-red) 19px, #900 21px, transparent 22px);
+                radial-gradient(circle at 25% 25%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
+                radial-gradient(circle at 75% 75%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
+                radial-gradient(circle at 75% 25%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
+                radial-gradient(circle at 25% 75%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%);
+            
+            /* 타일 사이즈를 50px 정도로 고정하여 균일하면서도 꽉 차게 반복 */
+            background-size: 50px 50px;
+            
+            /* 각 레이어의 위치를 어긋나게 배치하여 겹치게 만듦 (꽉 찬 느낌의 핵심) */
+            background-position: 0 0, 25px 25px, 25px 0, 0 25px;
+            
             box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
         }
 
         .window-section::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(255,255,255,0.2) 80%);
+            pointer-events: none;
         }
 
-        /* 하단: 손잡이 다이얼 섹션 */
         .dial-section {
             padding: 20px 0;
             display: flex;
@@ -168,7 +172,6 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 묵직한 가로 손잡이 바 */
         .dial-knob::before {
             content: ''; width: 85%; height: 14px;
             background: linear-gradient(to bottom, #444, #222);

@@ -12,8 +12,10 @@
             --capsule-red: #e74c3c;
             --capsule-shadow: #c0392b;
             --capsule-deep: #922b21;
-            --metal-face: #bdc3c7; /* 다이얼 금속면 색상 */
-            --metal-shadow: #7f8c8d; /* 다이얼 그림자 색상 */
+            --metal-face: #bdc3c7;
+            --metal-shadow: #7f8c8d;
+            --hanji-bg: #f5ecd9; /* 한지 배경색 */
+            --ink-color: #2c2c2c; /* 먹물색 */
         }
 
         body {
@@ -88,12 +90,18 @@
             border: 4px inset #ccc; border-radius: 6px;
             margin-bottom: 18px; position: relative; overflow: hidden;
             box-shadow: inset 0 5px 20px rgba(0,0,0,0.5);
+            
             background-image: 
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
                 radial-gradient(circle at center, var(--capsule-shadow) 45%, var(--capsule-deep) 60%, transparent 65%);
             background-size: 55px 55px, 47px 49px, 43px 43px;
             background-position: 15px 10px, 0px 0px, 25px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 10px;
         }
         .gacha-display::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -101,66 +109,76 @@
             pointer-events: none;
         }
 
+        /* [GOP 핵심] 한지 느낌의 종이 라벨 */
+        .hanji-sign {
+            background-color: var(--hanji-bg);
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); /* 한지 질감 */
+            border: 1px solid #d4c4a7;
+            padding: 8px 12px;
+            text-align: center;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            width: 70%;
+        }
+
+        /* 먹물 글씨 스타일 */
         .hanja-label {
-            font-family: 'Nanum Myeongjo'; font-size: 2.3rem;
-            color: #000; margin: 5px 0; font-weight: 900;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 2.0rem;
+            color: var(--ink-color);
+            margin: 0 0 5px 0;
+            font-weight: 800;
         }
         .thai-sub {
-            font-family: 'Kanit'; font-size: 0.85rem;
-            color: #5d4037; margin-bottom: 18px; font-weight: 600;
+            font-family: 'Gowun Batang', serif;
+            font-size: 0.85rem;
+            color: var(--ink-color);
+            margin: 0;
+            font-weight: 600;
+        }
+        
+        /* [GOP 핵심] 가챠 머신 아이콘 */
+        .gacha-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 5px;
+            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+            z-index: 1;
         }
 
-        /* --- [GOP 핵심] 입체 다이얼 손잡이 --- */
         .control-panel {
-            width: 90px; height: 90px; /* 크기 약간 키움 */
-            /* 금속 질감의 베이스 판 */
+            width: 90px; height: 90px;
             background: radial-gradient(circle, #ecf0f1 30%, var(--metal-face) 70%);
-            border: 4px solid #7f8c8d;
-            border-radius: 50%;
+            border: 4px solid #7f8c8d; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             position: relative;
-            /* 깊이감 있는 그림자 */
             box-shadow: 0 8px 15px rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.5);
         }
-
-        /* 회전하는 내부 뭉치 (다이얼 전체) */
         .knob-inner {
-            width: 100%; height: 100%;
-            position: relative;
+            width: 100%; height: 100%; position: relative;
             display: flex; align-items: center; justify-content: center;
-            transition: transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); /* 튕기는듯한 회전감 */
+            transition: transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1);
         }
-
-        /* 입체적인 다이얼 그립 (손잡이) */
         .dial-grip {
             width: 70%; height: 70%;
             background: linear-gradient(135deg, #ffffff 0%, var(--metal-face) 50%, var(--metal-shadow) 100%);
-            border-radius: 50%;
-            position: absolute;
-            /* 툭 튀어나온 입체 효과 */
+            border-radius: 50%; position: absolute;
             box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.8);
             display: flex; align-items: center; justify-content: center;
         }
-
-        /* 손잡이 중앙의 돌리는 홈 */
         .dial-grip::after {
-            content: '';
-            width: 60%; height: 8px;
-            background: #555;
-            border-radius: 4px;
+            content: ''; width: 60%; height: 8px;
+            background: #555; border-radius: 4px;
             box-shadow: inset 0 2px 3px rgba(0,0,0,0.6);
         }
-
-        /* 동전 투입구 (그립 위에 배치) */
         .coin-slot {
-            width: 6px; height: 26px;
-            background: #2c3e50;
-            position: absolute; top: 5%; /* 위치 조정 */
-            border-radius: 3px;
+            width: 6px; height: 26px; background: #2c3e50;
+            position: absolute; top: 5%; border-radius: 3px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.3);
             z-index: 5;
         }
-
         .rotating { transform: rotate(360deg); }
 
         .hint-text {
@@ -192,21 +210,30 @@
             </div>
             <div class="gacha-grid">
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'personality')">
-                    <div class="gacha-display"></div>
-                    <div class="hanja-label">性</div>
-                    <div class="thai-sub">ตัวตนของคุณ</div>
+                    <div class="gacha-display">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" class="gacha-icon" alt="Personality">
+                        <div class="hanji-sign">
+                            <div class="hanja-label">性</div>
+                            <div class="thai-sub">ตัวตนของคุณ</div>
+                        </div>
+                    </div>
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
-                            <div class="dial-grip"></div> </div>
+                            <div class="dial-grip"></div>
+                        </div>
                     </div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
                 </div>
                 
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'wealth')">
-                    <div class="gacha-display"></div>
-                    <div class="hanja-label">財</div>
-                    <div class="thai-sub">ดวงการเงิน</div>
+                    <div class="gacha-display">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135706.png" class="gacha-icon" alt="Wealth">
+                        <div class="hanji-sign">
+                            <div class="hanja-label">財</div>
+                            <div class="thai-sub">ดวงการเงิน</div>
+                        </div>
+                    </div>
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
@@ -217,9 +244,13 @@
                 </div>
 
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'romance')">
-                    <div class="gacha-display"></div>
-                    <div class="hanja-label">愛</div>
-                    <div class="thai-sub">ดวงความรัก</div>
+                    <div class="gacha-display">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2904/2904861.png" class="gacha-icon" alt="Romance">
+                        <div class="hanji-sign">
+                            <div class="hanja-label">愛</div>
+                            <div class="thai-sub">ดวงความรัก</div>
+                        </div>
+                    </div>
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
@@ -230,9 +261,12 @@
                 </div>
 
                 <div class="gacha-machine" style="opacity: 0.7; cursor: default;" onclick="event.stopPropagation();">
-                    <div class="gacha-display" style="filter: grayscale(1);"></div>
-                    <div class="hanja-label" style="color: #888;">運</div>
-                    <div class="thai-sub" style="color: #888;">เร็วๆ นี้...</div>
+                    <div class="gacha-display" style="filter: grayscale(1);">
+                        <div class="hanji-sign" style="background-color: #e0e0e0; border-color: #ccc;">
+                            <div class="hanja-label" style="color: #888;">運</div>
+                            <div class="thai-sub" style="color: #888;">เร็วๆ นี้...</div>
+                        </div>
+                    </div>
                     <div class="control-panel" style="background: #999; border-color: #777;">
                         <div class="knob-inner">
                             <div class="coin-slot" style="background: #666;"></div>

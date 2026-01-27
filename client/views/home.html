@@ -3,23 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>머두 K - 정갈한 운세 뽑기</title>
+    <title>머두 K - 전통 운세 뽑기</title>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --hanji-bg: #fdfcf0;   /* 깨끗한 한지색 */
-            --ink-black: #2c2c2c;  /* 먹색 */
-            --point-red: #d32f2f;  /* 포인트 레드 (낙관색) */
-            --accent-gold: #b8860b;/* 포인트 골드 */
-            --card-white: #ffffff; /* 카드 배경 */
-            --border-color: #e0d9c1;/* 은은한 테두리 */
+            /* --- [컬러 팔레트: 연한 나무 & 전통] --- */
+            --wood-light-bg: #f2ebd9; /* 아주 연한 나무 배경 (가판대 바닥) */
+            --wood-machine: #e8d5b5;  /* 기계 몸체 나무색 */
+            --wood-frame: #a67c52;    /* 나무 테두리/진한색 */
+            --sign-white: #fffaf4;    /* 간판 흰색 (한지 느낌) */
+            --ink-black: #2c2c2c;     /* 먹색 */
+            --point-red: #c0392b;     /* 포인트 레드 */
+            --metal-deco: #8c8c8c;    /* 장석 금속색 */
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: var(--hanji-bg);
-            /* 은은한 한지 패턴 오버레이 */
-            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
+            background-color: #222; /* 바깥 배경은 어둡게 처리하여 가판대 강조 */
             font-family: 'Noto Sans KR', sans-serif;
             color: var(--ink-black);
             min-height: 100vh;
@@ -28,118 +28,121 @@
             align-items: center;
         }
 
-        /* --- [헤더: 심플 & 클린] --- */
+        /* --- [헤더: 깔끔 유지] --- */
         header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            background: rgba(253, 252, 240, 0.8);
-            backdrop-filter: blur(5px);
+            width: 100%; max-width: 500px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; box-sizing: border-box;
+            background: var(--wood-light-bg); /* 헤더도 연한 나무톤 유지 */
+            border-bottom: 2px solid var(--wood-frame);
             position: sticky; top: 0; z-index: 100;
         }
-
         .logo {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.4rem; font-weight: 800;
-            letter-spacing: -1px;
+            font-size: 1.4rem; font-weight: 800; color: var(--wood-frame);
             display: flex; align-items: center; gap: 6px;
         }
         .logo-seal {
             background: var(--point-red); color: #fff;
-            font-size: 0.75rem; padding: 2px 4px;
-            border-radius: 2px; line-height: 1;
+            font-size: 0.75rem; padding: 2px 4px; border-radius: 2px;
         }
-
         .user-nav { display: flex; align-items: center; gap: 12px; }
         .profile-circle {
             width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-            border: 1px solid var(--border-color); cursor: pointer;
+            border: 2px solid var(--wood-frame); cursor: pointer;
         }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
-
         #loginBtn {
-            background: none; border: 1px solid var(--ink-black);
-            padding: 6px 14px; border-radius: 20px; cursor: pointer;
-            font-size: 0.85rem; font-weight: 500; transition: 0.3s;
+            background: var(--wood-frame); color: #fff; border: none;
+            padding: 6px 14px; border-radius: 4px; cursor: pointer;
+            font-size: 0.85rem; font-weight: 700;
         }
-        #loginBtn:hover { background: var(--ink-black); color: #fff; }
 
-        /* --- [메인 섹션] --- */
+        /* --- [메인 컨테이너: 연한 나무 가판대] --- */
         .container {
             width: 100%; max-width: 500px;
-            padding: 20px; box-sizing: border-box;
+            /* 연한 나무 질감 배경 적용 */
+            background-color: var(--wood-light-bg);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            padding: 25px 20px; box-sizing: border-box;
             text-align: center;
+            flex: 1; /* 남은 높이 모두 차지 */
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); /* 가판대 입체감 */
         }
 
-        /* 오늘의 운세 타이틀 (한지 띠지 컨셉) */
+        /* --- [메인 타이틀: 나무 위 흰색 현판 느낌] --- */
         .main-sign {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            padding: 15px 20px;
-            margin-bottom: 35px;
+            background: var(--sign-white);
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png'); /* 한지 질감 */
+            border: 3px solid var(--wood-frame); /* 나무 테두리 */
+            padding: 12px 20px;
+            margin-bottom: 30px;
             border-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
             position: relative;
+            display: inline-block; /* 텍스트 크기에 맞춤 */
+            min-width: 60%;
         }
-        .main-sign::before {
-            content: ''; position: absolute; left: 50%; top: -10px;
-            transform: translateX(-50%); width: 40px; height: 1px;
-            background: var(--accent-gold);
+        /* 현판을 고정하는 금속 장석 장식 */
+        .main-sign::before, .main-sign::after {
+            content: ''; position: absolute; top: 50%; transform: translateY(-50%);
+            width: 12px; height: 24px; background: var(--metal-deco);
+            border: 1px solid #555; border-radius: 2px;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
+        .main-sign::before { left: -6px; } .main-sign::after { right: -6px; }
 
         .main-sign h2 {
             font-family: 'Gowun Batang', serif;
-            font-size: 1.25rem; margin: 0;
+            font-size: 1.3rem; margin: 0;
             font-weight: 700; color: var(--ink-black);
         }
 
-        /* --- [가챠 그리드: 2열 배치] --- */
+        /* --- [가챠 그리드] --- */
         .gacha-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 16px; width: 100%;
         }
 
+        /* --- [개별 기계: 나무결 디자인] --- */
         .machine-card {
-            background: var(--card-white);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            /* 기계 몸체 나무 질감 */
+            background-color: var(--wood-machine);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            border: 3px solid var(--wood-frame); /* 진한 나무 테두리 */
+            border-radius: 6px;
             overflow: hidden;
             display: flex; flex-direction: column;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            cursor: pointer; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.3); /* 묵직한 그림자 */
+            cursor: pointer; transition: transform 0.2s;
         }
-        .machine-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .machine-card:hover { transform: translateY(-3px); }
 
-        /* 라벨 & 윈도우 섹션 */
         .machine-top {
             display: flex; height: 120px;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 3px solid var(--wood-frame);
         }
 
         .hanji-label {
             flex: 0 0 35%;
-            background: #fdfdf8;
-            border-right: 1px solid #f0f0f0;
+            background: var(--sign-white); /* 라벨도 흰색 한지 느낌 */
+            background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
+            border-right: 2px solid var(--wood-frame);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 10px 4px;
         }
         .hanja-main {
-            font-family: 'Nanum Myeongjo'; font-size: 1.6rem;
-            font-weight: 800; color: var(--point-red); margin-bottom: 4px;
+            font-family: 'Nanum Myeongjo'; font-size: 1.8rem;
+            font-weight: 800; color: var(--ink-black); margin-bottom: 4px;
         }
         .text-sub {
             writing-mode: vertical-rl; text-orientation: upright;
-            font-size: 0.75rem; font-weight: 600; color: #777;
+            font-size: 0.8rem; font-weight: 700; color: #555;
             letter-spacing: 1px;
         }
 
-        /* 캡슐 윈도우 (지그재그 꽉 찬 공) */
+        /* 캡슐 윈도우 (지그재그 꽉 찬 공 - 기존 유지) */
         .machine-window {
             flex: 1; background-color: #5a0000;
             position: relative; overflow: hidden;
@@ -147,25 +150,27 @@
                               radial-gradient(circle closest-side, #a00000 90%, transparent 91%);
             background-size: 34px 30px;
             background-position: 0 0, 17px 15px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
         .machine-window::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
         }
 
-        /* 하단 다이얼 섹션 */
         .machine-bottom {
-            padding: 15px 0;
+            padding: 12px 0;
             display: flex; flex-direction: column; align-items: center;
-            background: #fff;
+            /* 하단부도 나무 질감 연결 */
+            background-color: var(--wood-machine);
+            background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
         }
 
         .metal-dial {
             width: 50px; height: 50px;
-            background: radial-gradient(circle, #f5f5f5 10%, #ccc 100%);
-            border: 1px solid #aaa; border-radius: 50%;
+            background: radial-gradient(circle, #eee 10%, #999 100%);
+            border: 2px solid #555; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
             position: relative;
         }
         .dial-inner {
@@ -174,19 +179,21 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dial-inner::before {
-            content: ''; width: 75%; height: 4px;
-            background: #666; border-radius: 2px;
+            content: ''; width: 75%; height: 6px;
+            background: #555; border-radius: 3px;
         }
         .rotating { transform: rotate(360deg); }
 
         .btn-hint {
-            margin-top: 8px; font-size: 0.7rem; font-weight: 600;
-            color: #999; letter-spacing: -0.5px;
+            margin-top: 8px; font-size: 0.7rem; font-weight: 700;
+            color: var(--wood-frame);
         }
 
         footer {
-            margin-top: auto; padding: 40px 20px;
-            text-align: center; color: #bbb; font-size: 0.75rem;
+            width: 100%; max-width: 500px;
+            padding: 30px 20px;
+            text-align: center; color: rgba(255,255,255,0.6); font-size: 0.75rem;
+            background: #222; /* 푸터는 배경과 맞춤 */
         }
 
         .hidden { display: none !important; }
@@ -260,19 +267,19 @@
                 </div>
             </div>
 
-            <div class="machine-card" style="opacity: 0.5; cursor: default;">
+            <div class="machine-card" style="opacity: 0.6; cursor: default;">
                 <div class="machine-top">
-                    <div class="hanji-label">
-                        <div class="hanja-main" style="color:#ccc">運</div>
-                        <div class="text-sub">준비중</div>
+                    <div class="hanji-label" style="background:#e0e0e0;">
+                        <div class="hanja-main" style="color:#999">運</div>
+                        <div class="text-sub" style="color:#999">준비중</div>
                     </div>
                     <div class="machine-window" style="filter: grayscale(1);"></div>
                 </div>
-                <div class="machine-bottom">
-                    <div class="metal-dial" style="background:#eee;">
-                        <div class="dial-inner" style="opacity:0.3;"></div>
+                <div class="machine-bottom" style="background-color: #d0c0a0;">
+                    <div class="metal-dial" style="background:#ccc; border-color:#999;">
+                        <div class="dial-inner" style="opacity:0.5;"></div>
                     </div>
-                    <span class="btn-hint">준비중</span>
+                    <span class="btn-hint" style="color:#777;">준비중</span>
                 </div>
             </div>
         </div>
@@ -297,6 +304,7 @@
                     const user = await res.json();
                     profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
                     profileBox.classList.remove('hidden');
+                    loginBtn.classList.add('hidden');
                     isLoggedIn = true;
                 } else {
                     loginBtn.classList.remove('hidden');

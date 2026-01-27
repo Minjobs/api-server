@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - 전통 가챠 상점</title>
+    <title>MURDOO K - 전통 운세 상점</title>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Cinzel+Decorative:wght@700&family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --wood-frame: #8b5a2b; 
             --wood-panel: #d4a76a; 
             --hanji-paper: #fdfaf1; 
-            --capsule-red: #cc0000;
-            --capsule-shadow: #990000;
-            --capsule-deep: #660000;
+            --capsule-red: #e74c3c; /* 좀 더 밝고 선명한 빨강 */
+            --capsule-shadow: #a32f2f; /* 그림자색 */
             --ink-black: #1a1a1a;
         }
 
@@ -33,9 +32,7 @@
         }
 
         .container { 
-            max-width: 600px; 
-            margin: 0 auto; 
-            padding: 10px 5px; 
+            max-width: 600px; margin: 0 auto; padding: 10px 5px; 
         }
 
         header {
@@ -71,9 +68,7 @@
         }
 
         .gacha-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px 10px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px 10px;
         }
 
         .machine-unit {
@@ -81,17 +76,13 @@
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
             border: 4px solid var(--wood-frame);
             border-radius: 2px;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
-            position: relative;
-            cursor: pointer;
+            position: relative; cursor: pointer;
         }
 
         .label-section {
-            display: flex;
-            height: 180px;
-            border-bottom: 3px solid var(--wood-frame);
+            display: flex; height: 180px; border-bottom: 3px solid var(--wood-frame);
         }
 
         .hanji-strip {
@@ -101,10 +92,8 @@
             margin: 0 10px;
             border-left: 1px solid rgba(0,0,0,0.1);
             border-right: 1px solid rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             padding: 10px 0;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
@@ -119,41 +108,49 @@
             color: #444; letter-spacing: 2px;
         }
 
-        /* --- [GOP 핵심 수정] 빈틈없이 꽉 찬 캡슐 창 --- */
+        /* --- [GOP 핵심 수정] 무작위로 꽉 찬 리얼 캡슐 창 --- */
         .window-section {
             flex: 1;
-            background-color: var(--capsule-deep); /* 기본 배경색을 어두운 빨강으로 깔아서 빈틈 방지 */
+            background-color: #3a0000; /* 아주 어두운 배경으로 깊이감 표현 */
             border-left: 3px solid var(--wood-frame);
             position: relative;
             overflow: hidden;
             
-            /* 4중 레이어 캡슐 타일링: 무작위성을 위해 오프셋과 사이즈를 다르게 조절 */
+            /* 캡슐의 입체감을 살리는 그라데이션 정의 (빛반사-중간톤-그림자-투명) */
+            --capsule-look: radial-gradient(circle at 30% 30%, var(--capsule-red) 10%, var(--capsule-shadow) 50%, rgba(0,0,0,0.7) 70%, transparent 72%);
+
+            /* 3개의 레이어를 겹쳐서 밀도 표현 */
             background-image: 
-                radial-gradient(circle at 25% 25%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
-                radial-gradient(circle at 75% 75%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
-                radial-gradient(circle at 75% 25%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%),
-                radial-gradient(circle at 25% 75%, var(--capsule-red) 35%, var(--capsule-shadow) 50%, transparent 55%);
+                var(--capsule-look),
+                var(--capsule-look),
+                var(--capsule-look);
             
-            /* 타일 사이즈를 50px 정도로 고정하여 균일하면서도 꽉 차게 반복 */
-            background-size: 50px 50px;
+            /* 서로 다른 크기로 설정하여 불규칙성 부여 */
+            background-size: 
+                48px 48px, /* 앞쪽 큰 캡슐 */
+                43px 43px, /* 중간 캡슐 */
+                52px 52px; /* 뒤쪽 다른 크기 캡슐 */
             
-            /* 각 레이어의 위치를 어긋나게 배치하여 겹치게 만듦 (꽉 찬 느낌의 핵심) */
-            background-position: 0 0, 25px 25px, 25px 0, 0 25px;
-            
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            /* 소수(Prime number)를 이용한 불규칙한 위치 오프셋으로 정렬 깨뜨리기 */
+            background-position: 
+                7px 13px,   /* Layer 1 position */
+                23px 37px,  /* Layer 2 position */
+                41px 19px;  /* Layer 3 position */
+
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.9); /* 깊은 내부 그림자 */
         }
 
+        /* 유리창 반사광을 더 강하게 */
         .window-section::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%, rgba(255,255,255,0.2) 80%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 45%, rgba(255,255,255,0.2) 80%);
             pointer-events: none;
         }
+        /* --------------------------------------------------- */
 
         .dial-section {
             padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex; flex-direction: column; align-items: center;
             background: rgba(0,0,0,0.05);
         }
 

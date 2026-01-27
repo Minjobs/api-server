@@ -1,29 +1,28 @@
 <!DOCTYPE html>
-<html lang="ko"> <head>
+<html lang="ko">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>머두 K - 전통 운세 뽑기</title>
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Nanum+Myeongjo:wght@700;800&family=Cinzel+Decorative:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* --- [컬러 팔레트: 한국 전통 소재] --- */
-            --wood-roof: #5d4037;   /* 지붕/진한 나무색 */
-            --wood-frame: #8b5a2b;  /* 기둥/프레임색 */
-            --wood-panel: #d4a76a;  /* 밝은 판넬색 */
-            --hanji-bg: #f8f5e9;    /* 한지 배경색 (따뜻한 미색) */
-            --ink-color: #2c2c2c;   /* 먹색 (서예 글씨) */
-            --metal-dark: #3e2723;  /* 어두운 금속 장석 */
-            --capsule-red: #c0392b; /* 캡슐 기본 빨강 */
-            --capsule-shadow: #8a1c1c; /* 캡슐 그림자 빨강 */
-            --accent-gold: #d4af37; /* 은은한 금색 강조 */
+            --wood-roof: #5d4037;
+            --wood-frame: #8b5a2b;
+            --wood-panel: #d4a76a;
+            --hanji-bg: #f8f5e9;
+            --ink-color: #2c2c2c;
+            --metal-dark: #3e2723;
+            --capsule-red: #c0392b;
+            --capsule-shadow: #8a1c1c;
+            --accent-gold: #d4af37;
         }
 
         body {
             margin: 0; padding: 0;
             background-color: var(--hanji-bg);
-            /* 전체 배경에 은은한 한지 질감 적용 */
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
-            font-family: 'Noto Sans KR', sans-serif; /* 기본 폰트는 가독성 좋은 고딕 */
+            font-family: 'Noto Sans KR', sans-serif;
             color: var(--ink-color);
             min-height: 100vh;
             overflow-x: hidden;
@@ -32,171 +31,158 @@
             align-items: center;
         }
 
-        /* --- [헤더 영역: 기와 지붕 컨셉] --- */
         .roof-header {
             width: 100%;
-            max-width: 700px; /* 가판대 전체 폭에 맞춤 */
+            max-width: 500px; /* 모바일 사이즈에 맞춰 조정 */
             background-color: var(--wood-roof);
-            /* 기와 질감 패턴 (실제 이미지 사용 권장, 여기선 CSS로 느낌만 구현) */
             background-image: linear-gradient(to bottom, rgba(0,0,0,0.3), transparent), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            padding: 20px 0 10px;
+            padding: 20px 0 15px;
             border-bottom: 5px solid var(--wood-frame);
-            /* 처마 밑 그림자 효과 */
             box-shadow: 0 10px 20px rgba(0,0,0,0.4);
             position: relative;
             z-index: 10;
-            /* 기와 끝부분 곡선 처리 (간단하게 구현) */
             border-radius: 0 0 15px 15px;
-            margin-bottom: -15px; /* 몸체와 살짝 겹치게 */
+            margin-bottom: -10px;
         }
 
         .header-content {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 25px;
+            padding: 0 20px;
         }
 
         .logo {
-            /* 붓으로 쓴 듯한 로고 스타일 */
             font-family: 'Nanum Myeongjo', serif;
-            color: #fff; /* 어두운 지붕 위 흰색 글씨 */
-            font-size: 1.8rem; font-weight: 800;
+            color: #fff;
+            font-size: 1.5rem; font-weight: 800;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             display: flex; align-items: center; gap: 8px;
         }
-        /* 낙관(도장) 느낌의 포인트 */
         .logo::after {
             content: '運';
             display: inline-block;
             font-family: 'Gowun Batang', serif;
             background: #cc0000; color: #fff;
-            padding: 2px 6px; border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 2px 5px; border-radius: 4px;
+            font-size: 0.8rem;
             box-shadow: 1px 1px 2px rgba(0,0,0,0.3);
         }
 
-        .user-nav { display: flex; align-items: center; gap: 15px; }
+        .user-nav { display: flex; align-items: center; gap: 10px; }
 
         .profile-box {
-            width: 42px; height: 42px; border-radius: 50%; overflow: hidden;
-            border: 3px solid var(--accent-gold); cursor: pointer;
+            width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
+            border: 2px solid var(--accent-gold); cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         .profile-box img { width: 100%; height: 100%; object-fit: cover; }
 
         #loginBtn {
             background: var(--wood-frame); color: #fff; border: 1px solid var(--wood-roof);
-            padding: 8px 16px; border-radius: 4px; cursor: pointer;
-            font-family: 'Noto Sans KR'; font-weight: 700;
+            padding: 6px 12px; border-radius: 4px; cursor: pointer;
+            font-family: 'Noto Sans KR'; font-weight: 700; font-size: 0.9rem;
             box-shadow: 0 2px 0 var(--wood-roof);
             transition: 0.2s;
         }
         #loginBtn:active { transform: translateY(2px); box-shadow: none; }
 
-        /* --- [메인 컨테이너: 나무 가판대 몸체] --- */
         .kiosk-body {
-            width: 100%; max-width: 680px; /* 지붕보다 살짝 작게 */
+            width: 95%; max-width: 480px; /* 모바일 화면에 맞게 조정 */
             background-color: var(--wood-panel);
-            /* 밝은 원목 질감 */
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border-left: 8px solid var(--wood-frame);
-            border-right: 8px solid var(--wood-frame);
-            padding: 40px 20px 30px;
+            border-left: 6px solid var(--wood-frame);
+            border-right: 6px solid var(--wood-frame);
+            padding: 30px 15px 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* 전통 금속 장석 (모서리 장식) 구현 - 가상 요소 활용 */
         .kiosk-body::before, .kiosk-body::after {
             content: ''; position: absolute;
-            width: 40px; height: 40px;
+            width: 30px; height: 30px;
             background: var(--metal-dark);
-            /* 금속 질감 및 못 자국 표현 */
             background-image: radial-gradient(circle at 50% 50%, #5d4037 10%, transparent 15%),
                               linear-gradient(45deg, transparent 48%, #2c1e19 48%, #2c1e19 52%, transparent 52%);
-            background-size: 100% 100%, 10px 10px;
+            background-size: 100% 100%, 8px 8px;
             border: 2px solid #2c1e19;
             box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
         }
-        .kiosk-body::before { top: 10px; left: -4px; border-radius: 0 0 10px 0; }
-        .kiosk-body::after { top: 10px; right: -4px; border-radius: 0 0 0 10px; }
+        .kiosk-body::before { top: 8px; left: -3px; border-radius: 0 0 8px 0; }
+        .kiosk-body::after { top: 8px; right: -3px; border-radius: 0 0 0 8px; }
 
-        /* 메인 타이틀 (현판 느낌) */
         .main-sign {
             background: var(--hanji-bg);
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
             border: 3px solid var(--wood-frame);
-            padding: 10px 30px;
-            margin-bottom: 35px;
+            padding: 8px 20px;
+            margin-bottom: 25px;
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
             text-align: center;
             position: relative;
+            width: 80%;
         }
-        /* 현판 고리 */
         .main-sign::before, .main-sign::after {
-            content: ''; position: absolute; top: -15px;
-            width: 10px; height: 25px; background: var(--metal-dark);
-            border-radius: 5px;
+            content: ''; position: absolute; top: -12px;
+            width: 8px; height: 20px; background: var(--metal-dark);
+            border-radius: 4px;
         }
-        .main-sign::before { left: 20px; } .main-sign::after { right: 20px; }
+        .main-sign::before { left: 15px; } .main-sign::after { right: 15px; }
 
         .main-sign h2 {
-            font-family: 'Gowun Batang', serif; font-size: 1.8rem;
+            font-family: 'Gowun Batang', serif; font-size: 1.3rem;
             margin: 0; color: var(--ink-color); font-weight: 800;
         }
 
-        /* --- [가챠 그리드 및 기계 유닛 (기존 디자인 유지)] --- */
+        /* 가로 2개씩 배치되도록 그리드 설정 */
         .gacha-grid {
-            display: grid; grid-template-columns: 1fr 1fr 1fr; /* 3열로 변경하여 더 꽉 찬 느낌 */
-            gap: 15px; width: 100%;
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; width: 100%;
         }
 
         .machine-unit {
             background: var(--wood-panel);
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 3px solid var(--wood-frame); /* 테두리 살짝 얇게 */
+            border: 2px solid var(--wood-frame);
             border-radius: 2px;
             display: flex; flex-direction: column;
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.3);
+            box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
             position: relative; cursor: pointer;
             transition: transform 0.2s;
         }
-        .machine-unit:hover { transform: translateY(-3px); }
+        .machine-unit:hover { transform: translateY(-2px); }
 
         .label-section {
-            display: flex; height: 150px; /* 높이 약간 줄임 */
-            border-bottom: 3px solid var(--wood-frame);
+            display: flex; height: 110px;
+            border-bottom: 2px solid var(--wood-frame);
         }
 
-        /* 세로형 한지 라벨 */
         .hanji-strip {
-            flex: 0 0 35%; /* 너비 비율 고정 */
+            flex: 0 0 35%;
             background: var(--hanji-bg);
             background-image: url('https://www.transparenttextures.com/patterns/rice-paper.png');
             border-right: 2px solid var(--wood-frame);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 10px 5px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            padding: 8px 4px;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
         }
 
         .hanja-main {
-            font-family: 'Nanum Myeongjo'; font-size: 2.2rem;
-            font-weight: 800; color: var(--ink-color); margin-bottom: 5px;
+            font-family: 'Nanum Myeongjo'; font-size: 1.6rem;
+            font-weight: 800; color: var(--ink-color); margin-bottom: 4px;
         }
         .thai-title {
             writing-mode: vertical-rl; text-orientation: upright;
-            font-family: 'Noto Sans KR'; font-size: 0.9rem; font-weight: 700;
+            font-family: 'Noto Sans KR'; font-size: 0.8rem; font-weight: 700;
             color: #555; letter-spacing: 1px;
         }
 
-        /* 꽉 찬 캡슐 창 (기존 유지) */
         .window-section {
             flex: 1; background-color: #4a0a0a; position: relative; overflow: hidden;
-            /* SVG 패턴: 캡슐 더미 */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Ccircle cx='30' cy='30' r='14' fill='%238a1c1c'/%3E%3Ccircle cx='10' cy='10' r='12' fill='%23c0392b'/%3E%3Ccircle cx='50' cy='10' r='13' fill='%23c0392b'/%3E%3Ccircle cx='10' cy='50' r='13' fill='%23c0392b'/%3E%3Ccircle cx='50' cy='50' r='12' fill='%23c0392b'/%3E%3Ccircle cx='30' cy='5' r='10' fill='%23e74c3c'/%3E%3Ccircle cx='5' cy='30' r='11' fill='%23e74c3c'/%3E%3Ccircle cx='55' cy='30' r='11' fill='%23e74c3c'/%3E%3Ccircle cx='30' cy='55' r='10' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='20' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='40' cy='20' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='40' r='9' fill='%23e74c3c'/%3E%3Ccircle cx='40' cy='40' r='9' fill='%23e74c3c'/%3E%3C/svg%3E");
-            background-size: 45px 45px; /* 패턴 크기 조절 */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='9' fill='%238a1c1c'/%3E%3Ccircle cx='7' cy='7' r='8' fill='%23c0392b'/%3E%3Ccircle cx='33' cy='7' r='8.5' fill='%23c0392b'/%3E%3Ccircle cx='7' cy='33' r='8.5' fill='%23c0392b'/%3E%3Ccircle cx='33' cy='33' r='8' fill='%23c0392b'/%3E%3Ccircle cx='20' cy='3' r='6.5' fill='%23e74c3c'/%3E%3Ccircle cx='3' cy='20' r='7' fill='%23e74c3c'/%3E%3Ccircle cx='37' cy='20' r='7' fill='%23e74c3c'/%3E%3Ccircle cx='20' cy='37' r='6.5' fill='%23e74c3c'/%3E%3Ccircle cx='13' cy='13' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='27' cy='13' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='13' cy='27' r='6' fill='%23e74c3c'/%3E%3Ccircle cx='27' cy='27' r='6' fill='%23e74c3c'/%3E%3C/svg%3E");
+            background-size: 35px 35px;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.8);
         }
         .window-section::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -204,21 +190,20 @@
             pointer-events: none;
         }
 
-        /* 하단 다이얼 섹션 */
         .dial-section {
-            padding: 15px 0;
+            padding: 10px 0;
             display: flex; flex-direction: column; align-items: center;
-            background: rgba(0,0,0,0.1); /* 약간 어둡게 */
+            background: rgba(0,0,0,0.1);
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .metal-dial {
-            width: 60px; height: 60px; /* 크기 줄임 */
+            width: 45px; height: 45px;
             background: radial-gradient(circle, #eee 10%, #999 100%);
-            border: 3px solid #444; border-radius: 50%;
+            border: 2px solid #444; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             position: relative;
-            box-shadow: 0 4px 0 #222, inset 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 0 #222, inset 0 2px 3px rgba(0,0,0,0.4);
         }
         .dial-knob {
             width: 100%; height: 100%;
@@ -226,33 +211,31 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .dial-knob::before {
-            content: ''; width: 80%; height: 10px;
+            content: ''; width: 80%; height: 8px;
             background: linear-gradient(to bottom, #555, #222);
-            border-radius: 5px; box-shadow: 0 2px 3px rgba(0,0,0,0.5);
+            border-radius: 4px; box-shadow: 0 2px 3px rgba(0,0,0,0.5);
         }
         .rotating { transform: rotate(360deg); }
 
         .spin-hint {
-            margin-top: 8px; font-size: 0.7rem; font-weight: 700;
+            margin-top: 5px; font-size: 0.65rem; font-weight: 700;
             color: var(--wood-roof);
         }
 
-        /* --- [푸터 영역: 전통 문양 받침대] --- */
         .kiosk-footer {
-            width: 100%; max-width: 680px;
+            width: 95%; max-width: 480px;
             background-color: var(--wood-frame);
-            /* 전통 창살 문양 (아자살/완자살 느낌) 패턴 */
             background-image: 
                 linear-gradient(45deg, transparent 48%, #5d4037 48%, #5d4037 52%, transparent 52%),
                 linear-gradient(-45deg, transparent 48%, #5d4037 48%, #5d4037 52%, transparent 52%);
-            background-size: 30px 30px;
-            border-top: 5px solid var(--wood-roof);
-            padding: 20px 0;
+            background-size: 24px 24px;
+            border-top: 4px solid var(--wood-roof);
+            padding: 15px 0;
             text-align: center;
             color: rgba(255,255,255,0.7);
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             box-shadow: inset 0 5px 10px rgba(0,0,0,0.3);
-            border-radius: 0 0 5px 5px;
+            border-radius: 0 0 4px 4px;
         }
 
         .hidden { display: none !important; }
@@ -324,6 +307,22 @@
                     <span class="spin-hint">돌리기</span>
                 </div>
             </div>
+
+            <div class="machine-unit" style="opacity: 0.7; cursor: default;">
+                <div class="label-section">
+                    <div class="hanji-strip" style="background: #e0e0e0;">
+                        <div class="hanja-main" style="color:#999">運</div>
+                        <div class="thai-title" style="color:#999">준비중</div>
+                    </div>
+                    <div class="window-section" style="filter: grayscale(1);"></div>
+                </div>
+                <div class="dial-section">
+                    <div class="metal-dial" style="background: #ccc; border-color: #999; cursor: default;">
+                        <div class="dial-knob" style="opacity: 0.5;"></div>
+                    </div>
+                    <span class="spin-hint" style="color:#999">준비중</span>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -332,9 +331,7 @@
     </footer>
 
     <script>
-        // (스크립트 로직은 기존과 동일하게 유지)
         let isLoggedIn = false;
-        // 실제 서비스 시 API_KEY는 서버 사이드에서 관리하거나 안전한 방식으로 처리해야 합니다.
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -343,18 +340,16 @@
             const profileImg = document.getElementById('userProfileImg');
             
             try {
-                // API 요청 시 헤더에 키 포함
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
-                    // 프로필 이미지가 없으면 기본 구글 아바타 사용
                     profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
                     profileBox.classList.remove('hidden');
-                    loginBtn.classList.add('hidden'); // 로그인 버튼 숨김
+                    loginBtn.classList.add('hidden');
                     isLoggedIn = true;
                 } else {
                     loginBtn.classList.remove('hidden');
-                    profileBox.classList.add('hidden'); // 프로필 박스 숨김
+                    profileBox.classList.add('hidden');
                     isLoggedIn = false;
                 }
             } catch (err) {
@@ -367,18 +362,15 @@
 
         function handleGacha(machineEl, category) {
             if (!isLoggedIn) {
-                // 한국어 안내 메시지로 변경
                 if(confirm("로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
                     window.location.href = '/login';
                 }
                 return;
             }
 
-            // 다이얼 회전 애니메이션 실행
             const knob = machineEl.querySelector('.dial-knob');
             knob.classList.add('rotating');
 
-            // 애니메이션 시간(0.6초) 후 페이지 이동
             setTimeout(() => {
                 window.location.href = `/${category}`;
             }, 700);

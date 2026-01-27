@@ -12,8 +12,8 @@
             --capsule-red: #e74c3c;
             --capsule-shadow: #c0392b;
             --capsule-deep: #922b21;
-            --metal-shine: #eee;
-            --metal-dark: #7f8c8d;
+            --metal-face: #bdc3c7; /* 다이얼 금속면 색상 */
+            --metal-shadow: #7f8c8d; /* 다이얼 그림자 색상 */
         }
 
         body {
@@ -32,12 +32,7 @@
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
         }
 
-        /* [GOP] 좌우 여백을 넓게 사용하기 위해 패딩 최소화 */
-        .container { 
-            max-width: 580px; 
-            margin: 0 auto; 
-            padding: 20px 8px; 
-        }
+        .container { max-width: 580px; margin: 0 auto; padding: 20px 8px; }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
@@ -71,10 +66,7 @@
         }
 
         .gacha-grid {
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 25px 10px; 
-            padding-bottom: 40px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px 10px; padding-bottom: 40px;
         }
 
         .gacha-machine {
@@ -88,6 +80,7 @@
             display: flex; flex-direction: column; align-items: center;
             cursor: pointer; transition: transform 0.2s;
         }
+        .gacha-machine:hover { transform: translateY(-3px); }
 
         .gacha-display {
             width: 94%; height: 140px;
@@ -95,7 +88,6 @@
             border: 4px inset #ccc; border-radius: 6px;
             margin-bottom: 18px; position: relative; overflow: hidden;
             box-shadow: inset 0 5px 20px rgba(0,0,0,0.5);
-            
             background-image: 
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
@@ -103,7 +95,6 @@
             background-size: 55px 55px, 47px 49px, 43px 43px;
             background-position: 15px 10px, 0px 0px, 25px 25px;
         }
-
         .gacha-display::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.2) 85%);
@@ -119,51 +110,63 @@
             color: #5d4037; margin-bottom: 18px; font-weight: 600;
         }
 
-        /* --- [GOP 핵심] 리얼 코인 레버 다이얼 --- */
+        /* --- [GOP 핵심] 입체 다이얼 손잡이 --- */
         .control-panel {
-            width: 85px; height: 85px;
-            background: radial-gradient(circle, #ddd 20%, #888 100%);
-            border: 4px solid #444; border-radius: 50%;
+            width: 90px; height: 90px; /* 크기 약간 키움 */
+            /* 금속 질감의 베이스 판 */
+            background: radial-gradient(circle, #ecf0f1 30%, var(--metal-face) 70%);
+            border: 4px solid #7f8c8d;
+            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             position: relative;
-            box-shadow: 0 6px 0 #222, inset 0 2px 8px rgba(0,0,0,0.5);
+            /* 깊이감 있는 그림자 */
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4), inset 0 2px 5px rgba(255,255,255,0.5);
         }
 
-        /* 회전하는 내부 뭉치 */
+        /* 회전하는 내부 뭉치 (다이얼 전체) */
         .knob-inner {
             width: 100%; height: 100%;
             position: relative;
             display: flex; align-items: center; justify-content: center;
-            transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            transition: transform 0.6s cubic-bezier(0.3, 1.5, 0.5, 1); /* 튕기는듯한 회전감 */
         }
 
-        /* 동전 구멍 (Coin Slot) */
+        /* 입체적인 다이얼 그립 (손잡이) */
+        .dial-grip {
+            width: 70%; height: 70%;
+            background: linear-gradient(135deg, #ffffff 0%, var(--metal-face) 50%, var(--metal-shadow) 100%);
+            border-radius: 50%;
+            position: absolute;
+            /* 툭 튀어나온 입체 효과 */
+            box-shadow: 0 5px 10px rgba(0,0,0,0.5), inset 0 2px 3px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* 손잡이 중앙의 돌리는 홈 */
+        .dial-grip::after {
+            content: '';
+            width: 60%; height: 8px;
+            background: #555;
+            border-radius: 4px;
+            box-shadow: inset 0 2px 3px rgba(0,0,0,0.6);
+        }
+
+        /* 동전 투입구 (그립 위에 배치) */
         .coin-slot {
-            width: 6px; height: 24px;
-            background: #111;
-            position: absolute; top: 15%;
-            border-radius: 2px;
-            box-shadow: inset 0 1px 3px rgba(255,255,255,0.3);
-            z-index: 1;
+            width: 6px; height: 26px;
+            background: #2c3e50;
+            position: absolute; top: 5%; /* 위치 조정 */
+            border-radius: 3px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.3);
+            z-index: 5;
         }
 
-        /* 입체적인 손잡이 레버 */
-        .lever-bar {
-            width: 90%; height: 16px;
-            background: linear-gradient(to bottom, #666, #222);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.6);
-            z-index: 2;
-        }
-
-        /* 회전 애니메이션 */
         .rotating { transform: rotate(360deg); }
 
         .hint-text {
             font-size: 0.75rem; color: #8b4513; margin-top: 15px;
             font-weight: bold; letter-spacing: -0.5px;
         }
-        
         .hidden { display: none !important; }
         footer {
             text-align: center; margin-top: 40px; padding-bottom: 30px;
@@ -195,8 +198,7 @@
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
-                            <div class="lever-bar"></div>
-                        </div>
+                            <div class="dial-grip"></div> </div>
                     </div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
                 </div>
@@ -208,7 +210,7 @@
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
-                            <div class="lever-bar"></div>
+                            <div class="dial-grip"></div>
                         </div>
                     </div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
@@ -221,7 +223,7 @@
                     <div class="control-panel">
                         <div class="knob-inner">
                             <div class="coin-slot"></div>
-                            <div class="lever-bar"></div>
+                            <div class="dial-grip"></div>
                         </div>
                     </div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭하여 돌리기)</span>
@@ -233,8 +235,8 @@
                     <div class="thai-sub" style="color: #888;">เร็วๆ นี้...</div>
                     <div class="control-panel" style="background: #999; border-color: #777;">
                         <div class="knob-inner">
-                            <div class="coin-slot"></div>
-                            <div class="lever-bar" style="background: #555;"></div>
+                            <div class="coin-slot" style="background: #666;"></div>
+                            <div class="dial-grip" style="background: linear-gradient(135deg, #ccc, #777);"></div>
                         </div>
                     </div>
                     <span class="hint-text" style="color: #777;">잠겨있음</span>
@@ -243,7 +245,6 @@
         </main>
         <footer><p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p></footer>
     </div>
-
     <script>
         let isLoggedIn = false;
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
@@ -267,7 +268,6 @@
                 isLoggedIn = false;
             }
         });
-
         function handleGachaClick(machineElement, category) {
             if (!isLoggedIn) {
                 if(confirm("กรุณาเข้าสู่ระบบก่อนหมุนกาชา (로그인 후 이용 가능합니다)")) {
@@ -275,10 +275,8 @@
                 }
                 return;
             }
-            // 레버 전체가 돌아가는 애니메이션
             const knobInner = machineElement.querySelector('.knob-inner');
             knobInner.classList.add('rotating');
-            
             setTimeout(() => {
                 window.location.href = `/${category}`;
             }, 650);

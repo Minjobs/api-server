@@ -11,7 +11,7 @@
             --wood-dark: #8b4513;
             --capsule-red: #e74c3c;
             --capsule-shadow: #c0392b;
-            --capsule-deep: #922b21; /* 깊이감을 위한 더 어두운 색 */
+            --capsule-deep: #922b21;
         }
 
         body {
@@ -23,6 +23,7 @@
             overflow-x: hidden;
         }
 
+        /* 배경: 한지 질감의 은은한 배경 */
         .magic-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -30,11 +31,16 @@
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
         }
 
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        /* [GOP 수정] 좌우 여백을 더 활용하기 위해 padding 축소 및 max-width 상향 */
+        .container { 
+            max-width: 550px; 
+            margin: 0 auto; 
+            padding: 20px 10px; /* 좌우 패딩을 10px로 줄여 공간 확보 */
+        }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 0; border-bottom: 2px solid var(--wood-dark);
+            padding: 15px 5px; border-bottom: 2px solid var(--wood-dark);
             margin-bottom: 30px;
         }
 
@@ -64,8 +70,12 @@
             margin: 0; color: #2c3e50; text-shadow: 1px 1px 0px #fff;
         }
 
+        /* [GOP 수정] 가챠 머신 그리드 간격 미세 조정 */
         .gacha-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 25px 15px; padding-bottom: 40px;
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 25px 12px; /* 간격을 살짝 좁혀서 기계 크기 극대화 */
+            padding-bottom: 40px;
         }
 
         .gacha-machine {
@@ -73,7 +83,7 @@
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
             border: 5px solid var(--wood-dark);
             border-radius: 10px 10px 25px 25px; 
-            padding: 15px 10px 20px 10px;
+            padding: 15px 8px 20px 8px; /* 내부 패딩도 살짝 조절 */
             position: relative;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 50px rgba(0,0,0,0.1);
             display: flex; flex-direction: column; align-items: center;
@@ -81,43 +91,28 @@
         }
         .gacha-machine:hover { transform: translateY(-3px); }
 
-        /* --- [GOP 수정 핵심] 리얼하게 꽉 찬 캡슐 창 --- */
+        /* 리얼하게 꽉 찬 캡슐 창 */
         .gacha-display {
-            width: 92%; height: 135px;
-            background-color: var(--capsule-deep); /* 빈틈을 메우는 어두운 배경색 */
+            width: 95%; height: 135px; /* 너비를 95%로 확장 */
+            background-color: var(--capsule-deep);
             border: 4px inset #ccc; border-radius: 6px;
             margin-bottom: 15px; position: relative; overflow: hidden;
             box-shadow: inset 0 5px 20px rgba(0,0,0,0.4);
             
-            /* 3중 레이어로 캡슐을 무작위로 쌓아 올림 */
             background-image: 
-                /* Layer 3 (Top): 가장 밝고 앞쪽에 있는 캡슐들 */
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
-                /* Layer 2 (Mid): 중간 깊이의 캡슐들 (약간 다르게 반복) */
                 radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
-                /* Layer 1 (Back): 가장 뒤쪽의 어두운 캡슐들 (빈틈 채우기) */
                 radial-gradient(circle at center, var(--capsule-shadow) 45%, var(--capsule-deep) 60%, transparent 65%);
             
-            /* 크기는 비슷하게(약 45px) 하되, 반복 패턴을 다르게 하여 무작위성 부여 */
-            background-size: 
-                55px 55px,  /* Layer 3 */
-                47px 49px,  /* Layer 2 */
-                43px 43px;  /* Layer 1 */
-            
-            /* 위치를 오프셋 시켜 정렬되지 않은 느낌 강조 */
-            background-position: 
-                15px 10px,  /* Layer 3 offset */
-                0px 0px,    /* Layer 2 offset */
-                25px 25px;  /* Layer 1 offset */
+            background-size: 55px 55px, 47px 49px, 43px 43px;
+            background-position: 15px 10px, 0px 0px, 25px 25px;
         }
 
-        /* 유리창 광택 및 반사 효과 강화 */
         .gacha-display::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.2) 85%);
             pointer-events: none;
         }
-        /* ----------------------------------------- */
 
         .hanja-label {
             font-family: 'Nanum Myeongjo'; font-size: 2.4rem;

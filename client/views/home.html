@@ -1,233 +1,242 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - 선택된 운명의 길</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* 기본 배경 및 폰트 설정 */
-        body {
-            margin: 0; padding: 0;
-            background-color: #0a0a12;
-            color: white;
-            font-family: 'Niramit', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>운명 자판기</title>
 
-        /* 신비로운 마법진 배경 효과 */
-        .magic-background {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a12 100%);
-        }
+  <!-- 한글 + 한문 느낌 폰트 -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
 
-        .magic-ring {
-            position: absolute;
-            border: 1px solid rgba(46, 204, 113, 0.2); /* 에메랄드 빛 */
-            border-radius: 50%;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .ring-1 { width: 300px; height: 300px; border-style: double; animation: rotate 20s linear infinite; }
-        .ring-2 { width: 500px; height: 500px; border-color: rgba(255, 215, 0, 0.1); animation: rotate 30s linear infinite reverse; }
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Noto Serif KR', serif;
+      background: #1a0f0a;
+      color: #f5f0e6;
+    }
 
-        @keyframes rotate { 
-            from { transform: translate(-50%, -50%) rotate(0deg); } 
-            to { transform: translate(-50%, -50%) rotate(360deg); } 
-        }
+    /* 전체 배경 */
+    .background {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top, #3a1c12 0%, #1a0f0a 60%);
+      display: flex;
+      justify-content: center;
+      padding: 30px 15px;
+    }
 
-        /* 컨테이너 및 헤더 */
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    /* 본체 */
+    .machine {
+      width: 100%;
+      max-width: 420px;
+      background: #6b3f22;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 
+        inset 0 0 0 3px rgba(255,255,255,0.05),
+        0 20px 50px rgba(0,0,0,0.6);
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
+    /* 상단 간판 */
+    .sign {
+      background: #2a120a;
+      border: 2px solid #b88a44;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
 
-        .logo {
-            font-family: 'Cinzel Decorative', cursive;
-            color: #ffd700;
-            font-size: 1.5rem;
-            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
-        }
+    .sign h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+      color: #e6c77a;
+    }
 
-        .user-nav { display: flex; align-items: center; gap: 15px; }
+    .sign p {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      color: #c8b38a;
+    }
 
-        .profile-container {
-            width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
-            border: 2px solid #ffd700; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-        .profile-container:hover { transform: scale(1.1); }
-        .profile-container img { width: 100%; height: 100%; object-fit: cover; }
+    /* 사주 구슬 창 */
+    .glass {
+      background: rgba(0,0,0,0.5);
+      border: 2px solid #3d2315;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
 
-        #loginBtn {
-            background: linear-gradient(45deg, #ffd700, #ffae00);
-            color: #000; border: none; padding: 10px 20px; border-radius: 25px;
-            font-weight: 700; cursor: pointer; font-size: 0.9rem;
-        }
+    .balls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
 
-        /* 카테고리 그리드 및 카드 디자인 */
-        .category-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-top: 30px;
-        }
+    .ball {
+      background: radial-gradient(circle at top, #ff5b5b, #7a0000);
+      border-radius: 50%;
+      aspect-ratio: 1 / 1;
+      box-shadow:
+        inset -3px -5px 10px rgba(0,0,0,0.4),
+        0 2px 4px rgba(0,0,0,0.6);
+    }
 
-        .category-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(46, 204, 113, 0.15);
-            border-radius: 24px;
-            padding: 30px 25px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+    /* 메뉴 */
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
 
-        .category-card:hover {
-            transform: translateY(-8px);
-            background: rgba(46, 204, 113, 0.1);
-            border-color: #ffd700;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-        }
+    .menu-item {
+      background: #f3ead8;
+      color: #2a1a12;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: 0.25s;
+      box-shadow: 0 4px 0 #cbb48b;
+    }
 
-        .category-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            display: block;
-        }
+    .menu-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 0 #cbb48b;
+    }
 
-        .category-card h3 {
-            font-family: 'Cinzel Decorative', cursive;
-            color: #ffd700;
-            font-size: 1.5rem;
-            margin: 0 0 10px 0;
-            letter-spacing: 2px;
-        }
+    .menu-item:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #cbb48b;
+    }
 
-        .category-card p {
-            color: #888;
-            font-size: 0.95rem;
-            margin: 0;
-            line-height: 1.6;
-        }
+    .menu-item h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
 
-        .hidden { display: none !important; }
+    .menu-item p {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      color: #5a4634;
+    }
 
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding: 30px;
-            font-size: 0.8rem;
-            color: #444;
-        }
-    </style>
+    /* 하단 조작부 */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2a120a;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .coin {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at top, #ffd98a, #b88a44);
+      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.4);
+    }
+
+    .handle {
+      width: 90px;
+      height: 36px;
+      border-radius: 18px;
+      background: linear-gradient(#7a3e1e, #4a220f);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.1);
+      cursor: pointer;
+      text-align: center;
+      line-height: 36px;
+      font-size: 0.85rem;
+      color: #e6c77a;
+    }
+
+    footer {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #9c8365;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="background">
+    <div class="machine">
 
-    <div class="magic-background">
-        <div class="magic-ring ring-1"></div>
-        <div class="magic-ring ring-2"></div>
+      <div class="sign">
+        <h1>運命自販機</h1>
+        <p>동전을 넣고 운명을 뽑으세요</p>
+      </div>
+
+      <div class="glass">
+        <div class="balls">
+          <div class="ball"></div><div class="ball"></div><div class="ball"></div><div class="ball"></div>
+          <div class="ball"></div><div class="ball"></div><div class="ball"></div><div class="ball"></div>
+        </div>
+      </div>
+
+      <div class="menu">
+        <div class="menu-item" onclick="selectFortune('personality')">
+          <h3>성격 사주</h3>
+          <p>타고난 기질과 본성</p>
+        </div>
+
+        <div class="menu-item" onclick="selectFortune('wealth')">
+          <h3>재물 운</h3>
+          <p>돈의 흐름과 재물복</p>
+        </div>
+
+        <div class="menu-item" onclick="selectFortune('love')">
+          <h3>연애 운</h3>
+          <p>인연과 궁합</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="coin"></div>
+        <div class="handle" onclick="pullHandle()">손잡이 돌리기</div>
+      </div>
+
+      <footer>
+        © 2026 인사동 운명 자판기
+      </footer>
+
     </div>
+  </div>
 
-    <div class="container">
-        <header>
-            <div class="logo">✨ MURDOO K</div>
-            <div class="user-nav">
-                <div class="profile-container hidden" id="profileBox" onclick="location.href='/profile'">
-                    <img id="userProfileImg" src="" alt="Profile">
-                </div>
-                <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
-            </div>
-        </header>
+  <script>
+    let selected = null;
+    let isLoggedIn = false;
 
-        <main>
-            <div style="text-align: center; margin-top: 30px; margin-bottom: 40px;">
-                <h2 style="font-family: 'Cinzel Decorative'; color: white; font-size: 1.8rem; margin-bottom: 8px;">THE DESTINY</h2>
-                <p style="color: #666;">Choose your path from the stars</p>
-            </div>
+    function selectFortune(type) {
+      selected = type;
+      alert('선택됨: ' + type);
+    }
 
-            <div class="category-grid">
-                <div class="category-card" onclick="handleCategoryClick('personality')">
-                    <span class="category-icon">🎭</span>
-                    <h3>Personality</h3>
-                    <p>วิเคราะห์ตัวตนและอุปนิสัยดั้งเดิมของคุณ</p>
-                </div>
+    function pullHandle() {
+      if (!selected) {
+        alert('먼저 사주를 선택하세요.');
+        return;
+      }
 
-                <div class="category-card" onclick="handleCategoryClick('wealth')">
-                    <span class="category-icon">💰</span>
-                    <h3>Wealth</h3>
-                    <p>ตรวจดวงชะตาการเงินและความมั่งคั่ง</p>
-                </div>
-
-                <div class="category-card" onclick="handleCategoryClick('romance')">
-                    <span class="category-icon">❤️</span>
-                    <h3>Romance</h3>
-                    <p>ทำนายเรื่องความรักและเนื้อคู่ของคุณ</p>
-                </div>
-            </div>
-        </main>
-
-        <footer>
-            <p>© 2026 MURDOO K. The Book of Destiny</p>
-        </footer>
-    </div>
-
-    <script>
-        let isLoggedIn = false;
-        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            const profileBox = document.getElementById('profileBox');
-            const loginBtn = document.getElementById('loginBtn');
-            const profileImg = document.getElementById('userProfileImg');
-            
-            const initUser = async () => {
-                try {
-                    const res = await fetch('/api/user/profile', {
-                        headers: { 'x-api-key': API_KEY }
-                    });
-
-                    if (res.ok) {
-                        const user = await res.json();
-                        profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
-                        profileBox.classList.remove('hidden');
-                        isLoggedIn = true;
-                    } else {
-                        loginBtn.classList.remove('hidden');
-                        isLoggedIn = false;
-                    }
-                } catch (err) {
-                    loginBtn.classList.remove('hidden');
-                    isLoggedIn = false;
-                }
-            };
-
-            await initUser();
-        });
-
-        function handleCategoryClick(category) {
-            if (!isLoggedIn) {
-                if(confirm("Please log in to see your full destiny.\n(로그인 후 상세 사주를 확인하실 수 있습니다.)")) {
-                    window.location.href = '/login';
-                }
-            } else {
-                window.location.href = `/${category}`;
-            }
+      if (!isLoggedIn) {
+        if (confirm('로그인 후 상세 사주를 확인할 수 있습니다.\n로그인 하시겠습니까?')) {
+          location.href = '/login';
         }
-    </script>
+        return;
+      }
+
+      location.href = '/' + selected;
+    }
+  </script>
 </body>
 </html>

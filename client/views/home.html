@@ -11,7 +11,7 @@
             --wood-dark: #8b4513;
             --capsule-red: #e74c3c;
             --capsule-shadow: #c0392b;
-            --accent-gold: #ffd700;
+            --capsule-deep: #922b21; /* 깊이감을 위한 더 어두운 색 */
         }
 
         body {
@@ -23,7 +23,6 @@
             overflow-x: hidden;
         }
 
-        /* 배경: 한지 질감의 은은한 배경 */
         .magic-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -59,109 +58,96 @@
             font-family: 'Kanit'; font-weight: 600;
         }
 
-        /* 메인 제목 */
         .main-title { text-align: center; margin-bottom: 30px; }
         .main-title h2 { 
             font-family: 'Nanum Myeongjo'; font-size: 1.8rem; 
             margin: 0; color: #2c3e50; text-shadow: 1px 1px 0px #fff;
         }
 
-        /* --- [GOP 핵심] 가챠 머신 그리드 --- */
         .gacha-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px 15px;
-            padding-bottom: 40px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 25px 15px; padding-bottom: 40px;
         }
 
-        /* 가챠 기계 본체 디자인 */
         .gacha-machine {
             background: var(--wood-body);
             background-image: url('https://www.transparenttextures.com/patterns/wood-pattern.png');
             border: 5px solid var(--wood-dark);
-            /* 배출구가 없어졌으므로 하단도 둥글게 처리 */
             border-radius: 10px 10px 25px 25px; 
             padding: 15px 10px 20px 10px;
             position: relative;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3), inset 0 0 50px rgba(0,0,0,0.1);
             display: flex; flex-direction: column; align-items: center;
-            cursor: pointer; /* 전체 클릭 가능 */
-            transition: transform 0.2s;
+            cursor: pointer; transition: transform 0.2s;
         }
+        .gacha-machine:hover { transform: translateY(-3px); }
 
-        .gacha-machine:hover {
-            transform: translateY(-3px);
-        }
-
-        /* [GOP 수정] 리얼한 캡슐 보관 창 */
+        /* --- [GOP 수정 핵심] 리얼하게 꽉 찬 캡슐 창 --- */
         .gacha-display {
-            width: 90%; height: 140px; /* 높이를 좀 더 키움 */
-            background: #fff;
-            border: 4px inset #ccc;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-            /* 여러 겹의 그라데이션으로 무질서하고 입체적인 캡슐 표현 */
+            width: 92%; height: 135px;
+            background-color: var(--capsule-deep); /* 빈틈을 메우는 어두운 배경색 */
+            border: 4px inset #ccc; border-radius: 6px;
+            margin-bottom: 15px; position: relative; overflow: hidden;
+            box-shadow: inset 0 5px 20px rgba(0,0,0,0.4);
+            
+            /* 3중 레이어로 캡슐을 무작위로 쌓아 올림 */
             background-image: 
-                radial-gradient(circle at 30% 40%, var(--capsule-red) 20px, var(--capsule-shadow) 22px, transparent 24px),
-                radial-gradient(circle at 70% 60%, var(--capsule-red) 18px, var(--capsule-shadow) 20px, transparent 22px),
-                radial-gradient(circle at 50% 80%, var(--capsule-red) 22px, var(--capsule-shadow) 24px, transparent 26px),
-                radial-gradient(circle at 20% 70%, var(--capsule-red) 16px, var(--capsule-shadow) 18px, transparent 20px),
-                radial-gradient(circle at 80% 30%, var(--capsule-red) 20px, var(--capsule-shadow) 22px, transparent 24px),
-                radial-gradient(circle at 50% 20%, var(--capsule-red) 18px, var(--capsule-shadow) 20px, transparent 22px);
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.3); /* 깊이감 추가 */
+                /* Layer 3 (Top): 가장 밝고 앞쪽에 있는 캡슐들 */
+                radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
+                /* Layer 2 (Mid): 중간 깊이의 캡슐들 (약간 다르게 반복) */
+                radial-gradient(circle at center, var(--capsule-red) 40%, var(--capsule-shadow) 55%, transparent 60%),
+                /* Layer 1 (Back): 가장 뒤쪽의 어두운 캡슐들 (빈틈 채우기) */
+                radial-gradient(circle at center, var(--capsule-shadow) 45%, var(--capsule-deep) 60%, transparent 65%);
+            
+            /* 크기는 비슷하게(약 45px) 하되, 반복 패턴을 다르게 하여 무작위성 부여 */
+            background-size: 
+                55px 55px,  /* Layer 3 */
+                47px 49px,  /* Layer 2 */
+                43px 43px;  /* Layer 1 */
+            
+            /* 위치를 오프셋 시켜 정렬되지 않은 느낌 강조 */
+            background-position: 
+                15px 10px,  /* Layer 3 offset */
+                0px 0px,    /* Layer 2 offset */
+                25px 25px;  /* Layer 1 offset */
         }
 
-        /* 유리창 광택 효과 */
+        /* 유리창 광택 및 반사 효과 강화 */
         .gacha-display::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 60%);
+            background: linear-gradient(120deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.2) 85%);
             pointer-events: none;
         }
+        /* ----------------------------------------- */
 
-        /* 한자 라벨 */
         .hanja-label {
             font-family: 'Nanum Myeongjo'; font-size: 2.4rem;
             color: #000; margin: 5px 0; font-weight: 900;
             text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
         }
-
         .thai-sub {
             font-family: 'Kanit'; font-size: 0.85rem;
             color: #5d4037; margin-bottom: 15px; font-weight: 600;
         }
 
-        /* 코인 투입구 & 레버 섹션 */
         .control-panel {
             width: 75px; height: 75px;
-            background: #bdc3c7;
-            border: 3px solid #7f8c8d;
-            border-radius: 50%;
+            background: #bdc3c7; border: 3px solid #7f8c8d; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            position: relative;
-            box-shadow: 0 5px 0 #95a5a6, inset 0 2px 5px rgba(0,0,0,0.2);
+            position: relative; box-shadow: 0 5px 0 #95a5a6, inset 0 2px 5px rgba(0,0,0,0.2);
             transition: 0.2s;
         }
-
         .control-panel::before {
             content: ''; width: 85%; height: 12px;
             background: #2c3e50; border-radius: 6px;
             transition: transform 0.6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
         }
-
-        /* 레버 회전 애니메이션 클래스 */
         .rotating::before { transform: rotate(360deg); }
 
         .hint-text {
             font-size: 0.7rem; color: #8b4513; margin-top: 12px;
             font-weight: bold; letter-spacing: -0.5px;
         }
-
         .hidden { display: none !important; }
-
         footer {
             text-align: center; margin-top: 40px; padding-bottom: 30px;
             font-size: 0.8rem; color: #999;
@@ -169,9 +155,7 @@
     </style>
 </head>
 <body>
-
     <div class="magic-background"></div>
-
     <div class="container">
         <header>
             <div class="logo">✨ MURDOO K</div>
@@ -182,12 +166,10 @@
                 <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
             </div>
         </header>
-
         <main>
             <div class="main-title">
                 <h2>วิหารกาชาเกาหลี (가챠 사주)</h2>
             </div>
-
             <div class="gacha-grid">
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'personality')">
                     <div class="gacha-display"></div>
@@ -196,7 +178,6 @@
                     <div class="control-panel"></div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭)</span>
                 </div>
-
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'wealth')">
                     <div class="gacha-display"></div>
                     <div class="hanja-label">財</div>
@@ -204,7 +185,6 @@
                     <div class="control-panel"></div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭)</span>
                 </div>
-
                 <div class="gacha-machine" onclick="handleGachaClick(this, 'romance')">
                     <div class="gacha-display"></div>
                     <div class="hanja-label">愛</div>
@@ -212,7 +192,6 @@
                     <div class="control-panel"></div>
                     <span class="hint-text">หมุนเพื่อสุ่ม (클릭)</span>
                 </div>
-
                 <div class="gacha-machine" style="opacity: 0.7; cursor: default;" onclick="event.stopPropagation();">
                     <div class="gacha-display" style="filter: grayscale(1);"></div>
                     <div class="hanja-label" style="color: #888;">運</div>
@@ -222,21 +201,17 @@
                 </div>
             </div>
         </main>
-
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตาที่ถูกจารึก</p>
         </footer>
     </div>
-
     <script>
         let isLoggedIn = false;
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-
         document.addEventListener('DOMContentLoaded', async () => {
             const profileBox = document.getElementById('profileBox');
             const loginBtn = document.getElementById('loginBtn');
             const profileImg = document.getElementById('userProfileImg');
-            
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -253,7 +228,6 @@
                 isLoggedIn = false;
             }
         });
-
         function handleGachaClick(machineElement, category) {
             if (!isLoggedIn) {
                 if(confirm("กรุณาเข้าสู่ระบบก่อนหมุนกาชา\n(로그인 후 가챠를 돌릴 수 있습니다.)")) {
@@ -261,12 +235,8 @@
                 }
                 return;
             }
-
-            // 레버 회전 애니메이션
             const knob = machineElement.querySelector('.control-panel');
             knob.classList.add('rotating');
-
-            // 0.6초 뒤 페이지 이동
             setTimeout(() => {
                 window.location.href = `/${category}`;
             }, 650);

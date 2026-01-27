@@ -70,7 +70,7 @@
             display: inline-block; padding-bottom: 5px;
         }
 
-        /* --- [GOP 핵심] 사진 속 가판대 구조 재현 --- */
+        /* 가판대 그리드 */
         .gacha-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -86,6 +86,7 @@
             flex-direction: column;
             box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
             position: relative;
+            cursor: pointer;
         }
 
         /* 상단: 세로형 한지 라벨 섹션 */
@@ -116,7 +117,7 @@
             font-weight: 800; color: var(--ink-black); margin-bottom: 5px;
         }
         .thai-title {
-            writing-mode: vertical-rl; /* 세로 쓰기 느낌 */
+            writing-mode: vertical-rl; 
             font-family: 'Kanit'; font-size: 0.9rem; font-weight: 700;
             color: #444; letter-spacing: 2px;
         }
@@ -128,7 +129,6 @@
             border-left: 3px solid var(--wood-frame);
             position: relative;
             overflow: hidden;
-            /* 리얼한 캡슐 스택 */
             background-image: 
                 radial-gradient(circle at 30% 80%, var(--capsule-red) 22px, #900 24px, transparent 25px),
                 radial-gradient(circle at 70% 85%, var(--capsule-red) 20px, #900 22px, transparent 23px),
@@ -144,7 +144,7 @@
             background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
         }
 
-        /* 하단: 금속 다이얼 섹션 */
+        /* 하단: 손잡이 다이얼 섹션 */
         .dial-section {
             padding: 20px 0;
             display: flex;
@@ -155,12 +155,11 @@
 
         .metal-dial {
             width: 80px; height: 80px;
-            background: radial-gradient(circle, #eee 20%, #999 100%);
+            background: radial-gradient(circle, #f0f0f0 20%, #999 100%);
             border: 4px solid #555; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            position: relative; cursor: pointer;
+            position: relative;
             box-shadow: 0 5px 0 #333, inset 0 2px 5px rgba(0,0,0,0.5);
-            transition: 0.2s;
         }
 
         .dial-knob {
@@ -169,18 +168,12 @@
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* 다이얼 가로 손잡이 */
+        /* 묵직한 가로 손잡이 바 */
         .dial-knob::before {
             content: ''; width: 85%; height: 14px;
-            background: #333; border-radius: 7px;
+            background: linear-gradient(to bottom, #444, #222);
+            border-radius: 7px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* 동전 구멍 */
-        .dial-knob::after {
-            content: ''; width: 6px; height: 20px;
-            background: #000; position: absolute; top: 15%;
-            border-radius: 2px;
         }
 
         .rotating { transform: rotate(360deg); }
@@ -322,7 +315,6 @@
                 return;
             }
 
-            // 다이얼 회전 애니메이션
             const knob = machineEl.querySelector('.dial-knob');
             knob.classList.add('rotating');
 

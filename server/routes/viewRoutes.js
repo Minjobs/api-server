@@ -12,6 +12,8 @@ router.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'client/vie
 // 🔐 로그인한 사람만 접근 가능 (verifyToken 추가)
 // router.get('/home', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/home.html')));
 router.get('/profile', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/profile.html')));
+//오방기 페이지
+router.get('/obanggi', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/obanggi.html')));
 // 성격, 재물, 연애 모두 같은 input-form.html을 보여줍니다.
 router.get(['/personality', '/wealth', '/romance'], (req, res) => {
     res.sendFile(path.join(__dirname, 'client/views/input-form.html'));

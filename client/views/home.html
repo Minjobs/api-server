@@ -3,188 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - K-Modern Fortune</title>
-    <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;700&family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <title>머두 K - 전통 운세</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-ivory: #f9f7f2;
-            --point-red: #b22222; /* 전통 낙관색 */
-            --ink-black: #1a1a1a;
-            --glass-white: rgba(255, 255, 255, 0.7);
-            --border-tan: #e0d8c0;
+            /* --- [컬러 팔레트: 파스텔톤 카드 & 기본 색상] --- */
+            --card-blue: #8ab4f8;   /* 파랑 카드 (오늘의 운세) */
+            --card-green: #81c784;  /* 초록 카드 (타로) */
+            --card-yellow: #ffd54f; /* 노랑 카드 (궁합) */
+            --card-red: #e57373;    /* 빨강 카드 (성심/상담) */
+            --card-gray: #b0bec5;   /* 회색 카드 (준비중) */
+            --bg-overlay: rgba(0, 0, 0, 0.5); /* 배경 어두운 오버레이 */
+            --text-white: #ffffff;  /* 기본 흰색 텍스트 */
+            --text-light: #e0e0e0;  /* 연한 텍스트 (서브) */
+            --point-gold: #ffd700;  /* 포인트 금색 (로고 등) */
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: var(--bg-ivory);
+            /* [배경 설정] 흐릿한 한옥 이미지 */
+            /* 실제 사용 시 'hanok_bg.jpg' 부분을 실제 이미지 경로로 변경해주세요. */
+            background-image: url('https://source.unsplash.com/1600x900/?korean,traditional,house,blur'); 
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* 스크롤 시 배경 고정 */
             font-family: 'Noto Sans KR', sans-serif;
-            color: var(--ink-black);
+            color: var(--text-white);
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
+            /* 전체적으로 배경을 어둡게 눌러줌 */
+            backdrop-filter: blur(5px) brightness(0.8); 
         }
 
-        /* --- [배경: 준비하신 background.jpg 적용 및 모자이크 효과] --- */
-        .background-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            /* 이미지 경로 설정 */
-            background-image: url('background.jpg'); 
-            background-size: cover; 
-            background-position: center;
-            background-repeat: no-repeat;
-            /* 배경 이미지가 너무 선명하지 않게 투명도 조절 */
-            opacity: 0.4; 
-        }
-
-        .background-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            /* 배경을 흐릿하게 만들어 컨텐츠 집중도 향상 (모자이크 느낌) */
-            backdrop-filter: blur(10px) contrast(90%);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        /* --- [헤더: 스타트업 미니멀 스타일] --- */
-        header {
-            width: 100%; max-width: 500px;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px; box-sizing: border-box;
-        }
-
-        .logo {
-            font-family: 'Cinzel Decorative', cursive;
-            font-size: 1.4rem; color: var(--ink-black); font-weight: 700;
-        }
-        .logo span { color: var(--point-red); }
-
-        .profile-btn {
-            width: 38px; height: 38px; border-radius: 12px;
-            background: #fff; border: 1px solid var(--border-tan);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        /* --- [메인 컨텐츠] --- */
+        /* --- [메인 컨테이너: 폰 화면 같은 느낌] --- */
         .container {
-            width: 100%; max-width: 500px;
-            padding: 0 20px 40px; box-sizing: border-box;
-            text-align: center;
+            width: 90%; max-width: 480px; /* 모바일 친화적 너비 */
+            margin: 20px 0;
+            background-color: var(--bg-overlay); /* 반투명 검정 배경 */
+            border-radius: 30px; /* 둥근 모서리 */
+            padding: 30px 25px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: blur(10px); /* 내부 블러 효과 */
         }
 
-        .hero-section { margin-top: 20px; margin-bottom: 40px; }
-        .hero-section h2 {
-            font-family: 'Gowun Batang', serif; font-size: 1.8rem;
-            margin: 0; font-weight: 700; line-height: 1.4;
+        /* --- [헤더: 로고 및 네비게이션] --- */
+        header {
+            width: 100%;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 30px;
         }
-        .hero-section p { color: #555; font-size: 0.95rem; margin-top: 10px; }
+        .logo {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.5rem; font-weight: 800; color: var(--text-white);
+            display: flex; align-items: center; gap: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .logo span { color: var(--point-gold); } /* 포인트 컬러 */
 
-        /* --- [메인 버튼 그리드: 스타트업 감성의 카드] --- */
-        .nav-grid {
-            display: flex; flex-direction: column; gap: 16px;
+        .user-nav { display: flex; align-items: center; gap: 10px; }
+        .profile-circle {
+            width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+            border: 2px solid var(--point-gold); cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
+        #loginBtn {
+            background: transparent; color: var(--text-white);
+            border: 2px solid var(--point-gold);
+            padding: 8px 16px; border-radius: 20px; cursor: pointer;
+            font-size: 0.9rem; font-weight: 700; transition: 0.2s;
+        }
+        #loginBtn:hover { background: var(--point-gold); color: #000; }
+
+        /* --- [캐릭터 및 메인 타이틀 섹션] --- */
+        .character-section {
+            text-align: center; margin-bottom: 40px;
+        }
+        .character-img {
+            /* 캐릭터 이미지 영역 (실제 이미지로 교체 필요) */
+            width: 150px; height: auto;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            margin-bottom: 15px;
+            animation: float 3s ease-in-out infinite; /* 둥둥 떠있는 애니메이션 */
+        }
+        .main-title {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.8rem; font-weight: 800; margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .sub-title {
+            font-size: 1rem; color: var(--text-light); margin-top: 8px;
+            font-weight: 500;
         }
 
-        .nav-card {
-            background: var(--glass-white);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            border-radius: 24px;
-            padding: 24px;
-            display: flex; align-items: center;
-            text-align: left; cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        /* --- [메뉴 리스트: 카드형 버튼] --- */
+        .menu-list {
+            width: 100%; display: flex; flex-direction: column; gap: 15px;
         }
 
-        .nav-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-            border-color: var(--point-red);
-            background: rgba(255, 255, 255, 0.9);
+        .menu-card {
+            width: 100%; padding: 20px 25px; box-sizing: border-box;
+            border-radius: 22px; /* 둥근 모서리 */
+            display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            color: #fff; /* 텍스트는 기본 흰색 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative; overflow: hidden;
         }
+        .menu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .menu-card:active { transform: scale(0.98); }
 
-        .card-icon {
-            width: 56px; height: 56px;
-            background: #fff; border-radius: 16px;
+        /* 각 카드별 색상 테마 */
+        .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #6495ed); }
+        .menu-card.green { background: linear-gradient(135deg, var(--card-green), #66bb6a); }
+        .menu-card.yellow { background: linear-gradient(135deg, var(--card-yellow), #fbc02d); color: #333; /* 노랑 카드는 텍스트 어둡게 */ }
+        .menu-card.red { background: linear-gradient(135deg, var(--card-red), #ef5350); }
+        .menu-card.gray { background: linear-gradient(135deg, var(--card-gray), #90a4ae); opacity: 0.8; cursor: default; }
+
+        /* 메뉴 아이콘 영역 */
+        .menu-icon-box {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2); /* 반투명 흰색 배경 */
             display: flex; align-items: center; justify-content: center;
             font-size: 1.8rem; margin-right: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            flex-shrink: 0; /* 아이콘 크기 고정 */
         }
+        /* 노랑 카드는 아이콘 배경을 어둡게 */
+        .menu-card.yellow .menu-icon-box { background: rgba(0, 0, 0, 0.1); }
 
-        .card-info h3 {
-            margin: 0; font-size: 1.2rem; font-weight: 700;
-            font-family: 'Gowun Batang', serif;
+        /* 메뉴 텍스트 영역 */
+        .menu-text { flex: 1; }
+        .menu-title {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.3rem; font-weight: 800; margin: 0 0 5px 0;
         }
-        .card-info p { margin: 4px 0 0; font-size: 0.85rem; color: #666; }
+        .menu-sub {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 0.9rem; font-weight: 500; margin: 0;
+            opacity: 0.9;
+        }
+        /* 노랑 카드는 서브 텍스트 색상 조정 */
+        .menu-card.yellow .menu-sub { color: #555; opacity: 1; }
 
-        .card-arrow {
-            margin-left: auto; color: #ccc; font-size: 1.2rem;
-        }
+        /* 화살표 아이콘 */
+        .menu-arrow { font-size: 1.5rem; opacity: 0.7; }
+        .menu-card.yellow .menu-arrow { color: #333; }
 
         footer {
-            margin-top: auto; padding: 30px;
-            font-size: 0.8rem; color: #888;
+            margin-top: 30px; text-align: center; color: var(--text-light);
+            font-size: 0.8rem; opacity: 0.7;
         }
 
         .hidden { display: none !important; }
+
+        /* 캐릭터 둥둥 떠있는 애니메이션 정의 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
 
-    <div class="background-overlay"></div>
-    <div class="background-blur"></div>
-
-    <header>
-        <div class="logo">MURDOO <span>K</span></div>
-        <div class="profile-btn" onclick="location.href='/profile'">👤</div>
-    </header>
-
     <main class="container">
-        <div class="hero-section">
-            <h2>오늘, 당신의 운명을<br>새롭게 그려보세요</h2>
-            <p>전통의 지혜를 모던한 감각으로 전합니다.</p>
+        <header>
+            <div class="logo">머두 <span>K</span> 운세</div>
+            <div class="user-nav">
+                <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
+                    <img id="userProfileImg" src="" alt="프로필">
+                </div>
+                <button id="loginBtn" class="hidden" onclick="location.href='/login'">로그인</button>
+            </div>
+        </header>
+
+        <div class="character-section">
+            <img src="https://cdn-icons-png.flaticon.com/512/7803/7803033.png" class="character-img" alt="한복 캐릭터">
+            <h2 class="main-title">오늘의 운세를 확인해보세요!</h2>
+            <p class="sub-title">당신의 하루를 비춰줄 신비로운 이야기</p>
         </div>
 
-        <div class="nav-grid">
-            <div class="nav-card" onclick="location.href='/gacha'">
-                <div class="card-icon">🎡</div>
-                <div class="card-info">
-                    <h3>사주 뽑기</h3>
-                    <p>캡슐 속에 담긴 오늘의 행운 (Gacha)</p>
+        <div class="menu-list">
+            <div class="menu-card blue" onclick="handleMenuClick('today')">
+                <div class="menu-icon-box">🔮</div> <div class="menu-text">
+                    <h3 class="menu-title">오늘의 운세</h3>
+                    <p class="menu-sub">행운 가득한 하루가 될까요? ✨</p>
                 </div>
-                <div class="card-arrow">→</div>
+                <div class="menu-arrow">›</div>
             </div>
 
-            <div class="nav-card" onclick="location.href='/reading'">
-                <div class="card-icon">📜</div>
-                <div class="card-info">
-                    <h3>사주보기</h3>
-                    <p>정밀한 분석으로 확인하는 평생의 운</p>
+            <div class="menu-card green" onclick="handleMenuClick('gacha')">
+                <div class="menu-icon-box">🎴</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">사주 뽑기</h3>
+                    <p class="menu-sub">오늘의 행운 캡슐 뽑기 (Gacha)</p>
                 </div>
-                <div class="card-arrow">→</div>
+                <div class="menu-arrow">›</div>
             </div>
 
-            <div class="nav-card" onclick="location.href='/obanggi'">
-                <div class="card-icon">🚩</div>
-                <div class="card-info">
-                    <h3>오방기 점술</h3>
-                    <p>다섯 가지 색의 깃발이 주는 메세지</p>
+            <div class="menu-card yellow" onclick="handleMenuClick('compatibility')">
+                <div class="menu-icon-box">💕</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">궁합 확인</h3>
+                    <p class="menu-sub">나와 잘 맞는 별자리는?</p>
                 </div>
-                <div class="card-arrow">→</div>
+                <div class="menu-arrow">›</div>
             </div>
+
+            <div class="menu-card gray">
+                <div class="menu-icon-box">🚧</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">신비한 점술 (준비중)</h3>
+                    <p class="menu-sub">곧 새로운 기능이 추가됩니다.</p>
+                </div>
+                </div>
         </div>
+
+        <footer>
+            © 2026 MURDOO K. 당신의 소중한 운명을 기록합니다.
+        </footer>
     </main>
 
-    <footer>
-        © 2026 MURDOO K. 정성을 다해 운명을 기록합니다.
-    </footer>
-
     <script>
+        let isLoggedIn = false;
+        // API 키는 실제 환경에서 안전하게 관리해야 합니다.
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-        
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // 필요 시 로그인 상태 체크 로직 추가 가능
+            const profileBox = document.getElementById('profileBox');
+            const loginBtn = document.getElementById('loginBtn');
+            const profileImg = document.getElementById('userProfileImg');
+            
+            try {
+                // 로그인 상태 확인 API 호출 (예시)
+                const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
+                if (res.ok) {
+                    const user = await res.json();
+                    profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+                    profileBox.classList.remove('hidden');
+                    loginBtn.classList.add('hidden');
+                    isLoggedIn = true;
+                } else {
+                    loginBtn.classList.remove('hidden');
+                    isLoggedIn = false;
+                }
+            } catch (err) {
+                // API 오류 등으로 실패 시 로그인 안 된 상태로 처리
+                loginBtn.classList.remove('hidden');
+                isLoggedIn = false;
+            }
         });
+
+        // 메뉴 클릭 처리 함수
+        function handleMenuClick(category) {
+            if (!isLoggedIn) {
+                if(confirm("로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
+                    window.location.href = '/login';
+                }
+                return;
+            }
+
+            // 각 카테고리에 맞는 페이지로 이동
+            switch(category) {
+                case 'today':
+                    window.location.href = '/today-fortune'; // 오늘의 운세 페이지
+                    break;
+                case 'gacha':
+                    window.location.href = '/gacha-main'; // 기존 사주 뽑기(가챠) 메인 페이지
+                    break;
+                case 'compatibility':
+                    window.location.href = '/compatibility'; // 궁합 페이지
+                    break;
+                // 추가 메뉴에 대한 처리...
+            }
+        }
     </script>
 </body>
 </html>

@@ -1,36 +1,36 @@
-import express from 'express'; // 👈 소문자로 수정
+import express from 'express';
 import cookieParser from 'cookie-parser';
-import path from 'path';
+import path from 'path'; // 👈 추가 필요!
 import 'dotenv/config';
 
-// 라우트 임포트
+import { verifyToken } from './middlewares/authMiddleware.js';
 import viewRoutes from './routes/viewRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import fortuneRoutes from './routes/fortuneRoutes.js';
 
 const app = express();
-const __dirname = path.resolve();
+const __dirname = path.resolve(); // 👈 ES 모듈에서 __dirname 설정
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static('client/public'));
 
-// --- [이미지/CSS 정적 파일 경로 설정] ---
-// client/public 폴더 안에 background.jpg와 logo.png를 넣어두세요.
-app.use(express.static(path.join(__dirname, 'client/public')));
+// 만약 HTML 파일과 이미지가 모두 현재 폴더(루트)에 있다면 아래와 같이 설정
+app.use(express.static(path.join(__dirname, 'client/views'))); 
 
-// HTML 파일들이 있는 폴더 설정
-app.use(express.static(path.join(__dirname, 'client/views')));
+// 1. 로그인 관련 및 API 라우트를 검문소 앞에 배치하거나 
 
-// --- [API 및 라우트 설정] ---
 app.use('/', viewRoutes);
 app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/fortune', fortuneRoutes);
+app.use('/api/user',userRoutes);
+app.use('/api/fortune', fortuneRoutes); // /api/fortune/analyze 등으로 접속 가능
 
-// --- [404 처리] ---
+
+// [중요] 모든 라우트(viewRoutes 등) 뒤에 위치해야 합니다.
 app.use((req, res) => {
+    // 만약 파일 경로가 'client/views/404.html'이 맞다면 아래 코드가 작동합니다.
     res.status(404).sendFile(path.join(__dirname, 'client/views/404.html'));
 });
 
-app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중... http://localhost:3000"));
+app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중..."));

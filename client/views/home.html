@@ -9,7 +9,8 @@
         :root {
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
-            --card-yellow: #ffd54f; 
+            /* [수정] 흰색 글자가 잘 보이도록 노란색을 조금 더 진한 골드 톤으로 변경 */
+            --card-gold: #f9a825; 
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
@@ -43,7 +44,6 @@
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
-        /* --- [컨테이너 너비 및 패딩 수정] --- */
         .container {
             width: 88%; 
             max-width: 440px; 
@@ -88,7 +88,6 @@
         .character-section {
             text-align: center; margin-bottom: 40px;
         }
-        /* [수정] 로고 이미지 스타일 - src 변경 */
         .logo-img {
             width: 120px; height: auto;
             filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
@@ -110,12 +109,12 @@
         }
 
         .menu-card {
-            width: 100%; padding: 20px 20px; /* 내부 패딩 최적화 */
+            width: 100%; padding: 20px 20px; 
             box-sizing: border-box;
             border-radius: 22px; 
             display: flex; align-items: center; justify-content: space-between;
             cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            color: #fff;
+            color: #fff; /* 전체 버튼 글자색 흰색 통일 */
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
@@ -123,7 +122,8 @@
 
         .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #6495ed); }
         .menu-card.green { background: linear-gradient(135deg, var(--card-green), #66bb6a); }
-        .menu-card.yellow { background: linear-gradient(135deg, var(--card-yellow), #fbc02d); color: #333; }
+        /* [수정] 골드 그라데이션 적용 */
+        .menu-card.gold { background: linear-gradient(135deg, var(--card-gold), #f57c00); }
 
         .menu-icon-box {
             width: 48px; height: 48px; border-radius: 50%;
@@ -168,7 +168,7 @@
         </header>
 
         <div class="character-section">
-            <img src="logo.png" class="logo-img" alt="Lucky Bag">
+            <img src="logo.png" class="logo-img" alt="Logo">
             <h2 class="main-title">เช็กดวงชะตาของคุณวันนี้!</h2>
             <p class="sub-title">มอบความโชคดีให้กับวันของคุณ</p>
         </div>
@@ -192,7 +192,7 @@
                 <div class="menu-arrow">›</div>
             </div>
 
-            <div class="menu-card yellow" onclick="handleMenuClick('obanggi')">
+            <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
                 <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
                     <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>

@@ -45,12 +45,12 @@
 
         /* --- [컨테이너 너비 및 패딩 수정] --- */
         .container {
-            width: 88%; /* 95%에서 88%로 줄여 양옆 배경 확보 */
+            width: 88%; 
             max-width: 440px; 
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            padding: 30px 15px; /* 좌우 패딩을 25px에서 15px로 줄여 버튼 확장 */
+            padding: 30px 15px; 
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
@@ -88,6 +88,7 @@
         .character-section {
             text-align: center; margin-bottom: 40px;
         }
+        /* [수정] 로고 이미지 스타일 - src 변경 */
         .logo-img {
             width: 120px; height: auto;
             filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
@@ -167,7 +168,7 @@
         </header>
 
         <div class="character-section">
-            <img src="https://cdn-icons-png.flaticon.com/512/3431/3431347.png" class="logo-img" alt="Lucky Bag">
+            <img src="logo.png" class="logo-img" alt="Lucky Bag">
             <h2 class="main-title">เช็กดวงชะตาของคุณวันนี้!</h2>
             <p class="sub-title">มอบความโชคดีให้กับวันของคุณ</p>
         </div>

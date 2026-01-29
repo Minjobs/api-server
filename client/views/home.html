@@ -26,10 +26,11 @@
             overflow-x: hidden;
         }
 
-        /* 배경 이미지 경로를 본인의 실제 파일 경로로 수정하세요 */
+        /* 배경 이미지 설정 */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
+            /* 예시 이미지 URL (로컬 파일 경로가 있다면 교체하세요) */
             background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr0kHFq6KI41VkzP38EcbzQYGpjsc9yE9OfH2iHQFoVsgxsrJacYVMMsuT&s=10'); 
             background-size: cover;
             background-position: center;
@@ -37,13 +38,16 @@
             opacity: 0.8; 
         }
 
+        /* [수정 1] 전체 배경 블러 레이어 */
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(3px) brightness(1.0);
-            -webkit-backdrop-filter: blur(3px) brightness(1.0);
+            /* 기존 3px -> 5px로 조금 높여서 배경을 더 부드럽게 만듦 */
+            backdrop-filter: blur(5px) brightness(1.0);
+            -webkit-backdrop-filter: blur(5px) brightness(1.0);
         }
 
+        /* [수정 2] 메인 컨테이너 박스 */
         .container {
             width: 95%; max-width: 480px; 
             margin: 20px 0;
@@ -53,8 +57,9 @@
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
-            backdrop-filter: blur(3px); 
-            -webkit-backdrop-filter: blur(3px);
+            /* 기존 3px -> 5px로 조금 높여서 박스 뒤 배경을 더 흐릿하게 처리 */
+            backdrop-filter: blur(5px); 
+            -webkit-backdrop-filter: blur(5px);
             border: 2px solid var(--border-line); 
         }
 
@@ -87,12 +92,12 @@
         .character-section {
             text-align: center; margin-bottom: 40px;
         }
-        /* [수정] 로고 이미지 스타일 */
+        
         .logo-img {
-            width: 120px; height: auto; /* 크기 조절 */
-            filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3)); /* 금색 그림자 효과 */
+            width: 120px; height: auto;
+            filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
             margin-bottom: 15px;
-            animation: float 3s ease-in-out infinite; /* 둥둥 떠다니는 애니메이션 유지 */
+            animation: float 3s ease-in-out infinite;
         }
         .main-title {
             font-family: 'Nanum Myeongjo', serif;

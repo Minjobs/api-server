@@ -49,7 +49,8 @@
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            padding: 30px 12px; /* 좌우 패딩을 더 줄여 공간 확보 */
+            /* [수정] 상단 패딩을 30px -> 15px로 줄여 로고를 위로 붙임 */
+            padding: 15px 12px 30px 12px; 
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
@@ -61,12 +62,14 @@
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px;
+            /* [수정] 헤더 하단 여백을 살짝 조정하여 밸런스 유지 */
+            margin-bottom: 25px;
             padding: 0 5px;
         }
         .logo {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.5rem; font-weight: 800; color: var(--text-white);
+            /* [수정] 로고 크기를 1.5rem -> 1.8rem으로 키움 */
+            font-size: 1.8rem; font-weight: 800; color: var(--text-white);
             display: flex; align-items: center; gap: 8px;
         }
         .logo span { color: var(--point-gold); }
@@ -109,7 +112,7 @@
 
         .menu-card {
             width: 100%; 
-            padding: 18px 12px; /* 버튼 내부 좌우 패딩을 줄여 텍스트 공간 확보 */
+            padding: 18px 12px;
             box-sizing: border-box;
             border-radius: 22px; 
             display: flex; align-items: center;
@@ -135,7 +138,6 @@
         .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px 0; }
         .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.85; font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* --- [가격 태그 디자인] --- */
         .price-badge {
             background: rgba(0, 0, 0, 0.25);
             padding: 4px 10px;

@@ -11,10 +11,11 @@
             --point-gold: #ffd700;
             --text-white: #ffffff;
             --border-line: rgba(200, 200, 200, 0.8);
-            --obang-red: #d32f2f;
-            --obang-blue: #1976d2;
-            --obang-yellow: #fbc02d;
-            --obang-white: #f5f5f5;
+            /* 오방기 색상 */
+            --obang-red: #e53935;
+            --obang-blue: #1e88e5;
+            --obang-yellow: #fdd835;
+            --obang-white: #ffffff;
             --obang-black: #212121;
         }
 
@@ -25,7 +26,7 @@
             color: var(--text-white);
             min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .background-overlay {
@@ -43,10 +44,10 @@
         }
 
         .container {
-            width: 90%; max-width: 460px;
+            width: 88%; max-width: 440px;
             background-color: var(--bg-overlay);
             border-radius: 30px;
-            padding: 30px 20px 40px 20px;
+            padding: 25px 15px 40px 15px;
             box-sizing: border-box;
             backdrop-filter: blur(10px);
             border: 3px solid var(--border-line);
@@ -54,114 +55,123 @@
             position: relative;
         }
 
-        .header-title h1 { font-size: 1.6rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; }
-        .header-title p { font-size: 1rem; margin: 8px 0 30px 0; opacity: 0.9; font-weight: 300; }
+        .header-title {
+            margin-bottom: 30px;
+        }
+        .header-title h1 {
+            font-size: 1.5rem; margin: 0; color: var(--point-gold);
+        }
+        .header-title p {
+            font-size: 0.9rem; margin: 5px 0 0 0; opacity: 0.8; font-weight: 300;
+        }
 
+        /* --- [깃발 영역] --- */
         .flag-stage {
-            height: 320px;
+            height: 250px;
+            display: flex; justify-content: center; align-items: center;
             position: relative;
             margin-bottom: 30px;
-            display: flex; flex-direction: column; justify-content: center; gap: 30px;
-            transition: all 0.5s ease;
         }
-
-        .flag-row { display: flex; justify-content: center; gap: 25px; width: 100%; }
 
         .flag {
-            width: 70px; height: 100px;
-            clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-            position: relative;
-            transition: all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 60px; height: 90px;
+            border-radius: 4px;
+            position: absolute;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
         }
 
-        .f-red { background-color: var(--obang-red); }
-        .f-blue { background-color: var(--obang-blue); }
-        .f-yellow { background-color: var(--obang-yellow); }
-        .f-white { background-color: var(--obang-white); }
-        .f-black { background-color: var(--obang-black); }
+        .flag-red { background-color: var(--obang-red); left: calc(50% - 130px); }
+        .flag-blue { background-color: var(--obang-blue); left: calc(50% - 65px); }
+        .flag-yellow { background-color: var(--obang-yellow); left: calc(50% - 0px); transform: translateX(-50%); }
+        .flag-white { background-color: var(--obang-white); left: calc(50% + 5px); }
+        .flag-black { background-color: var(--obang-black); left: calc(50% + 70px); }
 
-        .flag-stage.merging .flag-row { display: none; }
-        .flag-stage.merging .flag {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) scale(1.1) !important;
-            margin: 0; opacity: 0.9;
-        }
-        
-        .flag-stage.spinning { animation: spin-flags 0.3s linear infinite; }
-        @keyframes spin-flags {
-            from { transform: rotate(0deg) scale(0.9); }
-            to { transform: rotate(360deg) scale(0.9); }
+        /* --- [애니메이션 클래스] --- */
+        .merging .flag {
+            left: 50% !important;
+            transform: translateX(-50%) scale(1.1);
+            opacity: 0.8;
         }
 
+        .spinning .flag {
+            animation: spin 0.4s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, 0) rotate(0deg); }
+            100% { transform: translate(-50%, 0) rotate(360deg); }
+        }
+
+        /* 결과 창 스타일 */
         #result-display {
             display: none;
-            flex-direction: column; align-items: center;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
         }
         .result-flag {
-            width: 140px; height: 200px;
-            clip-path: polygon(0 0, 100% 0, 85% 50%, 100% 100%, 0 100%);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            margin-bottom: 25px;
+            width: 120px; height: 180px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
         }
-        .result-title { font-size: 1.8rem; font-weight: 700; color: var(--point-gold); margin-bottom: 5px; }
-        .result-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 25px; font-weight: 300; }
+        .result-text {
+            font-size: 1.4rem; font-weight: 700; color: var(--point-gold);
+            margin-bottom: 10px;
+        }
 
+        /* --- [버튼 스타일] --- */
         #pickBtn {
-            background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: white; border: none; padding: 15px 45px; border-radius: 30px;
-            font-size: 1.2rem; font-weight: 700; cursor: pointer;
+            background: linear-gradient(135deg, var(--card-gold), #f57c00);
+            color: white; border: none;
+            padding: 15px 40px; border-radius: 30px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             transition: transform 0.2s;
         }
+        #pickBtn:active { transform: scale(0.95); }
 
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         .hidden { display: none !important; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
+
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
     <main class="container">
         <div class="header-title">
-            <h1>เสี่ยงทายธง 5 สี</h1>
-            <p>อธิษฐานแล้วกดปุ่มเพื่อเลือกธง</p>
+            <h1>เลือกธงศักดิ์สิทธิ์</h1>
+            <p>อธิษฐานแล้วเลือกธงเพื่อดูคำทำนาย</p>
         </div>
 
         <div class="flag-stage" id="flagStage">
-            <div class="flag-row">
-                <div class="flag f-red"></div>
-                <div class="flag f-blue"></div>
-                <div class="flag f-yellow"></div>
-            </div>
-            <div class="flag-row">
-                <div class="flag f-white"></div>
-                <div class="flag f-black"></div>
-            </div>
+            <div class="flag flag-red"></div>
+            <div class="flag flag-blue"></div>
+            <div class="flag flag-yellow"></div>
+            <div class="flag flag-white"></div>
+            <div class="flag flag-black"></div>
         </div>
 
         <div id="result-display">
             <div class="result-flag" id="finalFlag"></div>
-            <div class="result-title" id="resultTitle"></div>
-            <div class="result-desc" id="resultDesc"></div>
-            <button onclick="location.reload()" style="background:transparent; color:#fff; border:1px solid #fff; padding:10px 20px; border-radius:20px; cursor:pointer;">ลองอีกครั้ง</button>
+            <div class="result-text" id="resultTitle">...</div>
+            <button onclick="location.reload()" style="background:transparent; color:#fff; border:1px solid #fff; padding:8px 20px; border-radius:20px; cursor:pointer;">ลองอีกครั้ง</button>
         </div>
 
-        <button id="pickBtn" onclick="startPicking()">เสี่ยงทาย</button>
+        <button id="pickBtn" onclick="startPicking()">เสี่ยงทายธง</button>
     </main>
 
     <script>
-        // [복구 완료] API KEY 적용
-        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-
         const flags = [
-            { color: 'var(--obang-red)', title: 'ธงแดง', desc: 'โชคลาภกำลังมาเยือน' },
-            { color: 'var(--obang-blue)', title: 'ธงน้ำเงิน', desc: 'ระวังอุป찰만 통과하면 성공' },
-            { color: 'var(--obang-yellow)', title: 'ธงเหลือง', desc: 'ความรักสมหวัง' },
-            { color: 'var(--obang-white)', title: 'ธงขาว', desc: 'สุขภาพแข็งแรง' },
-            { color: 'var(--obang-black)', title: 'ธงดำ', desc: 'การเริ่มต้นใหม่' }
+            { color: '#e53935', name: 'ธงสีแดง', mean: 'โชคลาภกำลังมา!' },
+            { color: '#1e88e5', name: 'ธงสีน้ำเงิน', mean: 'ความสำเร็จในงาน' },
+            { color: '#fdd835', name: 'ธงสีเหลือง', mean: 'ความรักที่สดใส' },
+            { color: '#ffffff', name: 'ธงสีขาว', mean: 'สุขภาพที่แข็งแรง' },
+            { color: '#212121', name: 'ธงสีดำ', mean: 'การเริ่มต้นใหม่' }
         ];
 
         function startPicking() {
@@ -170,22 +180,29 @@
             const resultDisplay = document.getElementById('result-display');
             const finalFlag = document.getElementById('finalFlag');
             const resultTitle = document.getElementById('resultTitle');
-            const resultDesc = document.getElementById('resultDesc');
 
+            // 1. 버튼 숨기기
             btn.classList.add('hidden');
+
+            // 2. 합치기 애니메이션 (Merging)
             stage.classList.add('merging');
 
             setTimeout(() => {
+                // 3. 회전 애니메이션 (Spinning)
                 stage.classList.add('spinning');
+
                 setTimeout(() => {
+                    // 4. 결과 도출
                     stage.classList.add('hidden');
                     const win = flags[Math.floor(Math.random() * flags.length)];
+                    
                     finalFlag.style.backgroundColor = win.color;
-                    resultTitle.innerText = win.title;
-                    resultDesc.innerText = win.desc;
+                    resultTitle.innerText = win.mean;
+                    
                     resultDisplay.style.display = 'flex';
-                }, 2000);
-            }, 800);
+                }, 2000); // 2초간 회전
+
+            }, 600); // 0.6초간 합쳐짐
         }
     </script>
 </body>

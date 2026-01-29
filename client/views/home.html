@@ -24,23 +24,25 @@
             overflow-x: hidden;
         }
 
-        /* --- [배경: 격자문 & 병풍 모자이크 효과] --- */
+        /* --- [배경: 준비하신 background.jpg 적용 및 모자이크 효과] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            /* 격자문 느낌의 패턴 */
-            background-image: 
-                linear-gradient(var(--border-tan) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border-tan) 1px, transparent 1px);
-            background-size: 40px 60px;
-            opacity: 0.3;
+            /* 이미지 경로 설정 */
+            background-image: url('background.jpg'); 
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
+            /* 배경 이미지가 너무 선명하지 않게 투명도 조절 */
+            opacity: 0.4; 
         }
 
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            backdrop-filter: blur(8px) contrast(90%); /* 모자이크/블러 느낌 */
-            -webkit-backdrop-filter: blur(8px);
+            /* 배경을 흐릿하게 만들어 컨텐츠 집중도 향상 (모자이크 느낌) */
+            backdrop-filter: blur(10px) contrast(90%);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         /* --- [헤더: 스타트업 미니멀 스타일] --- */
@@ -75,30 +77,30 @@
             font-family: 'Gowun Batang', serif; font-size: 1.8rem;
             margin: 0; font-weight: 700; line-height: 1.4;
         }
-        .hero-section p { color: #666; font-size: 0.95rem; margin-top: 10px; }
+        .hero-section p { color: #555; font-size: 0.95rem; margin-top: 10px; }
 
-        /* --- [메인 버튼 그리드: 스타트업 느낌의 카드] --- */
+        /* --- [메인 버튼 그리드: 스타트업 감성의 카드] --- */
         .nav-grid {
             display: flex; flex-direction: column; gap: 16px;
         }
 
         .nav-card {
             background: var(--glass-white);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 24px;
             padding: 24px;
             display: flex; align-items: center;
             text-align: left; cursor: pointer;
             transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-            position: relative; overflow: hidden;
         }
 
         .nav-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
             border-color: var(--point-red);
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .card-icon {
@@ -113,16 +115,15 @@
             margin: 0; font-size: 1.2rem; font-weight: 700;
             font-family: 'Gowun Batang', serif;
         }
-        .card-info p { margin: 4px 0 0; font-size: 0.85rem; color: #777; }
+        .card-info p { margin: 4px 0 0; font-size: 0.85rem; color: #666; }
 
-        /* 포인트 장식 */
         .card-arrow {
             margin-left: auto; color: #ccc; font-size: 1.2rem;
         }
 
         footer {
             margin-top: auto; padding: 30px;
-            font-size: 0.8rem; color: #aaa;
+            font-size: 0.8rem; color: #888;
         }
 
         .hidden { display: none !important; }
@@ -182,7 +183,7 @@
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
         
         document.addEventListener('DOMContentLoaded', async () => {
-            // 로그인 상태 체크 및 프로필 이미지 연동 로직 (필요 시 유지)
+            // 필요 시 로그인 상태 체크 로직 추가 가능
         });
     </script>
 </body>

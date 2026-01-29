@@ -72,6 +72,21 @@
         .logo span { color: var(--point-gold); }
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
+        
+        /* --- [코인 잔액 스타일] --- */
+        #coinBox {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--point-gold);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--point-gold);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .profile-circle {
             width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
             border: 2px solid var(--point-gold); cursor: pointer;
@@ -175,6 +190,9 @@
         <header>
             <div class="logo">MURDOO <span>K</span></div>
             <div class="user-nav">
+                <div id="coinBox" class="hidden">
+                    <span id="userCoins">0</span> 🪙
+                </div>
                 <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
                     <img id="userProfileImg" src="" alt="Profile">
                 </div>
@@ -193,7 +211,7 @@
                 <div class="menu-icon-box">🎡</div>
                 <div class="menu-text">
                     <h3 class="menu-title">สุ่มดวงนำโชค</h3>
-                    <p class="menu-sub">สุ่มแคปซูลรับโชควันนี้ (Gacha)</p>
+                    <p class="menu-sub">สุ่มแคปซูลรับโชค오늘의 (Gacha)</p>
                 </div>
                 <div class="price-badge">🪙 1 คอยน์</div>
             </div>
@@ -228,15 +246,23 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const profileBox = document.getElementById('profileBox');
+            const coinBox = document.getElementById('coinBox');
             const loginBtn = document.getElementById('loginBtn');
             const profileImg = document.getElementById('userProfileImg');
+            const userCoins = document.getElementById('userCoins');
             
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
+                    
+                    // 데이터 반영
                     profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
+                    userCoins.innerText = user.coins || 0; // 코인 잔액 업데이트
+                    
+                    // UI 노출 조절
                     profileBox.classList.remove('hidden');
+                    coinBox.classList.remove('hidden');
                     loginBtn.classList.add('hidden');
                     isLoggedIn = true;
                 } else {
@@ -247,10 +273,8 @@
             }
         });
 
-        /* --- [JavaScript 수정: 즉시 리다이렉트] --- */
         function handleMenuClick(category) {
             if (!isLoggedIn) {
-                // 확인 창 없이 즉시 로그인 페이지로 이동
                 window.location.href = '/login';
                 return;
             }

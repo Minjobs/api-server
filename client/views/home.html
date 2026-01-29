@@ -9,7 +9,6 @@
         :root {
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
-            /* [수정] 흰색 글자가 잘 보이도록 노란색을 조금 더 진한 골드 톤으로 변경 */
             --card-gold: #f9a825; 
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -50,7 +49,7 @@
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            padding: 30px 15px; 
+            padding: 30px 12px; /* 좌우 패딩을 더 줄여 공간 확보 */
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
@@ -63,6 +62,7 @@
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 30px;
+            padding: 0 5px;
         }
         .logo {
             font-family: 'Nanum Myeongjo', serif;
@@ -86,35 +86,35 @@
         }
 
         .character-section {
-            text-align: center; margin-bottom: 40px;
+            text-align: center; margin-bottom: 35px;
         }
         .logo-img {
-            width: 120px; height: auto;
+            width: 110px; height: auto;
             filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
             margin-bottom: 15px;
             animation: float 3s ease-in-out infinite;
         }
         .main-title {
-            font-size: 1.6rem; font-weight: 700; margin: 0;
+            font-size: 1.5rem; font-weight: 700; margin: 0;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-            word-break: keep-all;
         }
         .sub-title {
-            font-size: 1rem; color: #fff; margin-top: 10px;
+            font-size: 0.95rem; color: #fff; margin-top: 10px;
             font-weight: 300; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         }
 
         .menu-list {
-            width: 100%; display: flex; flex-direction: column; gap: 15px;
+            width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
 
         .menu-card {
-            width: 100%; padding: 20px 20px; 
+            width: 100%; 
+            padding: 18px 12px; /* 버튼 내부 좌우 패딩을 줄여 텍스트 공간 확보 */
             box-sizing: border-box;
             border-radius: 22px; 
-            display: flex; align-items: center; justify-content: space-between;
+            display: flex; align-items: center;
             cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-            color: #fff; /* 전체 버튼 글자색 흰색 통일 */
+            color: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
@@ -122,25 +122,40 @@
 
         .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #6495ed); }
         .menu-card.green { background: linear-gradient(135deg, var(--card-green), #66bb6a); }
-        /* [수정] 골드 그라데이션 적용 */
         .menu-card.gold { background: linear-gradient(135deg, var(--card-gold), #f57c00); }
 
         .menu-icon-box {
-            width: 48px; height: 48px; border-radius: 50%;
+            width: 46px; height: 46px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; margin-right: 15px; flex-shrink: 0;
+            font-size: 1.5rem; margin-right: 12px; flex-shrink: 0;
         }
 
-        .menu-text { flex: 1; }
-        .menu-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 3px 0; }
-        .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.9; font-weight: 300; }
+        .menu-text { flex: 1; min-width: 0; }
+        .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px 0; }
+        .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.85; font-weight: 300; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        .menu-arrow { font-size: 1.4rem; opacity: 0.7; }
+        /* --- [가격 태그 디자인] --- */
+        .price-badge {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+            white-space: nowrap;
+        }
+        .price-badge.free {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
 
         footer {
             margin-top: 30px; text-align: center; color: #fff;
-            font-size: 0.8rem; opacity: 0.8; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-size: 0.75rem; opacity: 0.7; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
         .hidden { display: none !important; }
@@ -169,7 +184,7 @@
 
         <div class="character-section">
             <img src="logo.png" class="logo-img" alt="Logo">
-            <h2 class="main-title">เช็กดวงชะตาของคุณวันนี้!</h2>
+            <h2 class="main-title">เช็กดวงชะตาของคุณ!</h2>
             <p class="sub-title">มอบความโชคดีให้กับวันของคุณ</p>
         </div>
 
@@ -178,9 +193,9 @@
                 <div class="menu-icon-box">🎡</div>
                 <div class="menu-text">
                     <h3 class="menu-title">สุ่มดวงนำโชค</h3>
-                    <p class="menu-sub">สุ่มแคปซูลรับโชควันนี้ (Gacha) ✨</p>
+                    <p class="menu-sub">สุ่มแคปซูลรับโชควันนี้ (Gacha)</p>
                 </div>
-                <div class="menu-arrow">›</div>
+                <div class="price-badge">🪙 1 คอยน์</div>
             </div>
 
             <div class="menu-card green" onclick="handleMenuClick('saju')">
@@ -189,16 +204,16 @@
                     <h3 class="menu-title">ทำนายดวงชะตา</h3>
                     <p class="menu-sub">วิเคราะห์ดวงจากวันเกิดแบบเกาหลี</p>
                 </div>
-                <div class="menu-arrow">›</div>
+                <div class="price-badge">🪙 2 คอยน์</div>
             </div>
 
             <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
                 <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
                     <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
-                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
+                    <p class="menu-sub">รับคำทำนายจากธง (Obanggi)</p>
                 </div>
-                <div class="menu-arrow">›</div>
+                <div class="price-badge free">🏷️ ฟรี</div>
             </div>
         </div>
 

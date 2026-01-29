@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>머두 K - 전통 운세</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>MURDOO K - ดูดวงเกาหลี</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --card-blue: #8ab4f8;   
@@ -19,18 +19,16 @@
         body {
             margin: 0; padding: 0;
             background-color: #f5f5f5; 
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Kanit', sans-serif; /* 태국어 폰트 우선 적용 */
             color: var(--text-white);
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
             overflow-x: hidden;
         }
 
-        /* 배경 이미지 설정 */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            /* 예시 이미지 URL (로컬 파일 경로가 있다면 교체하세요) */
             background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr0kHFq6KI41VkzP38EcbzQYGpjsc9yE9OfH2iHQFoVsgxsrJacYVMMsuT&s=10'); 
             background-size: cover;
             background-position: center;
@@ -38,16 +36,13 @@
             opacity: 0.8; 
         }
 
-        /* [수정 1] 전체 배경 블러 레이어 */
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            /* 기존 3px -> 5px로 조금 높여서 배경을 더 부드럽게 만듦 */
             backdrop-filter: blur(5px) brightness(1.0);
             -webkit-backdrop-filter: blur(5px) brightness(1.0);
         }
 
-        /* [수정 2] 메인 컨테이너 박스 */
         .container {
             width: 95%; max-width: 480px; 
             margin: 20px 0;
@@ -57,7 +52,6 @@
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
-            /* 기존 3px -> 5px로 조금 높여서 박스 뒤 배경을 더 흐릿하게 처리 */
             backdrop-filter: blur(5px); 
             -webkit-backdrop-filter: blur(5px);
             border: 2px solid var(--border-line); 
@@ -100,13 +94,13 @@
             animation: float 3s ease-in-out infinite;
         }
         .main-title {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.8rem; font-weight: 800; margin: 0;
+            font-size: 1.6rem; font-weight: 700; margin: 0;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            word-break: keep-all;
         }
         .sub-title {
-            font-size: 1.1rem; color: #fff; margin-top: 8px;
-            font-weight: 500; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+            font-size: 1rem; color: #fff; margin-top: 10px;
+            font-weight: 300; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         }
 
         .menu-list {
@@ -137,10 +131,9 @@
 
         .menu-text { flex: 1; }
         .menu-title {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.3rem; font-weight: 800; margin: 0 0 5px 0;
+            font-size: 1.2rem; font-weight: 700; margin: 0 0 4px 0;
         }
-        .menu-sub { font-size: 0.9rem; margin: 0; opacity: 0.9; }
+        .menu-sub { font-size: 0.85rem; margin: 0; opacity: 0.9; font-weight: 300; }
 
         .menu-arrow { font-size: 1.5rem; opacity: 0.7; }
 
@@ -164,52 +157,52 @@
 
     <main class="container">
         <header>
-            <div class="logo">머두 <span>K</span> 운세</div>
+            <div class="logo">MURDOO <span>K</span></div>
             <div class="user-nav">
                 <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
-                    <img id="userProfileImg" src="" alt="프로필">
+                    <img id="userProfileImg" src="" alt="Profile">
                 </div>
-                <button id="loginBtn" class="hidden" onclick="location.href='/login'">로그인</button>
+                <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
             </div>
         </header>
 
         <div class="character-section">
-            <img src="https://cdn-icons-png.flaticon.com/512/3431/3431347.png" class="logo-img" alt="복주머니 로고">
-            <h2 class="main-title">오늘의 운세를 확인해보세요!</h2>
-            <p class="sub-title">당신의 하루에 복을 가득 담아드립니다</p>
+            <img src="https://cdn-icons-png.flaticon.com/512/3431/3431347.png" class="logo-img" alt="Lucky Bag">
+            <h2 class="main-title">เช็กดวงชะตาของคุณวันนี้!</h2>
+            <p class="sub-title">มอบความโชคดีให้กับวันของคุณ</p>
         </div>
 
         <div class="menu-list">
-            <div class="menu-card blue" onclick="handleMenuClick('today')">
-                <div class="menu-icon-box">🔮</div>
+            <div class="menu-card blue" onclick="handleMenuClick('gacha')">
+                <div class="menu-icon-box">🎡</div>
                 <div class="menu-text">
-                    <h3 class="menu-title">오늘의 운세</h3>
-                    <p class="menu-sub">행운 가득한 하루가 될까요? ✨</p>
+                    <h3 class="menu-title">สุ่มดวงนำโชค</h3>
+                    <p class="menu-sub">สุ่มแคปซูลรับโชควันนี้ (Gacha) ✨</p>
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
 
-            <div class="menu-card green" onclick="handleMenuClick('gacha')">
-                <div class="menu-icon-box">🎴</div>
+            <div class="menu-card green" onclick="handleMenuClick('saju')">
+                <div class="menu-icon-box">📜</div>
                 <div class="menu-text">
-                    <h3 class="menu-title">사주 뽑기</h3>
-                    <p class="menu-sub">행운 캡슐 뽑기 (Gacha)</p>
+                    <h3 class="menu-title">ทำนายดวงชะตา</h3>
+                    <p class="menu-sub">วิเคราะห์ดวงจากวันเกิดแบบเกาหลี</p>
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
 
-            <div class="menu-card yellow" onclick="handleMenuClick('compatibility')">
-                <div class="menu-icon-box">💕</div>
+            <div class="menu-card yellow" onclick="handleMenuClick('obanggi')">
+                <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
-                    <h3 class="menu-title">궁합 확인</h3>
-                    <p class="menu-sub">나와 잘 맞는 상대는 누구?</p>
+                    <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
+                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
                 </div>
                 <div class="menu-arrow">›</div>
             </div>
         </div>
 
         <footer>
-            © 2026 MURDOO K. 정성을 다해 운명을 기록합니다.
+            © 2026 MURDOO K. บันทึกโชคชะตาด้วยความใส่ใจ
         </footer>
     </main>
 
@@ -240,12 +233,12 @@
 
         function handleMenuClick(category) {
             if (!isLoggedIn) {
-                if(confirm("로그인이 필요한 서비스입니다.\n로그인 페이지로 이동하시겠습니까?")) {
+                if(confirm("กรุณาเข้าสู่ระบบก่อนใช้บริการ\nคุณต้องการไปที่หน้าเข้าสู่ระบบหรือไม่?")) {
                     window.location.href = '/login';
                 }
                 return;
             }
-            window.location.href = `/${category}-fortune`;
+            window.location.href = `/${category}`;
         }
     </script>
 </body>

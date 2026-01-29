@@ -10,7 +10,6 @@
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
             --card-yellow: #ffd54f; 
-            /* [수정] 투명도를 0.45에서 0.38로 낮춰 배경이 더 잘 보이게 설정 */
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
@@ -44,12 +43,14 @@
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
+        /* --- [컨테이너 너비 및 패딩 수정] --- */
         .container {
-            width: 95%; max-width: 480px; 
+            width: 88%; /* 95%에서 88%로 줄여 양옆 배경 확보 */
+            max-width: 440px; 
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            padding: 30px 25px;
+            padding: 30px 15px; /* 좌우 패딩을 25px에서 15px로 줄여 버튼 확장 */
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             display: flex; flex-direction: column; align-items: center;
@@ -108,7 +109,8 @@
         }
 
         .menu-card {
-            width: 100%; padding: 20px 25px; box-sizing: border-box;
+            width: 100%; padding: 20px 20px; /* 내부 패딩 최적화 */
+            box-sizing: border-box;
             border-radius: 22px; 
             display: flex; align-items: center; justify-content: space-between;
             cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
@@ -123,17 +125,17 @@
         .menu-card.yellow { background: linear-gradient(135deg, var(--card-yellow), #fbc02d); color: #333; }
 
         .menu-icon-box {
-            width: 50px; height: 50px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; margin-right: 20px; flex-shrink: 0;
+            font-size: 1.6rem; margin-right: 15px; flex-shrink: 0;
         }
 
         .menu-text { flex: 1; }
-        .menu-title { font-size: 1.2rem; font-weight: 700; margin: 0 0 4px 0; }
-        .menu-sub { font-size: 0.85rem; margin: 0; opacity: 0.9; font-weight: 300; }
+        .menu-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 3px 0; }
+        .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.9; font-weight: 300; }
 
-        .menu-arrow { font-size: 1.5rem; opacity: 0.7; }
+        .menu-arrow { font-size: 1.4rem; opacity: 0.7; }
 
         footer {
             margin-top: 30px; text-align: center; color: #fff;

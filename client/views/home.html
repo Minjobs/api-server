@@ -49,7 +49,6 @@
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            /* [수정] 상단 여백을 15px로 고정 */
             padding: 15px 12px 30px 12px; 
             box-sizing: border-box;
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
@@ -62,7 +61,6 @@
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
-            /* [수정] 텍스트 로고와 아래 이미지 로고 사이의 여백을 5px로 축소 */
             margin-bottom: 5px;
             padding: 0 5px;
         }
@@ -249,11 +247,11 @@
             }
         });
 
+        /* --- [JavaScript 수정: 즉시 리다이렉트] --- */
         function handleMenuClick(category) {
             if (!isLoggedIn) {
-                if(confirm("กรุณาเข้าสู่ระบบก่อนใช้บริการ\nคุณต้องการไปที่หน้าเข้าสู่ระบบหรือไม่?")) {
-                    window.location.href = '/login';
-                }
+                // 확인 창 없이 즉시 로그인 페이지로 이동
+                window.location.href = '/login';
                 return;
             }
             window.location.href = `/${category}`;

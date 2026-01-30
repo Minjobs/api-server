@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* --- [배경 설정] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -40,7 +39,6 @@
             -webkit-backdrop-filter: blur(7px) brightness(0.9);
         }
 
-        /* --- [컨테이너] --- */
         .container {
             width: 88%; max-width: 440px; 
             margin: 20px 0;
@@ -72,7 +70,6 @@
         .profile-circle { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid var(--point-gold); }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- [입력 폼 스타일] --- */
         .intro-section { text-align: center; margin-bottom: 25px; }
         #pageTitle { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
         #pageDesc { font-size: 0.9rem; opacity: 0.9; margin-top: 8px; font-weight: 300; }
@@ -100,7 +97,6 @@
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
 
-        /* --- [로딩 섹션] --- */
         #loadingSection {
             display: none; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 50px 10px; animation: fadeIn 0.5s ease;
@@ -165,9 +161,9 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                            <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                            <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                             <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                         </select>
@@ -185,7 +181,7 @@
                 <div class="field">
                     <label>เพศ (Gender Identity)</label>
                     <select id="gender" required>
-                        <option value="" disabled selected>เลือกเพ격</option>
+                        <option value="" disabled selected>เลือกเพศ</option>
                         <option value="male">ชาย (Male)</option><option value="female">หญิง (Female)</option>
                         <option value="lgbt">LGBTQ+</option><option value="other">อื่นๆ (Other)</option>
                     </select>
@@ -213,13 +209,12 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'personality';
 
-            // [1] 초기 설정 및 프로필 로드
             const config = {
                 personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงของคุณ" },
                 wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและความมั่งคั่ง" },
                 romance: { title: "Romance", desc: "ตามหาเนื้อคู่และเส้นทางความรัก" }
             };
-            const loadingMessages = ["วิเคราะห์ชื่อ...", "ตรวจสอบดวงดาว...", "ถอดรหัสโชคชะตา..."];
+            const loadingMessages = ["กำลังอ่านสมุดบัญชีสวรรค์...", "คำนวณตำแหน่งดวงดาว...", "วิเคราะห์ธาตุและโชคชะตา..."];
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
@@ -234,7 +229,6 @@
                 }
             } catch (e) { console.error(e); }
 
-            // [2] 드롭다운 데이터 생성
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
@@ -242,7 +236,6 @@
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
-            // [3] 시간 모름 토글
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -252,7 +245,6 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // [4] 폼 제출
             document.getElementById('fortuneForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 document.getElementById('inputSection').classList.add('hidden');
@@ -262,7 +254,7 @@
                 const interval = setInterval(() => {
                     msgIdx = (msgIdx + 1) % loadingMessages.length;
                     document.getElementById('dynamicText').innerText = loadingMessages[msgIdx];
-                }, 3000);
+                }, 4000);
 
                 const payload = {
                     type,
@@ -273,19 +265,33 @@
                     gender: document.getElementById('gender').value
                 };
 
+                // [중요] 타임아웃 처리를 위한 컨트롤러
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 60000); // 1분까지 대기
+
                 try {
                     const response = await fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(payload),
+                        signal: controller.signal
                     });
+                    
+                    clearTimeout(timeoutId);
                     const result = await response.json();
+
                     if (response.ok && result.resultId) {
                         window.location.href = `/result/${result.resultId}`;
-                    } else { throw new Error(); }
+                    } else { 
+                        throw new Error(result.message || "서버 응답 오류"); 
+                    }
                 } catch (err) {
                     clearInterval(interval);
-                    alert("เกิดข้อผิดพลาด โปรดลองอีกครั้ง");
+                    if (err.name === 'AbortError') {
+                        alert("การวิเคราะห์ใช้เวลานานเกินไป โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+                    } else {
+                        alert("เกิดข้อผิดพลาด โปรดลองอีกครั้ง");
+                    }
                     location.reload();
                 }
             });

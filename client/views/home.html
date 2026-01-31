@@ -26,6 +26,7 @@
             overflow-x: hidden;
         }
 
+        /* --- [배경 레이어] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -43,6 +44,7 @@
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
+        /* --- [메인 컨테이너] --- */
         .container {
             width: 88%; 
             max-width: 440px; 
@@ -58,6 +60,7 @@
             border: 3px solid var(--border-line); 
         }
 
+        /* --- [헤더: 로고 및 유저 정보] --- */
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
@@ -73,7 +76,7 @@
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
         
-        /* --- [코인 잔액 스타일] --- */
+        /* 코인 잔액 스타일 (상점 연결 클릭 가능) */
         #coinBox {
             background: rgba(255, 215, 0, 0.2);
             border: 1px solid var(--point-gold);
@@ -85,6 +88,13 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #coinBox:hover {
+            background: rgba(255, 215, 0, 0.35);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .profile-circle {
@@ -100,6 +110,7 @@
             font-size: 0.9rem; font-weight: 700;
         }
 
+        /* --- [메인 캐릭터 및 타이틀] --- */
         .character-section {
             text-align: center; margin-bottom: 30px;
         }
@@ -119,6 +130,7 @@
             font-weight: 300; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         }
 
+        /* --- [메뉴 카드 리스트] --- */
         .menu-list {
             width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
@@ -190,7 +202,7 @@
         <header>
             <div class="logo">MURDOO <span>K</span></div>
             <div class="user-nav">
-                <div id="coinBox" class="hidden">
+                <div id="coinBox" class="hidden" onclick="location.href='/shop'">
                     <span id="userCoins">0</span> 🪙
                 </div>
                 <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
@@ -211,7 +223,7 @@
                 <div class="menu-icon-box">🎡</div>
                 <div class="menu-text">
                     <h3 class="menu-title">สุ่มดวงนำโชค</h3>
-                    <p class="menu-sub">สุ่มแคปซูลรับโชค오늘의 (Gacha)</p>
+                    <p class="menu-sub">สุ่มแคปซูลรับโชครายวัน (Gacha)</p>
                 </div>
                 <div class="price-badge">🪙 1 คอยน์</div>
             </div>
@@ -229,7 +241,7 @@
                 <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
                     <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
-                    <p class="menu-sub">รับคำทำนายจากธง (Obanggi)</p>
+                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
                 </div>
                 <div class="price-badge free">🏷️ ฟรี</div>
             </div>
@@ -242,6 +254,7 @@
 
     <script>
         let isLoggedIn = false;
+        // 보안을 위한 API KEY (서버 미들웨어와 일치해야 함)
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -252,13 +265,14 @@
             const userCoins = document.getElementById('userCoins');
             
             try {
+                // 유저 프로필 및 코인 정보 로드
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
                     
                     // 데이터 반영
-                    profileImg.src = user.profile_img || 'https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png';
-                    userCoins.innerText = user.coins || 0; // 코인 잔액 업데이트
+                    profileImg.src = user.profile_img || '/avatar.png';
+                    userCoins.innerText = user.coins || 0;
                     
                     // UI 노출 조절
                     profileBox.classList.remove('hidden');
@@ -269,15 +283,18 @@
                     loginBtn.classList.remove('hidden');
                 }
             } catch (err) {
+                console.error("데이터 로드 실패:", err);
                 loginBtn.classList.remove('hidden');
             }
         });
 
         function handleMenuClick(category) {
             if (!isLoggedIn) {
+                // 로그인되지 않은 경우 로그인 페이지로 유도
                 window.location.href = '/login';
                 return;
             }
+            // 해당 서비스 페이지로 이동
             window.location.href = `/${category}`;
         }
     </script>

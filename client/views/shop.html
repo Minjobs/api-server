@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - เติมเหรียญโชคดี</title>
+    <title>MURDOO K - เติมเหรียญ</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -13,6 +13,7 @@
             --border-line: rgba(200, 200, 200, 0.6); 
             --card-bg: rgba(255, 255, 255, 0.08);
             --line-green: #06C755;
+            --btn-gradient: linear-gradient(135deg, #ffd700, #f57c00);
         }
 
         body {
@@ -39,20 +40,21 @@
         }
 
         .container {
-            width: 90%; max-width: 440px; 
+            width: 88%; max-width: 440px; 
             margin: 20px 0;
             background-color: var(--bg-overlay); 
             border-radius: 30px; 
-            padding: 20px 15px 40px 15px;
+            padding: 25px 15px 40px 15px;
             box-sizing: border-box;
-            backdrop-filter: blur(8px); 
-            border: 2px solid var(--border-line); 
+            backdrop-filter: blur(10px); 
+            border: 3px solid var(--border-line); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
             text-align: center;
         }
 
         header {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 30px; padding: 0 10px;
+            margin-bottom: 30px; padding: 0 5px;
         }
         .logo {
             font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
@@ -61,59 +63,71 @@
         .logo span { color: var(--point-gold); }
 
         .user-coins {
-            background: rgba(255, 215, 0, 0.15); border: 1px solid var(--point-gold);
-            padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: var(--point-gold);
+            background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold);
+            padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: var(--point-gold);
         }
 
-        /* --- [상품 리스트 섹션] --- */
-        .shop-title { margin-bottom: 25px; }
+        .shop-title { margin-bottom: 30px; }
         .shop-title h2 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
-        .shop-title p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; margin-top: 5px; }
+        .shop-title p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; margin-top: 8px; }
 
+        /* --- [상품 카드 스타일] --- */
         .coin-card {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            margin-bottom: 15px;
-            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            margin-bottom: 16px;
+            padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: all 0.2s ease;
             position: relative;
-            overflow: hidden;
         }
-        .coin-card:hover { border-color: var(--point-gold); transform: translateY(-2px); }
+        .coin-card:active { transform: scale(0.98); background: rgba(255,255,255,0.12); }
 
-        .coin-info { display: flex; align-items: center; gap: 15px; }
-        .coin-icon { font-size: 2rem; }
-        .coin-count { text-align: left; }
-        .coin-count .amount { font-size: 1.3rem; font-weight: 700; display: block; }
-        .coin-count .label { font-size: 0.8rem; opacity: 0.7; font-weight: 300; }
+        .coin-info { display: flex; align-items: center; gap: 12px; }
+        .coin-icon { font-size: 1.8rem; }
+        .coin-text { text-align: left; }
+        .coin-text .amount { font-size: 1.2rem; font-weight: 700; color: #fff; }
+        .coin-text .sub { font-size: 0.8rem; opacity: 0.6; font-weight: 300; }
 
-        .price-info { text-align: right; }
-        .price-info .baht { font-size: 1.2rem; font-weight: 700; color: var(--point-gold); }
-        
-        /* 할인 배지 */
-        .discount-badge {
-            background: #ff5252; color: white; font-size: 0.7rem; font-weight: 700;
-            padding: 3px 10px; border-radius: 10px; position: absolute; top: 10px; right: 20px;
+        /* --- [구매 버튼 스타일] --- */
+        .buy-button {
+            background: var(--btn-gradient);
+            color: #000;
+            padding: 10px 18px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .buy-button .price { font-size: 1.1rem; }
+        .buy-button .unit { font-size: 0.7rem; margin-top: -2px; }
+
+        /* 할인 배지 (태국어) */
+        .promo-badge {
+            background: #ff4757; color: white;
+            font-size: 0.75rem; font-weight: 700;
+            padding: 4px 12px; border-radius: 10px;
+            position: absolute; top: -10px; right: 15px;
+            box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
         }
 
-        /* --- [라인 상담 버튼] --- */
-        .line-section { margin-top: 35px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .line-section p { font-size: 0.85rem; opacity: 0.7; margin-bottom: 15px; font-weight: 300; }
+        /* --- [하단 상담 섹션] --- */
+        .contact-section { margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
+        .contact-section p { font-size: 0.85rem; opacity: 0.7; margin-bottom: 15px; font-weight: 300; }
         
-        .line-btn {
+        .line-link {
             background-color: var(--line-green);
-            color: white; border: none; width: 100%; padding: 15px;
-            border-radius: 15px; font-size: 1.1rem; font-weight: 700;
+            color: white; border: none; width: 100%; padding: 14px;
+            border-radius: 18px; font-size: 1.1rem; font-weight: 700;
             display: flex; justify-content: center; align-items: center; gap: 10px;
-            cursor: pointer; transition: filter 0.2s;
-            text-decoration: none;
+            text-decoration: none; transition: filter 0.2s;
         }
-        .line-btn:active { filter: brightness(0.9); transform: scale(0.98); }
-        .line-btn img { width: 24px; height: 24px; }
+        .line-link:active { filter: brightness(0.9); }
+        .line-link img { width: 22px; height: 22px; }
 
-        footer { margin-top: 20px; font-size: 0.7rem; opacity: 0.5; }
+        footer { margin-top: 25px; font-size: 0.75rem; opacity: 0.5; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -125,89 +139,89 @@
         <header>
             <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
             <div class="user-coins">
-                <span id="currentCoins">0</span> 🪙
+                <span id="displayCoins">0</span> 🪙
             </div>
         </header>
 
         <main>
             <section class="shop-title">
-                <h2>เติมเหรียญโชคดี</h2>
-                <p>เหรียญสำหรับปลดล็อกคำทำนายมหาเทพ</p>
+                <h2>เติมเหรียญ (Top Up)</h2>
+                <p>เหรียญสำหรับใช้ดูดวงมหาเทพเกาหลี</p>
             </section>
 
-            <div class="coin-card" onclick="contactLine('1 Coin')">
+            <div class="coin-card" onclick="goToPayment('1 เหรียญ', '10 บาท')">
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
-                    <div class="coin-count">
-                        <span class="amount">1 Coin</span>
-                        <span class="label">เริ่มต้นดวงชะตา</span>
+                    <div class="coin-text">
+                        <div class="amount">1 เหรียญ</div>
+                        <div class="sub">เริ่มต้นโชคชะตา</div>
                     </div>
                 </div>
-                <div class="price-info">
-                    <span class="baht">10 THB</span>
+                <div class="buy-button">
+                    <span class="price">10</span>
+                    <span class="unit">บาท (THB)</span>
                 </div>
             </div>
 
-            <div class="coin-card" onclick="contactLine('5 Coins')" style="border: 1px solid var(--point-gold);">
-                <span class="discount-badge">SAVE 10%</span>
+            <div class="coin-card" onclick="goToPayment('5 เหรียญ', '45 บาท')" style="border: 1px solid var(--point-gold);">
+                <span class="promo-badge">ประหยัด 10%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💰</div>
-                    <div class="coin-count">
-                        <span class="amount">5 Coins</span>
-                        <span class="label">ยอดนิยมที่สุด</span>
+                    <div class="coin-text">
+                        <div class="amount">5 เหรียญ</div>
+                        <div class="sub">ยอดนิยมที่สุด (Popular)</div>
                     </div>
                 </div>
-                <div class="price-info">
-                    <span class="baht">45 THB</span>
+                <div class="buy-button">
+                    <span class="price">45</span>
+                    <span class="unit">บาท (THB)</span>
                 </div>
             </div>
 
-            <div class="coin-card" onclick="contactLine('10 Coins')">
-                <span class="discount-badge">SAVE 20%</span>
+            <div class="coin-card" onclick="goToPayment('10 เหรียญ', '80 บาท')">
+                <span class="promo-badge">คุ้มค่าที่สุด ลด 20%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💎</div>
-                    <div class="coin-count">
-                        <span class="amount">10 Coins</span>
-                        <span class="label">คุ้มค่าสูงสุด</span>
+                    <div class="coin-text">
+                        <div class="amount">10 เหรียญ</div>
+                        <div class="sub">สำหรับผู้ที่ต้องการความคุ้มค่า</div>
                     </div>
                 </div>
-                <div class="price-info">
-                    <span class="baht">80 THB</span>
+                <div class="buy-button">
+                    <span class="price">80</span>
+                    <span class="unit">บาท (THB)</span>
                 </div>
             </div>
 
-            <section class="line-section">
-                <p>หากคุณมีปัญหาในการเติมเงินหรือต้องการสอบถามเพิ่มเติม</p>
-                <a href="https://line.me/ti/p/@your_id" class="line-btn">
+            <section class="contact-section">
+                <p>หากพบปัญหาในการใช้งานหรือต้องการสอบถาม</p>
+                <a href="https://line.me/ti/p/@your_id" class="line-link">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line">
-                    ติดต่อสอบถาม 1:1
+                    ติดต่อแอดมิน (Line)
                 </a>
             </section>
         </main>
 
         <footer>
-            © 2026 MURDOO K. บันทึกแห่งโชคชะตา
+            © 2026 MURDOO K. พลังแห่งดวงดาวและโชคชะตา
         </footer>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-            
-            // 현재 유저의 코인 정보 가져오기
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
-                    document.getElementById('currentCoins').innerText = user.coins || 0;
+                    document.getElementById('displayCoins').innerText = user.coins || 0;
                 }
             } catch (e) { console.error(e); }
         });
 
-        // 상품 클릭 시 라인 채팅으로 연결 (상담 유도)
-        function contactLine(productName) {
-            const lineUrl = "https://line.me/ti/p/@your_id"; // 실제 라인 ID 링크로 수정 필요
-            if(confirm(`คุณต้องการสั่งซื้อ ${productName} ใช่หรือไม่? ระบบจะนำคุณไปยังหน้าติดต่อสอบถาม`)) {
+        function goToPayment(item, price) {
+            const lineUrl = "https://line.me/ti/p/@your_id"; 
+            if(confirm(`ยืนยันการสั่งซื้อ ${item} ราคา ${price}?\nระบบจะนำคุณไปที่ Line เพื่อแจ้งชำระเงิน`)) {
                 window.location.href = lineUrl;
             }
         }

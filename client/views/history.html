@@ -161,7 +161,7 @@
 
             try {
                 // 1. 유저의 사주 히스토리 데이터 가져오기 (최신순)
-                const res = await fetch('/api/fortune/list', { headers: { 'x-api-key': API_KEY } });
+                const res = await fetch('/api/fortune/history', { headers: { 'x-api-key': API_KEY } });
                 const list = await res.json();
 
                 if (res.ok && list.length > 0) {

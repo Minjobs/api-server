@@ -5,73 +5,70 @@ import db from '../config/db.js';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export const analyzeFortune = async (req, res) => {
+    console.log("--- [START] 사주 분석 시작 ---");
     try {
         const { type, realName, nickName, birthDate, birthTime, gender } = req.body;
         const line_user_id = req.user.userId;
 
-        // [1] 성격 사주 전용 7대 섹터 정의 (타입이 personality일 때)
-                const personalitySectors = {
-            summary: "A one-line summary capturing the essence of personality and fate. (บทสรุปแห่งโชคชะตา)",
-            outward: "External temperament and social image. (ตัวตนภายนอกและภาพลักษณ์ทางสังคม)",
-            inward: "Deep inner psyche and instincts known only to oneself. (จิตวิญญาณภายในและสัญชาตญาณที่ซ่อนอยู่)",
-            strengths: "Powerful weapons and strengths gifted by heaven. (จุดแข็งและพรสวรรค์ที่สวรรค์ประทาน)",
-            weaknesses: "Aspects to refine and weaknesses to be mindful of. (จุดอ่อนที่ต้องขัดเกลาและระวัง)",
-            cautions: "Situations or mindsets that must be avoided. (สิ่งที่ต้องหลีกเลี่ยงและข้อควรระวัง)",
-            boosters: "Luck-boosting elements such as colors and items. (เคล็ดลับเสริมดวงชะตา สี และไอเทมนำโชค)"
-        };
-
-        // [2] GPT-4o-mini System Prompt (English)
+        // [1] 시스템 프롬프트 수정: 글자 수를 현실적으로 조정 (섹션당 약 500~700자)
         const systemPrompt = `
-            You are 'Murdoo K', a world-renowned master astrologer. 
-            Provide an extremely detailed and deep personality analysis for a premium paid service by harmoniously combining Korean Saju (Four Pillars of Destiny) and Thai Astrology.
+            You are 'Murdoo K', a mystical and highly professional master of astrology. 
+            Analyze the user's fate by perfectly integrating Korean Saju (Four Pillars of Destiny) and Thai Astrology.
 
             [Operational Guidelines]
-            1. Language: MUST write the final content ONLY in Thai.
-            2. Tone: Use a mystical, professional, and insightful tone that provides deep enlightenment to the user.
-            3. Length: Each sector's content MUST be extremely detailed, with a minimum of 1000 characters, ensuring the user feels the value of the paid service.
-            4. Pronoun: Always address the user as "คุณ" (You).
-            5. Content: Harmoniously blend the logical analysis of Korean Saju with the spiritual insights of Thai Astrology.
-            6. Format: Strictly adhere to the JSON structure provided below.
+            1. Language: MUST write exclusively in Thai.
+            2. Tone: Mystical, deep, and authoritative (Premium service quality).
+            3. Length: Each sector should be very detailed and insightful (approx. 500-700 characters in Thai). Do not exceed 800 characters per sector to avoid technical errors.
+            4. Style: Provide specific spiritual guidance, not just generic traits.
+            5. Address: Use "คุณ" to refer to the user.
 
-            [JSON Structure]
+            [JSON Structure - STRICT]
             {
-                "summary": "One-line personality summary (Max 200 characters in Thai)",
-                "outward": "Detailed astrological analysis of external traits (Min 1000 characters in Thai)",
-                "inward": "Detailed astrological analysis of inner psyche (Min 1000 characters in Thai)",
-                "strengths": "Detailed astrological analysis of strengths (Min 1000 characters in Thai)",
-                "weaknesses": "Detailed astrological analysis of weaknesses (Min 1000 characters in Thai)",
-                "cautions": "Detailed analysis of situations/mindsets to be careful of (Min 1000 characters in Thai)",
-                "boosters": "Detailed guide on lucky elements, colors, and items (Min 1000 characters in Thai)"
+                "summary": "One-line essence of fate (Thai)",
+                "outward": "Deep analysis of external personality and social mask (Thai)",
+                "inward": "Hidden instincts and internal psychological world (Thai)",
+                "strengths": "Celestial talents and powerful advantages (Thai)",
+                "weaknesses": "Spiritual lessons and traits to improve (Thai)",
+                "cautions": "Specific situations and mindsets to avoid (Thai)",
+                "boosters": "Lucky colors, items, and directions with reasoning (Thai)"
             }
         `;
 
+        // [2] 유저 프롬프트 수정: 데이터 구조화
         const userPrompt = `
-            - Real Name: ${realName} (${nickName})
-            - Birth Date: ${birthDate}
-            - Birth Time: ${birthTime}
+            [User Data]
+            - Name: ${realName} (Nickname: ${nickName})
+            - Birth: ${birthDate} at ${birthTime}
             - Gender: ${gender}
-            - Analysis Type: Personality and Temperament Analysis
             
-            Based on the information above, please analyze the 7 items: 'summary, outward, inward, strengths, weaknesses, cautions, and boosters'.
+            [Request]
+            Please provide a premium-grade personality analysis following the 7-sector JSON structure. 
+            Combine the logical 5-elements theory of Saju with the celestial movements of Thai Astrology.
         `;
 
+        console.log("🤖 GPT-4o-mini 분석 요청 중...");
 
-        // [3] AI 요청 (JSON Mode)
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: userPrompt }
             ],
-            response_format: { type: "json_object" }
+            response_format: { type: "json_object" },
+            // 타임아웃 방지를 위해 약간의 여유를 둠
+            temperature: 0.7 
         });
+
+        console.log("✅ AI 응답 수신 성공");
 
         const fortuneData = JSON.parse(completion.choices[0].message.content);
         const resultId = uuidv4();
 
-        // [4] DB 저장 (detail_data 컬럼에 JSON 형태로 6개 섹터 저장)
         const { summary, ...details } = fortuneData;
 
+        // [3] DB 저장 시 에러 핸들링 강화
+        console.log("💾 데이터베이스 저장 시도...");
+        
         await db.execute(
             `INSERT INTO fortune_results 
             (result_id, line_user_id, fortune_type, summary_text, detail_data) 
@@ -81,15 +78,17 @@ export const analyzeFortune = async (req, res) => {
                 line_user_id, 
                 type, 
                 summary, 
-                JSON.stringify(details) // summary를 제외한 나머지 6개 섹터가 들어감
+                JSON.stringify(details)
             ]
         );
-        console.log("저장까지 완료.");
+
+        console.log("🎉 저장 완료! Result ID:", resultId);
         res.json({ resultId });
 
     } catch (err) {
-        console.error('❌ 분석 및 저장 실패:', err);
-        res.status(500).json({ error: 'Failed to analyze fortune' });
+        console.error('❌ 분석 실패 상세 로그:', err);
+        // 에러가 발생해도 클라이언트가 무한 로딩에 빠지지 않게 응답을 보냅니다.
+        res.status(500).json({ error: 'Failed to analyze fortune', message: err.message });
     }
 };
 

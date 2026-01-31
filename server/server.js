@@ -34,3 +34,5 @@ app.use((req, res) => {
 });
 
 app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중..."));
+
+server.timeout = 180000; 

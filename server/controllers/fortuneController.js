@@ -133,3 +133,32 @@ export const getFortuneResult = async (req, res) => {
         res.status(500).json({ error: 'Database error' });
     }
 };
+
+/**
+ * 3. [GET] /api/fortune/history
+ * 유저 본인의 모든 사주 기록을 최신순으로 가져옵니다.
+ */
+export const getFortuneHistory = async (req, res) => {
+    console.log("--- [START] 히스토리 조회 시작 ---");
+    try {
+        const line_user_id = req.user.userId; // 인증 미들웨어에서 가져온 유저 ID
+
+        // 최신순(created_at DESC)으로 result_id, 타입, 요약문, 생성일자만 추출
+        const [rows] = await db.execute(
+            `SELECT result_id, fortune_type, summary_text, created_at 
+             FROM fortune_results 
+             WHERE line_user_id = ? 
+             ORDER BY created_at DESC`,
+            [line_user_id]
+        );
+
+        console.log(`✅ 조회 완료: ${rows.length}건의 기록 발견`);
+        
+        // 데이터가 없어도 빈 배열([])을 반환하여 프론트엔드 에러를 방지합니다.
+        res.json(rows);
+
+    } catch (err) {
+        console.error('❌ 히스토리 조회 실패:', err);
+        res.status(500).json({ error: 'Database error', message: err.message });
+    }
+};

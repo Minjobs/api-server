@@ -15,4 +15,7 @@ router.post('/analyze', fortuneController.analyzeFortune);
 // 2. [GET] /api/fortune/result/:id - 특정 사주 결과 조회
 router.get('/result/:id', fortuneController.getFortuneResult);
 
+// [추가] 전체 히스토리 목록 조회 (GET)
+router.get('/history', verifyApiKey, verifyToken, getFortuneHistory);
+
 export default router;

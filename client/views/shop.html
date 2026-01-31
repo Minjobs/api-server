@@ -71,7 +71,6 @@
         .shop-title h2 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
         .shop-title p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; margin-top: 8px; }
 
-        /* --- [상품 카드 스타일] --- */
         .coin-card {
             background: var(--card-bg);
             border: 1px solid rgba(255, 255, 255, 0.15);
@@ -90,7 +89,6 @@
         .coin-text .amount { font-size: 1.2rem; font-weight: 700; color: #fff; }
         .coin-text .sub { font-size: 0.8rem; opacity: 0.6; font-weight: 300; }
 
-        /* --- [구매 버튼 스타일] --- */
         .buy-button {
             background: var(--btn-gradient);
             color: #000;
@@ -104,7 +102,6 @@
         .buy-button .price { font-size: 1.1rem; }
         .buy-button .unit { font-size: 0.7rem; margin-top: -2px; }
 
-        /* 할인 배지 (태국어) */
         .promo-badge {
             background: #ff4757; color: white;
             font-size: 0.75rem; font-weight: 700;
@@ -113,7 +110,6 @@
             box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
         }
 
-        /* --- [하단 상담 섹션] --- */
         .contact-section { margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
         .contact-section p { font-size: 0.85rem; opacity: 0.7; margin-bottom: 15px; font-weight: 300; }
         
@@ -149,21 +145,21 @@
                 <p>เหรียญสำหรับใช้ดูดวงมหาเทพเกาหลี</p>
             </section>
 
-            <div class="coin-card" onclick="goToPayment('1 เหรียญ', '10 บาท')">
+            <div class="coin-card" onclick="goToPayment('3 เหรียญ', '30 บาท', 3, 30)">
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
                     <div class="coin-text">
-                        <div class="amount">1 เหรียญ</div>
+                        <div class="amount">3 เหรียญ</div>
                         <div class="sub">เริ่มต้นโชคชะตา</div>
                     </div>
                 </div>
                 <div class="buy-button">
-                    <span class="price">10</span>
+                    <span class="price">30</span>
                     <span class="unit">บาท (THB)</span>
                 </div>
             </div>
 
-            <div class="coin-card" onclick="goToPayment('5 เหรียญ', '45 บาท')" style="border: 1px solid var(--point-gold);">
+            <div class="coin-card" onclick="goToPayment('5 เหรียญ', '45 บาท', 5, 45)" style="border: 1px solid var(--point-gold);">
                 <span class="promo-badge">ประหยัด 10%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💰</div>
@@ -178,7 +174,7 @@
                 </div>
             </div>
 
-            <div class="coin-card" onclick="goToPayment('10 เหรียญ', '80 บาท')">
+            <div class="coin-card" onclick="goToPayment('10 เหรียญ', '80 บาท', 10, 80)">
                 <span class="promo-badge">คุ้มค่าที่สุด ลด 20%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💎</div>
@@ -219,10 +215,11 @@
             } catch (e) { console.error(e); }
         });
 
-        function goToPayment(item, price) {
-            const lineUrl = "https://line.me/ti/p/@your_id"; 
-            if(confirm(`ยืนยันการสั่งซื้อ ${item} ราคา ${price}?\nระบบจะนำคุณไปที่ Line เพื่อแจ้งชำระเงิน`)) {
-                window.location.href = lineUrl;
+        function goToPayment(itemName, priceText, coinAmount, bahtAmount) {
+            // [다음 단계] 여기서 오미세 API를 호출하여 QR 코드를 생성하는 모달을 띄울 예정입니다.
+            if(confirm(`ยืนยันการสั่งซื้อ ${itemName} ราคา ${priceText}?`)) {
+                console.log(`결제 요청: ${coinAmount} 코인 / ${bahtAmount} 바트`);
+                // TODO: 오미세 QR 생성 함수 호출
             }
         }
     </script>

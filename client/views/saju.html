@@ -94,8 +94,9 @@
             width: 100%; background: linear-gradient(135deg, var(--point-gold), #f57c00);
             color: #fff; border: none; padding: 16px; border-radius: 20px;
             font-weight: 700; font-size: 1.1rem; margin-top: 10px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.3s ease;
         }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: scale(0.98); }
 
         #loadingSection {
             display: none; flex-direction: column; align-items: center; justify-content: center;
@@ -209,25 +210,33 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'personality';
 
+            const fortuneForm = document.getElementById('fortuneForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSection = document.getElementById('loadingSection');
+            const inputSection = document.getElementById('inputSection');
+            const dynamicText = document.getElementById('dynamicText');
+
+            let isSubmitting = false; // 중복 제출 방지 플래그
+
             const config = {
                 personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงของคุณ" },
                 wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและความมั่งคั่ง" },
                 romance: { title: "Romance", desc: "ตามหาเนื้อคู่และเส้นทางความรัก" }
             };
             
-            // 사용자가 기다리는 동안 보여줄 메시지 (로딩 지연 해소용)
             const loadingMessages = [
                 "กำลังเปิดสมุดบัญชีโชคชะตา...",
                 "คำนวณตำแหน่งดวงดาวและธาตุทั้งห้า...",
-                "วิเคราะห์พื้นดวงเกาหลีและไทยผสมผสาน...",
-                "มหาเทพกำลังเขียนคำทำนายที่แม่นยำ...",
-                "อีกนิดเดียว... โชคชะตาของคุณกำลังจะปรากฏ"
+                "วิเคราะห์พื้นดวงเกาหลี하고ไทย...",
+                "มหาเทพกำลังเขียนคำทำนาย...",
+                "อีกนิดเดียว... โชคชะตากำลังจะปรากฏ"
             ];
 
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
+            // 프로필 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -238,6 +247,7 @@
                 }
             } catch (e) { console.error(e); }
 
+            // 드롭다운 날짜/시간 생성
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
@@ -245,6 +255,7 @@
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
+            // 시간 모름 토글 로직
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -254,16 +265,25 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            document.getElementById('fortuneForm').addEventListener('submit', async (e) => {
+            // 폼 제출 이벤트 핸들러
+            fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                document.getElementById('inputSection').classList.add('hidden');
-                document.getElementById('loadingSection').style.display = 'flex';
+
+                // [해결] 이미 제출 중이면 중복 요청 차단
+                if (isSubmitting) return;
+
+                isSubmitting = true;
+                submitBtn.disabled = true; // 버튼 비활성화
+                submitBtn.innerText = "กำลังประมวลผล..."; // 텍스트 변경
+
+                inputSection.classList.add('hidden');
+                loadingSection.style.display = 'flex';
 
                 let msgIdx = 0;
                 const interval = setInterval(() => {
                     msgIdx = (msgIdx + 1) % loadingMessages.length;
-                    document.getElementById('dynamicText').innerText = loadingMessages[msgIdx];
-                }, 5000); // 5초마다 신비로운 메시지 교체
+                    dynamicText.innerText = loadingMessages[msgIdx];
+                }, 5000);
 
                 const payload = {
                     type,
@@ -274,9 +294,8 @@
                     gender: document.getElementById('gender').value
                 };
 
-                // [중요] 타임아웃 처리를 위한 컨트롤러 (2분으로 연장)
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 120000); 
+                const timeoutId = setTimeout(() => controller.abort(), 120000); // 2분 대기
 
                 try {
                     const response = await fetch('/api/fortune/analyze', {
@@ -290,17 +309,21 @@
                     const result = await response.json();
 
                     if (response.ok && result.resultId) {
-                        // 성공 시 결과 페이지로 즉시 이동
-                        window.location.href = `/result/${result.resultId}`;
+                        // [해결] 성공 시 replace를 사용하여 뒤로가기 시 재전송 방지
+                        window.location.replace(`/result/${result.resultId}`);
                     } else { 
-                        throw new Error(result.message || "서버 응답 오류"); 
+                        throw new Error(result.message || "서버 오류"); 
                     }
                 } catch (err) {
                     clearInterval(interval);
+                    isSubmitting = false; // 에러 시 재시도 가능하도록 상태 복구
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "ดูคำทำนายของคุณ";
+
                     if (err.name === 'AbortError') {
-                        alert("ใช้เวลานานกว่าปกติ โปรดรออีกสักครู่หรือลองใหม่อีกครั้ง");
+                        alert("ขออภัย การวิเคราะห์ใช้เวลานานเกินไป โปรดลองใหม่อีกครั้ง");
                     } else {
-                        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ โปรดลองอีกครั้ง");
+                        alert("เกิดข้อผิดพลาดในการวิเคราะห์ โปรดตรวจสอบอินเทอร์เน็ต");
                     }
                     location.reload();
                 }

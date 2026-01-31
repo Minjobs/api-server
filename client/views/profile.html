@@ -3,157 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MEODU K - ข้อมูลของท่าน</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Niramit:wght@300;500;700&family=Kanit:wght@500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/profile.css">
+    <title>MURDOO K - ข้อมูลของคุณ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* [NEW] 프로필 상단 레이아웃 스타일 */
-        .profile-top {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+        :root {
+            --bg-overlay: rgba(0, 0, 0, 0.45); 
+            --text-white: #ffffff;  
+            --point-gold: #ffd700;
+            --border-line: rgba(200, 200, 200, 0.8); 
+            --card-glass: rgba(255, 255, 255, 0.1);
         }
 
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid #ffd700;
-            padding: 3px;
-            background: rgba(255, 215, 0, 0.1);
-            margin-bottom: 15px;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        #headerDisplayName {
+        body {
+            margin: 0; padding: 0;
+            background-color: #f5f5f5; 
             font-family: 'Kanit', sans-serif;
-            font-size: 1.6rem;
-            font-weight: 500;
-            color: #fff;
-            margin: 0;
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- [배경 레이어: 전체 서비스 통일] --- */
+        .background-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: url('/background.jpg'); 
+            background-size: cover; background-position: center;
+            background-attachment: fixed; opacity: 0.8; 
+        }
+
+        .background-blur {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            backdrop-filter: blur(8px) brightness(0.9);
+            -webkit-backdrop-filter: blur(8px) brightness(0.9);
+        }
+
+        /* --- [메인 컨테이너] --- */
+        .container {
+            width: 88%; max-width: 440px; 
+            margin: 20px 0;
+            background-color: var(--bg-overlay); 
+            border-radius: 30px; 
+            padding: 25px 15px 40px 15px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px); 
+            border: 3px solid var(--border-line); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        header {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; padding: 0 5px;
+        }
+        .logo {
+            font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
+            color: var(--text-white); cursor: pointer;
+        }
+        .logo span { color: var(--point-gold); }
+
+        .back-link {
+            font-size: 0.9rem; color: var(--point-gold); text-decoration: none;
+            font-weight: 500; display: flex; align-items: center; gap: 5px;
+        }
+
+        /* --- [프로필 상단 섹션] --- */
+        .profile-header {
+            display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .avatar-wrapper {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 3px solid var(--point-gold);
+            padding: 4px; background: rgba(255, 215, 0, 0.1);
+            margin-bottom: 15px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+        .avatar-wrapper img {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+        }
+
+        #userName {
+            font-size: 1.5rem; font-weight: 700; margin: 0;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* 히스토리 버튼 스타일 */
-        .history-btn {
-            width: 100%;
-            background: linear-gradient(45deg, #ffd700, #ffae00);
-            color: #000;
-            border: none;
-            padding: 16px;
+        /* --- [코인 박스] --- */
+        .coin-status {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid var(--point-gold);
             border-radius: 20px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+            padding: 15px; margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.3s;
         }
-        .history-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        .coin-status:active { transform: scale(0.98); }
+        .coin-label { font-size: 0.9rem; font-weight: 500; color: var(--point-gold); }
+        .coin-value { font-size: 1.4rem; font-weight: 700; color: var(--point-gold); }
+
+        /* --- [메뉴/정보 리스트] --- */
+        .info-list {
+            width: 100%; display: flex; flex-direction: column; gap: 12px;
+            margin-bottom: 30px; text-align: left;
         }
-        
-        .info-grid { margin-top: 25px; }
-        
-        /* 로직 에러 방지를 위해 요소는 유지하되 UI에서 숨김 처리 */
-        .hidden-field { display: none !important; }
+
+        .info-item {
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px; padding: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .info-label { font-size: 0.85rem; opacity: 0.7; font-weight: 300; }
+        .info-value { font-size: 1rem; font-weight: 500; }
+
+        /* --- [버튼 그룹] --- */
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
+        .btn {
+            width: 100%; padding: 16px; border-radius: 20px; border: none;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer; font-family: 'Kanit';
+            transition: 0.3s; text-decoration: none; text-align: center;
+        }
+        .btn-main {
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        .btn-sub {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn:active { transform: scale(0.97); }
+
+        footer { margin-top: 30px; opacity: 0.5; font-size: 0.75rem; }
     </style>
-    <script src="/js/pages/profile.js" defer></script>
 </head>
 <body>
 
-    <div class="magic-background">
-        <div class="magic-ring ring-1"></div>
-        <div class="magic-ring ring-2"></div>
-        <div class="magic-ring ring-3"></div>
-    </div>
+    <div class="background-overlay"></div>
+    <div class="background-blur"></div>
 
     <div class="container">
         <header>
-            <div class="logo">✨ MEODU K</div>
-            <button class="back-btn" onclick="location.href='/'">← กลับหน้าหลัก</button>
+            <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
+            <a href="/" class="back-link">← หน้าหลัก</a>
         </header>
 
         <main>
-            <section class="glass-card">
-                <div class="profile-top">
-                    <div class="profile-avatar">
-                        <img id="userHeaderAvatar" src="https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png" alt="User Avatar">
-                    </div>
-                    <h1 id="headerDisplayName">ชื่อผู้ใช้</h1>
+            <section class="profile-header">
+                <div class="avatar-wrapper">
+                    <img id="profileImg" src="/avatar.png" alt="Avatar">
                 </div>
-
-                <h2>ข้อมูลโชคชะตา</h2>
-                <p class="subtitle">เส้นทางดาวที่ถูกบันทึกไว้ในวิหาร</p>
-
-                <div class="coin-section">
-                    <span class="coin-icon">🔮</span>
-                    <div class="coin-details">
-                        <div class="label">เหรียญคงเหลือ (My Coins)</div>
-                        <div class="value" id="userCoins">--</div>
-                    </div>
-                </div>
-
-                <button class="history-btn" onclick="location.href='/history'">
-                    📜 ดูประวัติโชคชะตา (Fortune History)
-                </button>
-
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="label">ชื่อที่ใช้ในวิหาร (Line Name)</div>
-                        <div class="value" id="displayName">-</div>
-                    </div>
-
-                    <div class="info-item hidden-field">
-                        <div class="label">ชื่อจริง (Real Name)</div>
-                        <div class="value" id="realName">-</div>
-                    </div>
-                    <div class="info-item hidden-field">
-                        <div class="label">วันเดือนปีเกิด (Birth Date)</div>
-                        <div class="value" id="birthDate">-</div>
-                    </div>
-                    <div class="info-item hidden-field">
-                        <div class="label">เวลาเกิด (Birth Time)</div>
-                        <div class="value" id="birthTime">-</div>
-                    </div>
-                    <div class="info-item hidden-field">
-                        <div class="label">เพศ (Gender)</div>
-                        <div class="value" id="gender">-</div>
-                    </div>
-
-                    <div class="info-item">
-                        <div class="label">จำนวนครั้งที่ดูดวง (Total Readings)</div>
-                        <div class="value" id="totalReadings">0 ครั้ง</div>
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button class="action-btn secondary" style="width: 100%;" onclick="location.href='/api/auth/logout'">
-                        ออกจากวิหาร (Logout)
-                    </button>
-                </div>
+                <h1 id="userName">กำลังโหลด...</h1>
             </section>
+
+            <div class="coin-status" onclick="location.href='/shop'">
+                <div class="coin-label">เหรียญของฉัน (My Coins)</div>
+                <div class="coin-value"><span id="coinCount">0</span> 🪙</div>
+            </div>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="info-label">ชื่อโปรไฟล์ (Line Name)</span>
+                    <span class="info-value" id="lineName">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ประวัติการดูดวง (Total Readings)</span>
+                    <span class="info-value" id="totalReadings">0 ครั้ง</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-main" onclick="location.href='/history'">
+                    📜 ประวัติโชคชะตา (Fortune History)
+                </button>
+                <button class="btn btn-sub" onclick="handleLogout()">
+                    ออกจากระบบ (Logout)
+                </button>
+            </div>
         </main>
 
         <footer>
-            <p>© 2026 MEODU K. ลิขิตแห่งดวงดาว</p>
+            © 2026 MURDOO K. ลิขิตแห่งดวงดาว
         </footer>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+            
+            try {
+                // 유저 데이터 로드
+                const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
+                if (res.ok) {
+                    const user = await res.json();
+                    
+                    // 데이터 바인딩
+                    document.getElementById('profileImg').src = user.profile_img || '/avatar.png';
+                    document.getElementById('userName').innerText = user.display_name || 'User';
+                    document.getElementById('lineName').innerText = user.display_name || '-';
+                    document.getElementById('coinCount').innerText = user.coins || 0;
+                    document.getElementById('totalReadings').innerText = `${user.total_readings || 0} ครั้ง`;
+                } else {
+                    window.location.href = '/login';
+                }
+            } catch (err) {
+                console.error("데이터 로드 실패:", err);
+                window.location.href = '/login';
+            }
+        });
+
+        function handleLogout() {
+            if (confirm("คุณต้องการออกจากระบบใช่หรือไม่? (로그아웃 하시겠습니까?)")) {
+                window.location.href = '/api/auth/logout';
+            }
+        }
+    </script>
 </body>
 </html>

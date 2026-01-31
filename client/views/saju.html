@@ -162,9 +162,9 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                            <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                            <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                            <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                             <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                         </select>
@@ -206,6 +206,14 @@
     </div>
 
     <script>
+        // [1] 간단한 UUID 생성 함수
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'personality';
@@ -216,7 +224,7 @@
             const inputSection = document.getElementById('inputSection');
             const dynamicText = document.getElementById('dynamicText');
 
-            let isSubmitting = false; // 중복 제출 방지 플래그
+            let isSubmitting = false;
 
             const config = {
                 personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงของคุณ" },
@@ -226,8 +234,7 @@
             
             const loadingMessages = [
                 "กำลังเปิดสมุดบัญชีโชคชะตา...",
-                "คำนวณตำแหน่งดวงดาวและธาตุทั้งห้า...",
-                "วิเคราะห์พื้นดวงเกาหลี하고ไทย...",
+                "คำนวณตำแหน่งดวงดาว와ธาตุทั้งห้า...",
                 "มหาเทพกำลังเขียนคำทำนาย...",
                 "อีกนิดเดียว... โชคชะตากำลังจะปรากฏ"
             ];
@@ -235,6 +242,27 @@
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
+
+            // [2] 복구 및 폴링 함수
+            const pollResult = async (resultId) => {
+                try {
+                    const res = await fetch(`/api/fortune/result/${resultId}`, {
+                        headers: { 'x-api-key': API_KEY }
+                    });
+                    if (res.ok) {
+                        localStorage.removeItem('current_analysis_id');
+                        window.location.replace(`/result/${resultId}`);
+                    }
+                } catch (e) { console.log("아직 분석 중..."); }
+            };
+
+            // 브라우저로 돌아왔을 때 실행
+            document.addEventListener('visibilitychange', () => {
+                const pendingId = localStorage.getItem('current_analysis_id');
+                if (document.visibilityState === 'visible' && pendingId) {
+                    pollResult(pendingId); 
+                }
+            });
 
             // 프로필 정보 로드
             try {
@@ -247,7 +275,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            // 드롭다운 날짜/시간 생성
+            // 드롭다운 생성
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
@@ -255,7 +283,6 @@
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
-            // 시간 모름 토글 로직
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -265,17 +292,17 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // 폼 제출 이벤트 핸들러
+            // 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
-                // [해결] 이미 제출 중이면 중복 요청 차단
                 if (isSubmitting) return;
 
-                isSubmitting = true;
-                submitBtn.disabled = true; // 버튼 비활성화
-                submitBtn.innerText = "กำลังประมวลผล..."; // 텍스트 변경
+                // [3] 클라이언트에서 ID 미리 생성 및 저장
+                const myResultId = generateUUID();
+                localStorage.setItem('current_analysis_id', myResultId);
 
+                isSubmitting = true;
+                submitBtn.disabled = true;
                 inputSection.classList.add('hidden');
                 loadingSection.style.display = 'flex';
 
@@ -286,6 +313,7 @@
                 }, 5000);
 
                 const payload = {
+                    resultId: myResultId, // 서버로 미리 만든 ID 전송
                     type,
                     realName: document.getElementById('realName').value,
                     nickName: document.getElementById('nickName').value,
@@ -294,40 +322,40 @@
                     gender: document.getElementById('gender').value
                 };
 
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 120000); // 2분 대기
-
                 try {
-                    const response = await fetch('/api/fortune/analyze', {
+                    // 분석 요청 시작
+                    fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-                        body: JSON.stringify(payload),
-                        signal: controller.signal
+                        body: JSON.stringify(payload)
+                    }).then(async (res) => {
+                        if (res.ok) {
+                            localStorage.removeItem('current_analysis_id');
+                            window.location.replace(`/result/${myResultId}`);
+                        }
                     });
-                    
-                    clearTimeout(timeoutId);
-                    const result = await response.json();
 
-                    if (response.ok && result.resultId) {
-                        // [해결] 성공 시 replace를 사용하여 뒤로가기 시 재전송 방지
-                        window.location.replace(`/result/${result.resultId}`);
-                    } else { 
-                        throw new Error(result.message || "서버 오류"); 
-                    }
+                    // [4] 폴링 시작: 5초마다 완료 여부 확인
+                    const pollInterval = setInterval(() => {
+                        if (!localStorage.getItem('current_analysis_id')) {
+                            clearInterval(pollInterval);
+                            return;
+                        }
+                        pollResult(myResultId);
+                    }, 5000);
+
                 } catch (err) {
-                    clearInterval(interval);
-                    isSubmitting = false; // 에러 시 재시도 가능하도록 상태 복구
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "ดูคำทำนายของคุณ";
-
-                    if (err.name === 'AbortError') {
-                        alert("ขออภัย การวิเคราะห์ใช้เวลานานเกินไป โปรดลองใหม่อีกครั้ง");
-                    } else {
-                        alert("เกิดข้อผิดพลาดในการวิเคราะห์ โปรดตรวจสอบอินเทอร์เน็ต");
-                    }
-                    location.reload();
+                    console.log("네트워크 일시 끊김 발생");
                 }
             });
+
+            // 페이지 진입 시 미완료 분석이 있는지 체크
+            const pendingId = localStorage.getItem('current_analysis_id');
+            if (pendingId) {
+                inputSection.classList.add('hidden');
+                loadingSection.style.display = 'flex';
+                pollResult(pendingId);
+            }
         });
     </script>
 </body>

@@ -113,7 +113,7 @@
             border-radius: 50%; animation: spin 1.2s linear infinite;
         }
         .loading-title { font-family: 'Nanum Myeongjo', serif; color: var(--point-gold); font-size: 1.6rem; margin-bottom: 15px; }
-        #dynamicText { font-size: 1rem; min-height: 1.5em; transition: opacity 0.5s; }
+        #dynamicText { font-size: 1rem; min-height: 1.5em; transition: opacity 0.5s; font-weight: 300; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
@@ -161,9 +161,9 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
+                            <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                            <option value="07">ก.ค.</option><option value="08">스.ค.</option>
+                            <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                             <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                         </select>
@@ -214,7 +214,16 @@
                 wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและความมั่งคั่ง" },
                 romance: { title: "Romance", desc: "ตามหาเนื้อคู่และเส้นทางความรัก" }
             };
-            const loadingMessages = ["กำลังอ่านสมุดบัญชีสวรรค์...", "คำนวณตำแหน่งดวงดาว...", "วิเคราะห์ธาตุและโชคชะตา..."];
+            
+            // 사용자가 기다리는 동안 보여줄 메시지 (로딩 지연 해소용)
+            const loadingMessages = [
+                "กำลังเปิดสมุดบัญชีโชคชะตา...",
+                "คำนวณตำแหน่งดวงดาวและธาตุทั้งห้า...",
+                "วิเคราะห์พื้นดวงเกาหลีและไทยผสมผสาน...",
+                "มหาเทพกำลังเขียนคำทำนายที่แม่นยำ...",
+                "อีกนิดเดียว... โชคชะตาของคุณกำลังจะปรากฏ"
+            ];
+
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
@@ -254,7 +263,7 @@
                 const interval = setInterval(() => {
                     msgIdx = (msgIdx + 1) % loadingMessages.length;
                     document.getElementById('dynamicText').innerText = loadingMessages[msgIdx];
-                }, 4000);
+                }, 5000); // 5초마다 신비로운 메시지 교체
 
                 const payload = {
                     type,
@@ -265,9 +274,9 @@
                     gender: document.getElementById('gender').value
                 };
 
-                // [중요] 타임아웃 처리를 위한 컨트롤러
+                // [중요] 타임아웃 처리를 위한 컨트롤러 (2분으로 연장)
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 60000); // 1분까지 대기
+                const timeoutId = setTimeout(() => controller.abort(), 120000); 
 
                 try {
                     const response = await fetch('/api/fortune/analyze', {
@@ -281,6 +290,7 @@
                     const result = await response.json();
 
                     if (response.ok && result.resultId) {
+                        // 성공 시 결과 페이지로 즉시 이동
                         window.location.href = `/result/${result.resultId}`;
                     } else { 
                         throw new Error(result.message || "서버 응답 오류"); 
@@ -288,9 +298,9 @@
                 } catch (err) {
                     clearInterval(interval);
                     if (err.name === 'AbortError') {
-                        alert("การวิเคราะห์ใช้เวลานานเกินไป โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต");
+                        alert("ใช้เวลานานกว่าปกติ โปรดรออีกสักครู่หรือลองใหม่อีกครั้ง");
                     } else {
-                        alert("เกิดข้อผิดพลาด โปรดลองอีกครั้ง");
+                        alert("เกิดข้อผิดพลาดในการเชื่อมต่อ โปรดลองอีกครั้ง");
                     }
                     location.reload();
                 }

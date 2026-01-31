@@ -15,7 +15,7 @@ router.get('/profile', verifyToken, (req, res) => res.sendFile(path.join(__dirna
 //오방기 페이지
 router.get('/obanggi', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/obanggi.html')));
 //사주 입력 페이지
-router.get('/saju', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/saju.html')));
+router.get('/saju', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/input-form.html')));
 // 성격, 재물, 연애 모두 같은 input-form.html을 보여줍니다.
 router.get(['/personality', '/wealth', '/romance'], (req, res) => {
     res.sendFile(path.join(__dirname, 'client/views/input-form.html'));

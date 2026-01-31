@@ -84,7 +84,7 @@ export const analyzeFortune = async (req, res) => {
                 JSON.stringify(details) // summary를 제외한 나머지 6개 섹터가 들어감
             ]
         );
-
+        console.log("저장까지 완료.");
         res.json({ resultId });
 
     } catch (err) {

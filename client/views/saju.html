@@ -6,6 +6,7 @@
     <title>MURDOO K - วิเคราะห์ดวงชะตาเกาหลี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        /* ... 기존 스타일 유지 ... */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -13,113 +14,37 @@
             --border-line: rgba(200, 200, 200, 0.8); 
             --input-bg: rgba(255, 255, 255, 0.1);
         }
-
-        body {
-            margin: 0; padding: 0;
-            background-color: #f5f5f5; 
-            font-family: 'Kanit', sans-serif;
-            color: var(--text-white);
-            min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
-        }
-
-        .background-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-image: url('/background.jpg'); 
-            background-size: cover; background-position: center;
-            background-attachment: fixed; opacity: 0.8; 
-        }
-
-        .background-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            backdrop-filter: blur(7px) brightness(0.9);
-            -webkit-backdrop-filter: blur(7px) brightness(0.9);
-        }
-
-        .container {
-            width: 88%; max-width: 440px; 
-            margin: 20px 0;
-            background-color: var(--bg-overlay); 
-            border-radius: 30px; 
-            padding: 15px 15px 30px 15px;
-            box-sizing: border-box;
-            backdrop-filter: blur(7px); 
-            border: 3px solid var(--border-line); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        header {
-            width: 100%; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding: 0 5px;
-        }
-        .logo {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; font-weight: 800;
-            color: var(--text-white); cursor: pointer;
-        }
+        body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.8; }
+        .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(0.9); -webkit-backdrop-filter: blur(7px) brightness(0.9); }
+        .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 15px 15px 30px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
+        .logo { font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; font-weight: 800; color: var(--text-white); cursor: pointer; }
         .logo span { color: var(--point-gold); }
-
         .user-nav { display: flex; align-items: center; gap: 10px; }
-        #coinBox {
-            background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold);
-            padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; color: var(--point-gold);
-            display: flex; align-items: center; gap: 5px;
-        }
+        #coinBox { background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; color: var(--point-gold); display: flex; align-items: center; gap: 5px; }
         .profile-circle { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid var(--point-gold); }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
-
         .intro-section { text-align: center; margin-bottom: 25px; }
         #pageTitle { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
         #pageDesc { font-size: 0.9rem; opacity: 0.9; margin-top: 8px; font-weight: 300; }
-
         .field { margin-bottom: 18px; text-align: left; }
         label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: var(--point-gold); font-weight: 500; }
-        input, select {
-            width: 100%; background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px; padding: 12px; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none;
-        }
+        input, select { width: 100%; background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 12px; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none; }
         input::placeholder { color: rgba(255,255,255,0.4); }
         .dropdown-group { display: flex; gap: 8px; }
-        
-        .unknown-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem;
-            cursor: pointer; margin-top: 8px; transition: 0.3s;
-        }
+        .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; transition: 0.3s; }
         .unknown-btn.active { background: var(--point-gold); color: #000; border-color: var(--point-gold); font-weight: 700; }
-
-        .submit-btn {
-            width: 100%; background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: #fff; border: none; padding: 16px; border-radius: 20px;
-            font-weight: 700; font-size: 1.1rem; margin-top: 10px; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.3s ease;
-        }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: scale(0.98); }
-
-        #loadingSection {
-            display: none; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 50px 10px; animation: fadeIn 0.5s ease;
-        }
+        .submit-btn { width: 100%; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #fff; border: none; padding: 16px; border-radius: 20px; font-weight: 700; font-size: 1.1rem; margin-top: 10px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.3s ease; }
+        #loadingSection { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 10px; animation: fadeIn 0.5s ease; }
         .orb-wrapper { position: relative; width: 100px; height: 100px; margin-bottom: 30px; }
-        .orb {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%);
-            filter: blur(10px); animation: pulse 2s infinite ease-in-out;
-        }
-        .mystic-spinner {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            border: 3px solid transparent; border-top: 3px solid var(--point-gold);
-            border-radius: 50%; animation: spin 1.2s linear infinite;
-        }
+        .orb { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%); filter: blur(10px); animation: pulse 2s infinite ease-in-out; }
+        .mystic-spinner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid transparent; border-top: 3px solid var(--point-gold); border-radius: 50%; animation: spin 1.2s linear infinite; }
         .loading-title { font-family: 'Nanum Myeongjo', serif; color: var(--point-gold); font-size: 1.6rem; margin-bottom: 15px; }
         #dynamicText { font-size: 1rem; min-height: 1.5em; transition: opacity 0.5s; font-weight: 300; }
-
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         .hidden { display: none !important; }
         footer { text-align: center; margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 0.75rem; }
     </style>
@@ -162,7 +87,7 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                             <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -206,7 +131,10 @@
     </div>
 
     <script>
-        // [1] 간단한 UUID 생성 함수
+        // [1] 전역 변수 설정 (localStorage 대체)
+        let currentAnalysisId = null;
+        let isPolling = false;
+
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -224,8 +152,6 @@
             const inputSection = document.getElementById('inputSection');
             const dynamicText = document.getElementById('dynamicText');
 
-            let isSubmitting = false;
-
             const config = {
                 personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงของคุณ" },
                 wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและความมั่งคั่ง" },
@@ -236,33 +162,27 @@
                 "กำลังเปิดสมุดบัญชีโชคชะตา...",
                 "คำนวณตำแหน่งดวงดาว와ธาตุทั้งห้า...",
                 "มหาเทพกำลังเขียนคำทำนาย...",
-                "อีกนิดเดียว... โชคชะตากำลังจะปรากฏ"
+                "อีกนิดเดียว... โชคชะตาของคุณกำลังจะปรากฏ"
             ];
 
             const page = config[type] || config.personality;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // [2] 복구 및 폴링 함수
+            // [2] 결과 조회 폴링 함수
             const pollResult = async (resultId) => {
+                if (!isPolling) return;
                 try {
                     const res = await fetch(`/api/fortune/result/${resultId}`, {
                         headers: { 'x-api-key': API_KEY }
                     });
                     if (res.ok) {
-                        localStorage.removeItem('current_analysis_id');
+                        isPolling = false;
+                        currentAnalysisId = null;
                         window.location.replace(`/result/${resultId}`);
                     }
                 } catch (e) { console.log("아직 분석 중..."); }
             };
-
-            // 브라우저로 돌아왔을 때 실행
-            document.addEventListener('visibilitychange', () => {
-                const pendingId = localStorage.getItem('current_analysis_id');
-                if (document.visibilityState === 'visible' && pendingId) {
-                    pollResult(pendingId); 
-                }
-            });
 
             // 프로필 정보 로드
             try {
@@ -292,28 +212,31 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // 폼 제출 핸들러
+            // [3] 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (isSubmitting) return;
+                if (isPolling) return;
 
-                // [3] 클라이언트에서 ID 미리 생성 및 저장
-                const myResultId = generateUUID();
-                localStorage.setItem('current_analysis_id', myResultId);
+                // 변수에 ID 저장 및 상태 업데이트
+                currentAnalysisId = generateUUID();
+                isPolling = true;
 
-                isSubmitting = true;
                 submitBtn.disabled = true;
                 inputSection.classList.add('hidden');
                 loadingSection.style.display = 'flex';
 
                 let msgIdx = 0;
                 const interval = setInterval(() => {
+                    if (!isPolling) {
+                        clearInterval(interval);
+                        return;
+                    }
                     msgIdx = (msgIdx + 1) % loadingMessages.length;
                     dynamicText.innerText = loadingMessages[msgIdx];
                 }, 5000);
 
                 const payload = {
-                    resultId: myResultId, // 서버로 미리 만든 ID 전송
+                    resultId: currentAnalysisId,
                     type,
                     realName: document.getElementById('realName').value,
                     nickName: document.getElementById('nickName').value,
@@ -323,39 +246,42 @@
                 };
 
                 try {
-                    // 분석 요청 시작
+                    // 분석 요청 전송
                     fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                         body: JSON.stringify(payload)
                     }).then(async (res) => {
                         if (res.ok) {
-                            localStorage.removeItem('current_analysis_id');
-                            window.location.replace(`/result/${myResultId}`);
+                            // 이미 폴링 중이므로 성공 시 폴링에서 처리하도록 두거나, 즉시 이동 시도
+                            const checkImmediate = await fetch(`/api/fortune/result/${currentAnalysisId}`, {
+                                headers: { 'x-api-key': API_KEY }
+                            });
+                            if (checkImmediate.ok) {
+                                isPolling = false;
+                                window.location.replace(`/result/${currentAnalysisId}`);
+                            }
+                        } else if (res.status === 403) {
+                            isPolling = false;
+                            alert("เหรียญไม่พอ กรุณาเติมเหรียญก่อน (코인이 부족합니다.)");
+                            location.href = "/shop";
                         }
                     });
 
-                    // [4] 폴링 시작: 5초마다 완료 여부 확인
+                    // 폴링 시작 (5초 간격)
                     const pollInterval = setInterval(() => {
-                        if (!localStorage.getItem('current_analysis_id')) {
+                        if (!isPolling) {
                             clearInterval(pollInterval);
                             return;
                         }
-                        pollResult(myResultId);
+                        pollResult(currentAnalysisId);
                     }, 5000);
 
                 } catch (err) {
-                    console.log("네트워크 일시 끊김 발생");
+                    console.log("요청 전송 실패");
+                    isPolling = false;
                 }
             });
-
-            // 페이지 진입 시 미완료 분석이 있는지 체크
-            const pendingId = localStorage.getItem('current_analysis_id');
-            if (pendingId) {
-                inputSection.classList.add('hidden');
-                loadingSection.style.display = 'flex';
-                pollResult(pendingId);
-            }
         });
     </script>
 </body>

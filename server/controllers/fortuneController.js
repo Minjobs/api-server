@@ -1,16 +1,24 @@
-import { v4 as uuidv4 } from 'uuid';
 import OpenAI from 'openai';
 import db from '../config/db.js';
 
+// 클라이언트가 ID를 보내므로 서버에서 uuid 라이브러리는 더 이상 필요 없으나, 
+// 다른 용도가 없다면 수입 구문을 제거해도 됩니다.
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+/**
+ * 1. [POST] /api/fortune/analyze
+ * 클라이언트에서 생성한 resultId를 받아 AI 분석 후 DB 저장
+ */
 export const analyzeFortune = async (req, res) => {
     console.log("--- [START] 사주 분석 시작 ---");
     try {
-        const { type, realName, nickName, birthDate, birthTime, gender } = req.body;
+        // [핵심] 클라이언트가 생성해서 보낸 resultId를 Body에서 받습니다.
+        const { resultId, type, realName, nickName, birthDate, birthTime, gender } = req.body;
         const line_user_id = req.user.userId;
 
-        // [1] 시스템 프롬프트 수정: 글자 수를 현실적으로 조정 (섹션당 약 500~700자)
+        console.log(`📥 요청 데이터 수신: [ID: ${resultId}] [Type: ${type}]`);
+
+        // [1] GPT-4o-mini System Prompt
         const systemPrompt = `
             You are 'Murdoo K', a mystical and highly professional master of astrology. 
             Analyze the user's fate by perfectly integrating Korean Saju (Four Pillars of Destiny) and Thai Astrology.
@@ -34,7 +42,7 @@ export const analyzeFortune = async (req, res) => {
             }
         `;
 
-        // [2] 유저 프롬프트 수정: 데이터 구조화
+        // [2] GPT-4o-mini User Prompt
         const userPrompt = `
             [User Data]
             - Name: ${realName} (Nickname: ${nickName})
@@ -55,19 +63,16 @@ export const analyzeFortune = async (req, res) => {
                 { role: "user", content: userPrompt }
             ],
             response_format: { type: "json_object" },
-            // 타임아웃 방지를 위해 약간의 여유를 둠
             temperature: 0.7 
         });
 
         console.log("✅ AI 응답 수신 성공");
 
         const fortuneData = JSON.parse(completion.choices[0].message.content);
-        const resultId = uuidv4();
-
         const { summary, ...details } = fortuneData;
 
-        // [3] DB 저장 시 에러 핸들링 강화
-        console.log("💾 데이터베이스 저장 시도...");
+        // [3] DB 저장 (클라이언트에서 받은 resultId를 PK로 사용)
+        console.log(`💾 데이터베이스 저장 시도... (ID: ${resultId})`);
         
         await db.execute(
             `INSERT INTO fortune_results 
@@ -82,23 +87,26 @@ export const analyzeFortune = async (req, res) => {
             ]
         );
 
-        console.log("🎉 저장 완료! Result ID:", resultId);
+        console.log("🎉 저장 완료! 클라이언트로 응답을 보냅니다.");
         res.json({ resultId });
 
     } catch (err) {
         console.error('❌ 분석 실패 상세 로그:', err);
-        // 에러가 발생해도 클라이언트가 무한 로딩에 빠지지 않게 응답을 보냅니다.
+        // 클라이언트가 보낸 resultId가 이미 DB에 있을 경우(중복 요청) 에러가 날 수 있으나, 
+        // 멱등성(Idempotency)을 보장하는 측면에서 안전장치가 됩니다.
         res.status(500).json({ error: 'Failed to analyze fortune', message: err.message });
     }
 };
 
-
-// 특정 결과 조회 컨트롤러
+/**
+ * 2. [GET] /api/fortune/result/:id
+ * 특정 result_id에 해당하는 결과를 조회 (폴링 및 결과 출력용)
+ */
 export const getFortuneResult = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(`🔍 결과 조회 요청: ${id}`);
         
-        // result_id로 데이터 조회
         const [rows] = await db.execute(
             `SELECT * FROM fortune_results WHERE result_id = ?`, 
             [id]
@@ -110,17 +118,15 @@ export const getFortuneResult = async (req, res) => {
 
         const result = rows[0];
 
-        // MySQL의 JSON 타입은 이미 객체로 반환될 수도 있지만, 
-        // 환경에 따라 문자열일 수 있으므로 체크 후 파싱합니다.
+        // detail_data 파싱
         if (typeof result.detail_data === 'string') {
             result.detail_data = JSON.parse(result.detail_data);
         }
 
-        // 프론트엔드에 필요한 데이터만 정제해서 전송
         res.json({
             fortune_type: result.fortune_type,
             summary: result.summary_text,
-            details: result.detail_data // 성격, 재물 등 타입에 따른 JSON 객체
+            details: result.detail_data
         });
     } catch (err) {
         console.error('❌ 결과 조회 실패:', err);

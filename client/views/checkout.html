@@ -11,16 +11,30 @@
             --point-gold: #ffd700;
             --text-white: #ffffff;
             --card-white: #ffffff;
+            --btn-disabled: #444444;
+            --text-disabled: #888888;
         }
-        body { margin: 0; padding: 0; background: #000; font-family: 'Kanit', sans-serif; color: #fff; display: flex; justify-content: center; }
+        body { margin: 0; padding: 0; background: #000; font-family: 'Kanit', sans-serif; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; opacity: 0.7; }
-        .container { width: 90%; max-width: 400px; margin: 30px 0; background: var(--bg-overlay); border-radius: 30px; padding: 30px 20px; border: 2px solid rgba(255,215,0,0.3); text-align: center; backdrop-filter: blur(15px); }
+        
+        /* 메인 컨테이너 */
+        .container { 
+            width: 90%; max-width: 400px; 
+            margin: 30px 0 10px 0; 
+            background: var(--bg-overlay); 
+            border-radius: 30px; 
+            padding: 30px 20px; 
+            border: 2px solid rgba(255,215,0,0.3); 
+            text-align: center; 
+            backdrop-filter: blur(15px); 
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+        }
         
         /* 결제 정보 카드 */
-        .qr-card { background: var(--card-white); border-radius: 25px; padding: 20px; margin: 20px 0; color: #000; }
+        .qr-card { background: var(--card-white); border-radius: 25px; padding: 20px; margin: 20px 0; color: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .qr-card img.qr-main { width: 100%; border-radius: 15px; margin-bottom: 15px; }
-        .item-info { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 5px; }
-        .price-display { font-size: 1.8rem; font-weight: 700; color: #d32f2f; }
+        .item-info { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .price-display { font-size: 1.8rem; font-weight: 700; color: #d32f2f; margin: 5px 0; }
         .receiver-info { font-size: 0.85rem; color: #666; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px; }
 
         /* 단계별 안내 */
@@ -31,44 +45,74 @@
         /* 파일 업로드 및 미리보기 */
         .upload-area { margin-bottom: 25px; }
         #slipInput { display: none; }
-        .upload-label { display: block; background: rgba(255,215,0,0.1); border: 2px dashed var(--point-gold); padding: 12px; border-radius: 15px; cursor: pointer; color: var(--point-gold); font-weight: 500; }
+        .upload-label { display: block; background: rgba(255,215,0,0.1); border: 2px dashed var(--point-gold); padding: 15px; border-radius: 15px; cursor: pointer; color: var(--point-gold); font-weight: 500; transition: 0.3s; }
+        .upload-label:hover { background: rgba(255,215,0,0.2); }
         
-        /* 미리보기 이미지 스타일 */
         #previewContainer { margin-top: 15px; position: relative; display: none; }
-        #slipPreview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 15px; border: 2px solid var(--point-gold); }
+        #slipPreview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 15px; border: 2px solid var(--point-gold); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
         .preview-tag { position: absolute; top: 10px; left: 10px; background: var(--point-gold); color: #000; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: 700; }
 
-        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-        .btn-main { background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
-        .btn-main:disabled { background: #555; color: #888; box-shadow: none; cursor: not-allowed; }
+        /* 버튼 스타일 (활성/비활성 구분) */
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.4s; }
+        
+        /* 비활성 상태 (기본) */
+        .btn-main { 
+            background: var(--btn-disabled); 
+            color: var(--text-disabled); 
+            cursor: not-allowed;
+            pointer-events: none; /* 클릭 방지 */
+        }
+        
+        /* 활성 상태 (클래스 추가 시) */
+        .btn-main.active { 
+            background: linear-gradient(135deg, var(--point-gold), #f57c00); 
+            color: #000; 
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+            cursor: pointer;
+            pointer-events: auto;
+        }
+        .btn-main.active:active { transform: scale(0.97); }
 
         .hidden { display: none; }
-        footer { margin-top: 20px; font-size: 0.7rem; opacity: 0.5; }
+
+        /* 푸터: 컨테이너 하단 중앙 배치 */
+        footer { 
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.75rem; 
+            opacity: 0.6; 
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
     </style>
 </head>
 <body>
     <div class="background-overlay"></div>
+    
     <div class="container">
         <div id="paymentUI">
-            <h2 style="color: var(--point-gold); margin-bottom: 5px;">ชำระเงิน (Checkout)</h2>
-            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">สแกน QR และอัปโหลดสลิปเพื่อรับเหรียญ</p>
+            <h2 style="color: var(--point-gold); margin-bottom: 5px; font-weight: 700;">ชำระเงิน (Checkout)</h2>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">ส캔 QR และอัปโหลดสลิปเพื่อรับเหรียญ</p>
 
             <div class="qr-card">
-                <div class="item-info" id="itemName">กำลังโหลดรายการ...</div>
+                <div class="item-info">
+                    <span id="coinAmountText">--</span> 
+                    <span style="font-size: 1.4rem;">🪙</span> </div>
                 <div class="price-display" id="bahtAmount">-- THB</div>
                 <img src="/qrcode.jpg" class="qr-main" alt="PromptPay QR">
                 <div class="receiver-info">수취인: Miss. ThaiGirl (PromptPay)</div>
             </div>
 
             <div class="steps">
-                <div class="step-item"><div class="step-num">1</div><span><b>สแกน:</b> ใช้แอปธนาคารสแกน QR เพื่อโอนเงิน</span></div>
-                <div class="step-item"><div class="step-num">2</div><span><b>เก็บสลิป:</b> บันทึกรูปภาพหลักฐานการโอนเงิน</span></div>
-                <div class="step-item"><div class="step-num">3</div><span><b>อัปโหลด:</b> เลือกรูปสลิปและกดปุ่มยืนยัน</span></div>
+                <div class="step-item"><div class="step-num">1</div><span><b>스캔:</b> 은행 앱으로 QR 코드를 스캔하여 송금하세요.</span></div>
+                <div class="step-item"><div class="step-num">2</div><span><b>저장:</b> 송금 완료 후 영수증(Slip)을 저장하세요.</span></div>
+                <div class="step-item"><div class="step-num">3</div><span><b>업로드:</b> 아래 버튼으로 영수증을 선택해 주세요.</span></div>
             </div>
 
             <div class="upload-area">
                 <input type="file" id="slipInput" accept="image/*" onchange="handleFileSelect(this)">
-                <label for="slipInput" class="upload-label">📸 เลือกรูปภาพสลิป (영수증 선택)</label>
+                <label for="slipInput" class="upload-label" id="uploadLabel">📸 เลือกรูปภาพสลิป (영수증 선택)</label>
                 
                 <div id="previewContainer">
                     <span class="preview-tag">미리보기</span>
@@ -82,8 +126,8 @@
         <div id="successUI" class="hidden">
             <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
             <h2 style="color: var(--point-gold);">เติมเหรียญสำเร็จ!</h2>
-            <p>ระบบได้รับเงินเรียบร้อยแล้ว<br>เหรียญของคุณถูกอัปเดตแล้ว</p>
-            <button class="btn btn-main" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง (사주 보러 가기)</button>
+            <p>시스템이 입금을 확인했습니다.<br>코인이 성공적으로 충전되었습니다.</p>
+            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง (사주 보러 가기)</button>
         </div>
     </div>
 
@@ -96,38 +140,43 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // 1. 초기 코인 보유량 확인
                 const userRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 const userData = await userRes.json();
                 initialCoins = userData.coins || 0;
 
-                // 2. 결제 정보 가져오기 (상품명 포함)
                 const payRes = await fetch(`/api/payment/detail/${transactionId}`, { headers: { 'x-api-key': API_KEY } });
                 const payData = await payRes.json();
                 
-                document.getElementById('itemName').innerText = `${payData.coin_amount} เหรียญ (Coins)`;
+                document.getElementById('coinAmountText').innerText = `${payData.coin_amount} เหรียญ`;
                 document.getElementById('bahtAmount').innerText = `${payData.baht_amount} THB`;
             } catch (err) {
                 console.error(err);
-                alert("불러오기 실패");
             }
         });
 
-        // 파일 선택 시 실행되는 함수 (이름 업데이트 + 미리보기)
+        // 파일 선택 시 실행 (미리보기 + 버튼 활성화)
         function handleFileSelect(input) {
             const file = input.files[0];
             const previewContainer = document.getElementById('previewContainer');
             const previewImg = document.getElementById('slipPreview');
+            const verifyBtn = document.getElementById('verifyBtn');
+            const uploadLabel = document.getElementById('uploadLabel');
 
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImg.src = e.target.result;
                     previewContainer.style.display = 'block';
+                    
+                    // [핵심] 버튼 활성화 스타일 적용
+                    verifyBtn.classList.add('active');
+                    uploadLabel.innerText = "✅ 변경하기 (사진 교체)";
+                    uploadLabel.style.borderStyle = "solid";
                 }
                 reader.readAsDataURL(file);
             } else {
                 previewContainer.style.display = 'none';
+                verifyBtn.classList.remove('active');
             }
         }
 
@@ -135,12 +184,10 @@
             const fileInput = document.getElementById('slipInput');
             const btn = document.getElementById('verifyBtn');
 
-            if (!fileInput.files[0]) {
-                alert("กรุณาเลือกรูปภาพสลิปก่อนครับ (영수증 사진을 선택해주세요)");
-                return;
-            }
+            if (!fileInput.files[0]) return;
 
-            btn.disabled = true;
+            // 버튼 로딩 상태로 변경
+            btn.classList.remove('active');
             btn.innerText = "กำลังตรวจสอบ... (검증 중...)";
 
             const formData = new FormData();
@@ -156,7 +203,6 @@
                 const result = await res.json();
 
                 if (res.ok) {
-                    // 코인 증가 최종 확인
                     const checkRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                     const checkData = await checkRes.json();
 
@@ -165,17 +211,17 @@
                         document.getElementById('successUI').classList.remove('hidden');
                     } else {
                         alert("입금이 아직 확인되지 않았습니다. 잠시 후 다시 시도해주세요.");
-                        btn.disabled = false;
-                        btn.innerText = "ยืนยัน과เช็คเหรียญ (결제 완료 확인)";
+                        btn.classList.add('active');
+                        btn.innerText = "ยืนยันและเช็คเหรียญ (결제 완료 확인)";
                     }
                 } else {
                     alert(result.error || "검증 실패");
-                    btn.disabled = false;
+                    btn.classList.add('active');
                     btn.innerText = "ยืนยัน과เช็คเหรียญ (결제 완료 확인)";
                 }
             } catch (e) {
                 alert("서버 연결 에러");
-                btn.disabled = false;
+                btn.classList.add('active');
             }
         }
     </script>

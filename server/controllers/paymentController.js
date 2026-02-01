@@ -1,77 +1,118 @@
-import Omise from 'omise';
 import db from '../config/db.js';
-
-// 환경변수에 저장된 키 사용
-const omise = Omise({
-    publicKey: process.env.OMISE_PUBLIC_KEY,
-    secretKey: process.env.OMISE_SECRET_KEY
-});
+import axios from 'axios';
+import FormData from 'form-data';
 
 /**
- * [POST] /api/payment/checkout
- * 유저가 선택한 상품으로 PromptPay QR 코드를 생성합니다.
+ * [1] 결제 의도 생성 (shop.html 호출)
  */
-export const createCheckout = async (req, res) => {
-    const { coinAmount, bahtAmount } = req.body;
-    const line_user_id = req.user.userId; // 미들웨어에서 추출
-
+export const createIntent = async (req, res) => {
     try {
-        // 1. 오미세 'Source' 생성 (결제 수단 정의)
-        const source = await omise.sources.create({
-            type: 'promptpay',
-            amount: bahtAmount * 100, // 오미세는 Satang 단위(1/100)를 사용하므로 *100 필수
-            currency: 'thb'
-        });
-
-        // 2. 'Charge' 생성 (실제 결제 요청)
-        const charge = await omise.charges.create({
-            amount: bahtAmount * 100,
-            currency: 'thb',
-            source: source.id,
-            metadata: {
-                line_user_id: line_user_id,
-                coinAmount: coinAmount
-            }
-        });
-
-        // 3. 유저에게 QR 이미지 주소 반환
-        // PromptPay의 경우 scannable_code 내에 이미지 주소가 담겨 있습니다.
-        const qrUrl = charge.source.scannable_code.image.download_uri;
-        res.json({ qrUrl, chargeId: charge.id });
-
+        const { coinAmount, bahtAmount } = req.body;
+        const transactionId = `ORD-${Date.now()}`;
+        
+        await db.execute(
+            `INSERT INTO payment_transactions (id, line_user_id, coin_amount, baht_amount, status) 
+             VALUES (?, ?, ?, ?, 'pending')`,
+            [transactionId, req.user.userId, coinAmount, bahtAmount]
+        );
+        res.json({ transactionId });
     } catch (err) {
-        console.error('❌ 결제 생성 에러:', err);
-        res.status(500).json({ error: 'Failed to create payment' });
+        console.error('Intent Error:', err);
+        res.status(500).json({ error: 'Failed to create payment intent' });
     }
 };
 
 /**
- * [POST] /api/payment/webhook
- * 오미세 서버가 결제 완료를 알릴 때 호출됩니다 (자동 지급 핵심)
+ * [2] 결제 상세 정보 조회 (checkout.html 호출)
  */
-export const handleWebhook = async (req, res) => {
-    const event = req.body;
+export const getDetail = async (req, res) => {
+    try {
+        const [rows] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [req.params.id]);
+        if (rows.length === 0) return res.status(404).json({ error: 'Transaction not found' });
+        res.json(rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: 'Database error' });
+    }
+};
 
-    // 결제가 성공적으로 완료된 이벤트인지 확인
-    if (event.key === 'charge.complete' && event.data.status === 'successful') {
-        const { line_user_id, coinAmount } = event.data.metadata;
+/**
+ * [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
+ */
+export const verifySlip = async (req, res) => {
+    const { transactionId } = req.body;
+    const slipFile = req.file; // multer를 통해 들어온 이미지 파일
+
+    if (!slipFile) return res.status(400).json({ error: 'No slip image uploaded' });
+
+    try {
+        // 1. 주문 정보 가져오기
+        const [orderRows] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [transactionId]);
+        if (orderRows.length === 0) return res.status(404).json({ error: 'Invalid transaction' });
+        const order = orderRows[0];
+
+        // 2. SlipOK API 호출 (영수증 분석 요청)
+        const formData = new FormData();
+        formData.append('files', slipFile.buffer, { filename: slipFile.originalname });
+
+        const slipRes = await axios.post('https://api.slipok.com/api/line/apikey/YOUR_SLIPOK_BRANCH_ID', formData, {
+            headers: {
+                ...formData.getHeaders(),
+                'x-lib-apikey': process.env.SLIPOK_API_KEY // 환경변수에서 키 관리
+            }
+        });
+
+        const slipData = slipRes.data;
+
+        if (!slipData.success) {
+            return res.status(400).json({ error: 'ไม่สามารถตรวจสอบสลิปได้ (영수증을 인식할 수 없습니다)' });
+        }
+
+        const { transRef, amount, receiver } = slipData.data;
+
+        // 3. 보안 체크 (Anti-Fraud)
+        // A. 중복 사용 확인 (transRef가 이미 DB에 있는지)
+        const [dupCheck] = await db.execute(`SELECT id FROM payment_transactions WHERE trans_ref = ?`, [transRef]);
+        if (dupCheck.length > 0) {
+            return res.status(400).json({ error: 'สลิปนี้ถูกใช้งานแล้ว (이미 사용된 영수증입니다)' });
+        }
+
+        // B. 금액 일치 확인
+        if (parseFloat(amount) !== parseFloat(order.baht_amount)) {
+            return res.status(400).json({ error: 'ยอดเงินไม่ถูกต้อง (입금 금액이 일치하지 않습니다)' });
+        }
+
+        // C. 수취인 확인 (선택사항: 내 계좌가 맞는지)
+        // if (receiver.name !== "YOUR_ACCOUNT_NAME") { ... }
+
+        // 4. 최종 승인: 코인 지급 및 상태 업데이트
+        // 트랜잭션을 사용하여 안정적으로 처리
+        const connection = await db.getConnection();
+        await connection.beginTransaction();
 
         try {
-            console.log(`💰 결제 성공 확인: 유저(${line_user_id})에게 ${coinAmount}코인 지급 중...`);
-            
-            // DB 코인 업데이트
-            await db.execute(
+            // 유저 코인 추가
+            await connection.execute(
                 `UPDATE users SET coins = coins + ? WHERE line_user_id = ?`,
-                [coinAmount, line_user_id]
+                [order.coin_amount, order.line_user_id]
             );
 
-            // 처리 완료 응답 (200을 보내야 오미세가 재전송을 멈춤)
-            res.sendStatus(200);
-        } catch (err) {
-            console.error('❌ 코인 지급 DB 에러:', err);
-            res.sendStatus(500);
+            // 주문 상태 업데이트
+            await connection.execute(
+                `UPDATE payment_transactions SET status = 'success', trans_ref = ? WHERE id = ?`,
+                [transRef, transactionId]
+            );
+
+            await connection.commit();
+            res.json({ success: true, message: 'Payment verified and coins added' });
+        } catch (innerErr) {
+            await connection.rollback();
+            throw innerErr;
+        } finally {
+            connection.release();
         }
-    } else {
-        res.sendStatus(200); // 관심 없는 이벤트도 일단 성공 응답
+
+    } catch (err) {
+        console.error('Verification Error:', err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };

@@ -80,6 +80,7 @@
             display: flex; justify-content: space-between; align-items: center;
             transition: all 0.2s ease;
             position: relative;
+            cursor: pointer;
         }
         .coin-card:active { transform: scale(0.98); background: rgba(255,255,255,0.12); }
 
@@ -145,7 +146,7 @@
                 <p>เหรียญสำหรับใช้ดูดวงมหาเทพเกาหลี</p>
             </section>
 
-            <div class="coin-card" onclick="goToPayment('3 เหรียญ', '30 บาท', 3, 30)">
+            <div class="coin-card" onclick="startPaymentProcess('3 เหรียญ', '30 บาท', 3, 30)">
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
                     <div class="coin-text">
@@ -159,7 +160,7 @@
                 </div>
             </div>
 
-            <div class="coin-card" onclick="goToPayment('5 เหรียญ', '45 บาท', 5, 45)" style="border: 1px solid var(--point-gold);">
+            <div class="coin-card" onclick="startPaymentProcess('5 เหรียญ', '45 บาท', 5, 45)" style="border: 1px solid var(--point-gold);">
                 <span class="promo-badge">ประหยัด 10%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💰</div>
@@ -174,7 +175,7 @@
                 </div>
             </div>
 
-            <div class="coin-card" onclick="goToPayment('10 เหรียญ', '80 บาท', 10, 80)">
+            <div class="coin-card" onclick="startPaymentProcess('10 เหรียญ', '80 บาท', 10, 80)">
                 <span class="promo-badge">คุ้มค่าที่สุด ลด 20%</span>
                 <div class="coin-info">
                     <div class="coin-icon">💎</div>
@@ -199,13 +200,14 @@
         </main>
 
         <footer>
-            © 2026 MURDOO K. พลังแห่งดวงดาวและโชคชะตา
+            © 2026 MURDOO K. พลังแห่งดวงดาว하고โชคชะตา
         </footer>
     </div>
 
     <script>
+        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+
         document.addEventListener('DOMContentLoaded', async () => {
-            const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -215,11 +217,37 @@
             } catch (e) { console.error(e); }
         });
 
-        function goToPayment(itemName, priceText, coinAmount, bahtAmount) {
-            // [다음 단계] 여기서 오미세 API를 호출하여 QR 코드를 생성하는 모달을 띄울 예정입니다.
+        // 상점 전용 결제 시작 함수
+        function startPaymentProcess(itemName, priceText, coinAmount, bahtAmount) {
             if(confirm(`ยืนยันการสั่งซื้อ ${itemName} ราคา ${priceText}?`)) {
-                console.log(`결제 요청: ${coinAmount} 코인 / ${bahtAmount} 바트`);
-                // TODO: 오미세 QR 생성 함수 호출
+                goToPayment(coinAmount, bahtAmount);
+            }
+        }
+
+        // 백엔드 연동 결제 로직
+        async function goToPayment(coinAmount, bahtAmount) {
+            try {
+                // 1. 백엔드에 결제 의도 생성 요청 (DB에 pending 상태로 저장)
+                const res = await fetch('/api/payment/intent', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'x-api-key': API_KEY 
+                    },
+                    body: JSON.stringify({ coinAmount, bahtAmount })
+                });
+                
+                const data = await res.json();
+                
+                if (data.transactionId) {
+                    // 2. 생성된 PK(ID)를 가지고 결제 페이지로 이동
+                    window.location.href = `/checkout/${data.transactionId}`;
+                } else {
+                    alert("시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("일시적인 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     </script>

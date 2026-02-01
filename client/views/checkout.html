@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MURDOO K - ชำระเงิน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-overlay: rgba(0, 0, 0, 0.6); 
+            --point-gold: #ffd700;
+            --text-white: #ffffff;
+            --card-white: #ffffff;
+        }
+        body { margin: 0; padding: 0; background: #000; font-family: 'Kanit', sans-serif; color: #fff; display: flex; justify-content: center; }
+        .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; opacity: 0.7; }
+        .container { width: 90%; max-width: 400px; margin: 30px 0; background: var(--bg-overlay); border-radius: 30px; padding: 30px 20px; border: 2px solid rgba(255,215,0,0.3); text-align: center; backdrop-filter: blur(15px); }
+        
+        /* 결제 정보 카드 */
+        .qr-card { background: var(--card-white); border-radius: 25px; padding: 20px; margin: 20px 0; color: #000; }
+        .qr-card img { width: 100%; border-radius: 15px; margin-bottom: 15px; }
+        .receiver-info { font-size: 0.9rem; color: #666; margin-bottom: 5px; }
+        .price-display { font-size: 1.8rem; font-weight: 700; color: #d32f2f; }
+
+        /* 단계별 안내 */
+        .steps { text-align: left; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 25px; }
+        .step-item { font-size: 0.9rem; margin-bottom: 12px; display: flex; gap: 10px; line-height: 1.4; opacity: 0.9; }
+        .step-num { background: var(--point-gold); color: #000; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+
+        /* 파일 업로드 섹션 */
+        .upload-area { margin-bottom: 25px; }
+        #slipInput { display: none; }
+        .upload-label { display: block; background: rgba(255,215,0,0.1); border: 2px dashed var(--point-gold); padding: 15px; border-radius: 15px; cursor: pointer; color: var(--point-gold); font-weight: 500; }
+        #fileName { font-size: 0.8rem; margin-top: 8px; color: #aaa; }
+
+        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .btn-main { background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+        .btn-main:disabled { background: #555; color: #888; box-shadow: none; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    <div class="container">
+        <div id="paymentUI">
+            <h2 style="color: var(--point-gold); margin-bottom: 5px;">ชำระเงิน (Checkout)</h2>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">กรุณาโอนเงินตามยอดที่ระบุ</p>
+
+            <div class="qr-card">
+                <img src="/qrcode.png" alt="PromptPay QR">
+                <div class="receiver-info">수취인: <span id="receiverName">Miss. ThaiGirl (PromptPay)</span></div>
+                <div class="price-display" id="bahtAmount">-- THB</div>
+            </div>
+
+            <div class="steps">
+                <div class="step-item"><div class="step-num">1</div><span><b>สแกนจ่าย:</b> ใช้แอปธนาคารสแกน QR หรือโอนตามยอด</span></div>
+                <div class="step-item"><div class="step-num">2</div><span><b>เก็บสลิป:</b> บันทึกรูปภาพหลักฐาน (ให้เห็น QR ในสลิป)</span></div>
+                <div class="step-item"><div class="step-num">3</div><span><b>อัปโหลด:</b> เลือกรูปสลิปแล้วกดปุ่มยืนยันด้านล่าง</span></div>
+            </div>
+
+            <div class="upload-area">
+                <input type="file" id="slipInput" accept="image/*" onchange="updateFileName()">
+                <label for="slipInput" class="upload-label">📸 เลือกรูปภาพสลิป (영수증 선택)</label>
+                <div id="fileName">아직 선택된 파일이 없습니다</div>
+            </div>
+
+            <button class="btn btn-main" id="verifyBtn" onclick="processPayment()">ยืนยันและเช็คเหรียญ (결제 완료 확인)</button>
+        </div>
+
+        <div id="successUI" class="hidden">
+            <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
+            <h2 style="color: var(--point-gold);">เติมเหรียญสำเร็จ!</h2>
+            <p>ระบบได้รับเงินเรียบร้อยแล้ว<br>เหรียญของคุณถูก 업데이트 되었습니다.</p>
+            <button class="btn btn-main" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง (사주 보러 가기)</button>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+        const transactionId = window.location.pathname.split('/').pop();
+        let initialCoins = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 1. 초기 코인 보유량 확인
+            const userRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
+            const userData = await userRes.json();
+            initialCoins = userData.coins || 0;
+
+            // 2. 결제 정보(금액 등) 가져오기
+            const payRes = await fetch(`/api/payment/detail/${transactionId}`, { headers: { 'x-api-key': API_KEY } });
+            const payData = await payRes.json();
+            document.getElementById('bahtAmount').innerText = `${payData.baht_amount} THB`;
+        });
+
+        function updateFileName() {
+            const file = document.getElementById('slipInput').files[0];
+            document.getElementById('fileName').innerText = file ? file.name : "아직 선택된 파일이 없습니다";
+        }
+
+        async function processPayment() {
+            const fileInput = document.getElementById('slipInput');
+            const btn = document.getElementById('verifyBtn');
+
+            if (!fileInput.files[0]) {
+                alert("กรุณาเลือกรูปภาพสลิปก่อนครับ (영수증 사진을 선택해주세요)");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "กำลังตรวจสอบ... (검증 중...)";
+
+            // [STEP 1] 영수증 업로드 및 백엔드 검증 요청
+            const formData = new FormData();
+            formData.append('slip', fileInput.files[0]);
+            formData.append('transactionId', transactionId);
+
+            try {
+                const res = await fetch('/api/payment/verify-slip', {
+                    method: 'POST',
+                    headers: { 'x-api-key': API_KEY },
+                    body: formData
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    // [STEP 2] 코인이 실제로 늘어났는지 최종 확인
+                    const checkRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
+                    const checkData = await checkRes.json();
+
+                    if (checkData.coins > initialCoins) {
+                        document.getElementById('paymentUI').classList.add('hidden');
+                        document.getElementById('successUI').classList.remove('hidden');
+                    } else {
+                        alert("입금이 아직 확인되지 않았습니다. 잠시 후 다시 시도해주세요.");
+                        btn.disabled = false;
+                        btn.innerText = "ยืนยัน과เช็คเหรียญ (결제 완료 확인)";
+                    }
+                } else {
+                    alert(result.error || "검증 실패");
+                    btn.disabled = false;
+                    btn.innerText = "ยืนยัน과เช็คเหรียญ (결제 완료 확인)";
+                }
+            } catch (e) {
+                alert("서버 연결 에러");
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -21,7 +21,7 @@ router.get('/shop', verifyToken, (req, res) => res.sendFile(path.join(__dirname,
 //내가 본 사주 리스트 페이지
 router.get('/history', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/history.html')));
 //결제 페이지
-router.get('/checkout', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/checkout.html')));
+router.get('/checkout/:id', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/checkout.html')));
 // 성격, 재물, 연애 모두 같은 input-form.html을 보여줍니다.
 router.get(['/personality', '/wealth', '/romance'], (req, res) => {
     res.sendFile(path.join(__dirname, 'client/views/input-form.html'));

@@ -8,7 +8,7 @@ import viewRoutes from './routes/viewRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import fortuneRoutes from './routes/fortuneRoutes.js';
-import paymentRoutes from './routes/payment.js';
+import paymentRoutes from './routes/paymentRoutes.js';
 
 const app = express();
 const __dirname = path.resolve(); // 👈 ES 모듈에서 __dirname 설정

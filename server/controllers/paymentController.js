@@ -79,7 +79,7 @@ export const verifySlip = async (req, res) => {
             {
                 headers: {
                     ...formData.getHeaders(),
-                    'x-lib-apikey': process.env.SLIPOK_API_KEY
+                    'x-authorization': process.env.SLIPOK_API_KEY
                 }
             }
         );

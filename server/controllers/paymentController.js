@@ -94,6 +94,7 @@ export const verifySlip = async (req, res) => {
 
         // [2] 수취인 이름 2중 체크
         const OWNER_NAME = "ธัญญพัทธ์ มงคลรัตนมณี"; 
+        console.log(receiver.name);
         if (!receiver.name.includes(OWNER_NAME)) {
             return res.status(400).json({ code: 'INVALID_RECEIVER', error: '수취인이 올바르지 않습니다.' });
         }

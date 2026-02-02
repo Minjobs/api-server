@@ -62,7 +62,7 @@
     <div class="container">
         <div id="paymentUI">
             <h2 style="color: var(--point-gold); margin-bottom: 5px; font-weight: 700;">ชำระเงิน (Checkout)</h2>
-            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">스캔 QR 및 어플로드 스립을 위해</p>
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">สแกน QR และอัปโหลดสลิปเพื่อรับเหรียญ</p>
 
             <div class="qr-card">
                 <div class="item-info">
@@ -71,40 +71,40 @@
                 </div>
                 <div class="price-display" id="bahtAmount">-- THB</div>
                 <img src="/qrcode.jpg" class="qr-main" alt="PromptPay QR">
-                <div class="receiver-info">수취인: Miss. ThaiGirl (PromptPay)</div>
+                <div class="receiver-info">ผู้รธัญญพัทธ์ มงคลรัตนมณีtPay)</div>
             </div>
 
             <div class="steps">
-                <div class="step-item"><div class="step-num">1</div><span><b>스캔:</b> 은행 앱으로 QR 코드를 스캔하여 송금하세요.</span></div>
-                <div class="step-item"><div class="step-num">2</div><span><b>저장:</b> 송금 완료 후 영수증(Slip)을 저장하세요.</span></div>
-                <div class="step-item"><div class="step-num">3</div><span><b>업로드:</b> 아래 버튼으로 영수증을 선택해 주세요.</span></div>
+                <div class="step-item"><div class="step-num">1</div><span><b>สแกน:</b> สแกน QR Code ด้วยแอปธนาคารของคุณเพื่อโอนเงิน</span></div>
+                <div class="step-item"><div class="step-num">2</div><span><b>บันทึก:</b> บันทึกรูปภาพสลิปหลังจากโอนเงินสำเร็จ</span></div>
+                <div class="step-item"><div class="step-num">3</div><span><b>อัปโหลด:</b> เลือกรูปภาพสลิปด้วยปุ่มด้านล่าง</span></div>
             </div>
 
             <div class="upload-area">
                 <input type="file" id="slipInput" accept="image/*" onchange="handleFileSelect(this)">
-                <label for="slipInput" class="upload-label" id="uploadLabel">📸 เลือกรูปภาพสลิป (영수증 선택)</label>
+                <label for="slipInput" class="upload-label" id="uploadLabel">📸 เลือกรูปภาพสลิป</label>
                 
                 <div id="previewContainer">
-                    <span class="preview-tag">미리보기</span>
+                    <span class="preview-tag">ตัวอย่าง</span>
                     <img id="slipPreview" src="" alt="Slip Preview">
                 </div>
             </div>
 
-            <button class="btn btn-main" id="verifyBtn" onclick="processPayment()">ยืนยันและเช็คเหรียญ (결제 완료 확인)</button>
+            <button class="btn btn-main" id="verifyBtn" onclick="processPayment()">ยืนยันและตรวจสอบเหรียญ</button>
         </div>
 
         <div id="successUI" class="hidden">
             <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
             <h2 style="color: var(--point-gold);">เติมเหรียญสำเร็จ!</h2>
-            <p>시스템이 입금을 확인했습니다.<br>코인이 성공적으로 충전되었습니다.</p>
-            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง (사주 보러 가기)</button>
+            <p>ระบบยืนยันการฝากเงินเรียบร้อยแล้ว<br>เหรียญของคุณถูกเติมเข้าบัญชีสำเร็จ</p>
+            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง</button>
         </div>
 
         <div id="errorUI" class="hidden">
             <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
             <h2 style="color: var(--error-red);">เข้าถึงไม่ได้</h2>
-            <p id="errorMsg">รายการนี้ไม่ถูกต้องหรือชำระเงินเรียบร้อยแล้ว<br>주문이 유효하지 않거나 이미 완료되었습니다.</p>
-            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px; background: #555;">돌아가기 (กลับหน้าหลัก)</button>
+            <p id="errorMsg">รายการนี้ไม่ถูกต้องหรือชำระเงินเรียบร้อยแล้ว</p>
+            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px; background: #555;">กลับหน้าหลัก</button>
         </div>
     </div>
 
@@ -113,16 +113,9 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
         const transactionId = window.location.pathname.split('/').pop();
-        let initialCoins = 0;
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // 1. 초기 유저 프로필 로딩
-                const userRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
-                const userData = await userRes.json();
-                initialCoins = userData.coins || 0;
-
-                // 2. 결제 상세 정보 로딩 및 상태 검증
                 const payRes = await fetch(`/api/payment/detail/${transactionId}`, { headers: { 'x-api-key': API_KEY } });
                 
                 if (!payRes.ok) {
@@ -131,14 +124,11 @@
                 }
 
                 const payData = await payRes.json();
-                
-                // 데이터 바인딩
                 document.getElementById('coinAmountText').innerText = `${payData.coin_amount} เหรียญ`;
                 document.getElementById('bahtAmount').innerText = `${payData.baht_amount} THB`;
 
             } catch (err) {
                 console.error("Access Error:", err);
-                // 잘못된 접근 시 UI 전환
                 document.getElementById('paymentUI').classList.add('hidden');
                 document.getElementById('errorUI').classList.remove('hidden');
             }
@@ -157,7 +147,7 @@
                     previewImg.src = e.target.result;
                     previewContainer.style.display = 'block';
                     verifyBtn.classList.add('active');
-                    uploadLabel.innerText = "✅ 변경하기 (사진 교체)";
+                    uploadLabel.innerText = "✅ เปลี่ยนรูปภาพ";
                 }
                 reader.readAsDataURL(file);
             } else {
@@ -170,10 +160,13 @@
             const fileInput = document.getElementById('slipInput');
             const btn = document.getElementById('verifyBtn');
 
-            if (!fileInput.files[0]) return;
+            if (!fileInput.files[0]) {
+                alert("📸 กรุณาเลือกรูปภาพสลิป");
+                return;
+            }
 
-            btn.classList.remove('active');
-            btn.innerText = "กำลังตรวจสอบ... (검증 중...)";
+            btn.disabled = true;
+            btn.innerText = "กำลังตรวจสอบ...";
 
             const formData = new FormData();
             formData.append('slip', fileInput.files[0]);
@@ -185,28 +178,40 @@
                     headers: { 'x-api-key': API_KEY },
                     body: formData
                 });
+
                 const result = await res.json();
 
                 if (res.ok) {
-                    const checkRes = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
-                    const checkData = await checkRes.json();
-
-                    if (checkData.coins > initialCoins) {
-                        document.getElementById('paymentUI').classList.add('hidden');
-                        document.getElementById('successUI').classList.remove('hidden');
-                    } else {
-                        alert("입금이 확인되지 않았습니다. 잠시 후 다시 시도하세요.");
-                        btn.classList.add('active');
-                        btn.innerText = "ยืนยันและเช็คเหรียญ";
-                    }
+                    document.getElementById('paymentUI').classList.add('hidden');
+                    document.getElementById('successUI').classList.remove('hidden');
                 } else {
-                    alert(result.error || "검증 실패");
-                    btn.classList.add('active');
-                    btn.innerText = "ยืนยัน과체크เหรียญ";
+                    let message = "";
+                    switch (result.code) {
+                        case 'SLIPOK_1014':
+                        case 'INVALID_RECEIVER':
+                            message = "❌ บัญชีผู้รับไม่ถูกต้อง\nกรุณาตรวจสอบว่าคุณได้โอนเงินไปยังบัญชี Sawarin M หรือไม่";
+                            break;
+                        case 'SLIPOK_1009':
+                        case 'BANK_MAINTENANCE':
+                            message = "⏳ ระบบธนาคารขัดข้องชั่วคราว\nธนาคารกำลังปิดปรับปรุงระบบ กรุณาลองใหม่ในอีก 15 นาที";
+                            break;
+                        case 'DUPLICATE_SLIP':
+                            message = "🚫 สลิปนี้ถูกใช้งานแล้ว\nกรุณาอัปโหลดสลิปใบใหม่";
+                            break;
+                        case 'SLIPOK_1002':
+                            message = "🔑 การตรวจสอบล้มเหลว\nกรุณาติดต่อผู้ดูแลระบบ";
+                            break;
+                        default:
+                            message = `⚠️ ข้อผิดพลาด: ${result.error}\nกรุณาลองใหม่อีกครั้งหรือตรวจสอบรูปภาพสลิปของคุณ`;
+                    }
+                    alert(message);
+                    btn.disabled = false;
+                    btn.innerText = "ยืนยันและตรวจสอบเหรียญ";
                 }
             } catch (e) {
-                alert("서버 연결 에러");
-                btn.classList.add('active');
+                alert("🚀 เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ");
+                btn.disabled = false;
+                btn.innerText = "ยืนยันและตรวจสอบเหรียญ";
             }
         }
     </script>

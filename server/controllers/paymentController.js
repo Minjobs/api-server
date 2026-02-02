@@ -103,7 +103,7 @@ export const verifySlip = async (req, res) => {
 
         // [3] 수취인 이름 체크 (가장 유력한 에러 지점)
         // [주의] SlipOK의 receiver.name은 영어인 경우가 많습니다! 
-        const OWNER_NAME_THAI = "ธัญญพัทธ์ มงคลรัตนมณี"; 
+        const OWNER_NAME_THAI = "THANYAPHAT M";
         
         console.log(`🧐 [3단계] 이름 대조 시작`);
         console.log(`- 영수증상 수취인(English): [${receiver.name}]`);

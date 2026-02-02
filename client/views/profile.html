@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - ข้อมูลของคุณ</title>
+    <title>Saju - ข้อมูลส่วนตัว</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.45); 
+            --bg-overlay: rgba(0, 0, 0, 0.38); /* 밝기 복구 */
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
-            --card-glass: rgba(255, 255, 255, 0.1);
+            --card-glass: rgba(255, 255, 255, 0.12);
         }
 
         body {
@@ -36,8 +36,8 @@
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(8px) brightness(0.9);
-            -webkit-backdrop-filter: blur(8px) brightness(0.9);
+            backdrop-filter: blur(7px) brightness(1.0);
+            -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
         /* --- [메인 컨테이너] --- */
@@ -48,28 +48,34 @@
             border-radius: 30px; 
             padding: 25px 15px 40px 15px;
             box-sizing: border-box;
-            backdrop-filter: blur(10px); 
+            backdrop-filter: blur(7px); 
             border: 3px solid var(--border-line); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             text-align: center;
         }
 
         header {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding: 0 5px;
+            box-sizing: border-box;
         }
+
+        /* --- [Saju 로고 디자인 통일] --- */
         .logo {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
-            color: var(--text-white); cursor: pointer;
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 1.8rem; font-weight: 800; 
+            color: var(--point-gold); font-style: italic;
+            margin-left: 10px; cursor: pointer;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
-        .logo span { color: var(--point-gold); }
 
         .back-link {
             font-size: 0.9rem; color: var(--point-gold); text-decoration: none;
             font-weight: 500; display: flex; align-items: center; gap: 5px;
+            margin-right: 5px;
         }
 
-        /* --- [프로필 상단 섹션: 테두리 공백 제거 버전] --- */
+        /* --- [프로필 섹션] --- */
         .profile-header {
             display: flex; flex-direction: column; align-items: center;
             margin-bottom: 30px;
@@ -78,52 +84,51 @@
         .avatar-wrapper {
             width: 96px; height: 96px; 
             border-radius: 50%;
-            border: 4px solid var(--point-gold); /* 링 느낌 강조 */
+            border: 3px solid var(--point-gold);
             margin-bottom: 15px; 
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.3);
-            overflow: hidden; /* 이미지가 원형 밖으로 나가지 않게 */
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            overflow: hidden;
             position: relative;
         }
 
         .avatar-wrapper img {
             width: 100%; height: 100%;
-            border-radius: 50%;
-            object-fit: cover; /* 비율 유지하며 꽉 채우기 */
-            display: block; /* 이미지 하단 미세 공백 제거 */
+            object-fit: cover;
+            display: block;
         }
 
         #userName {
             font-size: 1.5rem; font-weight: 700; margin: 0;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.4);
         }
 
         /* --- [코인 상태 박스] --- */
         .coin-status {
-            background: rgba(255, 215, 0, 0.15);
+            background: rgba(255, 215, 0, 0.2);
             border: 1px solid var(--point-gold);
             border-radius: 22px;
-            padding: 15px; margin-bottom: 25px;
+            padding: 18px; margin-bottom: 25px;
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: 0.2s;
         }
         .coin-status:active { transform: scale(0.98); }
-        .coin-label { font-size: 0.9rem; font-weight: 500; color: var(--point-gold); }
-        .coin-value { font-size: 1.4rem; font-weight: 700; color: var(--point-gold); }
+        .coin-label { font-size: 0.95rem; font-weight: 700; color: var(--point-gold); }
+        .coin-value { font-size: 1.4rem; font-weight: 800; color: var(--point-gold); }
 
-        /* --- [정보 리스트] --- */
+        /* --- [정보 리스트: Line Name 제거] --- */
         .info-list {
             width: 100%; display: flex; flex-direction: column; gap: 12px;
-            margin-bottom: 30px; text-align: left;
+            margin-bottom: 35px; text-align: left;
         }
 
         .info-item {
             background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px; padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px; padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .info-label { font-size: 0.85rem; opacity: 0.7; font-weight: 300; }
-        .info-value { font-size: 1rem; font-weight: 500; }
+        .info-label { font-size: 0.9rem; opacity: 0.9; font-weight: 300; }
+        .info-value { font-size: 1rem; font-weight: 700; color: #fff; }
 
         /* --- [액션 버튼 그룹] --- */
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
@@ -137,12 +142,12 @@
             color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
         }
         .btn-sub {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
             color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
         }
         .btn:active { transform: scale(0.97); }
 
-        footer { margin-top: 30px; opacity: 0.5; font-size: 0.75rem; }
+        footer { margin-top: 30px; opacity: 0.7; font-size: 0.75rem; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -152,7 +157,7 @@
 
     <div class="container">
         <header>
-            <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
+            <div class="logo" onclick="location.href='/'">Saju</div>
             <a href="/" class="back-link">← หน้าหลัก</a>
         </header>
 
@@ -162,37 +167,33 @@
                     <img id="profileImg" src="/avatar.png" alt="Avatar" 
                          onerror="this.src='https://www.gstatic.com/images/branding/product/1x/avatar_circle_blue_512dp.png'; this.onerror=null;">
                 </div>
-                <h1 id="userName">กำลังโหลด...</h1>
+                <h1 id="userName">...</h1>
             </section>
 
             <div class="coin-status" onclick="location.href='/shop'">
-                <div class="coin-label">เหรียญของฉัน (My Coins)</div>
+                <div class="coin-label">เหรียญของฉัน</div>
                 <div class="coin-value"><span id="coinCount">0</span> 🪙</div>
             </div>
 
             <div class="info-list">
                 <div class="info-item">
-                    <span class="info-label">Line Name</span>
-                    <span class="info-value" id="lineName">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Total Readings</span>
+                    <span class="info-label">จำนวนการดูดวง 전체</span>
                     <span class="info-value" id="totalReadings">0 ครั้ง</span>
                 </div>
             </div>
 
             <div class="btn-group">
                 <button class="btn btn-main" onclick="location.href='/history'">
-                    📜 ประวัติโชคชะตา (Fortune History)
+                    ประวัติการดูดวง
                 </button>
                 <button class="btn btn-sub" onclick="handleLogout()">
-                    ออกจากระบบ (Logout)
+                    ออกจากระบบ
                 </button>
             </div>
         </main>
 
         <footer>
-            © 2026 MURDOO K. ลิขิตแห่งดวงดาว
+            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
         </footer>
     </div>
 
@@ -201,32 +202,29 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             
             try {
-                // 유저 데이터 로드
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
                     
-                    // 프로필 이미지 바인딩 (빈 문자열 체크)
                     const profileSrc = (user.profile_img && user.profile_img.trim() !== "") 
                                        ? user.profile_img 
                                        : '/avatar.png';
                     
                     document.getElementById('profileImg').src = profileSrc;
                     document.getElementById('userName').innerText = user.display_name || 'User';
-                    document.getElementById('lineName').innerText = user.display_name || '-';
                     document.getElementById('coinCount').innerText = user.coins || 0;
                     document.getElementById('totalReadings').innerText = `${user.total_readings || 0} ครั้ง`;
                 } else {
                     window.location.href = '/login';
                 }
             } catch (err) {
-                console.error("데이터 로드 실패:", err);
+                console.error("Failed to load:", err);
                 window.location.href = '/login';
             }
         });
 
         function handleLogout() {
-            if (confirm("คุณต้องการออกจากระบบใช่หรือไม่? (로그아웃 하시겠습니까?)")) {
+            if (confirm("คุณต้องการออกจากระบบใช่หรือไม่?")) {
                 window.location.href = '/api/auth/logout';
             }
         }

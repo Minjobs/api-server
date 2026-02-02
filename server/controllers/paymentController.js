@@ -1,57 +1,57 @@
-// import db from '../config/db.js';
-// import axios from 'axios';
-// import FormData from 'form-data';
+import db from '../config/db.js';
+import axios from 'axios';
+import FormData from 'form-data';
 
-// /**
-// * [1] 결제 의도 생성 (shop.html 호출)
-// */
-// export const createIntent = async (req, res) => {
-//     try {
-//         const { coinAmount, bahtAmount } = req.body;
-//         const transactionId = `ORD-${Date.now()}`;
+/**
+* [1] 결제 의도 생성 (shop.html 호출)
+*/
+export const createIntent = async (req, res) => {
+    try {
+        const { coinAmount, bahtAmount } = req.body;
+        const transactionId = `ORD-${Date.now()}`;
         
-//         await db.execute(
-//             `INSERT INTO payment_transactions (id, line_user_id, coin_amount, baht_amount, status) 
-//             VALUES (?, ?, ?, ?, 'pending')`,
-//             [transactionId, req.user.userId, coinAmount, bahtAmount]
-//         );
-//         res.json({ transactionId });
-//     } catch (err) {
-//         console.error('Intent Error:', err);
-//         res.status(500).json({ error: 'Failed to create payment intent' });
-//     }
-// };
+        await db.execute(
+            `INSERT INTO payment_transactions (id, line_user_id, coin_amount, baht_amount, status) 
+            VALUES (?, ?, ?, ?, 'pending')`,
+            [transactionId, req.user.userId, coinAmount, bahtAmount]
+        );
+        res.json({ transactionId });
+    } catch (err) {
+        console.error('Intent Error:', err);
+        res.status(500).json({ error: 'Failed to create payment intent' });
+    }
+};
 
-// /**
-// * [2] 결제 상세 정보 조회 (checkout.html 호출)
-// */
-// export const getDetail = async (req, res) => {
-//     try {
-//         const [rows] = await db.execute(
-//             `SELECT * FROM payment_transactions WHERE id = ?`, 
-//             [req.params.id]
-//         );
+/**
+* [2] 결제 상세 정보 조회 (checkout.html 호출)
+*/
+export const getDetail = async (req, res) => {
+    try {
+        const [rows] = await db.execute(
+            `SELECT * FROM payment_transactions WHERE id = ?`, 
+            [req.params.id]
+        );
 
-//         if (rows.length === 0) {
-//             return res.status(404).json({ error: 'ORDER_NOT_FOUND', message: '주문을 찾을 수 없습니다.' });
-//         }
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'ORDER_NOT_FOUND', message: '주문을 찾을 수 없습니다.' });
+        }
 
-//         const order = rows[0];
+        const order = rows[0];
 
-//         // 핵심: pending 상태가 아니면 접근 거부
-//         if (order.status !== 'pending') {
-//             return res.status(403).json({ 
-//                 error: 'INVALID_STATUS', 
-//                 message: '이미 완료되었거나 취소된 주문입니다.',
-//                 status: order.status 
-//             });
-//         }
+        // 핵심: pending 상태가 아니면 접근 거부
+        if (order.status !== 'pending') {
+            return res.status(403).json({ 
+                error: 'INVALID_STATUS', 
+                message: '이미 완료되었거나 취소된 주문입니다.',
+                status: order.status 
+            });
+        }
 
-//         res.json(order);
-//     } catch (err) {
-//         res.status(500).json({ error: 'SERVER_ERROR' });
-//     }
-// };
+        res.json(order);
+    } catch (err) {
+        res.status(500).json({ error: 'SERVER_ERROR' });
+    }
+};
 
 // /**
 // * [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
@@ -140,7 +140,7 @@
 //         res.status(500).json({ error: '결제 확인 중 서버 오류가 발생했습니다.' });
 //     }
 // };
-
+// 
 
 export const verifySlip = async (req, res) => {
     const { transactionId } = req.body;

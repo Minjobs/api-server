@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saju - เติมคอยน์</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.38); /* 밝기 복구 */
+            --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
@@ -59,7 +59,6 @@
             box-sizing: border-box;
         }
 
-        /* --- [세련된 Saju 로고: 홈 화면과 통일] --- */
         .logo {
             font-family: 'Nanum Myeongjo', serif;
             font-size: 1.8rem; font-weight: 800; 
@@ -85,36 +84,43 @@
             margin-bottom: 20px;
             padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.2s ease;
             position: relative;
             box-sizing: border-box;
         }
 
         .coin-info { display: flex; align-items: center; gap: 12px; }
-        /* 모든 아이콘 코인으로 통일 */
         .coin-icon { font-size: 1.8rem; }
         .coin-text { text-align: left; }
         .coin-text .amount { font-size: 1.15rem; font-weight: 700; color: #fff; }
         .coin-text .sub { font-size: 0.8rem; opacity: 0.8; font-weight: 300; }
 
-        /* --- [구매 버튼 디자인 강화] --- */
+        /* --- [구매 버튼 및 가격 볼드 강화] --- */
         .buy-button {
             background: var(--btn-gradient);
             color: #000;
             padding: 8px 15px;
             border-radius: 14px;
-            font-weight: 800;
-            font-size: 0.95rem;
             box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
             display: flex; flex-direction: column; align-items: center;
             cursor: pointer;
             border: none;
-            min-width: 80px;
-            transition: transform 0.1s, box-shadow 0.1s;
+            min-width: 85px;
+            transition: transform 0.1s;
         }
-        .buy-button:active { transform: scale(0.95); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .buy-button .price { font-size: 1.1rem; line-height: 1; }
-        .buy-button .unit { font-size: 0.65rem; margin-top: 2px; font-weight: 500; }
+        .buy-button:active { transform: scale(0.95); }
+
+        /* 가격 숫자 볼드 처리 */
+        .buy-button .price { 
+            font-size: 1.25rem; 
+            font-weight: 800; /* 최상위 볼드 */
+            line-height: 1; 
+        }
+        /* บาท 단위 볼드 처리 */
+        .buy-button .unit { 
+            font-size: 0.75rem; 
+            margin-top: 2px; 
+            font-weight: 700; /* 볼드 적용 */
+        }
 
         .promo-badge {
             background: #ff4757; color: white;
@@ -125,7 +131,6 @@
             z-index: 10;
         }
 
-        /* --- [라인 버튼 레이아웃 수정] --- */
         .contact-section { 
             width: 100%;
             margin-top: 35px; 
@@ -138,12 +143,12 @@
         .line-link {
             background-color: var(--line-green);
             color: white; border: none; 
-            width: 100%; /* 부모 너비에 맞춤 */
+            width: 100%; 
             padding: 14px;
             border-radius: 18px; font-size: 1rem; font-weight: 700;
             display: flex; justify-content: center; align-items: center; gap: 10px;
             text-decoration: none; 
-            box-sizing: border-box; /* 패딩이 너비를 넘지 않도록 */
+            box-sizing: border-box;
             transition: filter 0.2s;
         }
         .line-link:active { filter: brightness(0.9); }
@@ -191,7 +196,7 @@
                     <div class="coin-icon">🪙</div>
                     <div class="coin-text">
                         <div class="amount">5 คอยน์</div>
-                        <div class="sub">ยอดนิยมที่สุด</div>
+                        <div class="sub">ยอดนิยมที่สุด (Popular)</div>
                     </div>
                 </div>
                 <button class="buy-button" onclick="startPaymentProcess('5 คอยน์', '45 บาท', 5, 45)">

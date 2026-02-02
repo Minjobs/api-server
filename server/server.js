@@ -28,12 +28,13 @@ app.use('/api/user',userRoutes);
 app.use('/api/fortune', fortuneRoutes); // /api/fortune/analyze 등으로 접속 가능
 app.use('/api/payment', paymentRoutes); // /api/fortune/analyze 등으로 접속 가능
 
-// [중요] 모든 라우트(viewRoutes 등) 뒤에 위치해야 합니다.
+// [중요] 모든 라우트 뒤에 위치해야 합니다.
 app.use((req, res) => {
-    // 만약 파일 경로가 'client/views/404.html'이 맞다면 아래 코드가 작동합니다.
     res.status(404).sendFile(path.join(__dirname, 'client/views/404.html'));
 });
 
-app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중..."));
+// 수정된 부분: server 변수 선언 ✅
+const server = app.listen(3000, () => console.log("🚀 Murdoo K 서버 가동 중..."));
 
+// 사주 분석 AI 연산 시간이 길 수 있으므로 타임아웃 3분 설정
 server.timeout = 180000; 

@@ -54,14 +54,6 @@ export const getDetail = async (req, res) => {
 };
 
 /**
-* [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
-*/
-
-import db from '../config/db.js';
-import axios from 'axios';
-import FormData from 'form-data';
-
-/**
  * [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
  * Race Condition(경주 상태) 방지 로직 포함
  */

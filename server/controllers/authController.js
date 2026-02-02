@@ -31,7 +31,7 @@ export const redirectToLine = (req, res) => {
 export const logout = (req, res) => {
     res.clearCookie('auth_token', {
         path: '/',
-        domain: '.murdoo-k.com'
+        domain: '.sajuhorokorea.com'
     });
 
     console.log('👋 로그아웃 완료: 신전을 떠납니다.');
@@ -96,13 +96,12 @@ export const handleCallback = async (req, res) => {
         );
 
         // [F] 쿠키 설정
-        // domain 설정은 실제 운영 환경(.murdoo-k.com)에 맞춰져 있습니다.
         // 로컬 테스트 시 쿠키가 안 구워진다면 domain 부분을 주석 처리하고 테스트하세요.
         res.cookie('auth_token', token, {
             httpOnly: true,
             secure: true, // HTTPS 필수
             sameSite: 'lax',
-            domain: '.murdoo-k.com', 
+            domain: '.sajuhorokorea.com', 
             path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });

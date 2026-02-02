@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - ดูดวงเกาหลี</title>
+    
+    <title>Saju - ดูดวงเกาหลีที่แม่นยำที่สุด</title>
+    <meta name="description" content="Saju บริการวิเคราะห์ดวงชะตาจากศาสตร์เกาหลีโบราณ ดูดวงแม่นๆ จากวันเดือนปีเกิด พร้อมรับคำแนะนำประจำวันเพื่อเสริมความเป็นสิริมงคล">
+    <meta name="keywords" content="Saju, ซาจู, ดูดวง, ดูดวงเกาหลี, โชคชะตา, ดูดวงแม่นๆ, ดวงรายวัน, มูเตลู">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Saju - บันทึกโชคชะตาด้วยศาสตร์เกาหลี">
+    <meta property="og:description" content="ค้นหาคำตอบของชีวิตผ่านศาสตร์การดูดวงที่ส่งตรงจากเกาหลี">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:url" content="https://sajuhorokorea.com">
+
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --card-blue: #8ab4f8;   
@@ -26,7 +37,6 @@
             overflow-x: hidden;
         }
 
-        /* --- [배경 레이어] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -44,7 +54,6 @@
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
-        /* --- [메인 컨테이너] --- */
         .container {
             width: 88%; 
             max-width: 440px; 
@@ -60,7 +69,6 @@
             border: 3px solid var(--border-line); 
         }
 
-        /* --- [헤더: 로고 및 유저 정보] --- */
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
@@ -69,14 +77,12 @@
         }
         .logo {
             font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.5rem; font-weight: 800; color: var(--text-white);
-            display: flex; align-items: center; gap: 8px;
+            font-size: 1.8rem; font-weight: 800; color: var(--point-gold);
+            letter-spacing: 1px;
         }
-        .logo span { color: var(--point-gold); }
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
         
-        /* 코인 잔액 스타일 (상점 연결 클릭 가능) */
         #coinBox {
             background: rgba(255, 215, 0, 0.2);
             border: 1px solid var(--point-gold);
@@ -89,12 +95,6 @@
             align-items: center;
             gap: 5px;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        #coinBox:hover {
-            background: rgba(255, 215, 0, 0.35);
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
         }
 
         .profile-circle {
@@ -110,7 +110,6 @@
             font-size: 0.9rem; font-weight: 700;
         }
 
-        /* --- [메인 캐릭터 및 타이틀] --- */
         .character-section {
             text-align: center; margin-bottom: 30px;
         }
@@ -122,7 +121,7 @@
             animation: float 3s ease-in-out infinite;
         }
         .main-title {
-            font-size: 1.5rem; font-weight: 700; margin: 0;
+            font-size: 1.6rem; font-weight: 700; margin: 0;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
         }
         .sub-title {
@@ -130,7 +129,6 @@
             font-weight: 300; text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
         }
 
-        /* --- [메뉴 카드 리스트] --- */
         .menu-list {
             width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
@@ -173,16 +171,11 @@
             align-items: center;
             gap: 4px;
             margin-left: 8px;
-            white-space: nowrap;
-        }
-        .price-badge.free {
-            background: rgba(255, 255, 255, 0.25);
-            color: #fff;
         }
 
         footer {
             margin-top: 30px; text-align: center; color: #fff;
-            font-size: 0.75rem; opacity: 0.7; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            font-size: 0.75rem; opacity: 0.7;
         }
 
         .hidden { display: none !important; }
@@ -200,7 +193,7 @@
 
     <main class="container">
         <header>
-            <div class="logo">MURDOO <span>K</span></div>
+            <div class="logo">Saju</div>
             <div class="user-nav">
                 <div id="coinBox" class="hidden" onclick="location.href='/shop'">
                     <span id="userCoins">0</span> 🪙
@@ -214,8 +207,8 @@
 
         <div class="character-section">
             <img src="logo.png" class="logo-img" alt="Logo">
-            <h2 class="main-title">เช็กดวงชะตาของคุณ!</h2>
-            <p class="sub-title">มอบความโชคดีให้กับวันของคุณ</p>
+            <h2 class="main-title">ค้นหาดวงชะตาของคุณ</h2>
+            <p class="sub-title">ให้ Saju นำทางความโชคดีมาสู่คุณ</p>
         </div>
 
         <div class="menu-list">
@@ -223,38 +216,37 @@
                 <div class="menu-icon-box">🎡</div>
                 <div class="menu-text">
                     <h3 class="menu-title">สุ่มดวงนำโชค</h3>
-                    <p class="menu-sub">สุ่มแคปซูลรับโชครายวัน (Gacha)</p>
+                    <p class="menu-sub">หมุนวงล้อเสี่ยงโชครายวัน (Gacha)</p>
                 </div>
-                <div class="price-badge">🪙 1 คอยน์</div>
+                <div class="price-badge">1 คอยน์</div>
             </div>
 
             <div class="menu-card green" onclick="handleMenuClick('saju')">
                 <div class="menu-icon-box">📜</div>
                 <div class="menu-text">
                     <h3 class="menu-title">ทำนายดวงชะตา</h3>
-                    <p class="menu-sub">วิเคราะห์ดวงจากวันเกิดแบบเกาหลี</p>
+                    <p class="menu-sub">วิเคราะห์ดวงแม่นๆ จากวันเกิดแบบเกาหลี</p>
                 </div>
-                <div class="price-badge">🪙 2 คอยน์</div>
+                <div class="price-badge">2 คอยน์</div>
             </div>
 
             <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
                 <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
-                    <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
-                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
+                    <h3 class="menu-title">ธง 5 สีนำทาง</h3>
+                    <p class="menu-sub">รับคำแนะนำจากธงศักดิ์สิทธิ์ (Obanggi)</p>
                 </div>
-                <div class="price-badge free">🏷️ ฟรี</div>
+                <div class="price-badge">ฟรี</div>
             </div>
         </div>
 
         <footer>
-            © 2026 MURDOO K. บันทึกโชคชะตาด้วยความใส่ใจ
+            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
         </footer>
     </main>
 
     <script>
         let isLoggedIn = false;
-        // 보안을 위한 API KEY (서버 미들웨어와 일치해야 함)
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -265,16 +257,11 @@
             const userCoins = document.getElementById('userCoins');
             
             try {
-                // 유저 프로필 및 코인 정보 로드
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
                     const user = await res.json();
-                    
-                    // 데이터 반영
                     profileImg.src = user.profile_img || '/avatar.png';
                     userCoins.innerText = user.coins || 0;
-                    
-                    // UI 노출 조절
                     profileBox.classList.remove('hidden');
                     coinBox.classList.remove('hidden');
                     loginBtn.classList.add('hidden');
@@ -283,18 +270,16 @@
                     loginBtn.classList.remove('hidden');
                 }
             } catch (err) {
-                console.error("데이터 로드 실패:", err);
+                console.error("Error:", err);
                 loginBtn.classList.remove('hidden');
             }
         });
 
         function handleMenuClick(category) {
             if (!isLoggedIn) {
-                // 로그인되지 않은 경우 로그인 페이지로 유도
                 window.location.href = '/login';
                 return;
             }
-            // 해당 서비스 페이지로 이동
             window.location.href = `/${category}`;
         }
     </script>

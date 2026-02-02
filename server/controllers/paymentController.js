@@ -27,11 +27,29 @@ export const createIntent = async (req, res) => {
  */
 export const getDetail = async (req, res) => {
     try {
-        const [rows] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [req.params.id]);
-        if (rows.length === 0) return res.status(404).json({ error: 'Transaction not found' });
-        res.json(rows[0]);
+        const [rows] = await db.execute(
+            `SELECT * FROM payment_transactions WHERE id = ?`, 
+            [req.params.id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'ORDER_NOT_FOUND', message: '주문을 찾을 수 없습니다.' });
+        }
+
+        const order = rows[0];
+
+        // 핵심: pending 상태가 아니면 접근 거부
+        if (order.status !== 'pending') {
+            return res.status(403).json({ 
+                error: 'INVALID_STATUS', 
+                message: '이미 완료되었거나 취소된 주문입니다.',
+                status: order.status 
+            });
+        }
+
+        res.json(order);
     } catch (err) {
-        res.status(500).json({ error: 'Database error' });
+        res.status(500).json({ error: 'SERVER_ERROR' });
     }
 };
 

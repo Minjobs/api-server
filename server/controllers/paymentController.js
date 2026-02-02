@@ -56,54 +56,63 @@ export const getDetail = async (req, res) => {
 /**
  * [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
  */
+import axios from 'axios';
+import FormData from 'form-data';
+import db from '../config/db.js';
+
 export const verifySlip = async (req, res) => {
     const { transactionId } = req.body;
-    const slipFile = req.file; // multer를 통해 들어온 이미지 파일
+    const slipFile = req.file; // multer로 들어온 이미지 파일
 
-    if (!slipFile) return res.status(400).json({ error: 'No slip image uploaded' });
+    if (!slipFile) return res.status(400).json({ error: '영수증 파일을 업로드해주세요.' });
 
     try {
-        // 1. 주문 정보 가져오기
-        const [orderRows] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [transactionId]);
-        if (orderRows.length === 0) return res.status(404).json({ error: 'Invalid transaction' });
-        const order = orderRows[0];
+        // 1. DB에서 주문 정보(금액 등) 확인
+        const [orders] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [transactionId]);
+        if (orders.length === 0) return res.status(404).json({ error: '주문을 찾을 수 없습니다.' });
+        const order = orders[0];
 
-        // 2. SlipOK API 호출 (영수증 분석 요청)
+        // 2. SlipOK API 호출 준비
         const formData = new FormData();
-        formData.append('files', slipFile.buffer, { filename: slipFile.originalname });
+        formData.append('files', slipFile.buffer, { filename: 'slip.jpg' });
 
-        const slipRes = await axios.post('https://api.slipok.com/api/line/apikey/YOUR_SLIPOK_BRANCH_ID', formData, {
-            headers: {
-                ...formData.getHeaders(),
-                'x-lib-apikey': process.env.SLIPOK_API_KEY // 환경변수에서 키 관리
+        const slipRes = await axios.post(
+            `https://api.slipok.com/api/line/apikey/${process.env.SLIPOK_BRANCH_ID}`, 
+            formData, 
+            {
+                headers: {
+                    ...formData.getHeaders(),
+                    'x-lib-apikey': process.env.SLIPOK_API_KEY
+                }
             }
-        });
+        );
 
         const slipData = slipRes.data;
 
+        // [핵심] API 응답 분석
         if (!slipData.success) {
-            return res.status(400).json({ error: 'ไม่สามารถตรวจสอบสลิปได้ (영수증을 인식할 수 없습니다)' });
+            return res.status(400).json({ error: '인식할 수 없는 영수증입니다. 사진을 다시 찍어주세요.' });
         }
 
         const { transRef, amount, receiver } = slipData.data;
 
-        // 3. 보안 체크 (Anti-Fraud)
-        // A. 중복 사용 확인 (transRef가 이미 DB에 있는지)
+        // 3. 보안 검증 (Anti-Fraud)
+        // A. 중복 사용 확인 (가장 중요!)
         const [dupCheck] = await db.execute(`SELECT id FROM payment_transactions WHERE trans_ref = ?`, [transRef]);
         if (dupCheck.length > 0) {
-            return res.status(400).json({ error: 'สลิปนี้ถูกใช้งานแล้ว (이미 사용된 영수증입니다)' });
+            return res.status(400).json({ error: '이미 사용된 영수증입니다.' });
         }
 
-        // B. 금액 일치 확인
+        // B. 금액 일치 확인 (소수점까지 정확히)
         if (parseFloat(amount) !== parseFloat(order.baht_amount)) {
-            return res.status(400).json({ error: 'ยอดเงินไม่ถูกต้อง (입금 금액이 일치하지 않습니다)' });
+            return res.status(400).json({ error: '입금 금액이 주문 금액과 일치하지 않습니다.' });
         }
 
-        // C. 수취인 확인 (선택사항: 내 계좌가 맞는지)
-        // if (receiver.name !== "YOUR_ACCOUNT_NAME") { ... }
+        // C. 수취인 이름 확인 (여자친구분 계좌가 맞는지)
+        // const MY_NAME = "MISS THAI GIRL"; // 실제 영문 성함으로 수정
+        // if (receiver.name !== MY_NAME) return res.status(400).json({ error: '수취인 정보가 올바르지 않습니다.' });
 
-        // 4. 최종 승인: 코인 지급 및 상태 업데이트
-        // 트랜잭션을 사용하여 안정적으로 처리
+        // 4. 모든 검증 통과 -> 코인 지급 및 주문 완료 처리
         const connection = await db.getConnection();
         await connection.beginTransaction();
 
@@ -114,14 +123,14 @@ export const verifySlip = async (req, res) => {
                 [order.coin_amount, order.line_user_id]
             );
 
-            // 주문 상태 업데이트
+            // 주문 상태 업데이트 (trans_ref 저장)
             await connection.execute(
                 `UPDATE payment_transactions SET status = 'success', trans_ref = ? WHERE id = ?`,
                 [transRef, transactionId]
             );
 
             await connection.commit();
-            res.json({ success: true, message: 'Payment verified and coins added' });
+            res.json({ success: true, message: '지급 완료!' });
         } catch (innerErr) {
             await connection.rollback();
             throw innerErr;
@@ -130,7 +139,7 @@ export const verifySlip = async (req, res) => {
         }
 
     } catch (err) {
-        console.error('Verification Error:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('SlipOK API Error:', err.response?.data || err.message);
+        res.status(500).json({ error: '결제 확인 중 서버 오류가 발생했습니다.' });
     }
 };

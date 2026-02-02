@@ -92,7 +92,7 @@ export const verifySlip = async (req, res) => {
 
         const { transRef, amount, receiver } = slipData.data;
 
-        // [2] 수취인 이름 2중 체크 (Sawarin M)
+        // [2] 수취인 이름 2중 체크
         const OWNER_NAME = "thanyaphat mongkolrattanamani"; 
         if (!receiver.name.includes(OWNER_NAME)) {
             return res.status(400).json({ code: 'INVALID_RECEIVER', error: '수취인이 올바르지 않습니다.' });

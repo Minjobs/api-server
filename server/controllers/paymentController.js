@@ -70,7 +70,7 @@ export const verifySlip = async (req, res) => {
 
         const formData = new FormData();
         formData.append('files', slipFile.buffer, { filename: 'slip.jpg' });
-        formData.append('log', 'true'); // 수취인 검증 활성화
+        formData.append('log', 'false'); // 수취인 검증 활성화
         formData.append('amount', order.baht_amount);
 
         const slipRes = await axios.post(
@@ -98,11 +98,11 @@ export const verifySlip = async (req, res) => {
             return res.status(400).json({ code: 'INVALID_RECEIVER', error: '수취인이 올바르지 않습니다.' });
         }
 
-        // [3] 중복 확인
-        const [dupCheck] = await db.execute(`SELECT id FROM payment_transactions WHERE trans_ref = ?`, [transRef]);
-        if (dupCheck.length > 0) {
-            return res.status(400).json({ code: 'DUPLICATE_SLIP', error: '이미 사용된 영수증입니다.' });
-        }
+        // // [3] 중복 확인
+        // const [dupCheck] = await db.execute(`SELECT id FROM payment_transactions WHERE trans_ref = ?`, [transRef]);
+        // if (dupCheck.length > 0) {
+        //     return res.status(400).json({ code: 'DUPLICATE_SLIP', error: '이미 사용된 영수증입니다.' });
+        // }
 
         // [4] 트랜잭션 및 코인 지급
         const connection = await db.getConnection();

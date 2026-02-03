@@ -59,6 +59,7 @@
             box-sizing: border-box;
         }
 
+        /* 텍스트 로고 스타일 */
         .logo {
             font-family: 'Nanum Myeongjo', serif;
             font-size: 1.8rem; font-weight: 800; 
@@ -94,7 +95,6 @@
         .coin-text .amount { font-size: 1.15rem; font-weight: 700; color: #fff; }
         .coin-text .sub { font-size: 0.8rem; opacity: 0.8; font-weight: 300; }
 
-        /* --- [구매 버튼 및 가격 볼드 강화] --- */
         .buy-button {
             background: var(--btn-gradient);
             color: #000;
@@ -109,18 +109,8 @@
         }
         .buy-button:active { transform: scale(0.95); }
 
-        /* 가격 숫자 볼드 처리 */
-        .buy-button .price { 
-            font-size: 1.25rem; 
-            font-weight: 800; /* 최상위 볼드 */
-            line-height: 1; 
-        }
-        /* บาท 단위 볼드 처리 */
-        .buy-button .unit { 
-            font-size: 0.75rem; 
-            margin-top: 2px; 
-            font-weight: 700; /* 볼드 적용 */
-        }
+        .buy-button .price { font-size: 1.25rem; font-weight: 800; line-height: 1; }
+        .buy-button .unit { font-size: 0.75rem; margin-top: 2px; font-weight: 700; }
 
         .promo-badge {
             background: #ff4757; color: white;
@@ -184,7 +174,7 @@
                         <div class="sub">เริ่มต้นโชคชะตา</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess('3 คอยน์', '30 บาท', 3, 30)">
+                <button class="buy-button" onclick="startPaymentProcess(3, 30)">
                     <span class="price">30</span>
                     <span class="unit">บาท</span>
                 </button>
@@ -199,7 +189,7 @@
                         <div class="sub">ยอดนิยมที่สุด</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess('5 คอยน์', '45 บาท', 5, 45)">
+                <button class="buy-button" onclick="startPaymentProcess(5, 45)">
                     <span class="price">45</span>
                     <span class="unit">บาท</span>
                 </button>
@@ -214,7 +204,7 @@
                         <div class="sub">เพื่อความคุ้มค่าสูงสุด</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess('10 คอยน์', '80 บาท', 10, 80)">
+                <button class="buy-button" onclick="startPaymentProcess(10, 80)">
                     <span class="price">80</span>
                     <span class="unit">บาท</span>
                 </button>
@@ -237,6 +227,7 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
+        // 사용자 코인 정보 가져오기
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
@@ -247,12 +238,12 @@
             } catch (e) { console.error(e); }
         });
 
-        function startPaymentProcess(itemName, priceText, coinAmount, bahtAmount) {
-            if(confirm(`ยืนยันการซื้อ ${itemName} ราคา ${priceText}?`)) {
-                goToPayment(coinAmount, bahtAmount);
-            }
+        // 팝업 없이 바로 결제 처리 함수
+        function startPaymentProcess(coinAmount, bahtAmount) {
+            goToPayment(coinAmount, bahtAmount);
         }
 
+        // 결제 인텐트 생성 및 체크아웃 페이지 이동
         async function goToPayment(coinAmount, bahtAmount) {
             try {
                 const res = await fetch('/api/payment/intent', {
@@ -260,8 +251,11 @@
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({ coinAmount, bahtAmount })
                 });
+                
                 const data = await res.json();
+                
                 if (data.transactionId) {
+                    // 성공 시 바로 체크아웃 페이지로 리다이렉트
                     window.location.href = `/checkout/${data.transactionId}`;
                 } else {
                     alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้งค่ะ");

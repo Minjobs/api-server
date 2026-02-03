@@ -3,168 +3,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saju - ดูดวงศาสตร์เกาหลีแท้</title>
+    <title>Saju - ศาสตร์ดูดวงเกาหลีแท้ 100%</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #0f1014;
-            --point-gold: #ffd700; /* 쨍한 금색 */
-            --sub-gold: #c5a059;
-            --text-white: #ffffff;
+            --point-gold: #ffd700;
             --line-green: #06C755;
+            --text-white: #ffffff;
+            --box-bg: rgba(0, 0, 0, 0.75); /* 검은색 반투명 박스 */
         }
 
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            background-color: var(--bg-dark);
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
-            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
         }
 
-        /* 배경 디자인: 은은한 한국 전통 문양 혹은 기운을 형상화 */
-        .bg-effect {
+        /* 배경 이미지 설정 */
+        .hero-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 30%, #22252e 0%, #0f1014 100%);
+            background-image: url('/background.jpg'); /* 배경 사진 경로 */
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+        }
+
+        /* 배경 어둡게 처리 (가독성 확보) */
+        .hero-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
             z-index: -1;
         }
 
-        .login-container {
-            width: 90%; max-width: 400px;
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        /* 메인 검은색 박스 디자인 */
+        .content-card {
+            width: 100%;
+            max-width: 450px;
+            background-color: var(--box-bg);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 40px;
+            padding: 60px 30px;
             text-align: center;
-            padding: 40px 20px;
+            backdrop-filter: blur(10px); /* 박스 뒤쪽 살짝 흐리게 */
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
         }
 
-        /* 로고 영역 */
-        .logo-area { margin-bottom: 40px; }
+        /* 로고 스타일 */
+        .logo-box { margin-bottom: 35px; }
         .logo-img {
-            height: 65px; width: auto;
-            filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.4));
+            height: 70px;
+            width: auto;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
         }
 
-        /* 메인 카피: 직관적인 강조 */
-        .main-headline {
-            font-size: 1.8rem; font-weight: 700;
+        /* 헤드라인 스타일 */
+        .headline {
+            font-size: 1.7rem;
+            font-weight: 700;
             color: var(--point-gold);
             margin-bottom: 15px;
             line-height: 1.3;
         }
-        .main-headline span {
-            display: block; font-size: 1rem;
-            color: var(--text-white); font-weight: 300;
-            margin-top: 5px; letter-spacing: 1px;
+
+        .description {
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 45px;
+            color: rgba(255, 255, 255, 0.8);
         }
 
-        /* 서비스 소개 요약 */
-        .service-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 40px;
-            border: 1px solid rgba(197, 160, 89, 0.2);
-        }
-        .info-item {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 12px; text-align: left;
-            font-size: 0.95rem; font-weight: 300; opacity: 0.9;
-        }
-        .info-item:last-child { margin-bottom: 0; }
-        .info-icon { color: var(--point-gold); font-size: 1.2rem; }
+        .description b { color: var(--text-white); font-weight: 400; }
 
         /* 라인 로그인 버튼 */
-        .line-login-btn {
-            display: flex; align-items: center; justify-content: center;
+        .btn-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--line-green);
-            color: white; text-decoration: none;
-            padding: 18px; border-radius: 15px;
-            font-size: 1.15rem; font-weight: 600;
-            box-shadow: 0 10px 25px rgba(6, 199, 85, 0.2);
-            transition: all 0.2s ease;
+            color: white;
+            text-decoration: none;
+            padding: 18px;
+            border-radius: 20px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 10px 20px rgba(6, 199, 85, 0.3);
         }
-        .line-login-btn:active { transform: scale(0.96); }
-        .line-icon { width: 26px; height: 26px; margin-right: 12px; }
+
+        .btn-line:active { transform: scale(0.97); }
+
+        .line-icon {
+            width: 26px;
+            height: 26px;
+            margin-right: 12px;
+        }
 
         footer {
-            margin-top: 50px; font-size: 0.8rem;
-            opacity: 0.4; font-weight: 200;
+            margin-top: 40px;
+            font-size: 0.75rem;
+            opacity: 0.5;
+            font-weight: 200;
+            letter-spacing: 1px;
         }
 
-        /* 로딩 애니메이션 */
-        .loading-overlay {
+        /* 로딩 화면 */
+        .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 16, 20, 0.98);
+            background: rgba(0, 0, 0, 0.95);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 1000;
         }
+
         .spinner {
             width: 50px; height: 50px;
             border: 3px solid rgba(255, 215, 0, 0.1);
             border-top: 3px solid var(--point-gold);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
+
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-    <div class="bg-effect"></div>
 
-    <div class="login-container">
-        <div class="logo-area">
-            <img src="textlogo.png" alt="Saju Logo" class="logo-img">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+
+    <div class="main-container">
+        <div class="content-card">
+            <header>
+                <div class="logo-box">
+                    <img src="textlogo.png" alt="Saju Logo" class="logo-img">
+                </div>
+                <div class="headline">
+                    ศาสตร์ดูดวงเกาหลีแท้ 100%
+                </div>
+                <div class="description">
+                    ค้นพบแผนผังชีวิตที่ถูกกำหนดไว้ผ่าน <b>วัน เดือน ปี และเวลาเกิด</b><br>
+                    วิเคราะห์อย่างแม่นยำด้วยหลักวิชาซาจูจากเกาหลี
+                </div>
+            </header>
+
+            <main>
+                <a href="/api/auth/line" class="btn-line" onclick="handleLogin(event)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" class="line-icon">
+                    <span>ดูดวงของคุณด้วย LINE</span>
+                </a>
+            </main>
+
+            <footer>
+                © 2026 SAJU KOREA. ALL RIGHTS RESERVED.
+            </footer>
         </div>
-
-        <div class="main-headline">
-            ศาสตร์ดูดวงเกาหลีแท้ 100%
-            <span>เผยความลับชีวิตด้วย วัน เดือน ปี และเวลาเกิด</span>
-        </div>
-
-        <div class="service-info">
-            <div class="info-item">
-                <span class="info-icon">●</span>
-                <span>วิเคราะห์ดวงชะตาตามตำราเกาหลีโบรา전 (Saju)</span>
-            </div>
-            <div class="info-item">
-                <span class="info-icon">●</span>
-                <span>แม่นยำ เจาะลึก ทั้งการงาน การเงิน และความรัก</span>
-            </div>
-            <div class="info-item">
-                <span class="info-icon">●</span>
-                <span>รับคำแนะนำเพื่อเสริมสิริมงคลให้ชีวิต</span>
-            </div>
-        </div>
-
-        <a href="/api/auth/line" class="line-login-btn" onclick="startLoading()">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" class="line-icon">
-            <span>เข้าสู่ระบบด้วย LINE</span>
-        </a>
-
-        <footer>
-            © 2026 Saju Korea. All rights reserved.
-        </footer>
     </div>
 
-    <div id="loading" class="loading-overlay hidden">
+    <div id="loading" class="loading-screen hidden">
         <div class="spinner"></div>
-        <p id="loadingText" style="color: var(--point-gold);">กำลังเข้าสู่ระบบ...</p>
+        <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเข้าสู่ระบบ...</p>
     </div>
 
     <script>
-        function startLoading() {
+        function handleLogin(e) {
+            // 로딩 화면 표시
             document.getElementById('loading').classList.remove('hidden');
+            
             const texts = [
                 "กำลังเตรียมข้อมูลดวงชะตา...",
-                "กำลังเชื่อมต่อระบบความปลอดภัย...",
-                "รอสักครู่ เพื่อเข้าสู่หน้าพยากรณ์..."
+                "กำลังเปิดบันทึกวิถีชีวิต...",
+                "กรุณารอสักครู่..."
             ];
             let i = 0;
             setInterval(() => {
-                const el = document.getElementById('loadingText');
+                const el = document.getElementById('loadText');
                 if(el) el.innerText = texts[i++ % texts.length];
             }, 1500);
+
+            // 실제 링크 이동은 브라우저 기본 동작으로 수행됨
         }
     </script>
 </body>

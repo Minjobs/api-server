@@ -21,7 +21,7 @@
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
             --card-gold: #f9a825; 
-            --bg-overlay: rgba(0, 0, 0, 0.38); /* 수정 전의 밝은 투명도로 복구 */
+            --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
@@ -29,7 +29,7 @@
 
         body {
             margin: 0; padding: 0;
-            background-color: #f5f5f5; /* 수정 전의 밝은 배경색으로 복구 */
+            background-color: #f5f5f5; 
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
@@ -37,7 +37,6 @@
             overflow-x: hidden;
         }
 
-        /* --- [배경 밝기 복구] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -45,13 +44,13 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-            opacity: 0.8; /* 밝기 복구 */
+            opacity: 0.8; 
         }
 
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(7px) brightness(1.0); /* 어둡게 만들던 brightness 제거 */
+            backdrop-filter: blur(7px) brightness(1.0);
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
@@ -75,17 +74,20 @@
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 5px;
             padding: 0 5px;
+            box-sizing: border-box;
         }
 
-        /* --- [Saju 로고 디자인: 세련된 Serif + 마진 적용] --- */
+        /* --- [로고 이미지 스타일 조정] --- */
         .logo {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            color: var(--point-gold);
-            margin-left: 10px; /* 왼쪽 마진 추가 */
-            font-style: italic;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            margin-left: 10px; /* 요청하신 왼쪽 마진 유지 */
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .logo img {
+            height: 38px; /* 헤더 높이에 맞춘 적정 크기 */
+            width: auto;
+            object-fit: contain;
         }
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
@@ -167,7 +169,6 @@
         .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px 0; }
         .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.85; font-weight: 300; }
 
-        /* --- [코인 아이콘 포함된 가격 배지] --- */
         .price-badge {
             background: rgba(0, 0, 0, 0.25);
             padding: 4px 10px;
@@ -200,7 +201,9 @@
 
     <main class="container">
         <header>
-            <div class="logo">Saju</div>
+            <div class="logo" onclick="location.href='/'">
+                <img src="textlogo.png" alt="Saju Logo">
+            </div>
             <div class="user-nav">
                 <div id="coinBox" class="hidden" onclick="location.href='/shop'">
                     <span id="userCoins">0</span> 🪙

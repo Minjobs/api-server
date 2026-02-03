@@ -10,7 +10,7 @@
             --point-gold: #ffd700;
             --line-green: #06C755;
             --text-white: #ffffff;
-            --box-bg: rgba(0, 0, 0, 0.75);
+            --box-bg: rgba(0, 0, 0, 0.78); /* 투명도를 살짝 낮춰 무게감 조절 */
         }
 
         body, html {
@@ -21,7 +21,7 @@
             overflow: hidden;
         }
 
-        /* 배경 이미지 설정 (필요한 경우 경로 수정) */
+        /* 배경 이미지 */
         .hero-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('/background.jpg'); 
@@ -30,48 +30,51 @@
             z-index: -2;
         }
 
-        /* 배경 어둡게 처리 */
+        /* 배경 오버레이 */
         .hero-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
 
+        /* 메인 컨테이너 배치 조정 */
         .main-container {
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: center; /* 수직 중앙 */
+            justify-content: center; /* 수평 중앙 */
             height: 100vh;
             padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* 메인 검은색 박스 */
+        /* 메인 검은색 박스 위치 최적화 */
         .content-card {
             width: 100%;
-            max-width: 480px; /* 박스 너비 약간 증가 */
+            max-width: 460px;
             background-color: var(--box-bg);
-            border: 1px solid rgba(255, 215, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.25);
             border-radius: 40px;
             padding: 50px 30px;
             text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
-            overflow: hidden; /* 내부 요소가 박스를 넘지 않도록 */
+            backdrop-filter: blur(12px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+            
+            /* [위치 조정] 정중앙보다 약간 위로 올림 (자연스러운 시선 처리) */
+            transform: translateY(-40px); 
         }
 
-        /* 상단 텍스트 로고 영역 */
-        .text-logo-box { margin-bottom: 20px; }
+        /* 상단 텍스트 로고 */
+        .text-logo-box { margin-bottom: 10px; }
         .text-logo-img {
-            height: 60px;
+            height: 55px;
             width: auto;
-            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
         }
 
-        /* --- 둥둥 떠다니는 메인 로고 이미지 --- */
+        /* 둥둥 떠다니는 메인 로고 */
         .floating-logo-box {
-            margin-bottom: 35px;
-            /* 로고가 떠다닐 공간 확보 */
-            height: 180px; 
+            margin-bottom: 25px;
+            height: 160px; 
             display: flex;
             align-items: center;
             justify-content: center;
@@ -79,36 +82,33 @@
 
         .floating-img {
             width: auto;
-            height: 160px; /* 로고 크기 조절 */
+            height: 140px;
             filter: drop-shadow(0 15px 25px rgba(255, 215, 0, 0.3));
-            /* 둥둥 떠다니는 애니메이션 적용 (4초 주기, 무한 반복) */
             animation: floating 4s ease-in-out infinite;
         }
 
-        /* 떠다니는 키프레임 정의 */
         @keyframes floating {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); } /* 위로 15px 이동 */
+            50% { transform: translateY(-12px); }
             100% { transform: translateY(0px); }
         }
-        /* ------------------------------------ */
 
         .headline {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: var(--point-gold);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             line-height: 1.3;
         }
 
         .description {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             font-weight: 300;
-            line-height: 1.6;
+            line-height: 1.7;
             margin-bottom: 40px;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.85);
         }
-        .description b { color: var(--text-white); font-weight: 400; }
+        .description b { color: var(--text-white); font-weight: 600; }
 
         /* 라인 로그인 버튼 */
         .btn-line {
@@ -118,33 +118,33 @@
             background-color: var(--line-green);
             color: white;
             text-decoration: none;
-            padding: 16px;
-            border-radius: 18px;
-            font-size: 1.1rem;
+            padding: 18px;
+            border-radius: 20px;
+            font-size: 1.15rem;
             font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 10px 20px rgba(6, 199, 85, 0.3);
+            transition: all 0.25s ease;
+            box-shadow: 0 12px 24px rgba(6, 199, 85, 0.3);
         }
-        .btn-line:active { transform: scale(0.97); }
-        .line-icon { width: 24px; height: 24px; margin-right: 12px; }
+        .btn-line:active { transform: scale(0.96); box-shadow: 0 5px 10px rgba(6, 199, 85, 0.2); }
+        .line-icon { width: 26px; height: 26px; margin-right: 12px; }
 
         footer {
-            margin-top: 30px;
+            margin-top: 35px;
             font-size: 0.75rem;
-            opacity: 0.5;
+            opacity: 0.4;
             font-weight: 200;
             letter-spacing: 1px;
         }
 
-        /* 로딩 화면 */
+        /* 로딩 오버레이 */
         .loading-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.95);
+            background: rgba(0, 0, 0, 0.96);
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 1000;
         }
         .spinner {
-            width: 50px; height: 50px;
+            width: 45px; height: 45px;
             border: 3px solid rgba(255, 215, 0, 0.1);
             border-top: 3px solid var(--point-gold);
             border-radius: 50%;
@@ -176,7 +176,7 @@
                 </div>
                 <div class="description">
                     ค้นพบแผนผังชีวิตผ่าน <b>วัน เดือน ปี และเวลาเกิด</b><br>
-                    วิเคราะห์แม่นยำด้วยตำราซาจูโบรา전
+                    วิเคราะห์แม่นยำด้วยตำราซาจูจากเกาหลี
                 </div>
             </header>
 
@@ -195,7 +195,7 @@
 
     <div id="loading" class="loading-screen hidden">
         <div class="spinner"></div>
-        <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเชื่อมต่อ...</p>
+        <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเข้าสู่ระบบ...</p>
     </div>
 
     <script>

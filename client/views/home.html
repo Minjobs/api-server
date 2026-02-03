@@ -21,15 +21,16 @@
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
             --card-gold: #f9a825; 
-            --bg-overlay: rgba(0, 0, 0, 0.38); 
+            --card-pink: #f48fb1; /* 궁합용 핑크 색상 추가 */
+            --bg-overlay: rgba(0, 0, 0, 0.45); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
-            --border-line: rgba(200, 200, 200, 0.8); 
+            --border-line: rgba(255, 215, 0, 0.3); /* 금빛 테두리로 변경 */
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #f5f5f5; 
+            background-color: #0f1014; 
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
@@ -50,8 +51,8 @@
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(7px) brightness(1.0);
-            -webkit-backdrop-filter: blur(7px) brightness(1.0);
+            backdrop-filter: blur(8px) brightness(0.8);
+            -webkit-backdrop-filter: blur(8px) brightness(0.8);
         }
 
         .container {
@@ -59,54 +60,53 @@
             max-width: 440px; 
             margin: 20px 0;
             background-color: var(--bg-overlay); 
-            border-radius: 30px; 
-            padding: 15px 12px 30px 12px; 
+            border-radius: 35px; 
+            padding: 20px 15px 35px 15px; 
             box-sizing: border-box;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
             display: flex; flex-direction: column; align-items: center;
-            backdrop-filter: blur(7px); 
-            -webkit-backdrop-filter: blur(7px);
-            border: 3px solid var(--border-line); 
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-line); 
         }
 
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             padding: 0 5px;
             box-sizing: border-box;
         }
 
-        /* --- [로고 이미지 스타일 조정] --- */
         .logo {
-            margin-left: 10px; /* 요청하신 왼쪽 마진 유지 */
+            margin-left: 5px;
             display: flex;
             align-items: center;
             cursor: pointer;
         }
         .logo img {
-            height: 38px; /* 헤더 높이에 맞춘 적정 크기 */
+            height: 35px;
             width: auto;
             object-fit: contain;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
         }
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
         
         #coinBox {
-            background: rgba(255, 215, 0, 0.2);
+            background: rgba(255, 215, 0, 0.15);
             border: 1px solid var(--point-gold);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.85rem;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
             font-weight: 700;
             color: var(--point-gold);
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 6px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .profile-circle {
-            width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
+            width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
             border: 2px solid var(--point-gold); cursor: pointer;
         }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
@@ -119,78 +119,80 @@
         }
 
         .character-section {
-            text-align: center; margin-bottom: 30px;
+            text-align: center; margin-bottom: 35px;
         }
         .logo-img {
-            width: 150px; 
+            width: 140px; 
             height: auto;
-            filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
-            margin-bottom: 5px; 
-            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(255, 215, 0, 0.4));
+            margin-bottom: 10px; 
+            animation: float 4s ease-in-out infinite;
         }
         .main-title {
-            font-size: 1.5rem; font-weight: 700; margin: 0;
-            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            font-size: 1.6rem; font-weight: 700; margin: 0;
+            color: var(--point-gold);
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.6);
         }
         .sub-title {
-            font-size: 0.95rem; color: #fff; margin-top: 8px;
-            font-weight: 300;
+            font-size: 0.9rem; color: rgba(255,255,255,0.9); margin-top: 10px;
+            font-weight: 300; line-height: 1.4;
         }
 
         .menu-list {
-            width: 100%; display: flex; flex-direction: column; gap: 12px;
+            width: 100%; display: flex; flex-direction: column; gap: 14px;
         }
 
         .menu-card {
             width: 100%; 
-            padding: 18px 12px;
+            padding: 20px 15px;
             box-sizing: border-box;
-            border-radius: 22px; 
+            border-radius: 25px; 
             display: flex; align-items: center;
-            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer; transition: all 0.2s ease;
             color: #fff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .menu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .menu-card:active { transform: scale(0.97); }
 
-        .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #6495ed); }
-        .menu-card.green { background: linear-gradient(135deg, var(--card-green), #66bb6a); }
-        .menu-card.gold { background: linear-gradient(135deg, var(--card-gold), #f57c00); }
+        .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #5c85d6); }
+        .menu-card.green { background: linear-gradient(135deg, var(--card-green), #4caf50); }
+        .menu-card.gold { background: linear-gradient(135deg, var(--card-gold), #e65100); }
+        .menu-card.pink { background: linear-gradient(135deg, var(--card-pink), #e91e63); } /* 궁합 카드 색상 */
 
         .menu-icon-box {
-            width: 46px; height: 46px; border-radius: 50%;
+            width: 48px; height: 48px; border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; margin-right: 12px; flex-shrink: 0;
+            font-size: 1.6rem; margin-right: 15px; flex-shrink: 0;
         }
 
         .menu-text { flex: 1; min-width: 0; }
-        .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px 0; }
-        .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.85; font-weight: 300; }
+        .menu-title { font-size: 1.15rem; font-weight: 700; margin: 0 0 2px 0; }
+        .menu-sub { font-size: 0.85rem; margin: 0; opacity: 0.9; font-weight: 300; }
 
         .price-badge {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: flex; align-items: center; gap: 4px;
-            margin-left: 8px;
+            margin-left: 10px;
             white-space: nowrap;
         }
-        .price-badge.free { background: rgba(255, 255, 255, 0.25); }
+        .price-badge.free { background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255,255,255,0.4); }
 
         footer {
-            margin-top: 30px; text-align: center; color: #fff;
-            font-size: 0.75rem; opacity: 0.7;
+            margin-top: 40px; text-align: center; color: rgba(255,255,255,0.6);
+            font-size: 0.75rem; font-weight: 300;
         }
 
         .hidden { display: none !important; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
         }
     </style>
 </head>
@@ -218,7 +220,7 @@
         <div class="character-section">
             <img src="logo.png" class="logo-img" alt="Logo">
             <h2 class="main-title">เช็กดวงชะตาของคุณ!</h2>
-            <p class="sub-title">ให้ Saju นำทางความโชคดีมาสู่คุณในทุกๆ วัน</p>
+            <p class="sub-title">ค้นพบความลับของโชคชะตาผ่านศาสตร์เกาหลี<br>เพื่อความโชคดีในทุกย่างก้าวของชีวิต</p>
         </div>
 
         <div class="menu-list">
@@ -235,23 +237,32 @@
                 <div class="menu-icon-box">📜</div>
                 <div class="menu-text">
                     <h3 class="menu-title">วิเคราะห์ดวงชะตา</h3>
-                    <p class="menu-sub">ดูดวงแม่นๆ จากวันเกิดแบบเกาหลี</p>
+                    <p class="menu-sub">ดูดวงส่วนตัวจากวันเกิดแบบเกาหลี</p>
                 </div>
                 <div class="price-badge">🪙 2 คอยน์</div>
+            </div>
+
+            <div class="menu-card pink" onclick="handleMenuClick('compatibility')">
+                <div class="menu-icon-box">💖</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">วิเคราะห์เนื้อคู่</h3>
+                    <p class="menu-sub">ตรวจสอบความสมพงษ์ของดวงชะตา</p>
+                </div>
+                <div class="price-badge">🪙 3 คอยน์</div>
             </div>
 
             <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
                 <div class="menu-icon-box">🚩</div>
                 <div class="menu-text">
                     <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
-                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
+                    <p class="menu-sub">รับคำแนะนำจากธงศักดิ์สิทธิ์ (Obanggi)</p>
                 </div>
                 <div class="price-badge free">🏷️ ฟรี</div>
             </div>
         </div>
 
         <footer>
-            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
+            © 2026 Saju Korea. บันทึกโชคชะตาด้วยความใส่ใจ
         </footer>
     </main>
 

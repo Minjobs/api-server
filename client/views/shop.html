@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saju - เติมคอยน์</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700;800&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
@@ -59,13 +59,17 @@
             box-sizing: border-box;
         }
 
-        /* 텍스트 로고 스타일 */
-        .logo {
-            font-family: 'Nanum Myeongjo', serif;
-            font-size: 1.8rem; font-weight: 800; 
-            color: var(--point-gold); font-style: italic;
-            margin-left: 10px; cursor: pointer;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        /* 이미지 로고 스타일 */
+        .logo-container {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .logo-img {
+            height: 45px; /* 헤더 높이에 맞게 조절 */
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
         }
 
         .user-coins {
@@ -154,7 +158,9 @@
 
     <div class="container">
         <header>
-            <div class="logo" onclick="location.href='/'">Saju</div>
+            <div class="logo-container" onclick="location.href='/'">
+                <img src="https://googleusercontent.com/image_generation_content/7" alt="Saju Logo" class="logo-img">
+            </div>
             <div class="user-coins">
                 <span id="displayCoins">0</span> 🪙
             </div>
@@ -227,7 +233,6 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 사용자 코인 정보 가져오기
         document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
@@ -238,12 +243,10 @@
             } catch (e) { console.error(e); }
         });
 
-        // 팝업 없이 바로 결제 처리 함수
         function startPaymentProcess(coinAmount, bahtAmount) {
             goToPayment(coinAmount, bahtAmount);
         }
 
-        // 결제 인텐트 생성 및 체크아웃 페이지 이동
         async function goToPayment(coinAmount, bahtAmount) {
             try {
                 const res = await fetch('/api/payment/intent', {
@@ -255,14 +258,13 @@
                 const data = await res.json();
                 
                 if (data.transactionId) {
-                    // 성공 시 바로 체크아웃 페이지로 리다이렉트
                     window.location.href = `/checkout/${data.transactionId}`;
                 } else {
                     alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้งค่ะ");
                 }
             } catch (err) {
                 console.error(err);
-                alert("ขออภัยค่ะ ระบบขัดข้องชั่วคราว");
+                alert("ขออภัยค่ะ 시스템 오류가 발생했습니다.");
             }
         }
     </script>

@@ -5,88 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>Saju - ดูดวงเกาหลีที่แม่นยำที่สุด</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Saju บริการวิเคราะห์ดวงชะตาจากศาสตร์เกาหลีโบราณ ดูดวงแม่นๆ จากวันเดือนปีเกิด พร้อมรับคำแนะนำประจำวันเพื่อเสริมความเป็นสิริมงคล">
+    <meta name="keywords" content="Saju, ซาจู, ดูดวง, ดูดวงเกาหลี, โชคชะตา, ดูดวงแม่นๆ, ดวงรายวัน, มูเตลู">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Saju - บันทึกโชคชะตาด้วยศาสตร์เกาหลี">
+    <meta property="og:description" content="ค้นหาคำตอบของชีวิตผ่านศาสตร์การดูดวงที่ส่งตรงจากเกาหลี">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:url" content="https://sajuhorokorea.com">
+
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* 이전 버전의 색상값 복구 */
-            --bg-overlay: rgba(0, 0, 0, 0.38); 
-            --border-line: rgba(200, 200, 200, 0.8); 
-            --text-white: #ffffff;  
-            --point-gold: #ffd700;
-            
-            /* 메뉴 카드 색상 */
             --card-blue: #8ab4f8;   
             --card-green: #81c784;  
             --card-gold: #f9a825; 
-            --card-pink: #f48fb1; 
+            --card-pink: #f48fb1; /* 궁합 카드 색상 추가 */
+            --bg-overlay: rgba(0, 0, 0, 0.38); 
+            --text-white: #ffffff;  
+            --point-gold: #ffd700;
+            --border-line: rgba(200, 200, 200, 0.8); 
         }
 
-        body, html {
+        body {
             margin: 0; padding: 0;
-            width: 100%; height: 100%;
+            background-color: #f5f5f5; 
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
             overflow-x: hidden;
         }
 
-        /* 이전 배경 설정 복구 */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
+            z-index: -1;
             background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
-            opacity: 0.8; /* 이전의 밝은 밝기 */
+            background-attachment: fixed;
+            opacity: 0.8; 
         }
 
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            backdrop-filter: blur(7px) brightness(1.0); /* 어둡게 하지 않음 */
+            z-index: -2;
+            backdrop-filter: blur(7px) brightness(1.0);
             -webkit-backdrop-filter: blur(7px) brightness(1.0);
         }
 
-        .main-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* 이전 스타일의 박스 디자인 적용 */
-        .container-card {
-            width: 100%; 
+        .container {
+            width: 88%; 
             max-width: 440px; 
-            background-color: var(--bg-overlay); /* 연한 검은색 투명 배경 */
-            border-radius: 35px; 
-            padding: 25px 15px 35px 15px; 
+            margin: 20px 0;
+            background-color: var(--bg-overlay); 
+            border-radius: 30px; 
+            padding: 15px 12px 30px 12px; 
             box-sizing: border-box;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 3px solid var(--border-line); /* 밝고 두꺼운 테두리 복구 */
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            text-align: center;
-            
-            /* 위치를 살짝 위로 조정 */
-            transform: translateY(-20px);
+            display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: blur(7px); 
+            -webkit-backdrop-filter: blur(7px);
+            border: 3px solid var(--border-line); 
         }
 
         header {
             width: 100%;
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             padding: 0 5px;
             box-sizing: border-box;
         }
 
+        .logo {
+            margin-left: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
         .logo img {
             height: 38px;
             width: auto;
             object-fit: contain;
-            cursor: pointer;
         }
 
         .user-nav { display: flex; align-items: center; gap: 10px; }
@@ -101,10 +102,11 @@
             color: var(--point-gold);
             display: flex; align-items: center; gap: 5px;
             cursor: pointer;
+            transition: all 0.2s;
         }
 
         .profile-circle {
-            width: 38px; height: 38px; border-radius: 50%; overflow: hidden;
+            width: 40px; height: 40px; border-radius: 50%; overflow: hidden;
             border: 2px solid var(--point-gold); cursor: pointer;
         }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
@@ -116,25 +118,25 @@
             font-size: 0.9rem; font-weight: 700;
         }
 
-        /* 둥둥 떠다니는 로고 */
-        .character-section { margin-bottom: 25px; }
+        .character-section {
+            text-align: center; margin-bottom: 30px;
+        }
         .logo-img {
-            width: 130px; 
+            width: 150px; 
             height: auto;
             filter: drop-shadow(0 5px 15px rgba(255, 215, 0, 0.3));
-            animation: float 4s ease-in-out infinite;
+            margin-bottom: 5px; 
+            animation: float 3s ease-in-out infinite;
         }
-
         .main-title {
             font-size: 1.5rem; font-weight: 700; margin: 0;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
         }
         .sub-title {
-            font-size: 0.9rem; color: #fff; margin-top: 8px;
-            font-weight: 300; opacity: 0.9;
+            font-size: 0.95rem; color: #fff; margin-top: 8px;
+            font-weight: 300;
         }
 
-        /* 메뉴 리스트 스타일 */
         .menu-list {
             width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
@@ -145,16 +147,16 @@
             box-sizing: border-box;
             border-radius: 22px; 
             display: flex; align-items: center;
-            cursor: pointer; transition: transform 0.2s;
+            cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
             color: #fff;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
-        .menu-card:active { transform: scale(0.97); }
+        .menu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 
         .menu-card.blue { background: linear-gradient(135deg, var(--card-blue), #6495ed); }
         .menu-card.green { background: linear-gradient(135deg, var(--card-green), #66bb6a); }
-        .menu-card.pink { background: linear-gradient(135deg, var(--card-pink), #e91e63); }
+        .menu-card.pink { background: linear-gradient(135deg, var(--card-pink), #e91e63); } /* 궁합 카드 */
         .menu-card.gold { background: linear-gradient(135deg, var(--card-gold), #f57c00); }
 
         .menu-icon-box {
@@ -164,32 +166,32 @@
             font-size: 1.5rem; margin-right: 12px; flex-shrink: 0;
         }
 
-        .menu-text { flex: 1; min-width: 0; text-align: left; }
-        .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0; }
-        .menu-sub { font-size: 0.8rem; margin: 2px 0 0 0; opacity: 0.9; font-weight: 300; }
+        .menu-text { flex: 1; min-width: 0; }
+        .menu-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 2px 0; }
+        .menu-sub { font-size: 0.8rem; margin: 0; opacity: 0.85; font-weight: 300; }
 
         .price-badge {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.25);
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 500;
             display: flex; align-items: center; gap: 4px;
             margin-left: 8px;
             white-space: nowrap;
         }
-        .price-badge.free { background: rgba(255, 255, 255, 0.2); }
+        .price-badge.free { background: rgba(255, 255, 255, 0.25); }
 
         footer {
             margin-top: 30px; text-align: center; color: #fff;
-            font-size: 0.75rem; opacity: 0.7; font-weight: 300;
+            font-size: 0.75rem; opacity: 0.7;
         }
 
         .hidden { display: none !important; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
@@ -198,72 +200,70 @@
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
-    <div class="main-container">
-        <main class="container-card">
-            <header>
-                <div class="logo" onclick="location.href='/'">
-                    <img src="textlogo.png" alt="Saju Logo">
+    <main class="container">
+        <header>
+            <div class="logo" onclick="location.href='/'">
+                <img src="textlogo.png" alt="Saju Logo">
+            </div>
+            <div class="user-nav">
+                <div id="coinBox" class="hidden" onclick="location.href='/shop'">
+                    <span id="userCoins">0</span> 🪙
                 </div>
-                <div class="user-nav">
-                    <div id="coinBox" class="hidden" onclick="location.href='/shop'">
-                        <span id="userCoins">0</span> 🪙
-                    </div>
-                    <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
-                        <img id="userProfileImg" src="" alt="Profile">
-                    </div>
-                    <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
+                <div class="profile-circle hidden" id="profileBox" onclick="location.href='/profile'">
+                    <img id="userProfileImg" src="" alt="Profile">
                 </div>
-            </header>
+                <button id="loginBtn" class="hidden" onclick="location.href='/login'">เข้าสู่ระบบ</button>
+            </div>
+        </header>
 
-            <div class="character-section">
-                <img src="logo.png" class="logo-img" alt="Logo">
-                <h2 class="main-title">เช็กดวงชะตาของคุณ!</h2>
-                <p class="sub-title">ศาสตร์เกาหลีที่นำทางความโชคดีมาสู่คุณ</p>
+        <div class="character-section">
+            <img src="logo.png" class="logo-img" alt="Logo">
+            <h2 class="main-title">เช็กดวงชะตาของคุณ!</h2>
+            <p class="sub-title">ให้ Saju นำทางความโชคดีมาสู่คุณในทุกๆ วัน</p>
+        </div>
+
+        <div class="menu-list">
+            <div class="menu-card blue" onclick="handleMenuClick('gacha')">
+                <div class="menu-icon-box">🎡</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">สุ่มดวงรายวัน</h3>
+                    <p class="menu-sub">หมุนวงล้อนำโชค (Gacha)</p>
+                </div>
+                <div class="price-badge">🪙 1 คอยน์</div>
             </div>
 
-            <div class="menu-list">
-                <div class="menu-card blue" onclick="handleMenuClick('gacha')">
-                    <div class="menu-icon-box">🎡</div>
-                    <div class="menu-text">
-                        <h3 class="menu-title">สุ่มดวงรายวัน</h3>
-                        <p class="menu-sub">หมุนวงล้อนำโชค (Gacha)</p>
-                    </div>
-                    <div class="price-badge">🪙 1</div>
+            <div class="menu-card green" onclick="handleMenuClick('saju')">
+                <div class="menu-icon-box">📜</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">วิเคราะห์ดวงชะตา</h3>
+                    <p class="menu-sub">ดูดวงแม่นๆ จากวันเกิดแบบเกาหลี</p>
                 </div>
-
-                <div class="menu-card green" onclick="handleMenuClick('saju')">
-                    <div class="menu-icon-box">📜</div>
-                    <div class="menu-text">
-                        <h3 class="menu-title">วิเคราะห์ดวงชะตา</h3>
-                        <p class="menu-sub">ดูดวงส่วนตัวแม่นๆ แบบเก아หลี</p>
-                    </div>
-                    <div class="price-badge">🪙 2</div>
-                </div>
-
-                <div class="menu-card pink" onclick="handleMenuClick('compatibility')">
-                    <div class="menu-icon-box">💖</div>
-                    <div class="menu-text">
-                        <h3 class="menu-title">วิเคราะห์เนื้อคู่</h3>
-                        <p class="menu-sub">ตรวจสอบความสมพงษ์ของดวงชะตา</p>
-                    </div>
-                    <div class="price-badge">🪙 3</div>
-                </div>
-
-                <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
-                    <div class="menu-icon-box">🚩</div>
-                    <div class="menu-text">
-                        <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
-                        <p class="menu-sub">คำแนะนำจากธงศักดิ์สิทธิ์ (Obanggi)</p>
-                    </div>
-                    <div class="price-badge free">🏷️ ฟรี</div>
-                </div>
+                <div class="price-badge">🪙 2 คอยน์</div>
             </div>
 
-            <footer>
-                © 2026 Saju Korea. บันทึกโชคชะตาด้วยความใส่ใจ
-            </footer>
-        </main>
-    </div>
+            <div class="menu-card pink" onclick="handleMenuClick('compatibility')">
+                <div class="menu-icon-box">💖</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">วิเคราะห์เนื้อคู่</h3>
+                    <p class="menu-sub">ตรวจสอบความสมพงษ์ของดวงชะตา</p>
+                </div>
+                <div class="price-badge">🪙 3 คอยน์</div>
+            </div>
+
+            <div class="menu-card gold" onclick="handleMenuClick('obanggi')">
+                <div class="menu-icon-box">🚩</div>
+                <div class="menu-text">
+                    <h3 class="menu-title">เสี่ยงทายธง 5 สี</h3>
+                    <p class="menu-sub">รับคำทำนายจากธงศักดิ์สิทธิ์ (Obanggi)</p>
+                </div>
+                <div class="price-badge free">🏷️ ฟรี</div>
+            </div>
+        </div>
+
+        <footer>
+            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
+        </footer>
+    </main>
 
     <script>
         let isLoggedIn = false;

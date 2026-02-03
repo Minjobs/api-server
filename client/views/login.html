@@ -10,7 +10,7 @@
             --point-gold: #ffd700;
             --line-green: #06C755;
             --text-white: #ffffff;
-            --box-bg: rgba(0, 0, 0, 0.75); /* 검은색 반투명 박스 */
+            --box-bg: rgba(0, 0, 0, 0.75);
         }
 
         body, html {
@@ -21,19 +21,19 @@
             overflow: hidden;
         }
 
-        /* 배경 이미지 설정 */
+        /* 배경 이미지 설정 (필요한 경우 경로 수정) */
         .hero-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('/background.jpg'); /* 배경 사진 경로 */
+            background-image: url('/background.jpg'); 
             background-size: cover;
             background-position: center;
             z-index: -2;
         }
 
-        /* 배경 어둡게 처리 (가독성 확보) */
+        /* 배경 어둡게 처리 */
         .hero-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             z-index: -1;
         }
 
@@ -45,44 +45,69 @@
             padding: 20px;
         }
 
-        /* 메인 검은색 박스 디자인 */
+        /* 메인 검은색 박스 */
         .content-card {
             width: 100%;
-            max-width: 450px;
+            max-width: 480px; /* 박스 너비 약간 증가 */
             background-color: var(--box-bg);
             border: 1px solid rgba(255, 215, 0, 0.3);
             border-radius: 40px;
-            padding: 60px 30px;
+            padding: 50px 30px;
             text-align: center;
-            backdrop-filter: blur(10px); /* 박스 뒤쪽 살짝 흐리게 */
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+            overflow: hidden; /* 내부 요소가 박스를 넘지 않도록 */
         }
 
-        /* 로고 스타일 */
-        .logo-box { margin-bottom: 35px; }
-        .logo-img {
-            height: 70px;
+        /* 상단 텍스트 로고 영역 */
+        .text-logo-box { margin-bottom: 20px; }
+        .text-logo-img {
+            height: 60px;
             width: auto;
-            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.4));
         }
 
-        /* 헤드라인 스타일 */
+        /* --- 둥둥 떠다니는 메인 로고 이미지 --- */
+        .floating-logo-box {
+            margin-bottom: 35px;
+            /* 로고가 떠다닐 공간 확보 */
+            height: 180px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-img {
+            width: auto;
+            height: 160px; /* 로고 크기 조절 */
+            filter: drop-shadow(0 15px 25px rgba(255, 215, 0, 0.3));
+            /* 둥둥 떠다니는 애니메이션 적용 (4초 주기, 무한 반복) */
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        /* 떠다니는 키프레임 정의 */
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); } /* 위로 15px 이동 */
+            100% { transform: translateY(0px); }
+        }
+        /* ------------------------------------ */
+
         .headline {
-            font-size: 1.7rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--point-gold);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             line-height: 1.3;
         }
 
         .description {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 300;
             line-height: 1.6;
-            margin-bottom: 45px;
+            margin-bottom: 40px;
             color: rgba(255, 255, 255, 0.8);
         }
-
         .description b { color: var(--text-white); font-weight: 400; }
 
         /* 라인 로그인 버튼 */
@@ -93,24 +118,18 @@
             background-color: var(--line-green);
             color: white;
             text-decoration: none;
-            padding: 18px;
-            border-radius: 20px;
-            font-size: 1.15rem;
+            padding: 16px;
+            border-radius: 18px;
+            font-size: 1.1rem;
             font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.2s ease;
             box-shadow: 0 10px 20px rgba(6, 199, 85, 0.3);
         }
-
         .btn-line:active { transform: scale(0.97); }
-
-        .line-icon {
-            width: 26px;
-            height: 26px;
-            margin-right: 12px;
-        }
+        .line-icon { width: 24px; height: 24px; margin-right: 12px; }
 
         footer {
-            margin-top: 40px;
+            margin-top: 30px;
             font-size: 0.75rem;
             opacity: 0.5;
             font-weight: 200;
@@ -124,7 +143,6 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             z-index: 1000;
         }
-
         .spinner {
             width: 50px; height: 50px;
             border: 3px solid rgba(255, 215, 0, 0.1);
@@ -133,7 +151,6 @@
             animation: spin 1s linear infinite;
             margin-bottom: 25px;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none; }
     </style>
@@ -146,22 +163,27 @@
     <div class="main-container">
         <div class="content-card">
             <header>
-                <div class="logo-box">
-                    <img src="textlogo.png" alt="Saju Logo" class="logo-img">
+                <div class="text-logo-box">
+                    <img src="textlogo.png" alt="Saju Text Logo" class="text-logo-img">
                 </div>
+
+                <div class="floating-logo-box">
+                    <img src="logo.png" alt="Saju Main Logo" class="floating-img">
+                </div>
+                
                 <div class="headline">
                     ศาสตร์ดูดวงเกาหลีแท้ 100%
                 </div>
                 <div class="description">
-                    ค้นพบแผนผังชีวิตที่ถูกกำหนดไว้ผ่าน <b>วัน เดือน ปี และเวลาเกิด</b><br>
-                    วิเคราะห์อย่างแม่นยำด้วยหลักวิชาซาจูจากเกาหลี
+                    ค้นพบแผนผังชีวิตผ่าน <b>วัน เดือน ปี และเวลาเกิด</b><br>
+                    วิเคราะห์แม่นยำด้วยตำราซาจูโบรา전
                 </div>
             </header>
 
             <main>
                 <a href="/api/auth/line" class="btn-line" onclick="handleLogin(event)">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="LINE" class="line-icon">
-                    <span>ดูดวงของคุณด้วย LINE</span>
+                    <span>เริ่มต้นดูดวงด้วย LINE</span>
                 </a>
             </main>
 
@@ -173,17 +195,15 @@
 
     <div id="loading" class="loading-screen hidden">
         <div class="spinner"></div>
-        <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเข้าสู่ระบบ...</p>
+        <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเชื่อมต่อ...</p>
     </div>
 
     <script>
         function handleLogin(e) {
-            // 로딩 화면 표시
             document.getElementById('loading').classList.remove('hidden');
-            
             const texts = [
-                "กำลังเตรียมข้อมูลดวงชะตา...",
-                "กำลังเปิดบันทึกวิถีชีวิต...",
+                "กำลังเตรียมข้อมูล...",
+                "กำลังเปิดบันทึกดวงชะตา...",
                 "กรุณารอสักครู่..."
             ];
             let i = 0;
@@ -191,8 +211,6 @@
                 const el = document.getElementById('loadText');
                 if(el) el.innerText = texts[i++ % texts.length];
             }, 1500);
-
-            // 실제 링크 이동은 브라우저 기본 동작으로 수행됨
         }
     </script>
 </body>

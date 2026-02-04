@@ -1,176 +1,131 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>차원의 틈 - 머두 K</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&display=swap" rel="stylesheet">
+    <title>Saju - ไม่พบหน้านี้</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --point-gold: #ffd700;
             --emerald: #50c878;
-            --gold: #ffd700;
-            --deep-bg: #090a0f;
+            --text-white: #ffffff;
+            --bg-overlay: rgba(0, 0, 0, 0.38);
+            --border-line: rgba(200, 200, 200, 0.8); 
         }
 
         body {
-            margin: 0;
+            margin: 0; padding: 0;
+            background-color: #f5f5f5;
+            font-family: 'Kanit', sans-serif;
+            color: var(--text-white);
             height: 100vh;
-            display: flex;
+            display: flex; flex-direction: column; align-items: center;
             justify-content: center;
-            align-items: center;
-            background: radial-gradient(ellipse at bottom, #1b3a2e 0%, var(--deep-bg) 80%);
             overflow: hidden;
-            font-family: 'Cinzel Decorative', cursive;
-            color: #fff;
         }
 
-        /* 마법진 컨테이너 (배경 레이어) */
+        /* --- [배경 및 블러 레이어: 서비스 통일] --- */
+        .background-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background-image: url('/background.jpg'); 
+            background-size: cover; background-position: center;
+            opacity: 0.8;
+        }
+
+        .background-blur {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            backdrop-filter: blur(8px) brightness(1.0);
+            -webkit-backdrop-filter: blur(8px) brightness(1.0);
+        }
+
+        /* --- [마법진 애니메이션: Saju 스타일로 변경] --- */
         .magic-circle-container {
-            position: absolute;
-            width: 800px;
-            height: 800px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-            opacity: 0.6;
-            filter: drop-shadow(0 0 20px var(--emerald));
+            position: absolute; width: 600px; height: 600px;
+            display: flex; justify-content: center; align-items: center;
+            z-index: 0; opacity: 0.4; pointer-events: none;
         }
+        .ring { position: absolute; border-radius: 50%; border: 2px solid var(--point-gold); }
+        .ring-1 { width: 100%; border-style: dashed; animation: spin 40s linear infinite; }
+        .ring-2 { width: 70%; border-color: var(--emerald); border-style: double; border-width: 4px; animation: spin-rev 25s linear infinite; }
+        .ring-3 { width: 40%; box-shadow: inset 0 0 20px var(--point-gold); animation: spin 15s linear infinite; }
 
-        /* 공통 링 스타일 */
-        .ring {
-            position: absolute;
-            border-radius: 50%;
-            border-style: solid;
-            background: transparent;
-        }
-
-        /* 가장 바깥 링 (천천히 회전) */
-        .ring-outer {
-            width: 100%; height: 100%;
-            border-width: 2px;
-            border-color: var(--emerald) transparent;
-            animation: spin 30s linear infinite;
-        }
-        
-        /* 중간 링 (반대로 회전, 복잡한 문양 느낌) */
-        .ring-middle {
-            width: 70%; height: 70%;
-            border-width: 4px;
-            border-color: var(--gold) transparent var(--emerald) transparent;
-            border-style: dashed;
-            animation: spin-reverse 20s linear infinite;
-        }
-
-        /* 안쪽 링 (빠르게 회전) */
-        .ring-inner {
-            width: 40%; height: 40%;
-            border-width: 1px;
-            border-color: var(--gold);
-            box-shadow: inset 0 0 20px var(--gold);
-            animation: spin 10s linear infinite;
-        }
-
-        /* 중심부 빛나는 핵 */
-        .core-glow {
-            position: absolute;
-            width: 100px; height: 100px;
-            background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: pulse 3s ease-in-out infinite;
-        }
-
-        /* 텍스트 컨텐츠 (상단 레이어) */
-        .content-layer {
-            position: relative;
-            z-index: 10;
+        /* --- [메인 컨텐츠 박스] --- */
+        .container {
+            position: relative; z-index: 10;
+            width: 88%; max-width: 440px;
+            background-color: var(--bg-overlay);
+            border-radius: 35px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            border: 3px solid var(--border-line);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
             text-align: center;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.3); /* 가독성을 위한 반투명 배경 */
-            backdrop-filter: blur(5px);
-            border-radius: 20px;
-            border: 1px solid rgba(80, 200, 120, 0.3);
         }
+
+        .logo-box { margin-bottom: 30px; }
+        .logo-box img { height: 55px; width: auto; }
 
         .error-code {
-            font-size: 8rem;
-            margin: 0;
-            background: linear-gradient(to bottom, var(--gold), var(--emerald));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(80, 200, 120, 0.5);
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 6rem; font-weight: 800; margin: 0;
+            background: linear-gradient(to bottom, var(--point-gold), #f57c00);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
         }
 
-        .message {
-            font-size: 1.8rem;
-            margin: 20px 0;
-            color: var(--emerald);
-        }
+        .message { font-size: 1.6rem; font-weight: 700; color: var(--point-gold); margin: 10px 0; }
+        .description { font-size: 1rem; opacity: 0.9; font-weight: 300; line-height: 1.6; margin-bottom: 40px; }
 
-        .description {
-            font-size: 1.1rem;
-            color: #aaa;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-
-        /* 마법 버튼 */
-        .magic-btn {
+        /* --- [홈으로 돌아가기 버튼] --- */
+        .home-btn {
             display: inline-block;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            color: var(--deep-bg);
-            background: linear-gradient(45deg, var(--emerald), var(--gold));
-            border: none;
-            border-radius: 50px;
+            width: 80%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: #000;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 20px rgba(80, 200, 120, 0.4);
-            position: relative;
-            overflow: hidden;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            transition: transform 0.2s;
         }
+        .home-btn:active { transform: scale(0.95); }
 
-        .magic-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
-        }
-        
-        /* 반짝이는 효과 */
-        .magic-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-            transform: rotate(45deg);
-            animation: sparkle 3s infinite linear;
-        }
-
-        /* 애니메이션 정의 */
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes spin-reverse { 100% { transform: rotate(-360deg); } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } }
-        @keyframes sparkle { 0% { left: -100%; } 100% { left: 100%; } }
-
+        @keyframes spin-rev { 100% { transform: rotate(-360deg); } }
     </style>
 </head>
 <body>
+
+    <div class="background-overlay"></div>
+    <div class="background-blur"></div>
+
     <div class="magic-circle-container">
-        <div class="ring ring-outer"></div>
-        <div class="ring ring-middle"></div>
-        <div class="ring ring-inner"></div>
-        <div class="core-glow"></div>
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
     </div>
 
-    <main class="content-layer">
+    <main class="container">
+        <div class="logo-box">
+            <img src="textlogo.png" alt="Saju Logo">
+        </div>
+
         <h1 class="error-code">404</h1>
-        <p class="message">회오리바람에 휩쓸리셨군요!</p>
+        <p class="message">คุณหลงทางในเส้นทางแห่งดวงดาว</p>
         <p class="description">
-            이곳은 오즈의 지도에 없는 차원의 틈새입니다.<br>
-            노란 벽돌길을 따라 원래 세계로 돌아가세요.
+            ขออภัย ไม่พบหน้าที่คุณกำลังค้นหา<br>
+            ดูเหมือนว่าโชคชะตาจะไม่ได้นำทางคุณมาที่นี่<br>
+            โปรดกลับสู่เส้นทางที่ถูกต้อง
         </p>
-        <a href="/home" class="magic-btn">노란 벽돌길 따라가기 (Home)</a>
+
+        <a href="/" class="home-btn">กลับสู่หน้าหลัก</a>
     </main>
+
 </body>
 </html>

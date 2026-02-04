@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saju - ผลทำนายความรัก</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-overlay: rgba(0, 0, 0, 0.38); 
+            --text-white: #ffffff;  
+            --point-gold: #ffd700;
+            --emerald: #50c878;
+            --heart-pink: #ff4757;
+            --border-line: rgba(200, 200, 200, 0.8); 
+            --card-glass: rgba(255, 255, 255, 0.12);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: #f5f5f5; 
+            font-family: 'Kanit', sans-serif;
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+
+        .background-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: url('/background.jpg'); 
+            background-size: cover; background-position: center;
+            background-attachment: fixed; opacity: 0.8; 
+        }
+
+        .background-blur {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            backdrop-filter: blur(7px) brightness(1.0);
+        }
+
+        .container {
+            width: 88%; max-width: 440px; 
+            margin: 20px 0;
+            background-color: var(--bg-overlay); 
+            border-radius: 30px; 
+            padding: 20px 15px 40px 15px;
+            box-sizing: border-box;
+            backdrop-filter: blur(7px); 
+            border: 3px solid var(--border-line); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        header {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; padding: 0 5px;
+            box-sizing: border-box;
+        }
+        .logo img { height: 55px; width: auto; cursor: pointer; margin-left: 5px; }
+        .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
+
+        /* --- [점수 게이지 섹션] --- */
+        .score-section {
+            margin-bottom: 30px;
+            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .score-circle {
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle, rgba(255, 71, 87, 0.15) 0%, transparent 70%);
+            position: relative;
+        }
+        .score-value {
+            font-size: 3.5rem; font-weight: 800; color: var(--point-gold);
+            line-height: 1; margin-bottom: 5px;
+        }
+        .score-label { font-size: 0.9rem; font-weight: 500; opacity: 0.9; }
+
+        .names-banner {
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+            margin-bottom: 25px; font-size: 1.3rem; font-weight: 700;
+        }
+        .heart-icon { color: var(--heart-pink); font-size: 1.6rem; animation: pulse 1.5s infinite; }
+
+        /* --- [결과 텍스트 카드] --- */
+        .analysis-card {
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            padding: 20px; text-align: left; margin-bottom: 20px;
+        }
+        .analysis-title {
+            font-size: 1.1rem; font-weight: 700; color: var(--point-gold);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .analysis-text {
+            font-size: 0.95rem; line-height: 1.7; font-weight: 300; opacity: 0.95;
+            word-break: keep-all;
+        }
+
+        /* --- [지표 바 스타일] --- */
+        .stat-item { margin-bottom: 15px; }
+        .stat-label-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; }
+        .stat-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .stat-bar-fill { height: 100%; background: var(--point-gold); border-radius: 4px; transition: width 1.5s ease-out; }
+
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
+        .btn {
+            width: 100%; padding: 16px; border-radius: 20px; border: none;
+            font-weight: 700; font-size: 1.1rem; cursor: pointer; font-family: 'Kanit';
+            transition: 0.3s; text-decoration: none; text-align: center;
+        }
+        .btn-main { background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+        .btn-sub { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        footer { margin-top: 30px; opacity: 0.7; font-size: 0.75rem; font-weight: 300; }
+    </style>
+</head>
+<body>
+
+    <div class="background-overlay"></div>
+    <div class="background-blur"></div>
+
+    <div class="container">
+        <header>
+            <div class="logo" onclick="location.href='/'">
+                <img src="textlogo.png" alt="Saju">
+            </div>
+            <a href="/history" class="back-link">← ประวัติ</a>
+        </header>
+
+        <main>
+            <div class="names-banner">
+                <span id="myName">คุณ</span>
+                <span class="heart-icon">❤️</span>
+                <span id="partnerName">อีกฝ่าย</span>
+            </div>
+
+            <section class="score-section">
+                <div class="score-circle">
+                    <div class="score-value" id="totalScore">0</div>
+                    <div class="score-label">คะแนนดวงสมพงษ์</div>
+                </div>
+            </section>
+
+            <article class="analysis-card">
+                <div class="analysis-title">✨ สรุปคำทำนาย</div>
+                <div class="analysis-text" id="summaryText">...</div>
+            </article>
+
+            <article class="analysis-card">
+                <div class="analysis-title">📊 วิเคราะห์แต่ละด้าน</div>
+                
+                <div class="stat-item">
+                    <div class="stat-label-row"><span>ด้านความรัก (Love)</span><span id="loveScoreText">0%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="loveBar" style="width: 0%; background: var(--heart-pink);"></div></div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label-row"><span>ความเข้าใจ (Understanding)</span><span id="commScoreText">0%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="commBar" style="width: 0%; background: var(--emerald);"></div></div>
+                </div>
+
+                <div class="stat-item">
+                    <div class="stat-label-row"><span>การส่งเสริมดวง (Support)</span><span id="luckScoreText">0%</span></div>
+                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="luckBar" style="width: 0%;"></div></div>
+                </div>
+            </article>
+
+            <div class="btn-group">
+                <button class="btn btn-main" onclick="location.href='/'">กลับหน้าหลัก</button>
+                <button class="btn btn-sub" onclick="alert('ระบบกำลังเตรียมรูปภาพสำหรับแชร์ค่ะ')">แชร์ผลลัพธ์</button>
+            </div>
+        </main>
+
+        <footer>
+            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 실제 환경에서는 API를 통해 가져온 데이터를 여기에 바인딩합니다.
+            const resultData = {
+                myName: "คุณ",
+                partnerName: "อีกฝ่าย",
+                score: 88,
+                love: 92,
+                comm: 80,
+                luck: 85,
+                summary: "ดวงชะตาของคุณทั้งคู่มีความเข้ากันได้อย่างน่าอัศจรรย์ มีเกณฑ์ส่งเสริมกันในเรื่องหน้าที่การงานและความมั่นคงในชีวิตคู่"
+            };
+
+            // 데이터 주입
+            document.getElementById('myName').innerText = resultData.myName;
+            document.getElementById('partnerName').innerText = resultData.partnerName;
+            document.getElementById('summaryText').innerText = resultData.summary;
+
+            // 숫자 카운팅 애니메이션
+            animateValue("totalScore", 0, resultData.score, 2000);
+            
+            // 게이지 바 애니메이션
+            setTimeout(() => {
+                document.getElementById('loveBar').style.width = resultData.love + '%';
+                document.getElementById('loveScoreText').innerText = resultData.love + '%';
+                document.getElementById('commBar').style.width = resultData.comm + '%';
+                document.getElementById('commScoreText').innerText = resultData.comm + '%';
+                document.getElementById('luckBar').style.width = resultData.luck + '%';
+                document.getElementById('luckScoreText').innerText = resultData.luck + '%';
+            }, 300);
+        });
+
+        function animateValue(id, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                document.getElementById(id).innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>

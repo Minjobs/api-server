@@ -20,6 +20,8 @@ router.get('/saju', verifyToken, (req, res) => res.sendFile(path.join(__dirname,
 router.get('/shop', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/shop.html')));
 //내가 본 사주 리스트 페이지
 router.get('/history', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/history.html')));
+//궁합 input 페이지
+router.get('/input/love', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/love.html')));
 //결제 페이지
 router.get('/checkout/:id', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/checkout.html')));
 // 성격, 재물, 연애 모두 같은 input-form.html을 보여줍니다.

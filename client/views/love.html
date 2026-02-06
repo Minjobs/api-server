@@ -59,47 +59,51 @@
         .logo img { height: 55px; width: auto; cursor: pointer; }
         .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
 
-        .form-section { margin-bottom: 30px; text-align: left; animation: fadeIn 0.5s ease; }
+        .form-section { margin-bottom: 35px; text-align: left; }
         .section-title { 
             font-size: 1.2rem; font-weight: 700; color: var(--point-gold); 
             margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
             border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px;
         }
 
-        .input-group { margin-bottom: 18px; }
-        .input-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 6px; display: block; font-weight: 400; }
-        .input-sub { font-size: 0.75rem; opacity: 0.6; font-weight: 300; margin-left: 5px; }
+        .input-group { margin-bottom: 20px; }
+        .input-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 8px; display: block; color: var(--point-gold); font-weight: 500; }
+        .input-sub { font-size: 0.75rem; opacity: 0.8; font-weight: 300; color: #fff; margin-left: 5px; }
         
-        input, select {
-            width: 100%; padding: 14px; border-radius: 12px;
+        input[type="text"], select {
+            width: 100%; padding: 12px; border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             background: var(--input-bg); color: #fff;
-            font-family: 'Kanit'; font-size: 1rem;
+            font-family: 'Kanit'; font-size: 0.95rem;
             box-sizing: border-box; outline: none; transition: 0.3s;
         }
-        input:focus, select:focus { border-color: var(--point-gold); background: rgba(255,255,255,0.15); }
 
-        /* 시간 모름 버튼 스타일 */
-        .time-row { display: flex; flex-direction: column; gap: 8px; }
+        /* --- [힌트 텍스트 컬러 수정: 흰색으로 강조] --- */
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+            font-weight: 300;
+        }
+
+        .dropdown-group { display: flex; gap: 8px; margin-bottom: 8px; }
+        .dropdown-group select { flex: 1; min-width: 0; }
+
         .unknown-btn {
-            align-self: flex-start;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 6px 12px; border-radius: 10px;
+            color: #ccc; padding: 6px 14px; border-radius: 20px;
             font-size: 0.75rem; cursor: pointer; transition: 0.3s;
         }
-        .unknown-btn.active { background: var(--emerald); color: #000; font-weight: 700; border-color: var(--emerald); }
+        .unknown-btn.active { background: var(--point-gold); color: #000; font-weight: 700; border-color: var(--point-gold); }
 
         .submit-btn {
             width: 100%; padding: 18px; border-radius: 22px; border: none;
             background: linear-gradient(135deg, var(--point-gold), #f57c00);
             color: #000; font-weight: 800; font-size: 1.2rem;
             cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-            margin-top: 10px; transition: 0.3s;
+            margin-top: 10px; transition: 0.2s;
         }
-        .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.7; }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* 로딩 화면 */
         #loadingLayer {
             display: none; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 60px 0;
@@ -109,9 +113,7 @@
             border-top: 5px solid var(--point-gold); border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 20px;
         }
-
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         footer { margin-top: 25px; font-size: 0.75rem; opacity: 0.7; text-align: center; }
         .hidden { display: none !important; }
@@ -133,36 +135,70 @@
         <main id="inputArea">
             <form id="loveForm">
                 <section class="form-section">
-                    <div class="section-title">👤 ข้อมูลของคุณ (Me)</div>
+                    <div class="section-title">👤 ข้อมูลของคุณ</div>
                     <div class="input-group">
                         <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
                         <input type="text" id="myName" placeholder="ระบุชื่อเล่นของคุณ" required>
                     </div>
+                    
                     <div class="input-group">
                         <label class="input-label">วันเดือนปีเกิด</label>
-                        <input type="date" id="myBirth" required>
+                        <div class="dropdown-group">
+                            <select id="myDay" required><option value="" disabled selected>วันที่</option></select>
+                            <select id="myMonth" required>
+                                <option value="" disabled selected>เดือน</option>
+                                <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
+                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                                <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
+                                <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
+                            </select>
+                            <select id="myYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
+                        </div>
                     </div>
-                    <div class="input-group time-row">
+
+                    <div class="input-group">
                         <label class="input-label">เวลาเกิด</label>
-                        <input type="time" id="myTime">
-                        <button type="button" class="unknown-btn" onclick="toggleTime('my')">ไม่ทราบเวลาเกิด</button>
+                        <div class="dropdown-group">
+                            <select id="myHour" required><option value="" disabled selected>ชม.</option></select>
+                            <select id="myMin" required><option value="" disabled selected>นาที</option></select>
+                        </div>
+                        <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
                 </section>
 
                 <section class="form-section">
-                    <div class="section-title">💖 ข้อมูลของอีกฝ่าย (Partner)</div>
+                    <div class="section-title">💖 ข้อมูลของอีกฝ่าย</div>
                     <div class="input-group">
                         <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
                         <input type="text" id="partnerName" placeholder="ระบุชื่อเล่นของเขา/เธอ" required>
                     </div>
+
                     <div class="input-group">
                         <label class="input-label">วันเดือนปีเกิด</label>
-                        <input type="date" id="partnerBirth" required>
+                        <div class="dropdown-group">
+                            <select id="partnerDay" required><option value="" disabled selected>วันที่</option></select>
+                            <select id="partnerMonth" required>
+                                <option value="" disabled selected>เดือน</option>
+                                <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
+                                <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
+                            </select>
+                            <select id="partnerYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
+                        </div>
                     </div>
-                    <div class="input-group time-row">
+
+                    <div class="input-group">
                         <label class="input-label">เวลาเกิด</label>
-                        <input type="time" id="partnerTime">
-                        <button type="button" class="unknown-btn" onclick="toggleTime('partner')">ไม่ทราบเวลาเกิด</button>
+                        <div class="dropdown-group">
+                            <select id="partnerHour" required><option value="" disabled selected>ชม.</option></select>
+                            <select id="partnerMin" required><option value="" disabled selected>นาที</option></select>
+                        </div>
+                        <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
                 </section>
 
@@ -189,65 +225,73 @@
         <div id="loadingLayer">
             <div class="spinner"></div>
             <h3 style="color: var(--point-gold);">กำลังอ่านโชคชะตาความรัก...</h3>
-            <p style="font-size: 0.9rem; opacity: 0.8; font-weight: 300;">ดวงดาวกำลังเรียงตัวเพื่อหาคำตอบให้คุณ</p>
+            <p style="font-size: 0.9rem; opacity: 0.8;">ดวงดาวกำลังเรียงตัวเพื่อคุณ</p>
         </div>
 
-        <footer>
-            © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
-        </footer>
+        <footer>© 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ</footer>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const setupSelect = (id, start, end, step = 1) => {
+                const select = document.getElementById(id);
+                for (let i = start; i <= end; i += step) {
+                    const val = i < 10 ? `0${i}` : i;
+                    select.add(new Option(val, val));
+                }
+            };
+
+            const currentYear = new Date().getFullYear();
+            ['my', 'partner'].forEach(p => {
+                setupSelect(p + 'Day', 1, 31);
+                for (let i = currentYear; i >= 1930; i--) document.getElementById(p + 'Year').add(new Option(i, i));
+                setupSelect(p + 'Hour', 0, 23);
+                setupSelect(p + 'Min', 0, 59);
+
+                document.getElementById(p + 'UnknownBtn').addEventListener('click', function() {
+                    const h = document.getElementById(p + 'Hour');
+                    const m = document.getElementById(p + 'Min');
+                    this.classList.toggle('active');
+                    const isUnknown = this.classList.contains('active');
+                    h.disabled = m.disabled = isUnknown;
+                    h.required = m.required = !isUnknown;
+                    h.style.opacity = m.style.opacity = isUnknown ? "0.3" : "1";
+                    if (isUnknown) { h.value = ""; m.value = ""; }
+                });
+            });
+        });
+
         let isAnalyzing = false;
-
-        function toggleTime(target) {
-            const input = document.getElementById(target + 'Time');
-            const btn = event.target;
-            btn.classList.toggle('active');
-            if (btn.classList.contains('active')) {
-                input.value = "";
-                input.disabled = true;
-                input.style.opacity = "0.3";
-            } else {
-                input.disabled = false;
-                input.style.opacity = "1";
-            }
-        }
-
         document.getElementById('loveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (isAnalyzing) return;
-
-            // 1. 중복 클릭 방지 (입구컷)
             isAnalyzing = true;
+
             const subBtn = document.getElementById('subBtn');
             subBtn.disabled = true;
             subBtn.innerText = "กำลังคำนวณ...";
 
-            // 2. 화면 전환
             document.getElementById('inputArea').classList.add('hidden');
             document.getElementById('loadingLayer').style.display = 'flex';
 
-            // 3. 데이터 수집
+            const getVal = id => document.getElementById(id).value;
             const payload = {
-                resultId: crypto.randomUUID(), // 중복 방지용 고유 ID 생성
+                resultId: crypto.randomUUID(),
                 type: 'love',
                 me: {
-                    name: document.getElementById('myName').value,
-                    birth: document.getElementById('myBirth').value,
-                    time: document.getElementById('myTime').disabled ? "unknown" : document.getElementById('myTime').value
+                    name: getVal('myName'),
+                    birth: `${getVal('myYear')}-${getVal('myMonth')}-${getVal('myDay')}`,
+                    time: document.getElementById('myUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('myHour')}:${getVal('myMin')}`
                 },
                 partner: {
-                    name: document.getElementById('partnerName').value,
-                    birth: document.getElementById('partnerBirth').value,
-                    time: document.getElementById('partnerTime').disabled ? "unknown" : document.getElementById('partnerTime').value
+                    name: getVal('partnerName'),
+                    birth: `${getVal('partnerYear')}-${getVal('partnerMonth')}-${getVal('partnerDay')}`,
+                    time: document.getElementById('partnerUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('partnerHour')}:${getVal('partnerMin')}`
                 },
-                relationship: document.getElementById('relationship').value
+                relationship: getVal('relationship')
             };
 
-            console.log("전송 데이터:", payload);
-
-            // 4. API 요청 (예시 경로)
+            // API 호출 로직 (서버 엔드포인트에 맞게 수정 필요)
             try {
                 const response = await fetch('/api/fortune/analyze', {
                     method: 'POST',
@@ -256,15 +300,13 @@
                 });
 
                 if (response.ok) {
-                    const data = await response.json();
-                    window.location.href = `/love/result/${data.resultId}`;
+                    window.location.href = `/love/result/${payload.resultId}`;
                 } else {
-                    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+                    alert("ขออภัย เกิดข้อผิดพลาด กรุณาลองใหม่");
                     location.reload();
                 }
             } catch (err) {
                 console.error(err);
-                alert("การเชื่อมต่อขัดข้อง");
                 location.reload();
             }
         });

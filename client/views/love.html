@@ -10,7 +10,6 @@
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
-            --emerald: #50c878;
             --heart-pink: #ff4757;
             --border-line: rgba(200, 200, 200, 0.8); 
             --input-bg: rgba(255, 255, 255, 0.1);
@@ -60,68 +59,33 @@
         .logo img { height: 55px; width: auto; cursor: pointer; }
         .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
 
-        /* --- [마케팅 히어로 섹션] --- */
-        .hero-section {
-            text-align: center; margin-bottom: 30px; animation: fadeIn 0.8s ease;
-        }
-        .main-heart-icon {
-            font-size: 4rem; 
-            filter: drop-shadow(0 0 15px var(--heart-pink));
-            animation: heartbeat 1.5s infinite ease-in-out;
-            margin-bottom: 10px;
-            display: block;
-        }
+        .hero-section { text-align: center; margin-bottom: 30px; }
+        .main-heart-icon { font-size: 4rem; filter: drop-shadow(0 0 15px var(--heart-pink)); animation: heartbeat 1.5s infinite ease-in-out; margin-bottom: 10px; display: block; }
         .hero-title { font-family: 'Nanum Myeongjo', serif; font-size: 1.7rem; color: var(--point-gold); margin: 0; }
         .hero-desc { font-size: 0.9rem; opacity: 0.9; font-weight: 300; margin-top: 8px; line-height: 1.5; }
 
-        /* --- [분석 포인트 카드] --- */
-        .benefits-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 35px;
-        }
-        .benefit-card {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 15px; padding: 12px 8px; text-align: center;
-        }
+        .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 35px; }
+        .benefit-card { background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 12px 8px; text-align: center; }
         .benefit-icon { font-size: 1.2rem; display: block; margin-bottom: 5px; }
         .benefit-text { font-size: 0.75rem; font-weight: 400; line-height: 1.3; }
 
         .form-section { margin-bottom: 35px; text-align: left; }
-        .section-title { 
-            font-size: 1.1rem; font-weight: 700; color: var(--point-gold); 
-            margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
-            border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px;
-        }
+        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--point-gold); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px; }
 
         .input-group { margin-bottom: 20px; }
         .input-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 8px; display: block; color: var(--point-gold); font-weight: 500; }
         .input-sub { font-size: 0.75rem; opacity: 0.8; font-weight: 300; color: #fff; margin-left: 5px; }
         
-        input[type="text"], select {
-            width: 100%; padding: 12px; border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: var(--input-bg); color: #fff;
-            font-family: 'Kanit'; font-size: 0.95rem;
-            box-sizing: border-box; outline: none; transition: 0.3s;
-        }
+        input[type="text"], select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); background: var(--input-bg); color: #fff; font-family: 'Kanit'; font-size: 0.95rem; box-sizing: border-box; outline: none; }
         input::placeholder { color: rgba(255, 255, 255, 0.7) !important; font-weight: 300; }
 
         .dropdown-group { display: flex; gap: 8px; margin-bottom: 8px; }
         .dropdown-group select { flex: 1; min-width: 0; }
 
-        .unknown-btn {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer;
-        }
+        .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
         .unknown-btn.active { background: var(--point-gold); color: #000; font-weight: 700; border-color: var(--point-gold); }
 
-        .submit-btn {
-            width: 100%; padding: 18px; border-radius: 22px; border: none;
-            background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: #000; font-weight: 800; font-size: 1.2rem;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-            margin-top: 10px; transition: 0.2s;
-        }
+        .submit-btn { width: 100%; padding: 18px; border-radius: 22px; border: none; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; font-weight: 800; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); margin-top: 10px; }
 
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
@@ -155,22 +119,10 @@
             </section>
 
             <div class="benefits-grid">
-                <div class="benefit-card">
-                    <span class="benefit-icon">📊</span>
-                    <span class="benefit-text">คะแนนความเข้ากัน<br>ของดวงชะตา</span>
-                </div>
-                <div class="benefit-card">
-                    <span class="benefit-icon">💡</span>
-                    <span class="benefit-text">วิธีปรับตัวให้<br>รักกันยาวนาน</span>
-                </div>
-                <div class="benefit-card">
-                    <span class="benefit-icon">🔮</span>
-                    <span class="benefit-text">อนาคตความรัก<br>ในวันข้างหน้า</span>
-                </div>
-                <div class="benefit-card">
-                    <span class="benefit-icon">🍀</span>
-                    <span class="benefit-text">ไอ템เสริมดวง<br>สำหรับคู่รัก</span>
-                </div>
+                <div class="benefit-card"><span class="benefit-icon">📊</span><span class="benefit-text">คะแนนความเข้ากัน<br>ของดวงชะตา</span></div>
+                <div class="benefit-card"><span class="benefit-icon">💡</span><span class="benefit-text">วิธีปรับตัวให้<br>รักกันยาวนาน</span></div>
+                <div class="benefit-card"><span class="benefit-icon">🔮</span><span class="benefit-text">อนาคตความรัก<br>ในวันข้างหน้า</span></div>
+                <div class="benefit-card"><span class="benefit-icon">🍀</span><span class="benefit-text">ไอเทมเสริมดวง<br>สำหรับคู่รัก</span></div>
             </div>
 
             <form id="loveForm">
@@ -180,7 +132,6 @@
                         <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
                         <input type="text" id="myName" placeholder="ระบุชื่อเล่นของคุณ" required>
                     </div>
-                    
                     <div class="input-group">
                         <label class="input-label">วันเดือนปีเกิด</label>
                         <div class="dropdown-group">
@@ -188,21 +139,20 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
                             <select id="myYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
                         </div>
                     </div>
-
                     <div class="input-group">
                         <label class="input-label">เวลาเกิด</label>
                         <div class="dropdown-group">
                             <select id="myHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="myMin" required><option value="" disabled selected>นาที</option></select>
+                            <select id="myMin" required><option value="" disabled selected>นา티</option></select>
                         </div>
                         <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
@@ -214,7 +164,6 @@
                         <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
                         <input type="text" id="partnerName" placeholder="ระบุชื่อเล่นของเขา/เธอ" required>
                     </div>
-
                     <div class="input-group">
                         <label class="input-label">วันเดือนปีเกิด</label>
                         <div class="dropdown-group">
@@ -222,21 +171,20 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
                             <select id="partnerYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
                         </div>
                     </div>
-
                     <div class="input-group">
                         <label class="input-label">เวลาเกิด</label>
                         <div class="dropdown-group">
                             <select id="partnerHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="partnerMin" required><option value="" disabled selected>นาที</option></select>
+                            <select id="partnerMin" required><option value="" disabled selected>นา티</option></select>
                         </div>
                         <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
@@ -247,6 +195,7 @@
                     <div class="input-group">
                         <label class="input-label">สถานะปัจจุบันของคุณทั้งคู่</label>
                         <select id="relationship" required>
+                            <option value="" disabled selected>เลือกสถานะ</option>
                             <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
                             <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
                             <option value="fling">กำลังดูใจกัน (썸)</option>
@@ -271,7 +220,6 @@
     </div>
 
     <script>
-        // 드롭다운 및 모름 버튼 로직 동일 유지
         document.addEventListener('DOMContentLoaded', () => {
             const setupSelect = (id, start, end) => {
                 const select = document.getElementById(id);
@@ -286,6 +234,7 @@
                 for (let i = currentYear; i >= 1930; i--) document.getElementById(p + 'Year').add(new Option(i, i));
                 setupSelect(p + 'Hour', 0, 23);
                 setupSelect(p + 'Min', 0, 59);
+
                 document.getElementById(p + 'UnknownBtn').addEventListener('click', function() {
                     const h = document.getElementById(p + 'Hour'), m = document.getElementById(p + 'Min');
                     this.classList.toggle('active');
@@ -295,18 +244,39 @@
                     if (isUnknown) { h.value = ""; m.value = ""; }
                 });
             });
+
+            // --- [핵심: 태국어 유효성 검사 팝업 메시지 적용] ---
+            const form = document.getElementById('loveForm');
+            const inputs = form.querySelectorAll('input[required], select[required]');
+
+            inputs.forEach(input => {
+                // 브라우저 툴팁 메시지를 태국어로 강제 설정
+                input.oninvalid = function(e) {
+                    e.target.setCustomValidity("");
+                    if (!e.target.validity.valid) {
+                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"); // "이 입력란을 작성하세요"의 태국어
+                    }
+                };
+                input.oninput = function(e) {
+                    e.target.setCustomValidity("");
+                };
+            });
         });
 
-        // 폼 제출 로직 동일 유지
         let isAnalyzing = false;
         document.getElementById('loveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            // 폼 검증 (한 번 더 체크)
+            if (!e.target.checkValidity()) return;
+
             if (isAnalyzing) return;
             isAnalyzing = true;
             document.getElementById('subBtn').disabled = true;
             document.getElementById('inputArea').classList.add('hidden');
             document.getElementById('loadingLayer').style.display = 'flex';
-            // ... API fetch 로직 (생략) ...
+
+            // ... API 요청 로직 (ID 생성 및 전송) ...
         });
     </script>
 </body>

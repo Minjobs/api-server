@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saju - ผลทำนายความรัก</title>
+    <title>Saju - ดูดวงสมพงษ์ความรัก</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,9 +11,8 @@
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --emerald: #50c878;
-            --heart-pink: #ff4757;
             --border-line: rgba(200, 200, 200, 0.8); 
-            --card-glass: rgba(255, 255, 255, 0.12);
+            --input-bg: rgba(255, 255, 255, 0.1);
         }
 
         body {
@@ -50,77 +49,72 @@
             backdrop-filter: blur(7px); 
             border: 3px solid var(--border-line); 
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            text-align: center;
         }
 
         header {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding: 0 5px;
+            margin-bottom: 25px; padding: 0 5px;
             box-sizing: border-box;
         }
-        .logo img { height: 55px; width: auto; cursor: pointer; margin-left: 5px; }
+        .logo img { height: 55px; width: auto; cursor: pointer; }
         .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
 
-        /* --- [점수 게이지 섹션] --- */
-        .score-section {
-            margin-bottom: 30px;
-            position: relative;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .score-circle {
-            width: 180px; height: 180px;
-            border-radius: 50%;
-            border: 8px solid rgba(255, 255, 255, 0.1);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            background: radial-gradient(circle, rgba(255, 71, 87, 0.15) 0%, transparent 70%);
-            position: relative;
-        }
-        .score-value {
-            font-size: 3.5rem; font-weight: 800; color: var(--point-gold);
-            line-height: 1; margin-bottom: 5px;
-        }
-        .score-label { font-size: 0.9rem; font-weight: 500; opacity: 0.9; }
-
-        .names-banner {
-            display: flex; justify-content: center; align-items: center; gap: 12px;
-            margin-bottom: 25px; font-size: 1.3rem; font-weight: 700;
-        }
-        .heart-icon { color: var(--heart-pink); font-size: 1.6rem; animation: pulse 1.5s infinite; }
-
-        /* --- [결과 텍스트 카드] --- */
-        .analysis-card {
-            background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 22px;
-            padding: 20px; text-align: left; margin-bottom: 20px;
-        }
-        .analysis-title {
-            font-size: 1.1rem; font-weight: 700; color: var(--point-gold);
-            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
-        }
-        .analysis-text {
-            font-size: 0.95rem; line-height: 1.7; font-weight: 300; opacity: 0.95;
-            word-break: keep-all;
+        .form-section { margin-bottom: 30px; text-align: left; animation: fadeIn 0.5s ease; }
+        .section-title { 
+            font-size: 1.2rem; font-weight: 700; color: var(--point-gold); 
+            margin-bottom: 15px; display: flex; align-items: center; gap: 8px;
+            border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px;
         }
 
-        /* --- [지표 바 스타일] --- */
-        .stat-item { margin-bottom: 15px; }
-        .stat-label-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; }
-        .stat-bar-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
-        .stat-bar-fill { height: 100%; background: var(--point-gold); border-radius: 4px; transition: width 1.5s ease-out; }
-
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
-        .btn {
-            width: 100%; padding: 16px; border-radius: 20px; border: none;
-            font-weight: 700; font-size: 1.1rem; cursor: pointer; font-family: 'Kanit';
-            transition: 0.3s; text-decoration: none; text-align: center;
+        .input-group { margin-bottom: 18px; }
+        .input-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 6px; display: block; font-weight: 400; }
+        .input-sub { font-size: 0.75rem; opacity: 0.6; font-weight: 300; margin-left: 5px; }
+        
+        input, select {
+            width: 100%; padding: 14px; border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--input-bg); color: #fff;
+            font-family: 'Kanit'; font-size: 1rem;
+            box-sizing: border-box; outline: none; transition: 0.3s;
         }
-        .btn-main { background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
-        .btn-sub { background: rgba(255, 255, 255, 0.1); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); }
+        input:focus, select:focus { border-color: var(--point-gold); background: rgba(255,255,255,0.15); }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        /* 시간 모름 버튼 스타일 */
+        .time-row { display: flex; flex-direction: column; gap: 8px; }
+        .unknown-btn {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc; padding: 6px 12px; border-radius: 10px;
+            font-size: 0.75rem; cursor: pointer; transition: 0.3s;
+        }
+        .unknown-btn.active { background: var(--emerald); color: #000; font-weight: 700; border-color: var(--emerald); }
 
-        footer { margin-top: 30px; opacity: 0.7; font-size: 0.75rem; font-weight: 300; }
+        .submit-btn {
+            width: 100%; padding: 18px; border-radius: 22px; border: none;
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: #000; font-weight: 800; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+            margin-top: 10px; transition: 0.3s;
+        }
+        .submit-btn:disabled { background: #666; cursor: not-allowed; opacity: 0.7; }
+
+        /* 로딩 화면 */
+        #loadingLayer {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 60px 0;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2);
+            border-top: 5px solid var(--point-gold); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        footer { margin-top: 25px; font-size: 0.75rem; opacity: 0.7; text-align: center; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -133,52 +127,70 @@
             <div class="logo" onclick="location.href='/'">
                 <img src="textlogo.png" alt="Saju">
             </div>
-            <a href="/history" class="back-link">← ประวัติ</a>
+            <a href="/" class="back-link">← หน้าหลัก</a>
         </header>
 
-        <main>
-            <div class="names-banner">
-                <span id="myName">คุณ</span>
-                <span class="heart-icon">❤️</span>
-                <span id="partnerName">อีกฝ่าย</span>
-            </div>
+        <main id="inputArea">
+            <form id="loveForm">
+                <section class="form-section">
+                    <div class="section-title">👤 ข้อมูลของคุณ (Me)</div>
+                    <div class="input-group">
+                        <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
+                        <input type="text" id="myName" placeholder="ระบุชื่อเล่นของคุณ" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">วันเดือนปีเกิด</label>
+                        <input type="date" id="myBirth" required>
+                    </div>
+                    <div class="input-group time-row">
+                        <label class="input-label">เวลาเกิด</label>
+                        <input type="time" id="myTime">
+                        <button type="button" class="unknown-btn" onclick="toggleTime('my')">ไม่ทราบเวลาเกิด</button>
+                    </div>
+                </section>
 
-            <section class="score-section">
-                <div class="score-circle">
-                    <div class="score-value" id="totalScore">0</div>
-                    <div class="score-label">คะแนนดวงสมพงษ์</div>
-                </div>
-            </section>
+                <section class="form-section">
+                    <div class="section-title">💖 ข้อมูลของอีกฝ่าย (Partner)</div>
+                    <div class="input-group">
+                        <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
+                        <input type="text" id="partnerName" placeholder="ระบุชื่อเล่นของเขา/เธอ" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">วันเดือนปีเกิด</label>
+                        <input type="date" id="partnerBirth" required>
+                    </div>
+                    <div class="input-group time-row">
+                        <label class="input-label">เวลาเกิด</label>
+                        <input type="time" id="partnerTime">
+                        <button type="button" class="unknown-btn" onclick="toggleTime('partner')">ไม่ทราบเวลาเกิด</button>
+                    </div>
+                </section>
 
-            <article class="analysis-card">
-                <div class="analysis-title">✨ สรุปคำทำนาย</div>
-                <div class="analysis-text" id="summaryText">...</div>
-            </article>
+                <section class="form-section">
+                    <div class="section-title">💍 ความสัมพันธ์</div>
+                    <div class="input-group">
+                        <label class="input-label">สถานะปัจจุบันของคุณทั้งคู่</label>
+                        <select id="relationship" required>
+                            <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
+                            <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
+                            <option value="fling">กำลังดูใจกัน (썸)</option>
+                            <option value="dating_1yr">คบกันมากกว่า 1 ปี</option>
+                            <option value="dating_3yr">คบกันมากกว่า 3 ปี</option>
+                            <option value="dating_5yr">คบกันมากกว่า 5 ปี</option>
+                            <option value="married">แต่งงานแล้ว</option>
+                        </select>
+                    </div>
+                </section>
 
-            <article class="analysis-card">
-                <div class="analysis-title">📊 วิเคราะห์แต่ละด้าน</div>
-                
-                <div class="stat-item">
-                    <div class="stat-label-row"><span>ด้านความรัก (Love)</span><span id="loveScoreText">0%</span></div>
-                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="loveBar" style="width: 0%; background: var(--heart-pink);"></div></div>
-                </div>
-
-                <div class="stat-item">
-                    <div class="stat-label-row"><span>ความเข้าใจ (Understanding)</span><span id="commScoreText">0%</span></div>
-                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="commBar" style="width: 0%; background: var(--emerald);"></div></div>
-                </div>
-
-                <div class="stat-item">
-                    <div class="stat-label-row"><span>การส่งเสริมดวง (Support)</span><span id="luckScoreText">0%</span></div>
-                    <div class="stat-bar-bg"><div class="stat-bar-fill" id="luckBar" style="width: 0%;"></div></div>
-                </div>
-            </article>
-
-            <div class="btn-group">
-                <button class="btn btn-main" onclick="location.href='/'">กลับหน้าหลัก</button>
-                <button class="btn btn-sub" onclick="alert('ระบบกำลังเตรียมรูปภาพสำหรับแชร์ค่ะ')">แชร์ผลลัพธ์</button>
-            </div>
+                <button type="submit" class="submit-btn" id="subBtn">ดูผลทำนายความรัก 🪙 2</button>
+            </form>
         </main>
+
+        <div id="loadingLayer">
+            <div class="spinner"></div>
+            <h3 style="color: var(--point-gold);">กำลังอ่านโชคชะตาความรัก...</h3>
+            <p style="font-size: 0.9rem; opacity: 0.8; font-weight: 300;">ดวงดาวกำลังเรียงตัวเพื่อหาคำตอบให้คุณ</p>
+        </div>
 
         <footer>
             © 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ
@@ -186,47 +198,76 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 실제 환경에서는 API를 통해 가져온 데이터를 여기에 바인딩합니다.
-            const resultData = {
-                myName: "คุณ",
-                partnerName: "อีกฝ่าย",
-                score: 88,
-                love: 92,
-                comm: 80,
-                luck: 85,
-                summary: "ดวงชะตาของคุณทั้งคู่มีความเข้ากันได้อย่างน่าอัศจรรย์ มีเกณฑ์ส่งเสริมกันในเรื่องหน้าที่การงานและความมั่นคงในชีวิตคู่"
-            };
+        let isAnalyzing = false;
 
-            // 데이터 주입
-            document.getElementById('myName').innerText = resultData.myName;
-            document.getElementById('partnerName').innerText = resultData.partnerName;
-            document.getElementById('summaryText').innerText = resultData.summary;
-
-            // 숫자 카운팅 애니메이션
-            animateValue("totalScore", 0, resultData.score, 2000);
-            
-            // 게이지 바 애니메이션
-            setTimeout(() => {
-                document.getElementById('loveBar').style.width = resultData.love + '%';
-                document.getElementById('loveScoreText').innerText = resultData.love + '%';
-                document.getElementById('commBar').style.width = resultData.comm + '%';
-                document.getElementById('commScoreText').innerText = resultData.comm + '%';
-                document.getElementById('luckBar').style.width = resultData.luck + '%';
-                document.getElementById('luckScoreText').innerText = resultData.luck + '%';
-            }, 300);
-        });
-
-        function animateValue(id, start, end, duration) {
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                document.getElementById(id).innerHTML = Math.floor(progress * (end - start) + start);
-                if (progress < 1) window.requestAnimationFrame(step);
-            };
-            window.requestAnimationFrame(step);
+        function toggleTime(target) {
+            const input = document.getElementById(target + 'Time');
+            const btn = event.target;
+            btn.classList.toggle('active');
+            if (btn.classList.contains('active')) {
+                input.value = "";
+                input.disabled = true;
+                input.style.opacity = "0.3";
+            } else {
+                input.disabled = false;
+                input.style.opacity = "1";
+            }
         }
+
+        document.getElementById('loveForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (isAnalyzing) return;
+
+            // 1. 중복 클릭 방지 (입구컷)
+            isAnalyzing = true;
+            const subBtn = document.getElementById('subBtn');
+            subBtn.disabled = true;
+            subBtn.innerText = "กำลังคำนวณ...";
+
+            // 2. 화면 전환
+            document.getElementById('inputArea').classList.add('hidden');
+            document.getElementById('loadingLayer').style.display = 'flex';
+
+            // 3. 데이터 수집
+            const payload = {
+                resultId: crypto.randomUUID(), // 중복 방지용 고유 ID 생성
+                type: 'love',
+                me: {
+                    name: document.getElementById('myName').value,
+                    birth: document.getElementById('myBirth').value,
+                    time: document.getElementById('myTime').disabled ? "unknown" : document.getElementById('myTime').value
+                },
+                partner: {
+                    name: document.getElementById('partnerName').value,
+                    birth: document.getElementById('partnerBirth').value,
+                    time: document.getElementById('partnerTime').disabled ? "unknown" : document.getElementById('partnerTime').value
+                },
+                relationship: document.getElementById('relationship').value
+            };
+
+            console.log("전송 데이터:", payload);
+
+            // 4. API 요청 (예시 경로)
+            try {
+                const response = await fetch('/api/fortune/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': 'YOUR_API_KEY' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    window.location.href = `/love/result/${data.resultId}`;
+                } else {
+                    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+                    location.reload();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("การเชื่อมต่อขัดข้อง");
+                location.reload();
+            }
+        });
     </script>
 </body>
 </html>

@@ -118,33 +118,3 @@ export const analyzeLove = async (req, res) => {
         activeLoveJobs.delete(resultId); // 작업 완료 후 맵에서 삭제
     }
 };
-
-/**
- * 2. [GET] /api/love/result/:id
- * 결과 상세 조회
- */
-export const getLoveResult = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [rows] = await db.execute(
-            `SELECT fortune_type, summary_text, detail_data, created_at 
-             FROM fortune_results WHERE result_id = ?`, 
-            [id]
-        );
-
-        if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
-
-        const data = rows[0];
-        const details = typeof data.detail_data === 'string' ? JSON.parse(data.detail_data) : data.detail_data;
-
-        res.json({
-            id,
-            type: data.fortune_type,
-            summary: data.summary_text,
-            createdAt: data.created_at,
-            ...details // score, chemistry 등을 최상위 레벨로 올려서 보냄
-        });
-    } catch (err) {
-        res.status(500).json({ error: 'Fetch failed' });
-    }
-};

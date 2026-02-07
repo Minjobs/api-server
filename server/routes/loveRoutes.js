@@ -7,7 +7,4 @@ const router = express.Router();
 // [POST] /api/love/analyze
 router.post('/analyze', authenticateUser, loveController.analyzeLove);
 
-// [GET] /api/love/result/:id
-router.get('/result/:id', authenticateUser, loveController.getLoveResult);
-
 export default router;

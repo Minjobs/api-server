@@ -28,10 +28,22 @@ router.get('/checkout/:id', verifyToken, (req, res) => res.sendFile(path.join(__
 router.get(['/personality', '/wealth', '/romance'], (req, res) => {
     res.sendFile(path.join(__dirname, 'client/views/input-form.html'));
 });
-// 결과 페이지 URL 처리: /result/무작위ID
-router.get('/result/:id', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/views/result.html'));
+// 결과 페이지 URL 처리
+router.get('/result/:type/:id', (req, res) => {
+    const { type, id } = req.params;
+
+    // type이 love일 경우에만 love_result.html을 보여줍니다.
+    if (type === 'love') {
+        console.log(`💖 연애 궁합 결과 페이지 로드: ${id}`);
+        res.sendFile(path.join(__dirname, 'client/views/love_result.html'));
+    } 
+    // 그 외의 경우 (일반 사주 등) 기존 결과 페이지를 보여줍니다.
+    else {
+        console.log(`🔮 일반 사주 결과 페이지 로드 (${type}): ${id}`);
+        res.sendFile(path.join(__dirname, 'client/views/result.html'));
+    }
 });
+
 
 
 export default router;

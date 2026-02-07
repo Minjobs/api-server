@@ -139,28 +139,3 @@ export const analyzeLove = async (req, res) => {
         activeLoveJobs.delete(resultId);
     }
 };
-
-/**
- * 2. [GET] /api/love/result/:id
- * 결과 상세 조회
- */
-export const getLoveResult = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [rows] = await db.execute(
-            `SELECT detail_data FROM fortune_results WHERE result_id = ?`, 
-            [id]
-        );
-
-        if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
-
-        const details = typeof rows[0].detail_data === 'string' 
-            ? JSON.parse(rows[0].detail_data) 
-            : rows[0].detail_data;
-
-        res.json(details);
-    } catch (err) {
-        console.error('❌ 조회 에러:', err);
-        res.status(500).json({ error: 'Fetch failed' });
-    }
-};

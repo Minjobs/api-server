@@ -17,7 +17,18 @@ export const analyzeLove = async (req, res) => {
     console.log(`--- [Love] 분석 시작 (ID: ${resultId}) ---`);
 
     try {
-        // [1] DB 중복 체크 (이미 결과가 있는지)
+        // [추가] 1. 유저 코인 잔액 확인
+        const [userRows] = await db.execute(
+            `SELECT coins FROM users WHERE user_id = ?`,
+            [line_user_id]
+        );
+
+        if (userRows.length === 0 || userRows[0].coins < 2) {
+            console.log(`⚠️ 코인 부족: ${line_user_id}`);
+            return res.status(403).json({ error: 'INSUFFICIENT_COINS' });
+        }
+
+        // [기존 1] DB 중복 체크
         const [existing] = await db.execute(
             `SELECT result_id FROM fortune_results WHERE result_id = ?`,
             [resultId]
@@ -28,7 +39,7 @@ export const analyzeLove = async (req, res) => {
             return res.json({ resultId, status: 'already_done' });
         }
 
-        // [2] 진행 중 중복 체크 (GPT 호출 중인지)
+        // [기존 2] 진행 중 중복 체크
         if (activeLoveJobs.has(resultId)) {
             console.log("⏳ 현재 같은 ID로 분석이 진행 중입니다.");
             return res.status(202).json({ message: 'Still calculating your love destiny...' });
@@ -36,7 +47,7 @@ export const analyzeLove = async (req, res) => {
 
         activeLoveJobs.set(resultId, true);
 
-        // [3] 시스템 프롬프트 설정 (한자 배제, 자연의 원리로 설명)
+        // [기존 3] 시스템 프롬프트 설정 (수정 없음)
         const systemPrompt = `
             You are 'Master Murdoo K', the leading expert in "Korean Saju" (ศาสตร์ 4 เสาหลักแห่งดวงชะตา). 
             Your mission is to analyze love compatibility using only the principles of Korean Saju.
@@ -61,7 +72,7 @@ export const analyzeLove = async (req, res) => {
             Provide the analysis in the specified JSON schema format.
         `;
 
-        // [4] OpenAI Structured Outputs 요청
+        // [기존 4] OpenAI Structured Outputs 요청
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
@@ -94,27 +105,46 @@ export const analyzeLove = async (req, res) => {
 
         const loveResult = JSON.parse(completion.choices[0].message.content);
 
-        // [5] DB 저장 (fortune_results 테이블 공용 사용)
-        console.log(`💾 결과 저장 중... (ID: ${resultId})`);
-        await db.execute(
-            `INSERT IGNORE INTO fortune_results 
-            (result_id, line_user_id, fortune_type, summary_text, detail_data) 
-            VALUES (?, ?, ?, ?, ?)`,
-            [
-                resultId, 
-                line_user_id, 
-                'love', 
-                `โชคชะตาความรักของคุณกับ ${partner.name} คือ ${loveResult.score} คะแนน`,
-                JSON.stringify(loveResult)
-            ]
-        );
+        // [수정 5] DB 저장 및 코인 차감 (트랜잭션 적용)
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
 
-        res.json({ resultId });
+            // 결과 저장
+            await conn.execute(
+                `INSERT IGNORE INTO fortune_results 
+                (result_id, line_user_id, fortune_type, summary_text, detail_data) 
+                VALUES (?, ?, ?, ?, ?)`,
+                [
+                    resultId, 
+                    line_user_id, 
+                    'love', 
+                    `โชคชะตาความรักของคุณกับ ${partner.name} คือ ${loveResult.score} คะแนน`,
+                    JSON.stringify(loveResult)
+                ]
+            );
+
+            // 코인 2개 차감
+            await conn.execute(
+                `UPDATE users SET coins = coins - 2 WHERE user_id = ?`,
+                [line_user_id]
+            );
+
+            await conn.commit();
+            console.log(`✅ 분석 완료 및 코인 차감 성공: ${resultId}`);
+            res.json({ resultId });
+
+        } catch (dbErr) {
+            await conn.rollback();
+            throw dbErr;
+        } finally {
+            conn.release();
+        }
 
     } catch (err) {
         console.error('❌ 분석 에러:', err);
         res.status(500).json({ error: 'Analysis failed', message: err.message });
     } finally {
-        activeLoveJobs.delete(resultId); // 작업 완료 후 맵에서 삭제
+        activeLoveJobs.delete(resultId);
     }
 };

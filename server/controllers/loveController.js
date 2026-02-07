@@ -8,18 +8,23 @@ const activeLoveJobs = new Map();
 
 /**
  * 1. [POST] /api/love/analyze
- * 한국식 사주(오행)를 기반으로 한자 없이 태국어로 궁합 분석
+ * DB 컬럼명(line_user_id) 반영 및 summary_text 제거 버전
  */
 export const analyzeLove = async (req, res) => {
     const { resultId, me, partner, relationship } = req.body;
+    
+    // 유저 인증 정보 확인
+    if (!req.user || !req.user.userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
     const line_user_id = req.user.userId;
 
     console.log(`--- [Love] 분석 시작 (ID: ${resultId}) ---`);
 
     try {
-        // [추가] 1. 유저 코인 잔액 확인
+        // [수정 1] 유저 코인 잔액 확인 (user_id -> line_user_id)
         const [userRows] = await db.execute(
-            `SELECT coins FROM users WHERE user_id = ?`,
+            `SELECT coins FROM users WHERE line_user_id = ?`,
             [line_user_id]
         );
 
@@ -42,22 +47,18 @@ export const analyzeLove = async (req, res) => {
         // [기존 2] 진행 중 중복 체크
         if (activeLoveJobs.has(resultId)) {
             console.log("⏳ 현재 같은 ID로 분석이 진행 중입니다.");
-            return res.status(202).json({ message: 'Still calculating your love destiny...' });
+            return res.status(202).json({ message: 'Still calculating...' });
         }
 
         activeLoveJobs.set(resultId, true);
 
-        // [기존 3] 시스템 프롬프트 설정 (수정 없음)
+        // [기존 3] 시스템 프롬프트 (수정 없음)
         const systemPrompt = `
             You are 'Master Murdoo K', the leading expert in "Korean Saju" (ศาสตร์ 4 เสาหลักแห่งดวงชะตา). 
             Your mission is to analyze love compatibility using only the principles of Korean Saju.
-
-            [Operational Guidelines]
             1. Language: MUST write exclusively in Thai (ภาษาไทย).
-            2. No Hanja: Do NOT use any Chinese characters (Hanja). Translate them into easy-to-understand Thai terms based on the 5 Elements (Wood, Fire, Earth, Metal, Water).
-            3. Accessibility: Explain the harmony of destiny as a natural flow (e.g., "Like water nourishing a tree" or "Like sun warming the earth") so that Thai users can understand intuitively.
-            4. Addressing: Use "คุณ" for the user and reference the partner's nickname naturally.
-            5. Context: Provide deeply personalized advice based on their current relationship status: ${relationship}.
+            2. No Hanja: Do NOT use any Chinese characters (Hanja). Translate them into easy-to-understand Thai terms.
+            3. Context: Provide deeply personalized advice based on status: ${relationship}.
         `;
 
         const userPrompt = `
@@ -65,20 +66,13 @@ export const analyzeLove = async (req, res) => {
             - User (Me): Name: ${me.name}, Birth: ${me.birth}, Time: ${me.time}
             - Partner: Name: ${partner.name}, Birth: ${partner.birth}, Time: ${partner.time}
             - Current Relationship Status: ${relationship}
-
-            [Request]
-            Analyze how the 'Energy of Nature' (the 5 Elements: Wood, Fire, Earth, Metal, Water) from their Korean birth pillars interact with each other. 
-            Focus on their spiritual sync, energy flow, and future path. 
-            Provide the analysis in the specified JSON schema format.
+            Analyze energy flow and paths.
         `;
 
         // [기존 4] OpenAI Structured Outputs 요청
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
-            messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userPrompt }
-            ],
+            messages: [{ role: "system", content: systemPrompt }, { role: "user", content: userPrompt }],
             response_format: {
                 type: "json_schema",
                 json_schema: {
@@ -99,34 +93,32 @@ export const analyzeLove = async (req, res) => {
                         additionalProperties: false
                     }
                 }
-            },
-            temperature: 0.7
+            }
         });
 
         const loveResult = JSON.parse(completion.choices[0].message.content);
 
-        // [수정 5] DB 저장 및 코인 차감 (트랜잭션 적용)
+        // [수정 5] DB 저장 및 코인 차감 (summary_text 제거 및 line_user_id 적용)
         const conn = await db.getConnection();
         try {
             await conn.beginTransaction();
 
-            // 결과 저장
+            // 결과 저장 (summary_text 컬럼 제외)
             await conn.execute(
                 `INSERT IGNORE INTO fortune_results 
-                (result_id, line_user_id, fortune_type, summary_text, detail_data) 
-                VALUES (?, ?, ?, ?, ?)`,
+                (result_id, line_user_id, fortune_type, detail_data) 
+                VALUES (?, ?, ?, ?)`,
                 [
                     resultId, 
                     line_user_id, 
                     'love', 
-                    `โชคชะตาความรักของคุณกับ ${partner.name} คือ ${loveResult.score} คะแนน`,
                     JSON.stringify(loveResult)
                 ]
             );
 
-            // 코인 2개 차감
+            // 코인 2개 차감 (user_id -> line_user_id)
             await conn.execute(
-                `UPDATE users SET coins = coins - 2 WHERE user_id = ?`,
+                `UPDATE users SET coins = coins - 2 WHERE line_user_id = ?`,
                 [line_user_id]
             );
 

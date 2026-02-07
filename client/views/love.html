@@ -82,10 +82,11 @@
         .dropdown-group { display: flex; gap: 8px; margin-bottom: 8px; }
         .dropdown-group select { flex: 1; min-width: 0; }
 
-        .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
+        .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: 0.3s; }
         .unknown-btn.active { background: var(--point-gold); color: #000; font-weight: 700; border-color: var(--point-gold); }
 
-        .submit-btn { width: 100%; padding: 18px; border-radius: 22px; border: none; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; font-weight: 800; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); margin-top: 10px; }
+        .submit-btn { width: 100%; padding: 18px; border-radius: 22px; border: none; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; font-weight: 800; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); margin-top: 10px; transition: 0.3s; }
+        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
@@ -139,9 +140,9 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
@@ -152,7 +153,7 @@
                         <label class="input-label">เวลาเกิด</label>
                         <div class="dropdown-group">
                             <select id="myHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="myMin" required><option value="" disabled selected>นา티</option></select>
+                            <select id="myMin" required><option value="" disabled selected>นาที</option></select>
                         </div>
                         <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
@@ -171,7 +172,7 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                                 <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -184,7 +185,7 @@
                         <label class="input-label">เวลาเกิด</label>
                         <div class="dropdown-group">
                             <select id="partnerHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="partnerMin" required><option value="" disabled selected>นา티</option></select>
+                            <select id="partnerMin" required><option value="" disabled selected>นาที</option></select>
                         </div>
                         <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบเวลาเกิด</button>
                     </div>
@@ -214,12 +215,21 @@
         <div id="loadingLayer">
             <div class="spinner"></div>
             <h3 style="color: var(--point-gold);">กำลังอ่านโชคชะตาความรัก...</h3>
+            <p style="font-size: 0.9rem; opacity: 0.8;">ดวงดาวกำลังคำนวณความสมพงษ์ของคุณทั้งคู่</p>
         </div>
 
         <footer>© 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ</footer>
     </div>
 
     <script>
+        // UUID 생성기 (결과 ID용)
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const setupSelect = (id, start, end) => {
                 const select = document.getElementById(id);
@@ -245,38 +255,74 @@
                 });
             });
 
-            // --- [핵심: 태국어 유효성 검사 팝업 메시지 적용] ---
+            // 태국어 유효성 검사 팝업 메시지
             const form = document.getElementById('loveForm');
             const inputs = form.querySelectorAll('input[required], select[required]');
-
             inputs.forEach(input => {
-                // 브라우저 툴팁 메시지를 태국어로 강제 설정
                 input.oninvalid = function(e) {
                     e.target.setCustomValidity("");
-                    if (!e.target.validity.valid) {
-                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"); // "이 입력란을 작성하세요"의 태국어
-                    }
+                    if (!e.target.validity.valid) e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
                 };
-                input.oninput = function(e) {
-                    e.target.setCustomValidity("");
-                };
+                input.oninput = function(e) { e.target.setCustomValidity(""); };
             });
         });
 
+        // --- [핵심: API 호출 및 리다이렉트 로직] ---
         let isAnalyzing = false;
         document.getElementById('loveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
-            // 폼 검증 (한 번 더 체크)
             if (!e.target.checkValidity()) return;
-
             if (isAnalyzing) return;
+            
             isAnalyzing = true;
-            document.getElementById('subBtn').disabled = true;
+            const subBtn = document.getElementById('subBtn');
+            const resultId = generateUUID(); // 고유 ID 생성
+
+            // UI 업데이트
+            subBtn.disabled = true;
+            subBtn.innerText = "กำลังคำนวณ...";
             document.getElementById('inputArea').classList.add('hidden');
             document.getElementById('loadingLayer').style.display = 'flex';
 
-            // ... API 요청 로직 (ID 생성 및 전송) ...
+            // 데이터 수집
+            const getVal = id => document.getElementById(id).value;
+            const payload = {
+                resultId: resultId,
+                me: {
+                    name: getVal('myName'),
+                    birth: `${getVal('myYear')}-${getVal('myMonth')}-${getVal('myDay')}`,
+                    time: document.getElementById('myUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('myHour')}:${getVal('myMin')}`
+                },
+                partner: {
+                    name: getVal('partnerName'),
+                    birth: `${getVal('partnerYear')}-${getVal('partnerMonth')}-${getVal('partnerDay')}`,
+                    time: document.getElementById('partnerUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('partnerHour')}:${getVal('partnerMin')}`
+                },
+                relationship: getVal('relationship')
+            };
+
+            try {
+                // API 호출 (서버의 loveController.js와 연결)
+                const response = await fetch('/api/love/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    // 분석 성공 시 결과 페이지로 이동 (/:type/:id 구조)
+                    window.location.href = `/result/love/${resultId}`;
+                } else if (response.status === 403) {
+                    alert("เหรียญไม่พอ กรุณาเติมเหรียญก่อน (코인이 부족합니다)");
+                    location.href = "/shop";
+                } else {
+                    throw new Error("Server error");
+                }
+            } catch (err) {
+                console.error('Analysis failed:', err);
+                alert("เกิดข้อผิดพลาดในการวิเคราะห์ กรุณาลองใหม่ในภายหลัง");
+                location.reload(); // 에러 발생 시 초기화
+            }
         });
     </script>
 </body>

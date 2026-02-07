@@ -1,366 +1,166 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saju - ดูดวงสมพงษ์ความรัก</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-overlay: rgba(0, 0, 0, 0.38); 
-            --text-white: #ffffff;  
-            --point-gold: #ffd700;
-            --heart-pink: #ff4757;
-            --border-line: rgba(200, 200, 200, 0.8); 
-            --input-bg: rgba(255, 255, 255, 0.1);
+import OpenAI from 'openai';
+import db from '../config/db.js';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// [중복 방지] 현재 분석이 진행 중인 요청을 추적하는 메모리 맵
+const activeLoveJobs = new Map();
+
+/**
+ * 1. [POST] /api/love/analyze
+ * DB 컬럼명(line_user_id) 반영 및 분석/차감 로직 통합
+ */
+export const analyzeLove = async (req, res) => {
+    const { resultId, me, partner, relationship } = req.body;
+    
+    // 유저 인증 정보 확인 (req.user.userId가 DB의 line_user_id와 매칭됨)
+    if (!req.user || !req.user.userId) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const line_user_id = req.user.userId;
+
+    console.log(`--- [Love] 분석 시작 (ID: ${resultId}) ---`);
+
+    try {
+        // [1] 유저 코인 잔액 확인 (user_id -> line_user_id로 수정)
+        const [userRows] = await db.execute(
+            `SELECT coins FROM users WHERE line_user_id = ?`,
+            [line_user_id]
+        );
+
+        if (userRows.length === 0 || userRows[0].coins < 2) {
+            console.log(`⚠️ 코인 부족: ${line_user_id}`);
+            return res.status(403).json({ error: 'INSUFFICIENT_COINS' });
         }
 
-        body {
-            margin: 0; padding: 0;
-            background-color: #f5f5f5; 
-            font-family: 'Kanit', sans-serif;
-            color: var(--text-white);
-            min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center;
-            overflow-x: hidden;
+        // [2] DB 중복 체크 (이미 결과가 있는지)
+        const [existing] = await db.execute(
+            `SELECT result_id FROM fortune_results WHERE result_id = ?`,
+            [resultId]
+        );
+
+        if (existing.length > 0) {
+            console.log("♻️ 이미 존재하는 결과입니다.");
+            return res.json({ resultId, status: 'already_done' });
         }
 
-        .background-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            background-image: url('/background.jpg'); 
-            background-size: cover; background-position: center;
-            background-attachment: fixed; opacity: 0.8; 
+        // [3] 진행 중 중복 체크 (GPT 호출 중인지)
+        if (activeLoveJobs.has(resultId)) {
+            console.log("⏳ 현재 같은 ID로 분석이 진행 중입니다.");
+            return res.status(202).json({ message: 'Still calculating...' });
         }
 
-        .background-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            backdrop-filter: blur(7px) brightness(1.0);
-        }
+        activeLoveJobs.set(resultId, true);
 
-        .container {
-            width: 88%; max-width: 440px; 
-            margin: 20px 0;
-            background-color: var(--bg-overlay); 
-            border-radius: 30px; 
-            padding: 20px 15px 40px 15px;
-            box-sizing: border-box;
-            backdrop-filter: blur(7px); 
-            border: 3px solid var(--border-line); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
+        // [4] 시스템 프롬프트 설정 (기존 로직 유지)
+        const systemPrompt = `
+            You are 'Master Murdoo K', the leading expert in "Korean Saju". 
+            Your mission is to analyze love compatibility using only the principles of Korean Saju.
+            1. Language: MUST write exclusively in Thai (ภาษาไทย).
+            2. No Hanja: Translate 5 Elements into Thai terms (Wood, Fire, Earth, Metal, Water).
+            3. Context: Provide deeply personalized advice based on status: ${relationship}.
+        `;
 
-        header {
-            width: 100%; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding: 0 5px;
-            box-sizing: border-box;
-        }
-        .logo img { height: 55px; width: auto; cursor: pointer; }
-        .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
+        const userPrompt = `
+            [Korean Saju Destiny Data]
+            - User (Me): Name: ${me.name}, Birth: ${me.birth}, Time: ${me.time}
+            - Partner: Name: ${partner.name}, Birth: ${partner.birth}, Time: ${partner.time}
+            - Current Relationship Status: ${relationship}
+            Provide a detailed analysis in Thai using JSON schema.
+        `;
 
-        .hero-section { text-align: center; margin-bottom: 30px; }
-        .main-heart-icon { font-size: 4rem; filter: drop-shadow(0 0 15px var(--heart-pink)); animation: heartbeat 1.5s infinite ease-in-out; margin-bottom: 10px; display: block; }
-        .hero-title { font-family: 'Nanum Myeongjo', serif; font-size: 1.7rem; color: var(--point-gold); margin: 0; }
-        .hero-desc { font-size: 0.9rem; opacity: 0.9; font-weight: 300; margin-top: 8px; line-height: 1.5; }
-
-        .benefits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 35px; }
-        .benefit-card { background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 12px 8px; text-align: center; }
-        .benefit-icon { font-size: 1.2rem; display: block; margin-bottom: 5px; }
-        .benefit-text { font-size: 0.75rem; font-weight: 400; line-height: 1.3; }
-
-        .form-section { margin-bottom: 35px; text-align: left; }
-        .section-title { font-size: 1.1rem; font-weight: 700; color: var(--point-gold); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid rgba(255,215,0,0.3); padding-bottom: 5px; }
-
-        .input-group { margin-bottom: 20px; }
-        .input-label { font-size: 0.85rem; opacity: 0.9; margin-bottom: 8px; display: block; color: var(--point-gold); font-weight: 500; }
-        .input-sub { font-size: 0.75rem; opacity: 0.8; font-weight: 300; color: #fff; margin-left: 5px; }
-        
-        input[type="text"], select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); background: var(--input-bg); color: #fff; font-family: 'Kanit'; font-size: 0.95rem; box-sizing: border-box; outline: none; }
-        input::placeholder { color: rgba(255, 255, 255, 0.7) !important; font-weight: 300; }
-
-        .dropdown-group { display: flex; gap: 8px; margin-bottom: 8px; }
-        .dropdown-group select { flex: 1; min-width: 0; }
-
-        .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; transition: 0.3s; }
-        .unknown-btn.active { background: var(--point-gold); color: #000; font-weight: 700; border-color: var(--point-gold); }
-
-        .submit-btn { width: 100%; padding: 18px; border-radius: 22px; border: none; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; font-weight: 800; font-size: 1.2rem; cursor: pointer; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4); margin-top: 10px; transition: 0.3s; }
-        .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
-        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
-
-        /* 커스텀 모달 스타일 */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); display: none;
-            align-items: center; justify-content: center; z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            width: 85%; max-width: 320px; background: #1a1a1a;
-            border: 2px solid var(--point-gold); border-radius: 25px;
-            padding: 30px 20px; text-align: center; color: white;
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-logo { width: 70px; margin-bottom: 15px; }
-        .modal-title { font-size: 1.3rem; color: var(--point-gold); margin-bottom: 10px; font-weight: 700; }
-        .modal-text { font-size: 0.95rem; opacity: 0.8; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
-        .shop-btn {
-            background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: black; border: none; width: 100%; padding: 14px; border-radius: 15px;
-            font-weight: 800; font-size: 1rem; cursor: pointer;
-        }
-        .close-btn {
-            background: transparent; color: #888; border: none; font-size: 0.9rem;
-            text-decoration: underline; cursor: pointer; padding: 5px; margin-top: 10px;
-        }
-
-        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        footer { margin-top: 25px; font-size: 0.75rem; opacity: 0.7; text-align: center; }
-        .hidden { display: none !important; }
-    </style>
-</head>
-<body>
-
-    <div class="background-overlay"></div>
-    <div class="background-blur"></div>
-
-    <div class="container">
-        <header>
-            <div class="logo" onclick="location.href='/'">
-                <img src="textlogo.png" alt="Saju">
-            </div>
-            <a href="/" class="back-link">← หน้าหลัก</a>
-        </header>
-
-        <main id="inputArea">
-            <section class="hero-section">
-                <span class="main-heart-icon">❤️</span>
-                <h2 class="hero-title">เช็กดวงสมพงษ์ความรัก</h2>
-                <p class="hero-desc">ค้นหาคำตอบว่าคุณและเขาเข้ากันได้แค่ไหน<br>ผ่านศาสตร์การดูดวงเกาหลีที่แม่นยำ</p>
-            </section>
-
-            <div class="benefits-grid">
-                <div class="benefit-card"><span class="benefit-icon">📊</span><span class="benefit-text">คะแนนความเข้ากัน<br>ของดวงชะตา</span></div>
-                <div class="benefit-card"><span class="benefit-icon">💡</span><span class="benefit-text">วิธีปรับตัวให้<br>รักกันยาวนาน</span></div>
-                <div class="benefit-card"><span class="benefit-icon">🔮</span><span class="benefit-text">อนาคตความรัก<br>ในวันข้างหน้า</span></div>
-                <div class="benefit-card"><span class="benefit-icon">🍀</span><span class="benefit-text">ไอเทมเสริมดวง<br>สำหรับคู่รัก</span></div>
-            </div>
-
-            <form id="loveForm">
-                <section class="form-section">
-                    <div class="section-title">👤 ข้อมูลของคุณ</div>
-                    <div class="input-group">
-                        <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
-                        <input type="text" id="myName" placeholder="ระบุชื่อเล่นของคุณ" required>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">วันเดือนปีเกิด</label>
-                        <div class="dropdown-group">
-                            <select id="myDay" required><option value="" disabled selected>วันที่</option></select>
-                            <select id="myMonth" required>
-                                <option value="" disabled selected>เดือน</option>
-                                <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
-                                <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
-                                <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
-                                <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
-                            </select>
-                            <select id="myYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">เวลาเกิด</label>
-                        <div class="dropdown-group">
-                            <select id="myHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="myMin" required><option value="" disabled selected>นาที</option></select>
-                        </div>
-                        <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบเวลาเกิด</button>
-                    </div>
-                </section>
-
-                <section class="form-section">
-                    <div class="section-title">💖 ข้อมูลของอีกฝ่าย</div>
-                    <div class="input-group">
-                        <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
-                        <input type="text" id="partnerName" placeholder="ระบุชื่อเล่นของเขา/เธอ" required>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">วันเดือนปีเกิด</label>
-                        <div class="dropdown-group">
-                            <select id="partnerDay" required><option value="" disabled selected>วันที่</option></select>
-                            <select id="partnerMonth" required>
-                                <option value="" disabled selected>เดือน</option>
-                                <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
-                                <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
-                                <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
-                                <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
-                            </select>
-                            <select id="partnerYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label">เวลาเกิด</label>
-                        <div class="dropdown-group">
-                            <select id="partnerHour" required><option value="" disabled selected>ชม.</option></select>
-                            <select id="partnerMin" required><option value="" disabled selected>นาที</option></select>
-                        </div>
-                        <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบเวลาเกิด</button>
-                    </div>
-                </section>
-
-                <section class="form-section">
-                    <div class="section-title">💍 ความสัมพันธ์</div>
-                    <div class="input-group">
-                        <label class="input-label">สถานะปัจจุบันของคุณทั้งคู่</label>
-                        <select id="relationship" required>
-                            <option value="" disabled selected>เลือกสถานะ</option>
-                            <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
-                            <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
-                            <option value="fling">กำลังดูใจกัน (썸)</option>
-                            <option value="dating_1yr">คบกันมากกว่า 1 ปี</option>
-                            <option value="dating_3yr">คบกันมากกว่า 3 ปี</option>
-                            <option value="dating_5yr">คบกันมากกว่า 5 ปี</option>
-                            <option value="married">แต่งงานแล้ว</option>
-                        </select>
-                    </div>
-                </section>
-
-                <button type="submit" class="submit-btn" id="subBtn">ดูผลทำนายความรัก 🪙 2</button>
-            </form>
-        </main>
-
-        <div id="loadingLayer">
-            <div class="spinner"></div>
-            <h3 style="color: var(--point-gold);">กำลังอ่านโชคชะตาความรัก...</h3>
-            <p style="font-size: 0.9rem; opacity: 0.8;">ดวงดาวกำลังคำนวณความสมพงษ์ของคุณทั้งคู่</p>
-        </div>
-
-        <div class="modal-overlay" id="coinModal">
-            <div class="modal-content">
-                <img src="textlogo.png" class="modal-logo" alt="Saju">
-                <div class="modal-title">เหรียญไม่พอ</div>
-                <div class="modal-text">คุณต้องการเหรียญอีก 2 เหรียญ<br>เพื่อดูโชคชะตาความรักครั้งนี้</div>
-                <div class="modal-btn-group">
-                    <button class="shop-btn" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
-                    <button class="close-btn" onclick="location.reload()">ไว้วันหลัง</button>
-                </div>
-            </div>
-        </div>
-
-        <footer>© 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ</footer>
-    </div>
-
-    <script>
-        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-
-        function generateUUID() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const setupSelect = (id, start, end) => {
-                const select = document.getElementById(id);
-                for (let i = start; i <= end; i++) {
-                    const val = i < 10 ? `0${i}` : i;
-                    select.add(new Option(val, val));
+        // [5] OpenAI Structured Outputs 요청
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: userPrompt }
+            ],
+            response_format: {
+                type: "json_schema",
+                json_schema: {
+                    name: "love_compatibility_analysis",
+                    strict: true,
+                    schema: {
+                        type: "object",
+                        properties: {
+                            score: { type: "number" },
+                            chemistry: { type: "string" },
+                            strengths: { type: "string" },
+                            challenges: { type: "string" },
+                            status_advice: { type: "string" },
+                            future: { type: "string" },
+                            boosters: { type: "string" }
+                        },
+                        required: ["score", "chemistry", "strengths", "challenges", "status_advice", "future", "boosters"],
+                        additionalProperties: false
+                    }
                 }
-            };
-            const currentYear = new Date().getFullYear();
-            ['my', 'partner'].forEach(p => {
-                setupSelect(p + 'Day', 1, 31);
-                for (let i = currentYear; i >= 1930; i--) document.getElementById(p + 'Year').add(new Option(i, i));
-                setupSelect(p + 'Hour', 0, 23);
-                setupSelect(p + 'Min', 0, 59);
-
-                document.getElementById(p + 'UnknownBtn').addEventListener('click', function() {
-                    const h = document.getElementById(p + 'Hour'), m = document.getElementById(p + 'Min');
-                    this.classList.toggle('active');
-                    const isUnknown = this.classList.contains('active');
-                    h.disabled = m.disabled = isUnknown; h.required = m.required = !isUnknown;
-                    h.style.opacity = m.style.opacity = isUnknown ? "0.3" : "1";
-                    if (isUnknown) { h.value = ""; m.value = ""; }
-                });
-            });
-
-            const form = document.getElementById('loveForm');
-            const inputs = form.querySelectorAll('input[required], select[required]');
-            inputs.forEach(input => {
-                input.oninvalid = function(e) {
-                    e.target.setCustomValidity("");
-                    if (!e.target.validity.valid) e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
-                };
-                input.oninput = function(e) { e.target.setCustomValidity(""); };
-            });
+            },
+            temperature: 0.7
         });
 
-        let isAnalyzing = false;
-        document.getElementById('loveForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!e.target.checkValidity()) return;
-            if (isAnalyzing) return;
-            
-            isAnalyzing = true;
-            const subBtn = document.getElementById('subBtn');
-            const resultId = generateUUID(); 
+        const loveResult = JSON.parse(completion.choices[0].message.content);
 
-            subBtn.disabled = true;
-            subBtn.innerText = "กำลังคำนวณ...";
-            document.getElementById('inputArea').classList.add('hidden');
-            document.getElementById('loadingLayer').style.display = 'flex';
+        // [6] DB 저장 및 코인 차감 (트랜잭션)
+        const conn = await db.getConnection();
+        try {
+            await conn.beginTransaction();
 
-            const getVal = id => document.getElementById(id).value;
-            const payload = {
-                resultId: resultId,
-                me: {
-                    name: getVal('myName'),
-                    birth: `${getVal('myYear')}-${getVal('myMonth')}-${getVal('myDay')}`,
-                    time: document.getElementById('myUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('myHour')}:${getVal('myMin')}`
-                },
-                partner: {
-                    name: getVal('partnerName'),
-                    birth: `${getVal('partnerYear')}-${getVal('partnerMonth')}-${getVal('partnerDay')}`,
-                    time: document.getElementById('partnerUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('partnerHour')}:${getVal('partnerMin')}`
-                },
-                relationship: getVal('relationship')
-            };
+            // 결과 저장 (summary_text 컬럼 제외)
+            await conn.execute(
+                `INSERT IGNORE INTO fortune_results 
+                (result_id, line_user_id, fortune_type, detail_data) 
+                VALUES (?, ?, ?, ?)`,
+                [resultId, line_user_id, 'love', JSON.stringify(loveResult)]
+            );
 
-            try {
-                const response = await fetch('/api/love/analyze', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'x-api-key': API_KEY 
-                    },
-                    body: JSON.stringify(payload)
-                });
+            // 코인 2개 차감 (user_id -> line_user_id로 수정)
+            await conn.execute(
+                `UPDATE users SET coins = coins - 2 WHERE line_user_id = ?`,
+                [line_user_id]
+            );
 
-                if (response.ok) {
-                    window.location.href = `/result/love/${resultId}`;
-                } else if (response.status === 403) {
-                    document.getElementById('loadingLayer').style.display = 'none';
-                    document.getElementById('coinModal').style.display = 'flex';
-                } else {
-                    throw new Error("Server error");
-                }
-            } catch (err) {
-                console.error('Analysis failed:', err);
-                alert("เกิดข้อผิดพลาด กรุณาลองใหม่ภายหลัง");
-                location.reload();
-            }
-        });
-    </script>
-</body>
-</html>
+            await conn.commit();
+            console.log(`✅ 분석 완료 및 코인 차감 성공: ${resultId}`);
+            res.json({ resultId });
+
+        } catch (dbErr) {
+            await conn.rollback();
+            throw dbErr;
+        } finally {
+            conn.release();
+        }
+
+    } catch (err) {
+        console.error('❌ 분석 에러:', err);
+        res.status(500).json({ error: 'Analysis failed', message: err.message });
+    } finally {
+        activeLoveJobs.delete(resultId);
+    }
+};
+
+/**
+ * 2. [GET] /api/love/result/:id
+ * 결과 상세 조회
+ */
+export const getLoveResult = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await db.execute(
+            `SELECT detail_data FROM fortune_results WHERE result_id = ?`, 
+            [id]
+        );
+
+        if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
+
+        const details = typeof rows[0].detail_data === 'string' 
+            ? JSON.parse(rows[0].detail_data) 
+            : rows[0].detail_data;
+
+        res.json(details);
+    } catch (err) {
+        console.error('❌ 조회 에러:', err);
+        res.status(500).json({ error: 'Fetch failed' });
+    }
+};

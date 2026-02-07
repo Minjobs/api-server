@@ -91,6 +91,33 @@
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
+        /* --- [추가] 커스텀 모달 스타일 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            width: 85%; max-width: 320px; background: #1a1a1a;
+            border: 2px solid var(--point-gold); border-radius: 25px;
+            padding: 30px 20px; text-align: center; color: white;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-logo { width: 70px; margin-bottom: 15px; }
+        .modal-title { font-size: 1.3rem; color: var(--point-gold); margin-bottom: 10px; font-weight: 700; }
+        .modal-text { font-size: 0.95rem; opacity: 0.8; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
+        .shop-btn {
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: black; border: none; width: 100%; padding: 14px; border-radius: 15px;
+            font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s;
+        }
+        .close-btn {
+            background: transparent; color: #888; border: none; font-size: 0.9rem;
+            text-decoration: underline; cursor: pointer; padding: 5px; margin-top: 10px;
+        }
+
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -140,9 +167,9 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
@@ -163,7 +190,7 @@
                     <div class="section-title">💖 ข้อมูลของอีกฝ่าย</div>
                     <div class="input-group">
                         <label class="input-label">ชื่อเล่น <span class="input-sub">(ไม่มีผลต่อคำทำนาย)</span></label>
-                        <input type="text" id="partnerName" placeholder="ระบุชื่อเล่นของเขา/เธอ" required>
+                        <input type="text" id="partnerName" placeholder="ระบุชื่อเล่น의เขา/เธอ" required>
                     </div>
                     <div class="input-group">
                         <label class="input-label">วันเดือนปีเกิด</label>
@@ -171,12 +198,12 @@
                             <select id="partnerDay" required><option value="" disabled selected>วันที่</option></select>
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
-                                <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
-                                <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
-                                <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
-                                <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
+                                <option value="01">01</option><option value="02">02</option>
+                                <option value="03">03</option><option value="04">04</option>
+                                <option value="05">05</option><option value="06">06</option>
+                                <option value="07">07</option><option value="08">08</option>
+                                <option value="09">09</option><option value="10">10</option>
+                                <option value="11">11</option><option value="12">12</option>
                             </select>
                             <select id="partnerYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
                         </div>
@@ -197,12 +224,9 @@
                         <label class="input-label">สถานะปัจจุบันของคุณทั้งคู่</label>
                         <select id="relationship" required>
                             <option value="" disabled selected>เลือกสถานะ</option>
-                            <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
-                            <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
-                            <option value="fling">กำลังดูใจกัน (썸)</option>
+                            <option value="crush_me">แอบรัก</option>
+                            <option value="fling">กำลังดูใจกัน</option>
                             <option value="dating_1yr">คบกันมากกว่า 1 ปี</option>
-                            <option value="dating_3yr">คบกันมากกว่า 3 ปี</option>
-                            <option value="dating_5yr">คบกันมากกว่า 5 ปี</option>
                             <option value="married">แต่งงานแล้ว</option>
                         </select>
                     </div>
@@ -218,11 +242,25 @@
             <p style="font-size: 0.9rem; opacity: 0.8;">ดวงดาวกำลังคำนวณความสมพงษ์ของคุณทั้งคู่</p>
         </div>
 
+        <div class="modal-overlay" id="coinModal">
+            <div class="modal-content">
+                <img src="textlogo.png" class="modal-logo" alt="Saju">
+                <div class="modal-title">เหรียญไม่พอ</div>
+                <div class="modal-text">คุณต้องการเหรียญอีก 2 เหรียญ<br>เพื่อดูโชคชะตาความรักครั้งนี้</div>
+                <div class="modal-btn-group">
+                    <button class="shop-btn" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
+                    <button class="close-btn" onclick="location.reload()">ไว้วันหลัง</button>
+                </div>
+            </div>
+        </div>
+
         <footer>© 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ</footer>
     </div>
 
     <script>
-        // UUID 생성기 (결과 ID용)
+        // [중요] 승민님의 고유 API Key
+        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -255,7 +293,6 @@
                 });
             });
 
-            // 태국어 유효성 검사 팝업 메시지
             const form = document.getElementById('loveForm');
             const inputs = form.querySelectorAll('input[required], select[required]');
             inputs.forEach(input => {
@@ -267,7 +304,6 @@
             });
         });
 
-        // --- [핵심: API 호출 및 리다이렉트 로직] ---
         let isAnalyzing = false;
         document.getElementById('loveForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -276,15 +312,13 @@
             
             isAnalyzing = true;
             const subBtn = document.getElementById('subBtn');
-            const resultId = generateUUID(); // 고유 ID 생성
+            const resultId = generateUUID(); 
 
-            // UI 업데이트
             subBtn.disabled = true;
             subBtn.innerText = "กำลังคำนวณ...";
             document.getElementById('inputArea').classList.add('hidden');
             document.getElementById('loadingLayer').style.display = 'flex';
 
-            // 데이터 수집
             const getVal = id => document.getElementById(id).value;
             const payload = {
                 resultId: resultId,
@@ -302,26 +336,29 @@
             };
 
             try {
-                // API 호출 (서버의 loveController.js와 연결)
+                // [수정] API Key 헤더 추가 및 에러 처리 로직
                 const response = await fetch('/api/love/analyze', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY 
+                    },
                     body: JSON.stringify(payload)
                 });
 
                 if (response.ok) {
-                    // 분석 성공 시 결과 페이지로 이동 (/:type/:id 구조)
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    alert("เหรียญไม่พอ กรุณาเติมเหรียญก่อน (코인이 부족합니다)");
-                    location.href = "/shop";
+                    // 코인 부족 시 커스텀 모달 팝업 표시
+                    document.getElementById('loadingLayer').style.display = 'none';
+                    document.getElementById('coinModal').style.display = 'flex';
                 } else {
                     throw new Error("Server error");
                 }
             } catch (err) {
                 console.error('Analysis failed:', err);
-                alert("เกิดข้อผิดพลาดในการวิเคราะห์ กรุณาลองใหม่ในภายหลัง");
-                location.reload(); // 에러 발생 시 초기화
+                alert("เกิดข้อผิดพลาด กรุณาลองใหม่ภายหลัง");
+                location.reload();
             }
         });
     </script>

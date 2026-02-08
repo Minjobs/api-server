@@ -158,19 +158,28 @@
     </div>
 
     <script>
+        // [중요] 보안을 위한 API Key 설정
+        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1. URL에서 ID 추출 (예: /result/love/abc-123)
             const pathParts = window.location.pathname.split('/');
             const resultId = pathParts[pathParts.length - 1];
 
             try {
-                // 2. API 호출
-                const response = await fetch(`/api/love/result/${resultId}`);
+                // [수정] 헤더에 x-api-key를 포함하여 요청을 보냅니다.
+                const response = await fetch(`/api/love/result/${resultId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    }
+                });
+
                 if (!response.ok) throw new Error("Not found");
                 
                 const data = await response.json();
 
-                // 3. 데이터 매핑
+                // 데이터 매핑
                 document.getElementById('score').innerText = data.score;
                 document.getElementById('chemistry').innerText = data.chemistry;
                 document.getElementById('strengths').innerText = data.strengths;
@@ -179,7 +188,6 @@
                 document.getElementById('future').innerText = data.future;
                 document.getElementById('boosters').innerText = data.boosters;
 
-                // 4. 화면 전환
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('resultContent').classList.remove('hidden');
 

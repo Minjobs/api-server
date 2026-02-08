@@ -11,6 +11,7 @@ router.use(verifyApiKey);
 // 1. 프로필 조회 (GET /api/user/profile)
 router.get('/profile', verifyToken, userController.getProfile);
 
+
 // 2. 코인 사용 (POST /api/user/use-coin)
 router.post('/use-coin', verifyToken, userController.useCoin);
 

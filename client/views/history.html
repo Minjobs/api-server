@@ -23,7 +23,6 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* --- [배경 통일] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -38,7 +37,6 @@
             backdrop-filter: blur(8px) brightness(0.9);
         }
 
-        /* --- [컨테이너] --- */
         .container {
             width: 88%; max-width: 440px; 
             margin: 20px 0;
@@ -67,12 +65,10 @@
             font-weight: 500;
         }
 
-        /* --- [타이틀 섹션] --- */
         .page-title { margin-bottom: 30px; }
         .page-title h2 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
         .page-title p { font-size: 0.9rem; opacity: 0.8; font-weight: 300; margin-top: 8px; }
 
-        /* --- [히스토리 리스트] --- */
         .history-list {
             width: 100%; display: flex; flex-direction: column; gap: 15px;
         }
@@ -103,11 +99,9 @@
 
         .arrow-icon { color: var(--point-gold); font-size: 1.2rem; margin-left: 10px; opacity: 0.6; }
 
-        /* --- [데이터 없음 상태] --- */
         .empty-state { padding: 40px 0; opacity: 0.6; }
         .empty-icon { font-size: 3rem; margin-bottom: 15px; }
 
-        /* 로더 */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 9999; display: flex; flex-direction: column;
@@ -146,8 +140,7 @@
                 <p>คำทำนายที่คุณเคยได้รับบันทึกไว้ที่นี่</p>
             </section>
 
-            <div id="historyContainer" class="history-list">
-                </div>
+            <div id="historyContainer" class="history-list"></div>
         </main>
 
         <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
@@ -166,7 +159,6 @@
 
                 if (res.ok && list.length > 0) {
                     list.forEach(item => {
-                        // 태국어 날짜 포맷팅 (예: 1 ก.พ. 2026)
                         const date = new Date(item.created_at);
                         const thaiDate = date.toLocaleDateString('th-TH', { 
                             day: 'numeric', month: 'short', year: 'numeric' 
@@ -174,12 +166,15 @@
 
                         const card = document.createElement('div');
                         card.className = 'history-card';
-                        card.onclick = () => location.href = `/result/${item.result_id}`;
+                        
+                        // --- [수정 포인트: 새로운 주소 체계 적용] ---
+                        // fortune_type과 result_id를 조합하여 이동합니다.
+                        card.onclick = () => location.href = `/result/${item.fortune_type}/${item.result_id}`;
                         
                         card.innerHTML = `
                             <div class="info-area">
                                 <div class="fortune-type">${item.fortune_type}</div>
-                                <div class="fortune-summary">${item.summary_text}</div>
+                                <div class="fortune-summary">${item.summary || "บันทึกโชคชะตา"}</div>
                                 <div class="date-area">${thaiDate}</div>
                             </div>
                             <div class="arrow-icon">❯</div>
@@ -187,7 +182,6 @@
                         container.appendChild(card);
                     });
                 } else {
-                    // 기록이 없을 때
                     container.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">🔮</div>

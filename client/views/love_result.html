@@ -11,6 +11,7 @@
             --point-gold: #ffd700;
             --heart-pink: #ff4757;
             --soft-pink: #ff7f9d;
+            --gauge-bg: rgba(255, 255, 255, 0.1);
         }
 
         body {
@@ -31,45 +32,71 @@
             padding: 30px 20px; box-sizing: border-box;
             backdrop-filter: blur(15px); border: 2px solid var(--point-gold);
             box-shadow: 0 15px 50px rgba(0,0,0,0.5);
-            animation: fadeIn 0.8s ease-out;
         }
 
         header { width: 100%; display: flex; justify-content: center; margin-bottom: 25px; }
         .logo img { height: 45px; }
 
-        /* 점수 섹션 */
+        /* --- 총점 원형 게이지 섹션 --- */
         .score-section { text-align: center; margin-bottom: 40px; position: relative; }
-        .score-circle {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 5px solid rgba(255, 215, 0, 0.2);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            margin: 0 auto; position: relative; background: rgba(0,0,0,0.3);
-            box-shadow: 0 0 30px rgba(255, 71, 87, 0.2);
+        .score-circle-wrapper {
+            position: relative; width: 180px; height: 180px; margin: 0 auto;
         }
-        .score-value { font-family: 'Nanum Myeongjo', serif; font-size: 3.5rem; color: var(--point-gold); line-height: 1; }
+        .score-circle-svg {
+            transform: rotate(-90deg); width: 180px; height: 180px;
+        }
+        .score-circle-bg {
+            fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 8;
+        }
+        .score-circle-progress {
+            fill: none; stroke: var(--point-gold); stroke-width: 8;
+            stroke-linecap: round; stroke-dasharray: 502.4; /* 2 * PI * r (r=80) */
+            stroke-dashoffset: 502.4;
+            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 8px var(--point-gold));
+        }
+        .score-text-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .score-value { font-family: 'Nanum Myeongjo', serif; font-size: 3.8rem; color: var(--point-gold); line-height: 1; }
         .score-unit { font-size: 1rem; color: var(--soft-pink); font-weight: 500; }
         .score-label { margin-top: 15px; font-size: 1.2rem; color: white; font-weight: 500; }
 
-        /* 결과 카드 스타일 */
+        /* --- 결과 카드 및 개별 게이지 --- */
         .result-card {
             background: rgba(255, 255, 255, 0.05); border-radius: 20px;
             padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 215, 0, 0.1);
         }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
         .card-title {
             font-size: 1.1rem; color: var(--point-gold); font-weight: 700;
-            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 8px;
         }
-        .card-content { font-size: 0.95rem; line-height: 1.6; color: rgba(255,255,255,0.9); font-weight: 300; }
+        .item-score { color: var(--soft-pink); font-weight: 700; font-size: 1.1rem; }
+        
+        /* 개별 게이지 바 */
+        .gauge-container {
+            width: 100%; height: 6px; background: var(--gauge-bg);
+            border-radius: 10px; margin-bottom: 15px; overflow: hidden;
+        }
+        .gauge-bar {
+            width: 0%; height: 100%; background: linear-gradient(90deg, var(--point-gold), #f57c00);
+            border-radius: 10px; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.5, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
 
-        /* 아이콘 전용 컬러 */
+        .card-content { font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 300; }
+
         .icon-heart { color: var(--heart-pink); }
         .icon-star { color: var(--point-gold); }
 
-        /* 공유 버튼 */
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
         .share-btn {
             width: 100%; padding: 15px; border-radius: 18px; border: none;
-            background: linear-gradient(135deg, #06C755, #05b34c); /* Line Color */
+            background: linear-gradient(135deg, #06C755, #05b34c);
             color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
         }
@@ -78,7 +105,6 @@
             background: transparent; color: white; font-weight: 500; cursor: pointer;
         }
 
-        /* 로딩 애니메이션 */
         #loading { text-align: center; padding: 100px 0; }
         .spinner { 
             width: 40px; height: 40px; border: 4px solid rgba(255,215,0,0.1); 
@@ -87,12 +113,7 @@
         }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        .score-circle { animation: heartbeat 2s infinite ease-in-out; }
-
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -106,102 +127,148 @@
         </div>
 
         <div id="resultContent" class="hidden">
-            <header>
-                <div class="logo"><img src="/textlogo.png" alt="Saju"></div>
-            </header>
+            <header><div class="logo"><img src="/textlogo.png" alt="Saju"></div></header>
 
             <section class="score-section">
-                <div class="score-circle">
-                    <span class="score-value" id="score">0</span>
-                    <span class="score-unit">คะแนน</span>
+                <div class="score-circle-wrapper">
+                    <svg class="score-circle-svg">
+                        <circle class="score-circle-bg" cx="90" cy="90" r="80"></circle>
+                        <circle id="totalGauge" class="score-circle-progress" cx="90" cy="90" r="80"></circle>
+                    </svg>
+                    <div class="score-text-container">
+                        <span class="score-value" id="score">0</span>
+                        <span class="score-unit">คะแนน</span>
+                    </div>
                 </div>
                 <div class="score-label">ดวงสมพงษ์ของคุณทั้งคู่</div>
             </section>
 
             <div class="result-card">
-                <div class="card-title"><span class="icon-heart">✨</span> ภาพรวมดวงสมพงษ์</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">✨</span> ภาพรวมดวงสมพงษ์</div>
+                    <div class="item-score"><span id="chemistry_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_chemistry" class="gauge-bar"></div></div>
                 <div class="card-content" id="chemistry"></div>
             </div>
 
             <div class="result-card">
-                <div class="card-title"><span class="icon-heart">💪</span> จุดแข็งของคู่คุณ</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">💪</span> จุดแข็งของคู่คุณ</div>
+                    <div class="item-score"><span id="strengths_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_strengths" class="gauge-bar"></div></div>
                 <div class="card-content" id="strengths"></div>
             </div>
 
             <div class="result-card">
-                <div class="card-title"><span class="icon-star">⚠️</span> สิ่งที่ควรระวัง</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">⚠️</span> สิ่งที่ควรระวัง</div>
+                    <div class="item-score"><span id="challenges_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_challenges" class="gauge-bar"></div></div>
                 <div class="card-content" id="challenges"></div>
             </div>
 
             <div class="result-card" style="border-color: var(--soft-pink);">
-                <div class="card-title"><span class="icon-heart">💍</span> คำแนะนำสำหรับคุณ</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">💍</span> คำแนะนำสำหรับคุณ</div>
+                    <div class="item-score"><span id="status_advice_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_status_advice" class="gauge-bar"></div></div>
                 <div class="card-content" id="status_advice"></div>
             </div>
 
             <div class="result-card">
-                <div class="card-title"><span class="icon-star">🔮</span> อนาคตข้างหน้า</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">🔮</span> อนาคตข้างหน้า</div>
+                    <div class="item-score"><span id="future_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_future" class="gauge-bar"></div></div>
                 <div class="card-content" id="future"></div>
             </div>
 
             <div class="result-card">
-                <div class="card-title"><span class="icon-star">🍀</span> เคล็ดลับเสริมดวงรัก</div>
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">🍀</span> เคล็ดลับเสริมดวงรัก</div>
+                    <div class="item-score"><span id="boosters_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_boosters" class="gauge-bar"></div></div>
                 <div class="card-content" id="boosters"></div>
             </div>
 
             <div class="btn-group">
-                <button class="share-btn" onclick="shareToLine()">
-                    <span>공유하기 (LINE)</span>
-                </button>
+                <button class="share-btn" onclick="shareToLine()">공유하기 (LINE)</button>
                 <button class="home-btn" onclick="location.href='/'">กลับหน้าหลัก</button>
             </div>
         </div>
     </div>
 
     <script>
-        // [중요] 보안을 위한 API Key 설정
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
+        // 숫자가 0부터 올라가는 애니메이션 함수
+        function animateNumber(id, target) {
+            let current = 0;
+            const step = target / 50; // 50단계로 나누어 증가
+            const element = document.getElementById(id);
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.innerText = Math.round(target);
+                    clearInterval(timer);
+                } else {
+                    element.innerText = Math.round(current);
+                }
+            }, 30);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            const pathParts = window.location.pathname.split('/');
-            const resultId = pathParts[pathParts.length - 1];
+            const resultId = window.location.pathname.split('/').pop();
 
             try {
-                // [수정] 헤더에 x-api-key를 포함하여 요청을 보냅니다.
                 const response = await fetch(`/api/love/result/${resultId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': API_KEY
-                    }
+                    headers: { 'x-api-key': API_KEY }
                 });
-
                 if (!response.ok) throw new Error("Not found");
-                
                 const data = await response.json();
 
-                // 데이터 매핑
-                document.getElementById('score').innerText = data.score;
-                document.getElementById('chemistry').innerText = data.chemistry;
-                document.getElementById('strengths').innerText = data.strengths;
-                document.getElementById('challenges').innerText = data.challenges;
-                document.getElementById('status_advice').innerText = data.status_advice;
-                document.getElementById('future').innerText = data.future;
-                document.getElementById('boosters').innerText = data.boosters;
+                // 텍스트 데이터 매핑
+                const fields = ['chemistry', 'strengths', 'challenges', 'status_advice', 'future', 'boosters'];
+                fields.forEach(f => document.getElementById(f).innerText = data[f]);
 
+                // 로딩 숨기기 및 결과 표시
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('resultContent').classList.remove('hidden');
 
+                // --- 애니메이션 실행 ---
+                
+                // 1. 총점 원형 게이지 애니메이션
+                setTimeout(() => {
+                    const circumference = 502.4;
+                    const offset = circumference - (data.score / 100) * circumference;
+                    document.getElementById('totalGauge').style.strokeDashoffset = offset;
+                    animateNumber('score', data.score);
+                }, 300);
+
+                // 2. 각 항목별 게이지 및 숫자 애니메이션
+                fields.forEach((f, index) => {
+                    const score = data[`${f}_score`];
+                    setTimeout(() => {
+                        document.getElementById(`gauge_${f}`).style.width = score + '%';
+                        animateNumber(`${f}_score`, score);
+                    }, 500 + (index * 200)); // 순차적으로 애니메이션 실행
+                });
+
             } catch (err) {
                 console.error(err);
-                alert("ไม่พบข้อมูลผลทำนาย (결과를 찾을 수 없습니다)");
+                alert("결과를 찾을 수 없습니다.");
                 location.href = '/';
             }
         });
 
         function shareToLine() {
-            const url = window.location.href;
-            const text = `เช็กดวงสมพงษ์ความรักของเราได้ที่นี่! ✨`;
-            window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+            window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(window.location.href)}`, '_blank');
         }
     </script>
 </body>

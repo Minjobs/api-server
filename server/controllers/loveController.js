@@ -139,3 +139,35 @@ export const analyzeLove = async (req, res) => {
         activeLoveJobs.delete(resultId);
     }
 };
+
+export const getLoveResult = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const line_user_id = req.user.userId; // 본인 결과만 보게 하려면 필요
+
+        console.log(`🔍 궁합 결과 조회 요청: ${id}`);
+
+        const [rows] = await db.execute(
+            `SELECT * FROM fortune_results WHERE result_id = ?`, 
+            [id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Result not found' });
+        }
+
+        const result = rows[0];
+
+        // detail_data 파싱 (JSON 타입이면 바로 사용, 문자열이면 JSON.parse)
+        const details = typeof result.detail_data === 'string' 
+            ? JSON.parse(result.detail_data) 
+            : result.detail_data;
+
+        // 프론트엔드(love_result.html)가 기대하는 데이터 구조로 반환
+        res.json(details);
+
+    } catch (err) {
+        console.error('❌ 결과 조회 실패:', err);
+        res.status(500).json({ error: 'Database error' });
+    }
+};

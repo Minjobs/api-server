@@ -89,54 +89,78 @@ export const LOVE_ASSET = {
 };
 
 /**
- * [Asset] Gacha Fortune (가차 운세 뽑기)
- * 뽑기 전용: 짧고 강렬한 요약 + 상세 분석 + 가차 전용 재미 요소
+ * [Asset] Gacha Fortune (오늘의 운세 뽑기)
+ * 한국 사주 + 띠 + 오행의 기운을 태국어로 쉽게 풀이
  */
 export const GACHA_ASSET = {
-    // 1. AI에게 전달할 지시문 생성 함수
     getPrompts: (year) => {
         return {
             system: `
-                You are 'Murdoo K', the legendary gacha fortune master. 
-                Your mission is to reveal the user's destiny for today based on their birth year: ${year}.
+                You are 'Master Murdoo K', the most trusted Korean Saju expert in Thailand. 
+                Your mission is to provide a "Daily Fortune Scroll" based on the user's birth year: ${year}.
 
-                [Operational Guidelines]
-                1. Language: MUST write exclusively in Thai (ภาษาไทย).
-                2. Tone: Mystical, exciting, and highly encouraging.
-                3. Quality: This is a premium paid service. Each qualitative section MUST contain AT LEAST 400 characters of insightful analysis.
-                4. Gacha Elements: Provide a "Lucky Number" (1-99) and a specific "Daily Taboo" (something to avoid today).
+                [Core Analysis Logic]
+                1. Korean Saju & 5 Elements: Analyze today's energy (Wood, Fire, Earth, Metal, Water) and how it interacts with the user's birth year.
+                2. Zodiac Animal (12 Animals): Incorporate the characteristics and luck of their specific Zodiac sign for today.
+                3. Quality: This is a premium paid service. Each text section MUST be detailed (AT LEAST 400 characters) to ensure the user feels the value.
+                4. Tone: Mystical but practical. Use friendly Thai "คุณ" and explain Saju terms as natural metaphors (e.g., "Today your energy is like a strong tree in a storm").
+                5. Language: Strictly Thai (ภาษาไทย). No Chinese characters (Hanja).
             `,
             user: `
-                [Gacha Data]
+                [User Info]
                 - Birth Year: ${year}
                 
                 [Request]
-                Analyze the user's cosmic energy for today. 
-                Explain how their birth year interacts with current celestial movements.
+                Please reveal the destiny for TODAY. 
+                1. How is the energy flow between their birth year and today's cosmic energy?
+                2. What is the specific advice for their Zodiac sign?
+                3. What should they avoid and how should they act to maximize their luck?
+                
                 Provide the analysis strictly following the JSON schema.
             `
         };
     },
 
-    // 2. OpenAI Structured Outputs용 JSON 스키마
     schema: {
-        name: "gacha_fortune_analysis",
+        name: "daily_gacha_fortune",
         strict: true,
         schema: {
             type: "object",
             properties: {
-                summary: { type: "string", description: "One-line essence of today's fate" },
-                outward: { type: "string", description: "Today's social luck and external energy (Min 400 chars)" },
-                inward: { type: "string", description: "Internal mindset and emotional guidance (Min 400 chars)" },
-                strengths: { type: "string", description: "The most powerful luck factor for today (Min 400 chars)" },
-                weaknesses: { type: "string", description: "Areas where energy is leaking (Min 400 chars)" },
-                cautions: { type: "string", description: "Specific warnings for today (Min 400 chars)" },
-                boosters: { type: "string", description: "How to maximize today's luck (Min 400 chars)" },
-                lucky_number: { type: "number", description: "A lucky number for today (1-99)" },
-                taboo: { type: "string", description: "One specific thing to avoid today (Thai)" }
+                summary: { 
+                    type: "string", 
+                    description: "A punchy one-line summary of today's luck." 
+                },
+                today_luck: { 
+                    type: "string", 
+                    description: "Detailed analysis of today's overall luck and energy flow (Min 400 chars)." 
+                },
+                today_luck_score: { type: "number" },
+                cautions: { 
+                    type: "string", 
+                    description: "Specific things to watch out for or avoid today (Min 400 chars)." 
+                },
+                action_plan: { 
+                    type: "string", 
+                    description: "Practical advice on how to behave and mindsets to keep (Min 400 chars)." 
+                },
+                zodiac_advice: { 
+                    type: "string", 
+                    description: "Special luck advice based on their Korean Zodiac animal (Min 400 chars)." 
+                },
+                lucky_items: { 
+                    type: "string", 
+                    description: "Recommendations for lucky colors, directions, and specific items for today." 
+                },
+                lucky_number: { type: "number" },
+                taboo: { 
+                    type: "string", 
+                    description: "One specific action or thing to strictly avoid today." 
+                }
             },
             required: [
-                "summary", "outward", "inward", "strengths", "weaknesses", "cautions", "boosters", "lucky_number", "taboo"
+                "summary", "today_luck", "today_luck_score", "cautions", 
+                "action_plan", "zodiac_advice", "lucky_items", "lucky_number", "taboo"
             ],
             additionalProperties: false
         }

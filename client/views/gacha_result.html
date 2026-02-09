@@ -32,6 +32,21 @@
             backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
         }
 
+        /* --- [상단 SAJU 로고] --- */
+        .top-logo-link {
+            text-decoration: none;
+            margin-top: 20px;
+            z-index: 10;
+        }
+        .top-logo-text {
+            font-family: 'Nanum Myeongjo', serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--point-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+            letter-spacing: 2px;
+        }
+
         /* --- [로딩 레이어] --- */
         #loadingLayer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -44,52 +59,47 @@
             background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
             border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
             position: relative; display: flex; justify-content: center;
-            z-index: 5; /* 공보다 뒤에 위치하도록 설정 */
+            z-index: 5;
         }
 
-        /* 배출구 슬롯: 처음엔 hidden, 공이 커질 땐 JS로 visible 변경 */
         .dispenser-slot {
             width: 80px; height: 40px; background: #1a0f0a;
             border: 4px solid var(--metal-brass); border-radius: 8px 8px 0 0;
             border-bottom: none; position: absolute; bottom: 0; 
-            overflow: hidden; /* 공이 떨어질 때까지만 숨김 */
+            overflow: hidden;
         }
 
-        /* 배출되는 공 */
         .exit-ball {
             position: absolute; top: -50px; left: 50%;
             width: 40px; height: 40px; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
             border-radius: 50%; transform: translateX(-50%);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
-            z-index: 10; /* 머신보다 앞에 위치 */
+            z-index: 10;
         }
 
-        /* 1. 공이 떨어지는 애니메이션 */
         .drop-anim { animation: ballDrop 0.6s ease-in forwards; }
         @keyframes ballDrop {
             0% { top: -50px; }
             100% { top: 5px; }
         }
 
-        /* 2. 공이 화면 전체로 커지는 애니메이션 (2초) */
         .zoom-anim { 
             animation: ballZoom 2s ease-in-out forwards; 
-            z-index: 10001; /* 로딩 레이어 내의 모든 요소보다 위 */
+            z-index: 10001;
         }
         @keyframes ballZoom {
             0% { transform: translate(-50%, 0) scale(1); top: 5px; }
-            100% { transform: translate(-50%, -120%) scale(25); top: 50%; } /* 중앙으로 이동하며 확대 */
+            100% { transform: translate(-50%, -120%) scale(25); top: 50%; }
         }
 
-        /* 화이트아웃 효과 */
         .flash-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 10005; display: none;
         }
 
-        /* --- [결과 페이지: 즉시 노출] --- */
+        /* --- [결과 페이지] --- */
         .container {
-            width: 92%; max-width: 440px; margin: 40px 0;
+            width: 92%; max-width: 440px; margin: 20px 0 40px 0;
             display: none;
             z-index: 10;
         }
@@ -109,7 +119,13 @@
 
         .section { margin-bottom: 25px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
         .section-title { font-weight: 700; color: #8b4513; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .section-content { font-size: 0.95rem; line-height: 1.7; color: #333; text-align: justify; }
+        
+        /* ✅ 태국어 띄어쓰기 벌어짐 수정 (justify 제거) */
+        .section-content { 
+            font-size: 0.95rem; line-height: 1.7; color: #333; 
+            text-align: left; /* 양끝 정렬에서 왼쪽 정렬로 변경 */
+            word-break: break-word; 
+        }
 
         .lucky-box {
             background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
@@ -120,17 +136,24 @@
         .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; }
         .lucky-value { font-weight: 700; font-size: 1.1rem; }
 
-        .btn-home { 
+        .btn { 
             width: 100%; padding: 16px; border-radius: 12px; border: none; 
-            background: #5d4037; color: white; font-family: 'Kanit'; 
-            font-weight: 700; font-size: 1.1rem; margin-top: 30px; cursor: pointer;
+            font-family: 'Kanit'; font-weight: 700; font-size: 1.1rem; 
+            cursor: pointer; transition: 0.2s;
         }
+        .btn-home { background: #5d4037; color: white; margin-top: 30px; }
+        .btn-main { background: #8b4513; color: white; margin-top: 10px; } /* 홈페이지 가기 버튼 추가 */
+        .btn:active { transform: scale(0.98); opacity: 0.9; }
     </style>
 </head>
 <body>
 
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
+
+    <a href="/" class="top-logo-link">
+        <div class="top-logo-text">SAJU</div>
+    </a>
 
     <div id="loadingLayer">
         <div class="mini-machine-bottom" id="machineBottom">
@@ -190,6 +213,7 @@
             </div>
 
             <button class="btn btn-home" onclick="location.href='/gacha'">กลับไปสุ่มใหม่</button>
+            <button class="btn btn-main" onclick="location.href='/'">กลับสู่หน้าหลัก</button> 
         </div>
     </div>
 
@@ -201,7 +225,6 @@
             const gachaBall = document.getElementById('gachaBall');
             const dispenserSlot = document.getElementById('dispenserSlot');
             
-            // 1. 공이 배출구에서 떨어지는 애니메이션 시작
             setTimeout(() => {
                 gachaBall.classList.add('drop-anim');
             }, 500);
@@ -210,9 +233,7 @@
                 headers: { 'x-api-key': API_KEY }
             }).then(res => res.json());
 
-            // 2. 공이 커지는 시점 (떨어지는 애니메이션 완료 후)
             setTimeout(() => {
-                // 💡 핵심: 배출구의 overflow를 visible로 바꿔서 공이 튀어나오게 함
                 dispenserSlot.style.overflow = 'visible'; 
                 gachaBall.classList.remove('drop-anim');
                 gachaBall.classList.add('zoom-anim');
@@ -233,7 +254,6 @@
                 document.getElementById('taboo').innerText = data.taboo;
                 document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // 3. 공이 70% 정도 커진 시점 (총 3.1초 지점)
                 setTimeout(() => {
                     const flash = document.getElementById('flash');
                     flash.style.display = 'block';

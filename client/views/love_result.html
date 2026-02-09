@@ -3,241 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - วันนี้ของคุณเป็นอย่างไร?</title>
+    <title>Saju - ผลทำนายความรัก</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --wood-dark: #3e2723;
-            --wood-medium: #5d4037;
-            --metal-brass: #b5a642;
-            --point-gold: #b8860b;
-            --paper-bg: #fffaf0;
-            --text-dark: #2c1b15;
+            --bg-overlay: rgba(0, 0, 0, 0.5); 
+            --point-gold: #ffd700;
+            --heart-pink: #ff4757;
+            --soft-pink: #ff7f9d;
+            --gauge-bg: rgba(255, 255, 255, 0.1);
         }
 
         body {
             margin: 0; padding: 0; background-color: #0a0a0a;
-            font-family: 'Kanit', sans-serif; color: var(--text-dark);
+            font-family: 'Kanit', sans-serif; color: white;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
         }
 
         .background-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background-image: url('/background.jpg'); background-size: cover; background-position: center;
-        }
-        .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
+            background-image: url('/background.jpg'); background-size: cover; background-position: center;
+            opacity: 0.6; filter: blur(10px);
         }
 
-        /* --- [상단 로고] --- */
-        .top-logo-link { text-decoration: none; margin-top: 20px; z-index: 10; }
-        .top-logo-text {
-            font-family: 'Nanum Myeongjo', serif; font-size: 2.2rem; font-weight: 800;
-            color: var(--point-gold); text-shadow: 2px 2px 4px rgba(0,0,0,0.6); letter-spacing: 2px;
+        .container {
+            width: 90%; max-width: 440px; margin: 30px 0;
+            background-color: var(--bg-overlay); border-radius: 35px;
+            padding: 30px 20px; box-sizing: border-box;
+            backdrop-filter: blur(15px); border: 2px solid var(--point-gold);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.5);
         }
 
-        /* --- [로딩 및 애니메이션] --- */
-        #loadingLayer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 10000;
+        header { width: 100%; display: flex; justify-content: center; margin-bottom: 25px; }
+        .logo img { height: 45px; }
+
+        /* --- 총점 원형 게이지 섹션 --- */
+        .score-section { text-align: center; margin-bottom: 40px; position: relative; }
+        .score-circle-wrapper {
+            position: relative; width: 180px; height: 180px; margin: 0 auto;
         }
-        .mini-machine-bottom {
-            width: 160px; height: 100px;
-            background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
-            border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
-            position: relative; display: flex; justify-content: center; z-index: 5;
+        .score-circle-svg {
+            transform: rotate(-90deg); width: 180px; height: 180px;
         }
-        .dispenser-slot {
-            width: 80px; height: 40px; background: #1a0f0a;
-            border: 4px solid var(--metal-brass); border-radius: 8px 8px 0 0;
-            border-bottom: none; position: absolute; bottom: 0; overflow: hidden;
+        .score-circle-bg {
+            fill: none; stroke: rgba(255, 255, 255, 0.1); stroke-width: 8;
         }
-        .exit-ball {
-            position: absolute; top: -50px; left: 50%;
-            width: 40px; height: 40px; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            border-radius: 50%; transform: translateX(-50%);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); z-index: 10;
+        .score-circle-progress {
+            fill: none; stroke: var(--point-gold); stroke-width: 8;
+            stroke-linecap: round; stroke-dasharray: 502.4; /* 2 * PI * r (r=80) */
+            stroke-dashoffset: 502.4;
+            transition: stroke-dashoffset 2s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 8px var(--point-gold));
         }
-        .drop-anim { animation: ballDrop 0.3s ease-in forwards; }
-        @keyframes ballDrop { 0% { top: -50px; } 100% { top: 5px; } }
-        .zoom-anim { animation: ballZoom 1s ease-in-out forwards; z-index: 10001; }
-        @keyframes ballZoom {
-            0% { transform: translate(-50%, 0) scale(1); top: 5px; }
-            100% { transform: translate(-50%, -120%) scale(calc(70vw / 40)); top: 50%; } 
+        .score-text-container {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .score-value { font-family: 'Nanum Myeongjo', serif; font-size: 3.8rem; color: var(--point-gold); line-height: 1; }
+        .score-unit { font-size: 1rem; color: var(--soft-pink); font-weight: 500; }
+        .score-label { margin-top: 15px; font-size: 1.2rem; color: white; font-weight: 500; }
+
+        /* --- 결과 카드 및 개별 게이지 --- */
+        .result-card {
+            background: rgba(255, 255, 255, 0.05); border-radius: 20px;
+            padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 1.1rem; color: var(--point-gold); font-weight: 700;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .item-score { color: var(--soft-pink); font-weight: 700; font-size: 1.1rem; }
+        
+        /* 개별 게이지 바 */
+        .gauge-container {
+            width: 100%; height: 6px; background: var(--gauge-bg);
+            border-radius: 10px; margin-bottom: 15px; overflow: hidden;
+        }
+        .gauge-bar {
+            width: 0%; height: 100%; background: linear-gradient(90deg, var(--point-gold), #f57c00);
+            border-radius: 10px; transition: width 1.5s cubic-bezier(0.1, 0.5, 0.5, 1);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
 
-        /* --- [결과 컨테이너] --- */
-        .container { width: 92%; max-width: 440px; margin: 20px 0 40px 0; display: none; z-index: 10; }
-        .result-scroll {
-            background: var(--paper-bg); padding: 40px 25px; border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            border-left: 12px solid #5d4037; border-right: 12px solid #5d4037;
+        .card-content { font-size: 0.95rem; line-height: 1.7; color: rgba(255,255,255,0.9); font-weight: 300; }
+
+        .icon-heart { color: var(--heart-pink); }
+        .icon-star { color: var(--point-gold); }
+
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .share-btn {
+            width: 100%; padding: 15px; border-radius: 18px; border: none;
+            background: linear-gradient(135deg, #06C755, #05b34c);
+            color: white; font-weight: 700; font-size: 1rem; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .home-btn {
+            width: 100%; padding: 15px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.3);
+            background: transparent; color: white; font-weight: 500; cursor: pointer;
         }
 
-        .date-text { text-align: center; color: #8b4513; font-size: 0.9rem; margin-bottom: 5px; font-weight: 500; }
-        .score-box { text-align: center; margin-bottom: 25px; }
-        .score-bar-bg { width: 100%; height: 8px; background: #ddd; border-radius: 4px; margin-top: 10px; overflow: hidden; }
-        .score-bar-fill { width: 0; height: 100%; background: var(--point-gold); transition: width 1s; }
-
-        .summary-title { font-size: 1.4rem; font-weight: 800; text-align: center; color: #5d4037; margin-bottom: 25px; line-height: 1.4; }
-        .section { margin-bottom: 25px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
-        .section-title { font-weight: 700; color: #8b4513; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .section-content { font-size: 0.95rem; line-height: 1.7; color: #333; text-align: left; word-break: break-word; }
-
-        /* --- [🔥 행운의 숫자 골든볼 섹션] --- */
-        .lucky-numbers-section { margin-top: 25px; text-align: center; padding: 20px 0; background: rgba(184, 134, 11, 0.05); border-radius: 15px; }
-        .lucky-balls-container { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
-        .golden-ball {
-            width: 65px; height: 65px; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b4513);
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 800; font-size: 1.3rem;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.3), inset -3px -3px 8px rgba(0,0,0,0.4);
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-            animation: ballPulse 2s infinite ease-in-out;
+        #loading { text-align: center; padding: 100px 0; }
+        .spinner { 
+            width: 40px; height: 40px; border: 4px solid rgba(255,215,0,0.1); 
+            border-top: 4px solid var(--point-gold); border-radius: 50%; 
+            animation: spin 1s linear infinite; margin: 0 auto 20px;
         }
-        @keyframes ballPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
 
-        .lucky-box {
-            background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
-            padding: 15px; border-radius: 10px; margin-top: 20px;
-            display: grid; grid-template-columns: 1fr; gap: 10px;
-        }
-        .lucky-item { text-align: center; }
-        .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; }
-        .lucky-value { font-weight: 700; font-size: 1.1rem; }
-
-        .btn { width: 100%; padding: 16px; border-radius: 12px; border: none; font-family: 'Kanit'; font-weight: 700; font-size: 1.1rem; cursor: pointer; }
-        .btn-home { background: #5d4037; color: white; margin-top: 30px; }
-        .btn-main { background: #8b4513; color: white; margin-top: 10px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div class="background-overlay"></div>
-    <div class="background-blur"></div>
 
-    <a href="/" class="top-logo-link"><div class="top-logo-text">SAJU</div></a>
-
-    <div id="loadingLayer">
-        <div class="mini-machine-bottom">
-            <div class="dispenser-slot" id="dispenserSlot">
-                <div class="exit-ball" id="gachaBall"></div>
-            </div>
+    <div class="container" id="mainContainer">
+        <div id="loading">
+            <div class="spinner"></div>
+            <p>กำลังเปิดสมุดบันทึกโชคชะตา...</p>
         </div>
-        <p id="loadingStatus" style="color: gold; margin-top: 40px; font-weight: 500;">กำลังเปิดผลทำนาย...</p>
-    </div>
 
-    <div class="container" id="resultContent">
-        <div class="result-scroll">
-            <div class="date-text" id="analysis_date">📅 ...</div>
-            <div class="score-box">
-                <div id="score" style="font-size: 2.5rem; font-weight: 800; color: var(--point-gold);">0</div>
-                <div style="font-size: 0.8rem; color: #8b4513;">คะแนนดวงวันนี้</div>
-                <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
-            </div>
+        <div id="resultContent" class="hidden">
+            <header><div class="logo"><img src="/textlogo.png" alt="Saju"></div></header>
 
-            <div class="summary-title" id="summary">...</div>
-
-            <div class="lucky-numbers-section">
-                <div class="section-title" style="justify-content: center;">🍀 เลขนำโชคของคุณ (Lucky Numbers)</div>
-                <div class="lucky-balls-container" id="luckyBalls">
-                    <div class="golden-ball">?</div>
-                    <div class="golden-ball">?</div>
-                    <div class="golden-ball">?</div>
+            <section class="score-section">
+                <div class="score-circle-wrapper">
+                    <svg class="score-circle-svg">
+                        <circle class="score-circle-bg" cx="90" cy="90" r="80"></circle>
+                        <circle id="totalGauge" class="score-circle-progress" cx="90" cy="90" r="80"></circle>
+                    </svg>
+                    <div class="score-text-container">
+                        <span class="score-value" id="score">0</span>
+                        <span class="score-unit">คะแนน</span>
+                    </div>
                 </div>
-            </div>
+                <div class="score-label">ดวงสมพงษ์ของคุณทั้งคู่</div>
+            </section>
 
-            <div class="section">
-                <div class="section-title">🔮 ดวงวันนี้ของคุณ</div>
-                <div class="section-content" id="today_luck"></div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🐾 คำแนะนำตามปีนักษัตร</div>
-                <div class="section-content" id="zodiac_advice"></div>
-            </div>
-
-            <div class="section">
-                <div class="section-title">🏃 วิธีปฏิบัติตน</div>
-                <div class="section-content" id="action_plan"></div>
-            </div>
-
-            <div class="section" style="border: none;">
-                <div class="section-title">⚠️ ข้อควรระวัง</div>
-                <div class="section-content" id="cautions"></div>
-            </div>
-
-            <div class="lucky-box">
-                <div class="lucky-item">
-                    <div class="lucky-label">ไอเทมเสริมดวง & สิ่งที่ควรเลี่ยง</div>
-                    <div class="lucky-value" id="lucky_items_taboo">?</div>
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">✨</span> ภาพรวมดวงสมพงษ์</div>
+                    <div class="item-score"><span id="chemistry_score">0</span>%</div>
                 </div>
+                <div class="gauge-container"><div id="gauge_chemistry" class="gauge-bar"></div></div>
+                <div class="card-content" id="chemistry"></div>
             </div>
 
-            <button class="btn btn-home" onclick="location.href='/gacha'">กลับไปสุ่มใหม่</button>
-            <button class="btn btn-main" onclick="location.href='/'">กลับสู่หน้าหลัก</button> 
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">💪</span> จุดแข็งของคู่คุณ</div>
+                    <div class="item-score"><span id="strengths_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_strengths" class="gauge-bar"></div></div>
+                <div class="card-content" id="strengths"></div>
+            </div>
+
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">⚠️</span> สิ่งที่ควรระวัง</div>
+                    <div class="item-score"><span id="challenges_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_challenges" class="gauge-bar"></div></div>
+                <div class="card-content" id="challenges"></div>
+            </div>
+
+            <div class="result-card" style="border-color: var(--soft-pink);">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-heart">💍</span> คำแนะนำสำหรับคุณ</div>
+                    <div class="item-score"><span id="status_advice_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_status_advice" class="gauge-bar"></div></div>
+                <div class="card-content" id="status_advice"></div>
+            </div>
+
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">🔮</span> อนาคตข้างหน้า</div>
+                    <div class="item-score"><span id="future_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_future" class="gauge-bar"></div></div>
+                <div class="card-content" id="future"></div>
+            </div>
+
+            <div class="result-card">
+                <div class="card-header">
+                    <div class="card-title"><span class="icon-star">🍀</span> เคล็ดลับเสริมดวงรัก</div>
+                    <div class="item-score"><span id="boosters_score">0</span>%</div>
+                </div>
+                <div class="gauge-container"><div id="gauge_boosters" class="gauge-bar"></div></div>
+                <div class="card-content" id="boosters"></div>
+            </div>
+
+            <div class="btn-group">
+                <button class="share-btn" onclick="shareToLine()">공유하기 (LINE)</button>
+                <button class="home-btn" onclick="location.href='/'">กลับหน้าหลัก</button>
+            </div>
         </div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
+        // 숫자가 0부터 올라가는 애니메이션 함수
+        function animateNumber(id, target) {
+            let current = 0;
+            const step = target / 50; // 50단계로 나누어 증가
+            const element = document.getElementById(id);
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.innerText = Math.round(target);
+                    clearInterval(timer);
+                } else {
+                    element.innerText = Math.round(current);
+                }
+            }, 30);
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
-            const startTime = Date.now();
             const resultId = window.location.pathname.split('/').pop();
-            const gachaBall = document.getElementById('gachaBall');
-            const dispenserSlot = document.getElementById('dispenserSlot');
-            
-            setTimeout(() => { gachaBall.classList.add('drop-anim'); }, 500);
-
-            const dataPromise = fetch(`/api/gacha/result/${resultId}`, {
-                headers: { 'x-api-key': API_KEY }
-            }).then(res => res.json());
-
-            setTimeout(() => {
-                dispenserSlot.style.overflow = 'visible'; 
-                gachaBall.classList.remove('drop-anim');
-                gachaBall.classList.add('zoom-anim');
-                document.getElementById('loadingStatus').style.display = 'none';
-            }, 800);
 
             try {
-                const data = await dataPromise;
+                const response = await fetch(`/api/love/result/${resultId}`, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                if (!response.ok) throw new Error("Not found");
+                const data = await response.json();
 
-                document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date} | ปีเกิด พ.ศ. ${data.user_year_be}`;
-                document.getElementById('score').innerText = data.today_luck_score;
-                document.getElementById('summary').innerText = data.summary;
-                document.getElementById('today_luck').innerText = data.today_luck;
-                document.getElementById('zodiac_advice').innerText = data.zodiac_advice;
-                document.getElementById('action_plan').innerText = data.action_plan;
-                document.getElementById('cautions').innerText = data.cautions;
-                document.getElementById('lucky_items_taboo').innerText = `${data.lucky_items} / เลี่ยง: ${data.taboo}`;
+                // 텍스트 데이터 매핑
+                const fields = ['chemistry', 'strengths', 'challenges', 'status_advice', 'future', 'boosters'];
+                fields.forEach(f => document.getElementById(f).innerText = data[f]);
 
-                // ✅ 골든볼에 숫자 넣기
-                const balls = document.querySelectorAll('.golden-ball');
-                if (data.lucky_numbers && data.lucky_numbers.length >= 3) {
-                    data.lucky_numbers.slice(0, 3).forEach((num, i) => {
-                        balls[i].innerText = num;
-                    });
-                }
+                // 로딩 숨기기 및 결과 표시
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('resultContent').classList.remove('hidden');
 
-                const waitTime = Math.max(0, 1800 - (Date.now() - startTime));
+                // --- 애니메이션 실행 ---
+                
+                // 1. 총점 원형 게이지 애니메이션
                 setTimeout(() => {
-                    document.getElementById('loadingLayer').style.display = 'none';
-                    document.getElementById('resultContent').style.display = 'block';
-                    setTimeout(() => { document.getElementById('scoreBar').style.width = data.today_luck_score + '%'; }, 100);
-                }, waitTime);
+                    const circumference = 502.4;
+                    const offset = circumference - (data.score / 100) * circumference;
+                    document.getElementById('totalGauge').style.strokeDashoffset = offset;
+                    animateNumber('score', data.score);
+                }, 300);
+
+                // 2. 각 항목별 게이지 및 숫자 애니메이션
+                fields.forEach((f, index) => {
+                    const score = data[`${f}_score`];
+                    setTimeout(() => {
+                        document.getElementById(`gauge_${f}`).style.width = score + '%';
+                        animateNumber(`${f}_score`, score);
+                    }, 500 + (index * 200)); // 순차적으로 애니메이션 실행
+                });
 
             } catch (err) {
                 console.error(err);
-                alert("เกิดข้อผิดพลาด");
-                location.href = '/gacha';
+                alert("결과를 찾을 수 없습니다.");
+                location.href = '/';
             }
         });
+
+        function shareToLine() {
+            window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(window.location.href)}`, '_blank');
+        }
     </script>
 </body>
 </html>

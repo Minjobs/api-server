@@ -96,8 +96,12 @@ export const LOVE_ASSET = {
  * [Asset] Gacha Fortune (오늘의 운세 - 태국 현지 날짜 최적화)
  * 한국 사주(명리학)의 일진(日辰)과 태국 유저의 친숙한 요소를 결합
  */
+/**
+ * [Asset] Gacha Fortune (오늘의 운세 - 태국 불기 연도 최적화)
+ * 사용자의 생년을 불기(B.E.)로 인식하여 한국 사주와 결합합니다.
+ */
 export const GACHA_ASSET = {
-    // 💡 날짜(thaiDate) 파라미터를 추가로 받아 AI에게 전달합니다.
+    // 💡 날짜(thaiDate)와 불기 연도(year)를 받아 AI에게 전달합니다.
     getPrompts: (year, thaiDate) => {
         return {
             system: `
@@ -105,10 +109,10 @@ export const GACHA_ASSET = {
                 
                 [Core Mission]
                 Provide a premium, highly detailed "Daily Fortune Report" for the specific date: ${thaiDate}.
-                The user's birth year is ${year}.
+                The user's birth year is Buddhist Era ${year} (พ.ศ. ${year}).
 
                 [Analytical Framework]
-                1. Daily Cosmic Energy (Il-jin): Analyze the energy of ${thaiDate} (e.g., Water Tiger, Gold Dragon, etc.) and its interaction with the user's birth year ${year}.
+                1. Daily Cosmic Energy (Il-jin): Analyze the energy of ${thaiDate} (e.g., Water Tiger, Gold Dragon, etc.) and its interaction with the user's birth year (B.E.) ${year}.
                 2. The 5 Elements (Wu Xing): Explain how the flow of Wood, Fire, Earth, Metal, and Water affects the user today.
                 3. Korean Zodiac (12 Animals): Provide specific advice based on their zodiac sign for this specific date.
                 4. Quality Control: This is a paid service. Every text section (today_luck, zodiac_advice, action_plan, cautions) MUST be at least 400 characters long.
@@ -117,11 +121,11 @@ export const GACHA_ASSET = {
             user: `
                 [Target Data]
                 - Today's Thai Date: ${thaiDate}
-                - User's Birth Year: ${year}
+                - User's Birth Year: Buddhist Era ${year} (พ.ศ. ${year})
 
                 [Request]
                 Please reveal the destiny secrets for today. 
-                Explain why today is special for someone born in ${year} and give clear, actionable guidance.
+                Explain why today is special for someone born in B.E. ${year} and give clear, actionable guidance.
                 Provide the analysis strictly following the JSON schema.
             `
         };

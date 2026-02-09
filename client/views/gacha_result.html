@@ -77,21 +77,22 @@
             z-index: 10;
         }
 
-        .drop-anim { animation: ballDrop 0.6s ease-in forwards; }
+        /* ✅ 0.3초 안에 배출 */
+        .drop-anim { animation: ballDrop 0.3s ease-in forwards; }
         @keyframes ballDrop {
             0% { top: -50px; }
             100% { top: 5px; }
         }
 
-        /* ✅ 공 커지는 애니메이션 수정: 1초간 (0.5s 가속 + 0.5s 감속) */
+        /* ✅ 0.5초 가속 + 0.5초 감속 확대 (총 1초) */
         .zoom-anim { 
-            animation: ballZoom 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+            animation: ballZoom 1s ease-in-out forwards; 
             z-index: 10001;
         }
         @keyframes ballZoom {
             0% { transform: translate(-50%, 0) scale(1); top: 5px; }
-            /* ✅ 최대 크기: 화면의 약 70% (모바일 기준 70vw) */
-            100% { transform: translate(-50%, -120%) scale(calc(70vw / 40)); top: 50%; } 
+            /* ✅ 화면 가로의 70% 크기 (70vw / 원본40px) */
+            100% { transform: translate(-50%, -120%) scale(calc(70vw / 40)); top: 50%; }
         }
 
         .flash-overlay {
@@ -222,11 +223,12 @@
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
         document.addEventListener('DOMContentLoaded', async () => {
+            const startTime = Date.now();
             const resultId = window.location.pathname.split('/').pop();
             const gachaBall = document.getElementById('gachaBall');
             const dispenserSlot = document.getElementById('dispenserSlot');
             
-            // 1. 공 배출 (0.6초)
+            // 1. 공 배출 애니메이션 시작 (0.3초)
             setTimeout(() => {
                 gachaBall.classList.add('drop-anim');
             }, 500);
@@ -235,13 +237,13 @@
                 headers: { 'x-api-key': API_KEY }
             }).then(res => res.json());
 
-            // 2. 공 확대 시작 (배출 애니메이션 완료 후 1.1초 시점)
+            // 2. 공 확대 애니메이션 시작 (배출 0.3초 완료 후 0.8초 시점)
             setTimeout(() => {
                 dispenserSlot.style.overflow = 'visible'; 
                 gachaBall.classList.remove('drop-anim');
                 gachaBall.classList.add('zoom-anim');
                 document.getElementById('loadingStatus').style.display = 'none';
-            }, 1100);
+            }, 800);
 
             try {
                 const data = await dataPromise;
@@ -257,14 +259,17 @@
                 document.getElementById('taboo').innerText = data.taboo;
                 document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // ✅ 3. 확대 애니메이션 완료 시점 (1.1초 + 1초 = 2.1초 시점)에 즉시 결과 노출
+                // 3. 확대 애니메이션 완료 시점 (0.8초 + 1초 = 1.8초)
+                const elapsed = Date.now() - startTime;
+                const waitTime = Math.max(0, 1800 - elapsed);
+
                 setTimeout(() => {
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('resultContent').style.display = 'block';
                     setTimeout(() => {
                         document.getElementById('scoreBar').style.width = data.today_luck_score + '%';
                     }, 100);
-                }, 2100);
+                }, waitTime);
 
             } catch (err) {
                 console.error(err);

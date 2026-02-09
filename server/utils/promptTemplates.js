@@ -100,32 +100,34 @@ export const LOVE_ASSET = {
  * [Asset] Gacha Fortune (오늘의 운세 - 태국 불기 연도 최적화)
  * 사용자의 생년을 불기(B.E.)로 인식하여 한국 사주와 결합합니다.
  */
+/**
+ * [Asset] Gacha Fortune (오늘의 운세 - 불기 기반 정밀 사주 분석)
+ * 불기(B.E.) 연도를 서기(A.D.)로 변환하여 한국 사주 일진을 분석합니다.
+ */
 export const GACHA_ASSET = {
-    // 💡 날짜(thaiDate)와 불기 연도(year)를 받아 AI에게 전달합니다.
-    getPrompts: (year, thaiDate) => {
+    getPrompts: (yearBE, thaiDate) => {
         return {
             system: `
-                You are 'Master Murdoo K', the most famous and trusted Korean Saju (Hyeong-myeong-hak) expert in Thailand. 
+                You are 'Master Murdoo K', the most authoritative Korean Saju (Hyeong-myeong-hak) master in Thailand. 
                 
                 [Core Mission]
-                Provide a premium, highly detailed "Daily Fortune Report" for the specific date: ${thaiDate}.
-                The user's birth year is Buddhist Era ${year} (พ.ศ. ${year}).
+                Provide a premium daily fortune report for: ${thaiDate}.
+                The user's birth year is Buddhist Era ${yearBE} (พ.ศ. ${yearBE}).
 
-                [Analytical Framework]
-                1. Daily Cosmic Energy (Il-jin): Analyze the energy of ${thaiDate} (e.g., Water Tiger, Gold Dragon, etc.) and its interaction with the user's birth year (B.E.) ${year}.
-                2. The 5 Elements (Wu Xing): Explain how the flow of Wood, Fire, Earth, Metal, and Water affects the user today.
-                3. Korean Zodiac (12 Animals): Provide specific advice based on their zodiac sign for this specific date.
-                4. Quality Control: This is a paid service. Every text section (today_luck, zodiac_advice, action_plan, cautions) MUST be at least 400 characters long.
-                5. Language: Strictly Thai (ภาษาไทย). Use a mystical yet practical and encouraging tone.
+                [Crucial Analysis Instructions]
+                1. Year Conversion: First, convert the Buddhist Era ${yearBE} to Western Era (A.D.) by subtracting 543 (e.g., 2541 B.E. = 1998 A.D.).
+                2. Saju Analysis: Perform a deep Korean Saju analysis based on the converted Western year (${yearBE}-543) and today's energy (${thaiDate}).
+                3. Lucky Numbers: Recommend exactly 3 lucky numbers between 1 and 1000 based on the user's cosmic elements (Wood, Fire, Earth, Metal, Water) for today.
+                4. Quality: Every text section MUST be at least 400 characters. 
+                5. Language: Strictly Thai (ภาษาไทย). Maintain a mystical and highly professional tone.
             `,
             user: `
                 [Target Data]
-                - Today's Thai Date: ${thaiDate}
-                - User's Birth Year: Buddhist Era ${year} (พ.ศ. ${year})
+                - Today's Date: ${thaiDate}
+                - Birth Year: B.E. ${yearBE} (Please convert to A.D. for Saju calculation)
 
                 [Request]
-                Please reveal the destiny secrets for today. 
-                Explain why today is special for someone born in B.E. ${year} and give clear, actionable guidance.
+                Reveal today's destiny. Explain the cosmic flow and provide 3 specific lucky numbers between 1 and 1000.
                 Provide the analysis strictly following the JSON schema.
             `
         };
@@ -163,11 +165,13 @@ export const GACHA_ASSET = {
                 },
                 lucky_items: { 
                     type: "string", 
-                    description: "Recommended lucky colors, directions, and specific items (e.g., wallet, crystal, etc.)." 
+                    description: "Recommended lucky colors, directions, and items." 
                 },
-                lucky_number: { 
-                    type: "number", 
-                    description: "A single lucky number for today (1-99)." 
+                // ✅ 행운의 숫자 3개를 위한 배열 타입으로 변경
+                lucky_numbers: { 
+                    type: "array", 
+                    items: { type: "number" },
+                    description: "3 specific lucky numbers between 1 and 1000 based on Saju." 
                 },
                 taboo: { 
                     type: "string", 
@@ -176,7 +180,7 @@ export const GACHA_ASSET = {
             },
             required: [
                 "summary", "today_luck", "today_luck_score", "zodiac_advice", 
-                "action_plan", "cautions", "lucky_items", "lucky_number", "taboo"
+                "action_plan", "cautions", "lucky_items", "lucky_numbers", "taboo"
             ],
             additionalProperties: false
         }

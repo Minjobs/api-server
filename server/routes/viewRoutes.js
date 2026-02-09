@@ -44,7 +44,7 @@ router.get('/result/:type/:id', (req, res) => {
     else if (type === 'gacha') {
         // 🎰 가차(뽑기) 전용 결과 페이지
         console.log(`🎰 가차 결과 페이지 로드: ${id}`);
-        res.sendFile(path.join(__dirname, 'client/views/Gacha_result.html'));
+        res.sendFile(path.join(__dirname, 'client/views/gacha_result.html'));
     }
     else {
         // 🔮 그 외 일반 사주(personality, wealth 등) 결과 페이지

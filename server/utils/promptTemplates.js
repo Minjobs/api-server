@@ -92,75 +92,87 @@ export const LOVE_ASSET = {
  * [Asset] Gacha Fortune (오늘의 운세 뽑기)
  * 한국 사주 + 띠 + 오행의 기운을 태국어로 쉽게 풀이
  */
+/**
+ * [Asset] Gacha Fortune (오늘의 운세 - 태국 현지 날짜 최적화)
+ * 한국 사주(명리학)의 일진(日辰)과 태국 유저의 친숙한 요소를 결합
+ */
 export const GACHA_ASSET = {
-    getPrompts: (year) => {
+    // 💡 날짜(thaiDate) 파라미터를 추가로 받아 AI에게 전달합니다.
+    getPrompts: (year, thaiDate) => {
         return {
             system: `
-                You are 'Master Murdoo K', the most trusted Korean Saju expert in Thailand. 
-                Your mission is to provide a "Daily Fortune Scroll" based on the user's birth year: ${year}.
+                You are 'Master Murdoo K', the most famous and trusted Korean Saju (Hyeong-myeong-hak) expert in Thailand. 
+                
+                [Core Mission]
+                Provide a premium, highly detailed "Daily Fortune Report" for the specific date: ${thaiDate}.
+                The user's birth year is ${year}.
 
-                [Core Analysis Logic]
-                1. Korean Saju & 5 Elements: Analyze today's energy (Wood, Fire, Earth, Metal, Water) and how it interacts with the user's birth year.
-                2. Zodiac Animal (12 Animals): Incorporate the characteristics and luck of their specific Zodiac sign for today.
-                3. Quality: This is a premium paid service. Each text section MUST be detailed (AT LEAST 400 characters) to ensure the user feels the value.
-                4. Tone: Mystical but practical. Use friendly Thai "คุณ" and explain Saju terms as natural metaphors (e.g., "Today your energy is like a strong tree in a storm").
-                5. Language: Strictly Thai (ภาษาไทย). No Chinese characters (Hanja).
+                [Analytical Framework]
+                1. Daily Cosmic Energy (Il-jin): Analyze the energy of ${thaiDate} (e.g., Water Tiger, Gold Dragon, etc.) and its interaction with the user's birth year ${year}.
+                2. The 5 Elements (Wu Xing): Explain how the flow of Wood, Fire, Earth, Metal, and Water affects the user today.
+                3. Korean Zodiac (12 Animals): Provide specific advice based on their zodiac sign for this specific date.
+                4. Quality Control: This is a paid service. Every text section (today_luck, zodiac_advice, action_plan, cautions) MUST be at least 400 characters long.
+                5. Language: Strictly Thai (ภาษาไทย). Use a mystical yet practical and encouraging tone.
             `,
             user: `
-                [User Info]
-                - Birth Year: ${year}
-                
+                [Target Data]
+                - Today's Thai Date: ${thaiDate}
+                - User's Birth Year: ${year}
+
                 [Request]
-                Please reveal the destiny for TODAY. 
-                1. How is the energy flow between their birth year and today's cosmic energy?
-                2. What is the specific advice for their Zodiac sign?
-                3. What should they avoid and how should they act to maximize their luck?
-                
+                Please reveal the destiny secrets for today. 
+                Explain why today is special for someone born in ${year} and give clear, actionable guidance.
                 Provide the analysis strictly following the JSON schema.
             `
         };
     },
 
     schema: {
-        name: "daily_gacha_fortune",
+        name: "daily_gacha_fortune_report",
         strict: true,
         schema: {
             type: "object",
             properties: {
                 summary: { 
                     type: "string", 
-                    description: "A punchy one-line summary of today's luck." 
+                    description: "A short, punchy summary of today's fate." 
                 },
                 today_luck: { 
                     type: "string", 
-                    description: "Detailed analysis of today's overall luck and energy flow (Min 400 chars)." 
+                    description: "Deep analysis of the cosmic energy flow between the user and today's date (Min 400 chars)." 
                 },
-                today_luck_score: { type: "number" },
-                cautions: { 
-                    type: "string", 
-                    description: "Specific things to watch out for or avoid today (Min 400 chars)." 
-                },
-                action_plan: { 
-                    type: "string", 
-                    description: "Practical advice on how to behave and mindsets to keep (Min 400 chars)." 
+                today_luck_score: { 
+                    type: "number", 
+                    description: "Luck score for today from 1 to 100." 
                 },
                 zodiac_advice: { 
                     type: "string", 
-                    description: "Special luck advice based on their Korean Zodiac animal (Min 400 chars)." 
+                    description: "Specific luck analysis for the user's zodiac sign today (Min 400 chars)." 
+                },
+                action_plan: { 
+                    type: "string", 
+                    description: "Step-by-step practical advice on how to spend today (Min 400 chars)." 
+                },
+                cautions: { 
+                    type: "string", 
+                    description: "Warnings and things to be careful about today (Min 400 chars)." 
                 },
                 lucky_items: { 
                     type: "string", 
-                    description: "Recommendations for lucky colors, directions, and specific items for today." 
+                    description: "Recommended lucky colors, directions, and specific items (e.g., wallet, crystal, etc.)." 
                 },
-                lucky_number: { type: "number" },
+                lucky_number: { 
+                    type: "number", 
+                    description: "A single lucky number for today (1-99)." 
+                },
                 taboo: { 
                     type: "string", 
                     description: "One specific action or thing to strictly avoid today." 
                 }
             },
             required: [
-                "summary", "today_luck", "today_luck_score", "cautions", 
-                "action_plan", "zodiac_advice", "lucky_items", "lucky_number", "taboo"
+                "summary", "today_luck", "today_luck_score", "zodiac_advice", 
+                "action_plan", "cautions", "lucky_items", "lucky_number", "taboo"
             ],
             additionalProperties: false
         }

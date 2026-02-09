@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ตู้เสี่ยงทายดวงเกาหลี (Korean Fortune Gacha)</title>
+    <title>ตู้สุ่มดวงเกาหลี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,94 +19,100 @@
             background-color: #0a0a0a;
             font-family: 'Kanit', sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; /* 화면에 딱 맞게 설정 */
-            overflow: hidden; /* 스크롤 방지 */
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* --- [배경 통일] --- */
+        /* --- [배경 설정] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('/background.jpg'); background-size: cover; background-position: center;
         }
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            backdrop-filter: blur(8px) brightness(0.8); background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5);
         }
 
-        /* --- [전체 기계 래퍼 (컴팩트 사이즈 조정)] --- */
+        /* --- [기계 래퍼: 약간 위로 배치하여 중앙 정렬] --- */
         .machine-wrapper {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
-            transform: scale(0.9); /* 전체적으로 약간 축소하여 한 화면에 담기 */
+            transform: translateY(-20px); /* 화면 위쪽으로 약간 이동하여 무게중심 조정 */
         }
 
-        /* 1. 간판 (태국어만 남김, 사이즈 축소) */
+        /* 1. 간판 (태국어 전용) */
         .sign-roof {
-            width: 320px; height: 30px; /* 높이 축소 */
-            background: var(--wood-dark); border-radius: 15px 15px 0 0; border-bottom: 4px solid #2c1b15;
+            width: 340px; height: 35px;
+            background: var(--wood-dark); border-radius: 18px 18px 0 0; border-bottom: 4px solid #2c1b15;
             background-image: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.3) 50%), linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
-            background-size: 15px 100%, 100% 100%; z-index: 6;
+            background-size: 18px 100%, 100% 100%; z-index: 6;
         }
         .machine-sign {
-            width: 280px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
-            border: 5px solid var(--wood-dark); border-top: none;
-            padding: 10px; border-radius: 0 0 10px 10px; margin-bottom: -20px; z-index: 5; /* 여백 축소 */
-            box-shadow: 0 8px 15px rgba(0,0,0,0.5); text-align: center; color: var(--metal-brass);
+            width: 300px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
+            border: 6px solid var(--wood-dark); border-top: none;
+            padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8); position: relative;
         }
-        .machine-sign::after, .machine-body::after, .control-panel::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: var(--wood-grain); pointer-events: none; opacity: 0.5;
-        }
-        .machine-sign h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; color: #ffd700; }
+        .machine-sign h1 { margin: 0; font-size: 1.6rem; letter-spacing: 1px; color: #ffd700; }
 
-        /* 2. 기계 본체 (사이즈 컴팩트화) */
+        /* 2. 기계 본체 (가로 세로 확장) */
         .machine-body {
-            width: 300px; /* 너비 축소 */
+            width: 330px; /* 기존 300 -> 330 */
             background: linear-gradient(to right, #4e342e, var(--wood-medium), #4e342e);
-            border-radius: 25px 25px 20px 20px; border: 6px solid var(--wood-dark);
-            box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.6);
+            border-radius: 30px; border: 7px solid var(--wood-dark);
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px rgba(0,0,0,0.7);
             position: relative; display: flex; flex-direction: column; align-items: center;
-            padding-top: 25px; /* 상단 여백 축소 */
+            padding-top: 30px;
             overflow: hidden;
         }
 
-        /* 유리볼 영역 (사이즈 축소) */
+        /* 유리볼 영역 (확장) */
         .globe-container {
-            width: 220px; height: 220px; /* 사이즈 축소 */
-            position: relative; margin-bottom: 20px; z-index: 2;
+            width: 240px; height: 240px; /* 기존 220 -> 240 */
+            position: relative; margin-bottom: 25px; z-index: 2;
         }
         .glass-dome {
             width: 100%; height: 100%; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.4) 100%);
-            border: 8px solid var(--metal-brass);
-            box-shadow: inset 0 0 25px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4);
-            position: relative; overflow: hidden; backdrop-filter: blur(1px);
+            border: 9px solid var(--metal-brass);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden; backdrop-filter: blur(1.5px);
         }
         .glass-reflection {
-            position: absolute; top: 15%; left: 15%; width: 50px; height: 80px;
+            position: absolute; top: 15%; left: 15%; width: 55px; height: 90px;
             background: linear-gradient(to bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.1));
-            border-radius: 50%; transform: rotate(20deg); z-index: 10; pointer-events: none;
+            border-radius: 50%; transform: rotate(20deg); z-index: 10;
         }
-        /* 캡슐 스타일 */
         .capsule-ball {
-            position: absolute; width: 42px; height: 42px; border-radius: 50%;
+            position: absolute; width: 44px; height: 44px; border-radius: 50%;
             box-shadow: inset -2px -2px 6px rgba(0,0,0,0.4), 2px 2px 4px rgba(0,0,0,0.3);
             background-image: linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.2) 55%, transparent 55%);
         }
 
-        /* 3. 컨트롤 패널 (컴팩트화) */
+        /* 3. 컨트롤 패널 */
         .control-panel {
-            width: 250px; /* 너비 축소 */
-            background: linear-gradient(135deg, var(--wood-medium), var(--wood-dark));
-            border: 4px solid #2c1b15; border-radius: 12px;
-            padding: 15px; /* 패딩 축소 */
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.7);
+            width: 270px; background: linear-gradient(135deg, var(--wood-medium), var(--wood-dark));
+            border: 5px solid #2c1b15; border-radius: 15px;
+            padding: 20px 15px; box-shadow: inset 0 5px 20px rgba(0,0,0,0.7);
             display: flex; flex-direction: column; align-items: center; position: relative;
         }
+
+        /* 연도 선택 버튼을 레버 위로 배치 */
+        .year-select-wrap { width: 100%; margin-bottom: 20px; }
+        .retro-select {
+            width: 100%; padding: 12px; background: #2c1b15;
+            border: 3px solid var(--metal-brass); color: var(--metal-brass);
+            font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.1rem; text-align: center;
+            border-radius: 12px; outline: none; appearance: none;
+            box-shadow: inset 0 3px 10px rgba(0,0,0,0.6);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b5a642' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center; background-size: 22px;
+        }
+
         .lever-container {
-            position: relative; width: 110px; height: 110px; /* 사이즈 축소 */
-            cursor: pointer; filter: drop-shadow(0 8px 12px rgba(0,0,0,0.5));
+            position: relative; width: 115px; height: 115px;
+            cursor: pointer; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
         }
         .lever-base {
             position: absolute; top:0; left:0; width: 100%; height: 100%;
@@ -116,68 +122,60 @@
         .lever-handle {
             position: absolute; top: 12%; left: 50%; width: 22px; height: 76%;
             background: linear-gradient(to right, #d4af37, #fff8e1, #d4af37);
-            transform-origin: center 48px; /* 회전축 조정 */
-            transform: translateX(-50%) rotate(0deg);
+            transform-origin: center 50px; transform: translateX(-50%) rotate(0deg);
             border-radius: 6px; border: 2px solid #a68b2b;
             transition: transform 1.2s cubic-bezier(0.3, -0.2, 0.3, 1.5); z-index: 2;
         }
         .lever-handle::before {
             content: ''; position: absolute; top: -15px; left: 50%;
-            width: 40px; height: 30px; background:inherit; border: inherit;
+            width: 42px; height: 32px; background:inherit; border: inherit;
             transform: translateX(-50%); border-radius: 8px;
         }
         .lever-container.spinning .lever-handle { transform: translateX(-50%) rotate(360deg); }
 
-        /* 4. 하단부 (여백 축소) */
-        .bottom-section { width: 90%; margin-top: 15px; text-align: center; z-index: 2; }
-        .year-select-wrap { margin-bottom: 15px; }
-        .retro-select {
-            width: 100%; padding: 10px; background: #2c1b15;
-            border: 3px solid var(--metal-brass); color: var(--metal-brass);
-            font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1rem; text-align: center;
-            border-radius: 10px; outline: none; appearance: none;
-            box-shadow: inset 0 3px 10px rgba(0,0,0,0.6);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b5a642' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 10px center; background-size: 20px;
+        /* 가격 텍스트 */
+        .price-text {
+            margin-top: 15px; color: #ffd700; font-size: 1.2rem; font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
+
+        /* 하단 배출구 */
+        .bottom-section { width: 90%; margin-top: 15px; display: flex; justify-content: center; z-index: 2; }
         .dispenser-slot {
-            width: 100px; height: 40px; background: #1a0f0a;
-            border: 4px solid var(--metal-brass); border-radius: 10px 10px 0 0;
-            border-bottom: none; margin: 0 auto; position: relative;
-            overflow: hidden; box-shadow: inset 0 15px 25px #000;
+            width: 110px; height: 45px; background: #1a0f0a;
+            border: 5px solid var(--metal-brass); border-radius: 12px 12px 0 0;
+            border-bottom: none; overflow: hidden; box-shadow: inset 0 15px 25px #000;
         }
         .dropped-capsule {
             position: absolute; top: -50px; left: 50%;
-            width: 35px; height: 35px; background: var(--capsule-gold);
+            width: 38px; height: 38px; background: var(--capsule-gold);
             border-radius: 50%; transform: translateX(-50%);
             box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4);
             transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5);
         }
-        .dispenser-slot.drop .dropped-capsule { top: 3px; }
+        .dispenser-slot.drop .dropped-capsule { top: 4px; }
 
-        /* 애니메이션 레이어 (기존 유지) */
+        /* 애니메이션 효과 레이어 */
         .effect-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); display: none;
             justify-content: center; align-items: center; z-index: 9999;
         }
         .lucky-ball-zoom {
-            width: 60px; height: 60px; border-radius: 50%;
+            width: 65px; height: 65px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.9);
-            transform: scale(0.1); opacity: 0;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.9); transform: scale(0.1); opacity: 0;
         }
         .lucky-ball-zoom.zoom-in { animation: zoomAndFill 3s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
         @keyframes zoomAndFill {
             0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            15% { opacity: 1; transform: scale(1) rotate(360deg); }
-            80% { transform: scale(25) rotate(1080deg); opacity: 1; }
-            100% { transform: scale(60); opacity: 1; background: #fffaf0; }
+            15% { opacity: 1; transform: scale(1.1) rotate(360deg); }
+            80% { transform: scale(28) rotate(1080deg); opacity: 1; }
+            100% { transform: scale(65); opacity: 1; background: #fffaf0; }
         }
         .loading-msg {
             position: absolute; bottom: 20%; width: 100%; text-align: center;
-            color: var(--metal-brass); font-size: 1.5rem; font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8); letter-spacing: 1px;
+            color: var(--metal-brass); font-size: 1.6rem; font-weight: 700;
         }
     </style>
 </head>
@@ -189,30 +187,32 @@
     <div class="machine-wrapper">
         <div class="sign-roof"></div>
         <div class="machine-sign">
-            <h1>ตู้เสี่ยงทายดวงเกาหลี</h1>
-            <p style="margin-top: 4px; font-size: 0.9rem; color: var(--metal-brass);">หมุนเพื่อดูดวงชะตาของคุณ</p>
+            <h1>ตู้สุ่มดวงเกาหลี</h1>
         </div>
 
         <div class="machine-body">
             <div class="globe-container">
                 <div class="glass-dome" id="glassGlobe">
                     <div class="glass-reflection"></div>
-                    </div>
+                </div>
             </div>
 
             <div class="control-panel">
+                <div class="year-select-wrap">
+                    <select id="birthYear" class="retro-select">
+                        <option value="" disabled selected>เลือกปีเกิด</option>
+                    </select>
+                </div>
+
                 <div class="lever-container" id="spinBtn">
                     <div class="lever-base"></div>
                     <div class="lever-handle"></div>
                 </div>
+
+                <div class="price-text">1 เหรียญ</div>
             </div>
 
             <div class="bottom-section">
-                <div class="year-select-wrap">
-                    <select id="birthYear" class="retro-select">
-                        <option value="" disabled selected>เลือกปีเกิด (Birth Year)</option>
-                    </select>
-                </div>
                 <div class="dispenser-slot" id="dispenser">
                     <div class="dropped-capsule"></div>
                 </div>
@@ -228,35 +228,25 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 유리볼 안에 캡슐 꽉 채우기 (개수 증가 및 배치 수정)
+        // 캡슐 꽉 채우기 로직 (85개)
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
-
-        // 캡슐 개수를 늘려 풍성하게 표현 (85개)
         for (let i = 0; i < 85; i++) { 
             const capsule = document.createElement('div');
             capsule.classList.add('capsule-ball');
             capsule.style.background = colors[Math.floor(Math.random() * colors.length)];
-            
-            // 유리볼(220x220) 안에 꽉 차게 배치하되, 하단에 더 밀집되도록 설정
-            const left = Math.random() * 180; // 좌우 범위
-            // 상단(0)보다는 중하단(40~180)에 더 많이 분포하도록 조정
+            const left = Math.random() * 200;
             const topPos = Math.random();
-            const top = topPos < 0.7 ? (Math.random() * 100 + 80) : (Math.random() * 80);
-            
+            const top = topPos < 0.75 ? (Math.random() * 100 + 100) : (Math.random() * 100);
             const rotate = Math.random() * 360;
-            
             capsule.style.left = `${left}px`;
             capsule.style.top = `${top}px`;
             capsule.style.transform = `rotate(${rotate}deg)`;
-            // z-index를 다양하게 주어 겹치는 느낌 강화
-            capsule.style.zIndex = Math.floor(Math.random() * 10); 
-
+            capsule.style.zIndex = Math.floor(Math.random() * 10);
             glassGlobe.appendChild(capsule);
         }
 
-
-        // 2. 드롭다운 연도 생성 (태국 불기 제거)
+        // 연도 드롭다운 (태국어 전용)
         const yearSelect = document.getElementById('birthYear');
         for (let y = 2026; y >= 1940; y--) {
             const opt = document.createElement('option');
@@ -279,13 +269,12 @@
         spinBtn.addEventListener('click', async () => {
             const year = yearSelect.value;
             if (!year) {
-                alert("กรุณาเลือกปีเกิดก่อน (Please select birth year first)");
+                alert("กรุณาเลือกปีเกิดของคุณ");
                 return;
             }
             if (spinBtn.classList.contains('spinning')) return;
 
             const resultId = generateUUID();
-            
             spinBtn.classList.add('spinning');
             setTimeout(() => { dispenser.classList.add('drop'); }, 800);
             setTimeout(() => {
@@ -294,30 +283,26 @@
             }, 1600);
 
             try {
-                // 실제 서비스 연결 시 아래 주석 해제 및 코인 로직 적용 필요
-                 const response = await fetch('/api/fortune/analyze', {
-                     method: 'POST',
-                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-                     body: JSON.stringify({
-                         resultId: resultId, type: 'gacha',
-                         realName: 'GachaUser', nickName: 'Lucky',
-                         birthDate: `${year}-01-01`, birthTime: 'unknown', gender: 'unisex'
-                     })
-                 });
+                const response = await fetch('/api/fortune/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
+                    body: JSON.stringify({
+                        resultId: resultId, type: 'gacha',
+                        realName: 'GachaUser', nickName: 'Lucky',
+                        birthDate: `${year}-01-01`, birthTime: 'unknown', gender: 'unisex'
+                    })
+                });
 
-                // 테스트용 성공 처리 (4.2초 후 이동)
-                setTimeout(() => {
-                    // window.location.href = `/result/gacha/${resultId}`; // 실제 연결 시 주석 해제
-                    console.log(`이동할 주소: /result/gacha/${resultId}`);
-                    // 테스트 완료 후 실제 이동 코드 적용 필요
-                }, 4200);
-
+                if (response.ok) {
+                    setTimeout(() => {
+                        window.location.href = `/result/gacha/${resultId}`;
+                    }, 4200);
+                } else {
+                    throw new Error("เกิดข้อผิดพลาด");
+                }
             } catch (err) {
-                alert("Error. Please try again.");
-                spinBtn.classList.remove('spinning');
-                dispenser.classList.remove('drop');
-                overlay.style.display = 'none';
-                zoomBall.classList.remove('zoom-in');
+                alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+                location.reload();
             }
         });
     </script>

@@ -12,6 +12,10 @@ router.get('/login', (req, res) => res.sendFile(path.join(__dirname, 'client/vie
 // 🔐 로그인한 사람만 접근 가능 (verifyToken 추가)
 // router.get('/home', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/home.html')));
 router.get('/profile', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/profile.html')));
+
+//뽑기 페이지
+router.get('/gacha', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/gacha.html')));
+
 //오방기 페이지
 router.get('/obanggi', verifyToken, (req, res) => res.sendFile(path.join(__dirname, 'client/views/obanggi.html')));
 //사주 입력 페이지

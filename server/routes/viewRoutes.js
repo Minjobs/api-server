@@ -36,13 +36,18 @@ router.get(['/personality', '/wealth', '/romance'], (req, res) => {
 router.get('/result/:type/:id', (req, res) => {
     const { type, id } = req.params;
 
-    // type이 love일 경우에만 love_result.html을 보여줍니다.
     if (type === 'love') {
+        // 💖 연애 궁합 전용 결과 페이지
         console.log(`💖 연애 궁합 결과 페이지 로드: ${id}`);
         res.sendFile(path.join(__dirname, 'client/views/love_result.html'));
     } 
-    // 그 외의 경우 (일반 사주 등) 기존 결과 페이지를 보여줍니다.
+    else if (type === 'gacha') {
+        // 🎰 가차(뽑기) 전용 결과 페이지
+        console.log(`🎰 가차 결과 페이지 로드: ${id}`);
+        res.sendFile(path.join(__dirname, 'client/views/Gacha_result.html'));
+    }
     else {
+        // 🔮 그 외 일반 사주(personality, wealth 등) 결과 페이지
         console.log(`🔮 일반 사주 결과 페이지 로드 (${type}): ${id}`);
         res.sendFile(path.join(__dirname, 'client/views/result.html'));
     }

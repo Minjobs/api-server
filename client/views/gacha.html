@@ -1,145 +1,263 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - GACHA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <title>인사동 명물 - 사주 뽑기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&display=swap" rel="stylesheet">
     <style>
         :root {
-            --machine-red: #d32f2f;
-            --machine-dark: #1a1a1a;
-            --point-gold: #ffd700;
-            --glass-shine: rgba(255, 255, 255, 0.2);
+            --retro-red: #8e1a1a; /* 낡은 빨간색 */
+            --retro-metal: #5a4a42; /* 놋쇠/구리 느낌 */
+            --retro-gold: #d4af37; /* 빛바랜 금색 */
+            --capsule-red: #e74c3c;
+            --capsule-blue: #3498db;
+            --capsule-yellow: #f1c40f;
         }
 
         body {
-            margin: 0; padding: 0; background: #050505;
-            font-family: 'Kanit', sans-serif; color: white;
-            display: flex; flex-direction: column; align-items: center;
-            overflow: hidden; height: 100vh;
+            margin: 0; padding: 0; background: #121212;
+            font-family: 'Do Hyeon', sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; overflow: hidden;
         }
 
+        /* --- [배경: 인사동 밤거리 느낌] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at center, #1e272e 0%, #000 100%);
+            background: url('/background.jpg') no-repeat center center/cover; /* 실제 인사동 사진 권장 */
+            filter: blur(8px) brightness(0.4) sepia(0.3);
         }
 
-        /* --- [기계 본체] --- */
-        .gacha-machine {
-            position: relative; width: 300px; margin-top: 8vh;
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        .glass-tank {
-            width: 220px; height: 220px; background: rgba(255, 255, 255, 0.05);
-            border: 6px solid #444; border-radius: 50% 50% 10% 10%;
-            margin: 0 auto; position: relative; overflow: hidden;
-            backdrop-filter: blur(2px);
+        /* --- [전체 기계 컨테이너] --- */
+        .machine-wrapper {
+            position: relative;
+            display: flex; flex-direction: column; align-items: center;
+            transform: scale(0.9); /* 모바일 화면 맞춤 */
         }
 
-        .machine-base {
-            width: 260px; height: 250px; background: var(--machine-red);
-            border-radius: 20px; margin: -10px auto 0; position: relative;
-            box-shadow: inset 0 -10px 20px rgba(0,0,0,0.6), 0 15px 40px rgba(0,0,0,0.8);
-            display: flex; flex-direction: column; align-items: center; z-index: 2;
+        /* 상단 간판 */
+        .machine-sign {
+            background: var(--retro-red); border: 4px solid var(--retro-metal);
+            padding: 10px 25px; border-radius: 10px; margin-bottom: -20px; z-index: 5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            text-align: center; color: var(--retro-gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        .machine-sign h1 { margin: 0; font-family: 'Black Han Sans'; font-size: 2rem; letter-spacing: 2px; }
+        .machine-sign p { margin: 5px 0 0 0; font-size: 1rem; color: #fff; opacity: 0.8; }
+
+        /* 기계 본체 */
+        .machine-body {
+            width: 340px; background: linear-gradient(to right, #7a1515, var(--retro-red), #7a1515);
+            border-radius: 30px 30px 15px 15px;
+            border: 6px solid var(--retro-metal);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 20px 50px rgba(0,0,0,0.7);
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            padding-top: 30px;
+        }
+        /* 본체 질감 표현 (스크래치 등) */
+        .machine-body::after {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(0,0,0,0.02) 2px);
+            pointer-events: none; mix-blend-mode: overlay;
         }
 
-        /* --- [수정된 드롭다운 디자인] --- */
-        .year-select-wrap { margin-top: 20px; width: 85%; }
-        .year-label { font-size: 0.85rem; color: var(--point-gold); margin-bottom: 8px; font-weight: 500; }
+        /* 1. 상단 유리볼 (Globe) */
+        .globe-container {
+            width: 260px; height: 260px; position: relative; margin-bottom: 20px;
+        }
+        .glass-dome {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), rgba(255,255,255,0.05) 40%, rgba(0,0,0,0.3) 80%);
+            border: 8px solid var(--retro-metal);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3);
+            position: relative; overflow: hidden;
+            backdrop-filter: blur(1px);
+        }
+        /* 유리 반사광 */
+        .glass-reflection {
+            position: absolute; top: 20%; left: 15%; width: 50px; height: 90px;
+            background: rgba(255,255,255,0.25); border-radius: 50%; transform: rotate(25deg);
+        }
+
+        /* 캡슐들 (데코레이션) */
+        .capsule-deco {
+            position: absolute; width: 50px; height: 50px; border-radius: 50%;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3);
+        }
+
+        /* 2. 중앙 컨트롤 패널 (금속판) */
+        .control-panel {
+            width: 280px; background: linear-gradient(135deg, #7f6a5a, #5a4a42);
+            border: 4px solid #3e312b; border-radius: 15px;
+            padding: 20px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        /* 동전 투입구 디자인 */
+        .coin-slot-area {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+            color: var(--retro-gold); font-size: 0.9rem;
+        }
+        .coin-slot {
+            width: 40px; height: 60px; background: #2a201c; border: 3px solid var(--retro-gold);
+            border-radius: 5px; position: relative; box-shadow: inset 0 5px 10px #000;
+        }
+        .coin-slot::after {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 6px; height: 40px; background: #000;
+            transform: translate(-50%, -50%); border-radius: 3px;
+            box-shadow: 0 0 5px rgba(255,255,255,0.1);
+        }
+
+        /* 레버 (돌리는 손잡이) - 핵심 인터랙션 */
+        .lever-container {
+            position: relative; width: 120px; height: 120px;
+            cursor: pointer;
+        }
+        .lever-base {
+            position: absolute; top:0; left:0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #5a4a42, #3e312b);
+            border: 5px solid var(--retro-gold); border-radius: 50%;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        /* 실제 돌아가는 손잡이 부분 */
+        .lever-handle {
+            position: absolute; top: 10%; left: 50%; width: 20px; height: 80%;
+            background: linear-gradient(to right, #bf9b30, #fff2c2, #bf9b30);
+            transform-origin: center 60px; /* 회전축 중심 설정 */
+            transform: translateX(-50%) rotate(0deg);
+            border-radius: 5px; border: 2px solid #8c7223;
+            transition: transform 1s cubic-bezier(0.25, 0.1, 0.25, 1.5); /* 팅기는 효과 */
+            z-index: 2;
+        }
+        .lever-handle::before { /* 손잡이 위쪽 뭉툭한 부분 */
+            content: ''; position: absolute; top: -15px; left: 50%;
+            width: 40px; height: 30px; background:inherit; border: inherit;
+            transform: translateX(-50%); border-radius: 8px;
+        }
+        /* 레버가 돌아갈 때 클래스 */
+        .lever-container.spinning .lever-handle { transform: translateX(-50%) rotate(360deg); }
+
+        /* 3. 하단: 년도 입력 및 배출구 */
+        .bottom-section { width: 90%; margin-top: 20px; text-align: center; }
         
-        .custom-select {
-            width: 100%; height: 50px; background: #000;
-            border: 2px solid var(--point-gold); border-radius: 12px;
-            color: var(--point-gold); font-size: 1.2rem; font-weight: 800;
-            text-align: center; font-family: 'Kanit'; cursor: pointer;
-            outline: none; appearance: none; -webkit-appearance: none;
-            /* 드롭다운 화살표 커스텀 */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ffd700'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 10px center; background-size: 25px;
+        .year-select-wrap { margin-bottom: 20px; }
+        .retro-select {
+            width: 100%; padding: 10px; background: #3e312b;
+            border: 3px solid var(--retro-gold); color: var(--retro-gold);
+            font-family: 'Do Hyeon'; font-size: 1.2rem; text-align: center;
+            border-radius: 8px; outline: none; appearance: none;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.5);
         }
 
-        .lever-zone {
-            width: 85px; height: 85px; background: #222; border: 4px solid var(--point-gold);
-            border-radius: 50%; margin-top: 20px; display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.2s;
+        /* 캡슐 배출구 */
+        .dispenser-slot {
+            width: 100px; height: 40px; background: #1a1512;
+            border: 4px solid var(--retro-metal); border-radius: 10px 10px 0 0;
+            border-bottom: none; margin: 0 auto; position: relative;
+            overflow: hidden; box-shadow: inset 0 10px 20px #000;
         }
-        .lever-bar { width: 55px; height: 12px; background: var(--point-gold); border-radius: 6px; transition: 0.6s; }
-        .lever-zone.spinning .lever-bar { transform: rotate(360deg); }
+        /* 배출되는 캡슐 (애니메이션용) */
+        .dropped-capsule {
+            position: absolute; top: -50px; left: 50%;
+            width: 35px; height: 35px; background: var(--capsule-red);
+            border-radius: 50%; transform: translateX(-50%);
+            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4);
+            transition: top 0.5s bounce;
+        }
+        .dispenser-slot.drop .dropped-capsule { top: 5px; }
 
-        /* --- [캡슐 애니메이션] --- */
+
+        /* --- [전체 화면 덮는 애니메이션 레이어 (기존 유지)] --- */
         .effect-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: none;
             justify-content: center; align-items: center; z-index: 9999;
         }
-        .lucky-ball {
+        .lucky-ball-zoom {
             width: 60px; height: 60px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
             transform: scale(0.1); opacity: 0;
         }
-        .lucky-ball.zoom-in { animation: zoomAndFill 2.6s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
-
+        .lucky-ball-zoom.zoom-in { animation: zoomAndFill 2.8s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
         @keyframes zoomAndFill {
             0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            15% { opacity: 1; transform: scale(1) rotate(180deg); }
-            85% { transform: scale(15) rotate(720deg); opacity: 1; }
-            100% { transform: scale(45); opacity: 1; background: white; }
+            20% { opacity: 1; transform: scale(1) rotate(360deg); }
+            85% { transform: scale(20) rotate(1080deg); opacity: 1; }
+            100% { transform: scale(50); opacity: 1; background: #fffaf0; }
         }
-
         .loading-msg {
-            position: absolute; bottom: 15%; width: 100%; text-align: center;
-            color: var(--point-gold); font-size: 1.1rem;
+            position: absolute; bottom: 20%; width: 100%; text-align: center;
+            color: var(--retro-gold); font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
         }
-        .ball-deco { position: absolute; width: 45px; height: 45px; border-radius: 50%; opacity: 0.8; }
     </style>
 </head>
 <body>
 
     <div class="background-overlay"></div>
-    <h1 style="font-family: 'Nanum Myeongjo'; color: var(--point-gold); margin-top: 40px; letter-spacing: 3px;">GACHA FORTUNE</h1>
 
-    <div class="gacha-machine">
-        <div class="glass-tank">
-            <div class="ball-deco" style="background: #f1c40f; bottom: 10px; left: 20px;"></div>
-            <div class="ball-deco" style="background: #e74c3c; bottom: 5px; left: 70px;"></div>
-            <div class="ball-deco" style="background: #ecf0f1; bottom: 12px; right: 20px;"></div>
+    <div class="machine-wrapper">
+        <div class="machine-sign">
+            <h1>인사동 명물</h1>
+            <p>신비한 사주 뽑기</p>
         </div>
 
-        <div class="machine-base">
-            <div class="year-select-wrap">
-                <div class="year-label">ปีเกิดของคุณ (Birth Year)</div>
-                <select id="birthYear" class="custom-select">
-                    <option value="" disabled selected>เลือกปี ค.ศ.</option>
-                </select>
+        <div class="machine-body">
+            <div class="globe-container">
+                <div class="glass-dome">
+                    <div class="glass-reflection"></div>
+                    <div class="capsule-deco" style="background: var(--capsule-red); bottom: 20px; left: 30px; transform: rotate(15deg);"></div>
+                    <div class="capsule-deco" style="background: var(--capsule-blue); bottom: 10px; right: 40px; transform: rotate(-20deg);"></div>
+                    <div class="capsule-deco" style="background: var(--capsule-yellow); bottom: 40px; left: 80px; z-index: -1;"></div>
+                    <div class="capsule-deco" style="background: var(--capsule-red); top: 60px; left: 50px; transform: rotate(45deg);"></div>
+                    <div class="capsule-deco" style="background: var(--capsule-blue); top: 80px; right: 60px; transform: rotate(-10deg);"></div>
+                    </div>
             </div>
 
-            <div class="lever-zone" id="spinBtn">
-                <div class="lever-bar"></div>
+            <div class="control-panel">
+                <div class="coin-slot-area">
+                    <div class="coin-slot"></div>
+                    <span>복채 (운명 교환권) 투입구</span>
+                </div>
+                
+                <div class="lever-container" id="spinBtn">
+                    <div class="lever-base"></div>
+                    <div class="lever-handle"></div>
+                </div>
+                <p style="color: var(--retro-gold); margin-top: 10px;">레버를 힘껏 돌리세요!</p>
             </div>
-            <p style="color: var(--point-gold); font-weight: 700; margin-top: 15px;">หมุนเพื่อดูดวง</p>
+
+            <div class="bottom-section">
+                <div class="year-select-wrap">
+                    <select id="birthYear" class="retro-select">
+                        <option value="" disabled selected>태어난 년도 선택 (YYYY)</option>
+                    </select>
+                </div>
+                
+                <div class="dispenser-slot" id="dispenser">
+                    <div class="dropped-capsule"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="effect-layer" id="overlay">
-        <div class="lucky-ball" id="ball"></div>
-        <div class="loading-msg">กำลังดึงโชคชะตาของคุณ...</div>
+        <div class="lucky-ball-zoom" id="zoomBall"></div>
+        <div class="loading-msg">당신의 운명을 읽는 중...</div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 드롭다운 연도 생성 (1940 ~ 2026)
+        // 1. 드롭다운 연도 생성
         const yearSelect = document.getElementById('birthYear');
-        const currentYear = 2026;
-        for (let y = currentYear; y >= 1940; y--) {
+        for (let y = 2026; y >= 1940; y--) {
             const opt = document.createElement('option');
-            opt.value = y;
-            opt.innerHTML = y;
-            yearSelect.appendChild(opt);
+            opt.value = y; opt.innerHTML = `${y}년생`; yearSelect.appendChild(opt);
         }
 
         function generateUUID() {
@@ -150,46 +268,57 @@
         }
 
         const spinBtn = document.getElementById('spinBtn');
+        const dispenser = document.getElementById('dispenser');
         const overlay = document.getElementById('overlay');
-        const ball = document.getElementById('ball');
+        const zoomBall = document.getElementById('zoomBall');
 
         spinBtn.addEventListener('click', async () => {
             const year = yearSelect.value;
             if (!year) {
-                alert("กรุณาเลือกปีเกิด (연도를 선택해주세요)");
+                alert("태어난 년도를 먼저 선택해주세요!");
                 return;
             }
+            if (spinBtn.classList.contains('spinning')) return; // 중복 클릭 방지
 
             const resultId = generateUUID();
+            
+            // --- [애니메이션 시퀀스 시작] ---
+            
+            // 1. 레버 회전 (1초)
             spinBtn.classList.add('spinning');
 
+            // 2. 캡슐 배출구로 톡 떨어짐 (0.8초 후)
+            setTimeout(() => {
+                dispenser.classList.add('drop');
+            }, 800);
+
+            // 3. 화면 줌인 이펙트 시작 (1.5초 후)
             setTimeout(() => {
                 overlay.style.display = 'flex';
-                ball.classList.add('zoom-in');
-            }, 600);
+                zoomBall.classList.add('zoom-in');
+            }, 1500);
 
+            // --- [서버 요청] ---
             try {
                 const response = await fetch('/api/fortune/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({
                         resultId: resultId,
-                        type: 'gacha',
-                        realName: 'GachaUser',
-                        nickName: 'LuckyOne',
-                        birthDate: `${year}-01-01`,
-                        birthTime: 'unknown',
-                        gender: 'unisex'
+                        type: 'gacha', // 뽑기 타입 지정
+                        realName: 'GachaUser', nickName: 'Lucky',
+                        birthDate: `${year}-01-01`, birthTime: 'unknown', gender: 'unisex'
                     })
                 });
 
                 if (response.ok) {
+                    // 애니메이션이 완전히 끝나고 화면이 하얗게 변했을 때 이동 (약 4초 후)
                     setTimeout(() => {
                         window.location.href = `/result/gacha/${resultId}`;
-                    }, 2500);
+                    }, 4000);
                 } else { throw new Error(); }
             } catch (err) {
-                alert("Server Error. Please try again.");
+                alert("서버 연결에 실패했습니다. 다시 시도해주세요.");
                 location.reload();
             }
         });

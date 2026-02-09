@@ -32,24 +32,27 @@
             backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
         }
 
-        /* --- [로딩 레이어: 가차머신 하단부 연출] --- */
+        /* --- [로딩 레이어] --- */
         #loadingLayer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 10000;
         }
 
-        /* 미니 가차머신 배출구 부분 */
         .mini-machine-bottom {
             width: 160px; height: 100px;
             background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
             border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
             position: relative; display: flex; justify-content: center;
+            z-index: 5; /* 공보다 뒤에 위치하도록 설정 */
         }
+
+        /* 배출구 슬롯: 처음엔 hidden, 공이 커질 땐 JS로 visible 변경 */
         .dispenser-slot {
             width: 80px; height: 40px; background: #1a0f0a;
             border: 4px solid var(--metal-brass); border-radius: 8px 8px 0 0;
-            border-bottom: none; position: absolute; bottom: 0; overflow: hidden;
+            border-bottom: none; position: absolute; bottom: 0; 
+            overflow: hidden; /* 공이 떨어질 때까지만 숨김 */
         }
 
         /* 배출되는 공 */
@@ -58,6 +61,7 @@
             width: 40px; height: 40px; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
             border-radius: 50%; transform: translateX(-50%);
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            z-index: 10; /* 머신보다 앞에 위치 */
         }
 
         /* 1. 공이 떨어지는 애니메이션 */
@@ -67,26 +71,26 @@
             100% { top: 5px; }
         }
 
-        /* 2. 공이 화면의 70%까지 커지는 애니메이션 (2초) */
+        /* 2. 공이 화면 전체로 커지는 애니메이션 (2초) */
         .zoom-anim { 
             animation: ballZoom 2s ease-in-out forwards; 
-            z-index: 10001;
+            z-index: 10001; /* 로딩 레이어 내의 모든 요소보다 위 */
         }
         @keyframes ballZoom {
             0% { transform: translate(-50%, 0) scale(1); top: 5px; }
-            100% { transform: translate(-50%, -50%) scale(25); top: 50%; } /* 화면의 약 70% 차지 */
+            100% { transform: translate(-50%, -120%) scale(25); top: 50%; } /* 중앙으로 이동하며 확대 */
         }
 
         /* 화이트아웃 효과 */
         .flash-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 10002; display: none;
+            background: white; z-index: 10005; display: none;
         }
 
-        /* --- [결과 페이지: 애니메이션 없이 즉시 노출] --- */
+        /* --- [결과 페이지: 즉시 노출] --- */
         .container {
             width: 92%; max-width: 440px; margin: 40px 0;
-            display: none; /* 초기 숨김 */
+            display: none;
             z-index: 10;
         }
 
@@ -129,8 +133,8 @@
     <div class="background-blur"></div>
 
     <div id="loadingLayer">
-        <div class="mini-machine-bottom">
-            <div class="dispenser-slot">
+        <div class="mini-machine-bottom" id="machineBottom">
+            <div class="dispenser-slot" id="dispenserSlot">
                 <div class="exit-ball" id="gachaBall"></div>
             </div>
         </div>
@@ -180,7 +184,7 @@
                     <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
                 </div>
                 <div class="lucky-item" style="grid-column: span 2;">
-                    <div class="lucky-label">ไอเทมเสริมดวง</div>
+                    <div class="lucky-label">아이템เสริมดวง</div>
                     <div class="lucky-value" id="lucky_items">?</div>
                 </div>
             </div>
@@ -195,19 +199,21 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const resultId = window.location.pathname.split('/').pop();
             const gachaBall = document.getElementById('gachaBall');
+            const dispenserSlot = document.getElementById('dispenserSlot');
             
-            // 1. 시퀀스 시작: 공이 툭 떨어짐
+            // 1. 공이 배출구에서 떨어지는 애니메이션 시작
             setTimeout(() => {
                 gachaBall.classList.add('drop-anim');
             }, 500);
 
-            // 2. 데이터 가져오기 (병렬 진행)
             const dataPromise = fetch(`/api/gacha/result/${resultId}`, {
                 headers: { 'x-api-key': API_KEY }
             }).then(res => res.json());
 
-            // 3. 공이 커지는 애니메이션 (떨어진 후 0.6초 뒤 시작)
+            // 2. 공이 커지는 시점 (떨어지는 애니메이션 완료 후)
             setTimeout(() => {
+                // 💡 핵심: 배출구의 overflow를 visible로 바꿔서 공이 튀어나오게 함
+                dispenserSlot.style.overflow = 'visible'; 
                 gachaBall.classList.remove('drop-anim');
                 gachaBall.classList.add('zoom-anim');
                 document.getElementById('loadingStatus').style.display = 'none';
@@ -216,7 +222,6 @@
             try {
                 const data = await dataPromise;
 
-                // 데이터 미리 매핑
                 document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date}`;
                 document.getElementById('score').innerText = data.today_luck_score;
                 document.getElementById('summary').innerText = data.summary;
@@ -228,7 +233,7 @@
                 document.getElementById('taboo').innerText = data.taboo;
                 document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // 4. 공이 꽉 찬 시점(약 3.1초 지점)에 화이트아웃 후 결과 노출
+                // 3. 공이 70% 정도 커진 시점 (총 3.1초 지점)
                 setTimeout(() => {
                     const flash = document.getElementById('flash');
                     flash.style.display = 'block';
@@ -237,7 +242,6 @@
                         document.getElementById('loadingLayer').style.display = 'none';
                         flash.style.display = 'none';
                         document.getElementById('resultContent').style.display = 'block';
-                        // 점수 바는 결과가 뜬 후 부드럽게 채움
                         setTimeout(() => {
                             document.getElementById('scoreBar').style.width = data.today_luck_score + '%';
                         }, 100);

@@ -7,16 +7,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.45); 
+            /* ✅ 홈페이지와 동일한 깊은 검은색 톤으로 수정 */
+            --bg-overlay: rgba(0, 0, 0, 0.85); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
-            --border-line: rgba(200, 200, 200, 0.8); 
-            --card-glass: rgba(255, 255, 255, 0.1);
+            --border-line: rgba(255, 215, 0, 0.3); 
+            --card-glass: rgba(255, 255, 255, 0.08);
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #f5f5f5; 
+            background-color: #0a0a0a; 
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
@@ -28,34 +29,35 @@
             z-index: -1;
             background-image: url('/background.jpg'); 
             background-size: cover; background-position: center;
-            background-attachment: fixed; opacity: 0.8; 
+            background-attachment: fixed; opacity: 0.6; 
         }
 
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(8px) brightness(0.9);
+            backdrop-filter: blur(15px) brightness(0.6);
         }
 
+        /* --- [메인 컨테이너: 홈페이지와 동일한 묵직함 적용] --- */
         .container {
-            width: 88%; max-width: 440px; 
-            margin: 20px 0;
+            width: 90%; max-width: 440px; 
+            margin: 40px 0;
             background-color: var(--bg-overlay); 
-            border-radius: 30px; 
-            padding: 25px 15px 40px 15px;
+            border-radius: 35px; 
+            padding: 30px 20px 45px 20px;
             box-sizing: border-box;
-            backdrop-filter: blur(10px); 
-            border: 3px solid var(--border-line); 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px); 
+            border: 2px solid var(--point-gold); /* 금색 테두리로 포인트 */
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             text-align: center;
         }
 
         header {
             width: 100%; display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; padding: 0 5px;
+            margin-bottom: 30px; padding: 0 10px;
         }
         .logo {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
+            font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; font-weight: 800;
             color: var(--text-white); cursor: pointer;
         }
         .logo span { color: var(--point-gold); }
@@ -65,42 +67,43 @@
             font-weight: 500;
         }
 
-        .page-title { margin-bottom: 30px; }
-        .page-title h2 { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
-        .page-title p { font-size: 0.9rem; opacity: 0.8; font-weight: 300; margin-top: 8px; }
+        .page-title { margin-bottom: 35px; }
+        .page-title h2 { font-family: 'Nanum Myeongjo', serif; font-size: 1.85rem; color: var(--point-gold); margin: 0; }
+        .page-title p { font-size: 0.95rem; opacity: 0.7; font-weight: 300; margin-top: 10px; }
 
         .history-list {
-            width: 100%; display: flex; flex-direction: column; gap: 15px;
+            width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
 
+        /* 히스토리 카드 디자인 강화 */
         .history-card {
             background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            padding: 20px;
+            padding: 18px;
             display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer; transition: all 0.3s;
             text-align: left;
         }
-        .history-card:active { transform: scale(0.97); background: rgba(255,255,255,0.15); }
+        .history-card:active { transform: scale(0.96); background: rgba(255,255,255,0.12); }
 
         .info-area { flex: 1; }
         .fortune-type { 
-            font-size: 0.75rem; color: var(--point-gold); 
-            letter-spacing: 1px; font-weight: 700; margin-bottom: 4px;
+            font-size: 0.7rem; color: var(--point-gold); 
+            letter-spacing: 1.2px; font-weight: 700; margin-bottom: 5px;
             text-transform: uppercase;
         }
         .fortune-summary { 
-            font-size: 1rem; font-weight: 500; color: #fff;
+            font-size: 1.05rem; font-weight: 500; color: #fff;
             overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
             -webkit-line-clamp: 1; -webkit-box-orient: vertical;
         }
-        .date-area { font-size: 0.75rem; opacity: 0.5; font-weight: 300; margin-top: 8px; }
+        .date-area { font-size: 0.8rem; opacity: 0.5; font-weight: 300; margin-top: 10px; }
 
-        .arrow-icon { color: var(--point-gold); font-size: 1.2rem; margin-left: 10px; opacity: 0.6; }
+        .arrow-icon { color: var(--point-gold); font-size: 1.1rem; opacity: 0.7; }
 
-        .empty-state { padding: 40px 0; opacity: 0.6; }
-        .empty-icon { font-size: 3rem; margin-bottom: 15px; }
+        .empty-state { padding: 50px 0; opacity: 0.6; }
+        .empty-icon { font-size: 3.5rem; margin-bottom: 15px; }
 
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -108,21 +111,21 @@
             align-items: center; justify-content: center;
         }
         .spinner {
-            width: 40px; height: 40px; border: 3px solid rgba(255, 215, 0, 0.1);
-            border-top: 3px solid var(--point-gold); border-radius: 50%;
+            width: 45px; height: 45px; border: 4px solid rgba(255, 215, 0, 0.1);
+            border-top: 4px solid var(--point-gold); border-radius: 50%;
             animation: spin 1s linear infinite; margin-bottom: 15px;
         }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .hidden { display: none !important; }
-        footer { margin-top: 30px; opacity: 0.5; font-size: 0.75rem; }
+        footer { margin-top: 35px; opacity: 0.4; font-size: 0.75rem; letter-spacing: 0.5px; }
     </style>
 </head>
 <body>
 
     <div id="loader">
         <div class="spinner"></div>
-        <p style="color: var(--point-gold); font-family: 'Kanit';">กำลังโหลดประวัติ...</p>
+        <p style="color: var(--point-gold); font-family: 'Kanit'; font-weight: 400;">กำลังโหลดประวัติ...</p>
     </div>
 
     <div class="background-overlay"></div>
@@ -153,7 +156,6 @@
             const loader = document.getElementById('loader');
 
             try {
-                // 1. 유저의 사주 히스토리 데이터 가져오기 (최신순)
                 const res = await fetch('/api/fortune/history', { headers: { 'x-api-key': API_KEY } });
                 const list = await res.json();
 
@@ -166,9 +168,6 @@
 
                         const card = document.createElement('div');
                         card.className = 'history-card';
-                        
-                        // --- [수정 포인트: 새로운 주소 체계 적용] ---
-                        // fortune_type과 result_id를 조합하여 이동합니다.
                         card.onclick = () => location.href = `/result/${item.fortune_type}/${item.result_id}`;
                         
                         card.innerHTML = `

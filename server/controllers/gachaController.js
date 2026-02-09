@@ -6,20 +6,20 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /**
  * 1. [POST] /api/gacha/analyze
- * 태국 현지 날짜 기반 오늘의 운세 분석 및 코인 차감
+ * 태국 현지 날짜 및 불기(B.E.) 연도 기반 오늘의 운세 분석 및 코인 차감
  */
 export const analyzeGacha = async (req, res) => {
-    const { resultId, birthDate } = req.body;
+    const { resultId, birthDate } = req.body; // birthDate 예: "2541-01-01" (불기)
     
     // Passport/JWT 미들웨어를 통해 들어온 유저 정보 확인
     const line_user_id = req.user ? req.user.userId : null;
 
-    // [로그] 요청 진입 확인
+    // [로그] 요청 진입 확인 (불기 연도 확인)
     console.log(`\n==========================================`);
     console.log(`🎰 [Gacha Analyze] 요청 수신`);
     console.log(`🆔 Result ID: ${resultId}`);
     console.log(`👤 Line User ID: ${line_user_id}`);
-    console.log(`🎂 Birth Date: ${birthDate}`);
+    console.log(`🎂 Birth Year (B.E.): ${birthDate.split('-')[0]}`); 
     console.log(`==========================================`);
 
     if (!line_user_id) {
@@ -29,7 +29,6 @@ export const analyzeGacha = async (req, res) => {
 
     try {
         // --- [Step 1] 태국 현지 날짜 생성 (UTC+7, 불기 연도 적용) ---
-        // 예: "วันจันทร์ที่ 9 กุมภาพันธ์ พ.ศ. 2569"
         const thaiDate = new Intl.DateTimeFormat('th-TH', {
             dateStyle: 'full',
             timeZone: 'Asia/Bangkok',
@@ -57,11 +56,11 @@ export const analyzeGacha = async (req, res) => {
             return res.status(403).json({ error: 'INSUFFICIENT_COINS' });
         }
 
-        // --- [Step 3] AI 분석 요청 (GACHA_ASSET 활용) ---
-        const birthYear = birthDate.split('-')[0];
-        const { system, user } = GACHA_ASSET.getPrompts(birthYear, thaiDate);
+        // --- [Step 3] AI 분석 요청 (GACHA_ASSET 활용 - 불기 연도 전달) ---
+        const birthYearBE = birthDate.split('-')[0]; // 유저가 선택한 불기 연도 (예: 2541)
+        const { system, user } = GACHA_ASSET.getPrompts(birthYearBE, thaiDate);
 
-        console.log(`🤖 [Step 3] AI(gpt-4o-mini) 분석 요청 전송...`);
+        console.log(`🤖 [Step 3] AI(gpt-4o-mini) 분석 요청 전송... (Year: B.E. ${birthYearBE})`);
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
@@ -76,8 +75,9 @@ export const analyzeGacha = async (req, res) => {
         });
 
         const gachaResult = JSON.parse(completion.choices[0].message.content);
-        // 결과 객체에 날짜 정보 수동 추가
+        // 결과 객체에 날짜 정보 및 사용자 불기 연도 추가
         gachaResult.analysis_date = thaiDate; 
+        gachaResult.user_year_be = birthYearBE;
         
         console.log("✅ AI 분석 및 결과 파싱 성공");
 

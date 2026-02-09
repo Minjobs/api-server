@@ -87,3 +87,58 @@ export const LOVE_ASSET = {
         }
     }
 };
+
+/**
+ * [Asset] Gacha Fortune (가차 운세 뽑기)
+ * 뽑기 전용: 짧고 강렬한 요약 + 상세 분석 + 가차 전용 재미 요소
+ */
+export const GACHA_ASSET = {
+    // 1. AI에게 전달할 지시문 생성 함수
+    getPrompts: (year) => {
+        return {
+            system: `
+                You are 'Murdoo K', the legendary gacha fortune master. 
+                Your mission is to reveal the user's destiny for today based on their birth year: ${year}.
+
+                [Operational Guidelines]
+                1. Language: MUST write exclusively in Thai (ภาษาไทย).
+                2. Tone: Mystical, exciting, and highly encouraging.
+                3. Quality: This is a premium paid service. Each qualitative section MUST contain AT LEAST 400 characters of insightful analysis.
+                4. Gacha Elements: Provide a "Lucky Number" (1-99) and a specific "Daily Taboo" (something to avoid today).
+            `,
+            user: `
+                [Gacha Data]
+                - Birth Year: ${year}
+                
+                [Request]
+                Analyze the user's cosmic energy for today. 
+                Explain how their birth year interacts with current celestial movements.
+                Provide the analysis strictly following the JSON schema.
+            `
+        };
+    },
+
+    // 2. OpenAI Structured Outputs용 JSON 스키마
+    schema: {
+        name: "gacha_fortune_analysis",
+        strict: true,
+        schema: {
+            type: "object",
+            properties: {
+                summary: { type: "string", description: "One-line essence of today's fate" },
+                outward: { type: "string", description: "Today's social luck and external energy (Min 400 chars)" },
+                inward: { type: "string", description: "Internal mindset and emotional guidance (Min 400 chars)" },
+                strengths: { type: "string", description: "The most powerful luck factor for today (Min 400 chars)" },
+                weaknesses: { type: "string", description: "Areas where energy is leaking (Min 400 chars)" },
+                cautions: { type: "string", description: "Specific warnings for today (Min 400 chars)" },
+                boosters: { type: "string", description: "How to maximize today's luck (Min 400 chars)" },
+                lucky_number: { type: "number", description: "A lucky number for today (1-99)" },
+                taboo: { type: "string", description: "One specific thing to avoid today (Thai)" }
+            },
+            required: [
+                "summary", "outward", "inward", "strengths", "weaknesses", "cautions", "boosters", "lucky_number", "taboo"
+            ],
+            additionalProperties: false
+        }
+    }
+};

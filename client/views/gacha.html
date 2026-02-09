@@ -9,20 +9,22 @@
         :root {
             --wood-dark: #3e2723;
             --wood-medium: #5d4037;
+            --wood-grain: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, transparent 2px, rgba(0,0,0,0.02) 5px);
             --metal-brass: #b5a642;
             --capsule-gold: #f1c40f;
         }
 
-        /* --- [1. 스크롤 가능하도록 수정] --- */
         body {
-            margin: 0; padding: 40px 0; /* 위아래 여백 */
+            margin: 0; padding: 40px 0;
             background-color: #0a0a0a;
             font-family: 'Kanit', sans-serif;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
             overflow-y: auto; /* 세로 스크롤 허용 */
+            box-sizing: border-box;
         }
 
+        /* --- [배경 설정] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('/background.jpg'); background-size: cover; background-position: center;
@@ -32,10 +34,12 @@
             backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5);
         }
 
+        /* --- [기계 래퍼: 컴팩트한 사이즈] --- */
         .machine-wrapper {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
-            margin: auto; /* 중앙 배치 */
+            transform: scale(0.95);
+            margin: auto;
         }
 
         .sign-roof {
@@ -49,8 +53,13 @@
             border: 6px solid var(--wood-dark); border-top: none;
             padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5;
             box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass);
+            position: relative;
         }
-        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; }
+        .machine-sign::after, .machine-body::after, .control-panel::after {
+            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+            background: var(--wood-grain); pointer-events: none; opacity: 0.4;
+        }
+        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; text-shadow: 1px 1px 2px #000; }
 
         .machine-body {
             width: 330px;
@@ -115,7 +124,6 @@
         }
         .lever-container.spinning .lever-handle { transform: translateX(-50%) rotate(360deg); }
 
-        /* --- [2. 코인 아이콘 변경] --- */
         .price-text {
             margin-top: 15px; color: #ffd700; font-size: 1.3rem; font-weight: 700;
             display: flex; align-items: center; gap: 6px;
@@ -129,7 +137,7 @@
             box-shadow: inset 0 15px 25px #000;
         }
         .dropped-capsule {
-            position: absolute; top: -50px; left: 50%;
+            position: absolute; top: -60px; left: 50%;
             width: 38px; height: 38px; background: var(--capsule-gold);
             border-radius: 50%; transform: translateX(-50%);
             box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4);
@@ -152,14 +160,13 @@
         @keyframes zoomAndFill {
             0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
             10% { opacity: 1; transform: scale(1); }
-            100% { transform: scale(70); opacity: 1; background: #fffaf0; }
+            100% { transform: scale(75); opacity: 1; background: #fffaf0; }
         }
 
-        /* --- [3. 로딩 문구 (애니메이션 후 노출)] --- */
         .loading-msg {
             position: absolute; bottom: 20%; width: 100%; text-align: center;
             color: var(--metal-brass); font-size: 1.6rem; font-weight: 700;
-            display: none; /* 초기 숨김 */
+            display: none;
         }
     </style>
 </head>
@@ -176,7 +183,7 @@
             <div class="globe-container">
                 <div class="glass-dome" id="glassGlobe">
                     <div class="glass-reflection"></div>
-                </div>
+                    </div>
             </div>
 
             <div class="control-panel">
@@ -208,22 +215,23 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 캡슐 채우기
+        // 1. 캡슐 꽉 채우기 (85개)
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
             const capsule = document.createElement('div');
             capsule.classList.add('capsule-ball');
             capsule.style.background = colors[Math.floor(Math.random() * colors.length)];
-            const left = Math.random() * 200;
-            const top = Math.random() * 100 + 100;
+            const left = Math.random() * 190;
+            const top = Math.random() * 100 + 100; // 하단 밀집
             const rotate = Math.random() * 360;
             capsule.style.left = `${left}px`; capsule.style.top = `${top}px`;
             capsule.style.transform = `rotate(${rotate}deg)`;
+            capsule.style.zIndex = Math.floor(Math.random() * 5);
             glassGlobe.appendChild(capsule);
         }
 
-        // --- [4. 태국 불기(BE) 추가] ---
+        // 2. 태국 불기 병기 드롭다운
         const yearSelect = document.getElementById('birthYear');
         for (let y = 2026; y >= 1940; y--) {
             const opt = document.createElement('option');
@@ -255,41 +263,45 @@
             // 시퀀스 1: 레버 돌리기
             spinBtn.classList.add('spinning');
             
-            // 시퀀스 2: 배출구에서 공 나오기
+            // 시퀀스 2: 배출구에서 공 나오기 (0.8초 뒤)
             setTimeout(() => { 
                 dispenser.classList.add('drop'); 
             }, 800);
 
-            // 시퀀스 3: 공이 커지며 화면 덮기
+            // 시퀀스 3: 배출된 공이 커지며 화면 덮기 (1.4초 뒤)
             setTimeout(() => {
                 overlay.style.display = 'flex';
                 zoomBall.classList.add('zoom-in');
             }, 1400);
 
-            // 시퀀스 4: 화면이 다 덮인 후(약 2.5초 애니메이션) 로딩 문구 띄우기
+            // 시퀀스 4: 화면이 다 덮인 후 로딩 문구 표시 (3.5초 뒤)
             setTimeout(() => {
                 msg.style.display = 'block';
             }, 3500);
 
-            // API 요청
+            // API 호출 (gachaController 연결)
             try {
-                const response = await fetch('/api/fortune/analyze', {
+                const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({
-                        resultId: resultId, type: 'gacha',
-                        realName: 'GachaUser', nickName: 'Lucky',
-                        birthDate: `${year}-01-01`, birthTime: 'unknown', gender: 'unisex'
+                        resultId: resultId,
+                        birthDate: `${year}-01-01`
                     })
                 });
 
                 if (response.ok) {
-                    // 결과가 준비되면 이동
+                    // 분석 완료 후 결과 페이지로 이동
                     setTimeout(() => {
                         window.location.href = `/result/gacha/${resultId}`;
                     }, 4000);
+                } else {
+                    const error = await response.json();
+                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ (코인이 부족합니다)");
+                    location.reload();
                 }
             } catch (err) {
+                console.error(err);
                 alert("เกิดข้อผิดพลาด");
                 location.reload();
             }

@@ -3,208 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - ผลทำนายดวงของคุณ</title>
+    <title>MURDOO K - วันนี้ของคุณเป็นอย่างไร?</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.6); 
             --point-gold: #b8860b;
-            --paper-bg: #fffaf0; /* 두루마리 종이색 */
+            --paper-bg: #fffaf0;
             --text-dark: #2c1b15;
+            --capsule-gold: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
         }
 
         body {
-            margin: 0; padding: 0; background-color: #fff; /* 시작은 하얗게 */
+            margin: 0; padding: 0; background-color: #0a0a0a;
             font-family: 'Kanit', sans-serif; color: var(--text-dark);
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; overflow-x: hidden;
-            animation: whiteToBg 1.5s ease-in-out forwards;
         }
 
-        /* 하얀 화면에서 배경으로 전환되는 애니메이션 */
-        @keyframes whiteToBg {
-            from { background-color: #fff; }
-            to { background-color: #1a120b; }
-        }
-
+        /* --- [배경 설정] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
             background-image: url('/background.jpg'); background-size: cover; background-position: center;
-            opacity: 0; animation: fadeIn 2s 1s forwards;
         }
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            backdrop-filter: blur(10px) brightness(0.6); opacity: 0; animation: fadeIn 2s 1s forwards;
+            backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        .container {
-            width: 90%; max-width: 440px; margin: 40px 0;
-            perspective: 1000px;
+        /* --- [강력한 가차 로딩 애니메이션] --- */
+        #loadingLayer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10000;
         }
+
+        .loader-capsule {
+            width: 120px; height: 120px; background: var(--capsule-gold);
+            border-radius: 50%; box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
+            animation: capsuleShake 0.5s infinite, capsuleZoom 3s forwards;
+        }
+
+        @keyframes capsuleShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        @keyframes capsuleZoom {
+            0% { transform: scale(0.5) translateY(0); opacity: 0; }
+            20% { opacity: 1; transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+
+        /* 공이 터지는 효과 */
+        .pop-effect {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 10001; display: none;
+            animation: flash 0.8s forwards;
+        }
+        @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
         /* --- [결과 두루마리 디자인] --- */
-        .result-scroll {
-            background: var(--paper-bg);
-            border-radius: 5px;
-            padding: 40px 25px;
-            box-sizing: border-box;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 100px rgba(139,69,19,0.1);
-            position: relative;
-            transform-origin: top;
-            animation: scrollOpen 1.2s 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) both;
-            border-left: 15px solid #8b4513; border-right: 15px solid #8b4513; /* 나무 축 느낌 */
+        .container {
+            width: 92%; max-width: 440px; margin: 40px 0;
+            display: none; /* 초기 숨김 */
+            animation: scrollUnfold 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
         }
 
-        @keyframes scrollOpen {
+        @keyframes scrollUnfold {
             from { transform: scaleY(0); opacity: 0; }
             to { transform: scaleY(1); opacity: 1; }
         }
 
-        header { text-align: center; margin-bottom: 30px; }
-        .logo { font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; color: #8b4513; font-weight: 800; }
-        
-        .fortune-badge {
-            display: inline-block; padding: 5px 15px; background: #8b4513; color: #fff;
-            font-size: 0.8rem; border-radius: 20px; margin-bottom: 15px; text-transform: uppercase;
+        .result-scroll {
+            background: var(--paper-bg); padding: 40px 25px; border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            border-left: 12px solid #5d4037; border-right: 12px solid #5d4037;
+            position: relative;
         }
 
-        .summary-text {
-            font-size: 1.4rem; font-weight: 700; line-height: 1.5; color: #2c1b15;
-            margin-bottom: 30px; text-align: center; border-bottom: 2px solid rgba(139,69,19,0.2);
-            padding-bottom: 20px;
-        }
+        /* 점수 게이지 바 */
+        .score-box { text-align: center; margin-bottom: 30px; }
+        .score-bar-bg { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        .score-bar-fill { width: 0; height: 100%; background: var(--point-gold); transition: width 1.5s 1.2s; }
 
-        /* 섹션 스타일 */
-        .detail-section { margin-bottom: 25px; text-align: left; }
-        .section-title {
-            font-size: 1.1rem; font-weight: 700; color: #8b4513;
-            margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
-        }
-        .section-content {
-            font-size: 0.95rem; line-height: 1.8; color: #4e342e; font-weight: 400;
-            white-space: pre-wrap;
-        }
+        .summary-title { font-size: 1.5rem; font-weight: 800; text-align: center; color: #5d4037; margin-bottom: 25px; line-height: 1.4; }
 
-        /* 액션 버튼 */
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; width: 100%; }
-        .btn {
-            padding: 16px; border-radius: 12px; border: none; font-family: 'Kanit';
-            font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
-        }
-        .btn-again { background: #8b4513; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .btn-share { background: transparent; border: 2px solid #8b4513; color: #8b4513; }
+        .section { margin-bottom: 25px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
+        .section-title { font-weight: 700; color: #8b4513; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .section-content { font-size: 0.95rem; line-height: 1.7; color: #333; }
 
-        .hidden { display: none !important; }
+        /* 가차 전용 아이템 박스 */
+        .lucky-box {
+            background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
+            padding: 15px; border-radius: 10px; margin-top: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+        }
+        .lucky-item { text-align: center; }
+        .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; }
+        .lucky-value { font-weight: 700; font-size: 1.1rem; }
 
-        /* 로딩 상태 (API 대기 중) */
-        #apiLoader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000; background: #fffaf0;
-        }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid #f3f3f3;
-            border-top: 4px solid #8b4513; border-radius: 50%; animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+        .btn { padding: 15px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .btn-home { background: #5d4037; color: white; }
     </style>
 </head>
 <body>
 
-    <div id="apiLoader">
-        <div class="spinner"></div>
-        <p style="margin-top: 15px; color: #8b4513;">กำลังเปิดคัมภีร์โชคชะตา...</p>
-    </div>
-
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
-    <div class="container hidden" id="resultContent">
+    <div id="loadingLayer">
+        <div class="loader-capsule"></div>
+        <p style="color: gold; margin-top: 30px; font-weight: 500;">กำลังดึงโชคชะตาของคุณ...</p>
+    </div>
+
+    <div class="pop-effect" id="popEffect"></div>
+
+    <div class="container" id="resultContent">
         <div class="result-scroll">
-            <header>
-                <div class="fortune-badge">Fortune Scroll</div>
-                <div class="logo">MURDOO <span>K</span></div>
-            </header>
+            <div class="score-box">
+                <div style="font-size: 0.9rem; color: #8b4513;">คะแนนดวงวันนี้</div>
+                <div style="font-size: 2.5rem; font-weight: 800; color: var(--point-gold);" id="score">0</div>
+                <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
+            </div>
 
-            <main>
-                <div class="summary-text" id="summary">...</div>
+            <div class="summary-title" id="summary">...</div>
 
-                <div id="details">
-                    </div>
+            <div class="section">
+                <div class="section-title">🔮 ดวงวันนี้ของคุณ (General Luck)</div>
+                <div class="section-content" id="today_luck"></div>
+            </div>
 
-                <div class="btn-group">
-                    <button class="btn btn-again" onclick="location.href='/gacha'">หมุนใหม่อีกครั้ง (Draw Again)</button>
-                    <button class="btn btn-share" onclick="shareResult()">แบ่งปันโชคชะตา (Share)</button>
+            <div class="section">
+                <div class="section-title">🐾 คำแนะนำตามปีนักษัตร (Zodiac Advice)</div>
+                <div class="section-content" id="zodiac_advice"></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🏃 วิธีปฏิบัติตน (Action Plan)</div>
+                <div class="section-content" id="action_plan"></div>
+            </div>
+
+            <div class="section" style="border: none;">
+                <div class="section-title">⚠️ ข้อควรระวัง (Cautions)</div>
+                <div class="section-content" id="cautions"></div>
+            </div>
+
+            <div class="lucky-box">
+                <div class="lucky-item">
+                    <div class="lucky-label">เลขนำโชค (Lucky Number)</div>
+                    <div class="lucky-value" id="lucky_number">?</div>
                 </div>
-            </main>
+                <div class="lucky-item">
+                    <div class="lucky-label">สิ่งที่ควรเลี่ยง (Taboo)</div>
+                    <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
+                </div>
+                <div class="lucky-item" style="grid-column: span 2;">
+                    <div class="lucky-label">ไอเทมเสริมดวง (Lucky Items)</div>
+                    <div class="lucky-value" id="lucky_items">?</div>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-home" onclick="location.href='/gacha'">กลับไปสุ่มใหม่</button>
+            </div>
         </div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-        
-        const labelMap = {
-            outward: "🎭 ตัวตนภายนอก",
-            inward: "🧠 ภายในจิตใจ",
-            strengths: "🌟 จุดแข็งของคุณ",
-            weaknesses: "⚠️ จุดที่ควรปรับปรุง",
-            cautions: "🚫 ข้อควรระวัง",
-            boosters: "✨ เคล็ดลับเสริมดวง"
-        };
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const pathParts = window.location.pathname.split('/');
-            const resultId = pathParts[pathParts.length - 1];
+            const resultId = window.location.pathname.split('/').pop();
+            const minLoadingTime = 3000; // 최소 3초 애니메이션 보장
+            const startTime = Date.now();
 
             try {
-                const response = await fetch(`/api/fortune/result/${resultId}`, {
+                // 1. API 호출 시작
+                const response = await fetch(`/api/gacha/result/${resultId}`, {
                     headers: { 'x-api-key': API_KEY }
                 });
                 
-                if (!response.ok) throw new Error("Result not found");
+                if (!response.ok) throw new Error("Not found");
                 const data = await response.json();
 
-                // 데이터 매핑
+                // 2. 데이터 매핑
+                document.getElementById('score').innerText = data.today_luck_score;
                 document.getElementById('summary').innerText = data.summary;
-                
-                const detailsContainer = document.getElementById('details');
-                Object.keys(labelMap).forEach(key => {
-                    if (data.details[key]) {
-                        const section = document.createElement('div');
-                        section.className = 'detail-section';
-                        section.innerHTML = `
-                            <div class="section-title">${labelMap[key]}</div>
-                            <div class="section-content">${data.details[key]}</div>
-                        `;
-                        detailsContainer.appendChild(section);
-                    }
-                });
+                document.getElementById('today_luck').innerText = data.today_luck;
+                document.getElementById('zodiac_advice').innerText = data.zodiac_advice;
+                document.getElementById('action_plan').innerText = data.action_plan;
+                document.getElementById('cautions').innerText = data.cautions;
+                document.getElementById('lucky_number').innerText = data.lucky_number;
+                document.getElementById('taboo').innerText = data.taboo;
+                document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // 화면 표시
-                document.getElementById('apiLoader').classList.add('hidden');
-                document.getElementById('resultContent').classList.remove('hidden');
+                // 3. 최소 로딩 시간 대기 후 연출 실행
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+                setTimeout(() => {
+                    // 팡! 터지는 연출 시작
+                    document.getElementById('popEffect').style.display = 'block';
+                    document.getElementById('loadingLayer').style.display = 'none';
+
+                    setTimeout(() => {
+                        document.getElementById('popEffect').style.display = 'none';
+                        document.getElementById('resultContent').style.display = 'block';
+                        // 스코어 바 애니메이션
+                        document.getElementById('scoreBar').style.width = data.today_luck_score + '%';
+                    }, 500);
+                }, remainingTime);
 
             } catch (err) {
-                console.error(err);
-                alert("ไม่พบผลทำนายของคุณ");
+                console.error("Fetch Error:", err);
+                alert("ไม่พบข้อมูล (연결 오류)");
                 location.href = '/gacha';
             }
         });
-
-        function shareResult() {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'MURDOO K - ดวงชะตาของฉัน',
-                    text: 'มาดูคำทำนายดวงชะตาเกาหลีของฉันสิ!',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert("คัดลอกลิงก์เรียบร้อยแล้ว!");
-            }
-        }
     </script>
 </body>
 </html>

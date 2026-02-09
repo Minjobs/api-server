@@ -7,10 +7,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --wood-dark: #3e2723;
+            --wood-medium: #5d4037;
+            --metal-brass: #b5a642;
             --point-gold: #b8860b;
             --paper-bg: #fffaf0;
             --text-dark: #2c1b15;
-            --capsule-gold: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
         }
 
         body {
@@ -30,70 +32,81 @@
             backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
         }
 
-        /* --- [강력한 가차 로딩 애니메이션] --- */
+        /* --- [로딩 레이어: 가차머신 하단부 연출] --- */
         #loadingLayer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 10000;
         }
 
-        .loader-capsule {
-            width: 120px; height: 120px; background: var(--capsule-gold);
-            border-radius: 50%; box-shadow: 0 0 50px rgba(255, 215, 0, 0.6);
-            animation: capsuleShake 0.5s infinite, capsuleZoom 3s forwards;
+        /* 미니 가차머신 배출구 부분 */
+        .mini-machine-bottom {
+            width: 160px; height: 100px;
+            background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
+            border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
+            position: relative; display: flex; justify-content: center;
+        }
+        .dispenser-slot {
+            width: 80px; height: 40px; background: #1a0f0a;
+            border: 4px solid var(--metal-brass); border-radius: 8px 8px 0 0;
+            border-bottom: none; position: absolute; bottom: 0; overflow: hidden;
         }
 
-        @keyframes capsuleShake {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(10deg); }
-            75% { transform: rotate(-10deg); }
+        /* 배출되는 공 */
+        .exit-ball {
+            position: absolute; top: -50px; left: 50%;
+            width: 40px; height: 40px; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
+            border-radius: 50%; transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
         }
 
-        @keyframes capsuleZoom {
-            0% { transform: scale(0.5) translateY(0); opacity: 0; }
-            20% { opacity: 1; transform: scale(1); }
-            100% { transform: scale(1.2); }
+        /* 1. 공이 떨어지는 애니메이션 */
+        .drop-anim { animation: ballDrop 0.6s ease-in forwards; }
+        @keyframes ballDrop {
+            0% { top: -50px; }
+            100% { top: 5px; }
         }
 
-        /* 공이 터지는 효과 */
-        .pop-effect {
+        /* 2. 공이 화면의 70%까지 커지는 애니메이션 (2초) */
+        .zoom-anim { 
+            animation: ballZoom 2s ease-in-out forwards; 
+            z-index: 10001;
+        }
+        @keyframes ballZoom {
+            0% { transform: translate(-50%, 0) scale(1); top: 5px; }
+            100% { transform: translate(-50%, -50%) scale(25); top: 50%; } /* 화면의 약 70% 차지 */
+        }
+
+        /* 화이트아웃 효과 */
+        .flash-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 10001; display: none;
-            animation: flash 0.8s forwards;
+            background: white; z-index: 10002; display: none;
         }
-        @keyframes flash { from { opacity: 1; } to { opacity: 0; } }
 
-        /* --- [결과 두루마리 디자인] --- */
+        /* --- [결과 페이지: 애니메이션 없이 즉시 노출] --- */
         .container {
             width: 92%; max-width: 440px; margin: 40px 0;
             display: none; /* 초기 숨김 */
-            animation: scrollUnfold 1.2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
-        }
-
-        @keyframes scrollUnfold {
-            from { transform: scaleY(0); opacity: 0; }
-            to { transform: scaleY(1); opacity: 1; }
+            z-index: 10;
         }
 
         .result-scroll {
             background: var(--paper-bg); padding: 40px 25px; border-radius: 4px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             border-left: 12px solid #5d4037; border-right: 12px solid #5d4037;
-            position: relative;
         }
 
-        /* 점수 게이지 바 */
-        .score-box { text-align: center; margin-bottom: 30px; }
-        .score-bar-bg { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin-top: 10px; overflow: hidden; }
-        .score-bar-fill { width: 0; height: 100%; background: var(--point-gold); transition: width 1.5s 1.2s; }
+        .date-text { text-align: center; color: #8b4513; font-size: 0.9rem; margin-bottom: 5px; font-weight: 500; }
+        .score-box { text-align: center; margin-bottom: 25px; }
+        .score-bar-bg { width: 100%; height: 8px; background: #ddd; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        .score-bar-fill { width: 0; height: 100%; background: var(--point-gold); transition: width 1s; }
 
-        .summary-title { font-size: 1.5rem; font-weight: 800; text-align: center; color: #5d4037; margin-bottom: 25px; line-height: 1.4; }
+        .summary-title { font-size: 1.4rem; font-weight: 800; text-align: center; color: #5d4037; margin-bottom: 25px; line-height: 1.4; }
 
         .section { margin-bottom: 25px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
-        .section-title { font-weight: 700; color: #8b4513; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-        .section-content { font-size: 0.95rem; line-height: 1.7; color: #333; }
+        .section-title { font-weight: 700; color: #8b4513; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .section-content { font-size: 0.95rem; line-height: 1.7; color: #333; text-align: justify; }
 
-        /* 가차 전용 아이템 박스 */
         .lucky-box {
             background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
             padding: 15px; border-radius: 10px; margin-top: 20px;
@@ -103,9 +116,11 @@
         .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; }
         .lucky-value { font-weight: 700; font-size: 1.1rem; }
 
-        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
-        .btn { padding: 15px; border-radius: 10px; border: none; font-family: 'Kanit'; font-weight: 700; font-size: 1rem; cursor: pointer; }
-        .btn-home { background: #5d4037; color: white; }
+        .btn-home { 
+            width: 100%; padding: 16px; border-radius: 12px; border: none; 
+            background: #5d4037; color: white; font-family: 'Kanit'; 
+            font-weight: 700; font-size: 1.1rem; margin-top: 30px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -114,60 +129,63 @@
     <div class="background-blur"></div>
 
     <div id="loadingLayer">
-        <div class="loader-capsule"></div>
-        <p style="color: gold; margin-top: 30px; font-weight: 500;">กำลังดึงโชคชะตาของคุณ...</p>
+        <div class="mini-machine-bottom">
+            <div class="dispenser-slot">
+                <div class="exit-ball" id="gachaBall"></div>
+            </div>
+        </div>
+        <p id="loadingStatus" style="color: gold; margin-top: 40px; font-weight: 500; opacity: 0.8;">กำลังเปิดผลทำนาย...</p>
     </div>
 
-    <div class="pop-effect" id="popEffect"></div>
+    <div class="flash-overlay" id="flash"></div>
 
     <div class="container" id="resultContent">
         <div class="result-scroll">
+            <div class="date-text" id="analysis_date">📅 로딩중...</div>
             <div class="score-box">
-                <div style="font-size: 0.9rem; color: #8b4513;">คะแนนดวงวันนี้</div>
                 <div style="font-size: 2.5rem; font-weight: 800; color: var(--point-gold);" id="score">0</div>
+                <div style="font-size: 0.8rem; color: #8b4513;">คะแนนดวงวันนี้</div>
                 <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
             </div>
 
             <div class="summary-title" id="summary">...</div>
 
             <div class="section">
-                <div class="section-title">🔮 ดวงวันนี้ของคุณ (General Luck)</div>
+                <div class="section-title">🔮 ดวงวันนี้ของคุณ</div>
                 <div class="section-content" id="today_luck"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">🐾 คำแนะนำตามปีนักษัตร (Zodiac Advice)</div>
+                <div class="section-title">🐾 คำแนะนำตามปีนักษัตร</div>
                 <div class="section-content" id="zodiac_advice"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">🏃 วิธีปฏิบัติตน (Action Plan)</div>
+                <div class="section-title">🏃 วิธีปฏิบัติตน</div>
                 <div class="section-content" id="action_plan"></div>
             </div>
 
             <div class="section" style="border: none;">
-                <div class="section-title">⚠️ ข้อควรระวัง (Cautions)</div>
+                <div class="section-title">⚠️ ข้อควรระวัง</div>
                 <div class="section-content" id="cautions"></div>
             </div>
 
             <div class="lucky-box">
                 <div class="lucky-item">
-                    <div class="lucky-label">เลขนำโชค (Lucky Number)</div>
+                    <div class="lucky-label">เลขนำโชค</div>
                     <div class="lucky-value" id="lucky_number">?</div>
                 </div>
                 <div class="lucky-item">
-                    <div class="lucky-label">สิ่งที่ควรเลี่ยง (Taboo)</div>
+                    <div class="lucky-label">สิ่งที่ควรเลี่ยง</div>
                     <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
                 </div>
                 <div class="lucky-item" style="grid-column: span 2;">
-                    <div class="lucky-label">ไอเทมเสริมดวง (Lucky Items)</div>
+                    <div class="lucky-label">ไอเทมเสริมดวง</div>
                     <div class="lucky-value" id="lucky_items">?</div>
                 </div>
             </div>
 
-            <div class="btn-group">
-                <button class="btn btn-home" onclick="location.href='/gacha'">กลับไปสุ่มใหม่</button>
-            </div>
+            <button class="btn btn-home" onclick="location.href='/gacha'">กลับไปสุ่มใหม่</button>
         </div>
     </div>
 
@@ -176,19 +194,30 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const resultId = window.location.pathname.split('/').pop();
-            const minLoadingTime = 3000; // 최소 3초 애니메이션 보장
-            const startTime = Date.now();
+            const gachaBall = document.getElementById('gachaBall');
+            
+            // 1. 시퀀스 시작: 공이 툭 떨어짐
+            setTimeout(() => {
+                gachaBall.classList.add('drop-anim');
+            }, 500);
+
+            // 2. 데이터 가져오기 (병렬 진행)
+            const dataPromise = fetch(`/api/gacha/result/${resultId}`, {
+                headers: { 'x-api-key': API_KEY }
+            }).then(res => res.json());
+
+            // 3. 공이 커지는 애니메이션 (떨어진 후 0.6초 뒤 시작)
+            setTimeout(() => {
+                gachaBall.classList.remove('drop-anim');
+                gachaBall.classList.add('zoom-anim');
+                document.getElementById('loadingStatus').style.display = 'none';
+            }, 1100);
 
             try {
-                // 1. API 호출 시작
-                const response = await fetch(`/api/gacha/result/${resultId}`, {
-                    headers: { 'x-api-key': API_KEY }
-                });
-                
-                if (!response.ok) throw new Error("Not found");
-                const data = await response.json();
+                const data = await dataPromise;
 
-                // 2. 데이터 매핑
+                // 데이터 미리 매핑
+                document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date}`;
                 document.getElementById('score').innerText = data.today_luck_score;
                 document.getElementById('summary').innerText = data.summary;
                 document.getElementById('today_luck').innerText = data.today_luck;
@@ -199,26 +228,25 @@
                 document.getElementById('taboo').innerText = data.taboo;
                 document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // 3. 최소 로딩 시간 대기 후 연출 실행
-                const elapsedTime = Date.now() - startTime;
-                const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-
+                // 4. 공이 꽉 찬 시점(약 3.1초 지점)에 화이트아웃 후 결과 노출
                 setTimeout(() => {
-                    // 팡! 터지는 연출 시작
-                    document.getElementById('popEffect').style.display = 'block';
-                    document.getElementById('loadingLayer').style.display = 'none';
-
+                    const flash = document.getElementById('flash');
+                    flash.style.display = 'block';
+                    
                     setTimeout(() => {
-                        document.getElementById('popEffect').style.display = 'none';
+                        document.getElementById('loadingLayer').style.display = 'none';
+                        flash.style.display = 'none';
                         document.getElementById('resultContent').style.display = 'block';
-                        // 스코어 바 애니메이션
-                        document.getElementById('scoreBar').style.width = data.today_luck_score + '%';
-                    }, 500);
-                }, remainingTime);
+                        // 점수 바는 결과가 뜬 후 부드럽게 채움
+                        setTimeout(() => {
+                            document.getElementById('scoreBar').style.width = data.today_luck_score + '%';
+                        }, 100);
+                    }, 400);
+                }, 3100);
 
             } catch (err) {
-                console.error("Fetch Error:", err);
-                alert("ไม่พบข้อมูล (연결 오류)");
+                console.error(err);
+                alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
                 location.href = '/gacha';
             }
         });

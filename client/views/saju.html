@@ -6,7 +6,6 @@
     <title>MURDOO K - วิเคราะห์ดวงชะตาเกาหลี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* ... 기존 스타일 유지 ... */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -14,7 +13,7 @@
             --border-line: rgba(200, 200, 200, 0.8); 
             --input-bg: rgba(255, 255, 255, 0.1);
         }
-        body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        body { margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.8; }
         .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(0.9); -webkit-backdrop-filter: blur(7px) brightness(0.9); }
         .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 15px 15px 30px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
@@ -87,7 +86,7 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
+                            <option value="03">미.ค.</option><option value="04">메.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                             <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -131,7 +130,6 @@
     </div>
 
     <script>
-        // [1] 전역 변수 설정 (localStorage 대체)
         let currentAnalysisId = null;
         let isPolling = false;
 
@@ -144,7 +142,8 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-            const type = window.location.pathname.split('/').pop() || 'personality';
+            // 경로에서 현재 타입 추출 (saju, gacha, love 중 하나)
+            const type = window.location.pathname.split('/').pop() || 'saju';
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -152,25 +151,26 @@
             const inputSection = document.getElementById('inputSection');
             const dynamicText = document.getElementById('dynamicText');
 
+            // ✅ gacha, saju, love 세 가지만 대응하도록 설정
             const config = {
-                personality: { title: "Personality", desc: "ค้นหาตัวตนที่แท้จริงของคุณ" },
-                wealth: { title: "Wealth", desc: "เจาะลึกดวงการเงินและความมั่งคั่ง" },
-                romance: { title: "Romance", desc: "ตามหาเนื้อคู่และเส้นทางความรัก" }
+                saju: { title: "Saju", desc: "วิเคราะห์ตัวตนและโชคชะตาเกาหลีแบบแม่นยำ" },
+                gacha: { title: "Gacha", desc: "สุ่มโชคชะตาประจำวันของคุณ" },
+                love: { title: "Love", desc: "ตามหาเนื้อคู่และเส้นทางความรักของคุณ" }
             };
             
             const loadingMessages = [
                 "กำลังเปิดสมุดบัญชีโชคชะตา...",
-                "คำนวณตำแหน่งดวงดาว와ธาตุทั้งห้า...",
+                "คำนวณตำแหน่งดวงดาวและธาตุทั้งห้า...",
                 "มหาเทพกำลังเขียนคำทำนาย...",
                 "อีกนิดเดียว... โชคชะตาของคุณกำลังจะปรากฏ"
             ];
 
-            const page = config[type] || config.personality;
+            const page = config[type] || config.saju;
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // [2] 결과 조회 폴링 함수
-            const pollResult = async (resultId) => {
+            // ✅ 결과 조회 폴링 함수 (타입에 맞는 경로로 이동)
+            const pollResult = async (resultId, fortuneType) => {
                 if (!isPolling) return;
                 try {
                     const res = await fetch(`/api/fortune/result/${resultId}`, {
@@ -179,9 +179,10 @@
                     if (res.ok) {
                         isPolling = false;
                         currentAnalysisId = null;
-                        window.location.replace(`/result/${resultId}`);
+                        // ✅ 요청하신 대로 /result/saju/:id 주소 체계로 이동
+                        window.location.replace(`/result/${fortuneType}/${resultId}`);
                     }
-                } catch (e) { console.log("아직 분석 중..."); }
+                } catch (e) { console.log("분석 진행 중..."); }
             };
 
             // 프로필 정보 로드
@@ -195,7 +196,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            // 드롭다운 생성
+            // 드롭다운 생성 (일, 년, 시, 분)
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
@@ -212,12 +213,11 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // [3] 폼 제출 핸들러
+            // 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (isPolling) return;
 
-                // 변수에 ID 저장 및 상태 업데이트
                 currentAnalysisId = generateUUID();
                 isPolling = true;
 
@@ -227,17 +227,14 @@
 
                 let msgIdx = 0;
                 const interval = setInterval(() => {
-                    if (!isPolling) {
-                        clearInterval(interval);
-                        return;
-                    }
+                    if (!isPolling) { clearInterval(interval); return; }
                     msgIdx = (msgIdx + 1) % loadingMessages.length;
                     dynamicText.innerText = loadingMessages[msgIdx];
                 }, 5000);
 
                 const payload = {
                     resultId: currentAnalysisId,
-                    type,
+                    type: type,
                     realName: document.getElementById('realName').value,
                     nickName: document.getElementById('nickName').value,
                     birthDate: `${yearSel.value}-${document.getElementById('birthMonth').value}-${daySel.value}`,
@@ -246,40 +243,31 @@
                 };
 
                 try {
-                    // 분석 요청 전송
-                    fetch('/api/fortune/analyze', {
+                    const res = await fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                         body: JSON.stringify(payload)
-                    }).then(async (res) => {
-                        if (res.ok) {
-                            // 이미 폴링 중이므로 성공 시 폴링에서 처리하도록 두거나, 즉시 이동 시도
-                            const checkImmediate = await fetch(`/api/fortune/result/${currentAnalysisId}`, {
-                                headers: { 'x-api-key': API_KEY }
-                            });
-                            if (checkImmediate.ok) {
-                                isPolling = false;
-                                window.location.replace(`/result/${currentAnalysisId}`);
-                            }
-                        } else if (res.status === 403) {
-                            isPolling = false;
-                            alert("เหรียญไม่พอ กรุณาเติมเหรียญก่อน (코인이 부족합니다.)");
-                            location.href = "/shop";
-                        }
                     });
 
-                    // 폴링 시작 (5초 간격)
-                    const pollInterval = setInterval(() => {
-                        if (!isPolling) {
-                            clearInterval(pollInterval);
-                            return;
-                        }
-                        pollResult(currentAnalysisId);
-                    }, 5000);
+                    if (res.ok) {
+                        // 즉시 확인 및 폴링 시작
+                        const pollInterval = setInterval(() => {
+                            if (!isPolling) { clearInterval(pollInterval); return; }
+                            pollResult(currentAnalysisId, type);
+                        }, 5000);
+                    } else if (res.status === 403) {
+                        isPolling = false;
+                        alert("เหรียญไม่พอ กรุณาเติมเหรียญก่อน (เหรียญไม่พอ)");
+                        location.href = "/shop";
+                    } else {
+                        throw new Error("Analysis request failed");
+                    }
 
                 } catch (err) {
-                    console.log("요청 전송 실패");
+                    console.error(err);
+                    alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                     isPolling = false;
+                    location.reload();
                 }
             });
         });

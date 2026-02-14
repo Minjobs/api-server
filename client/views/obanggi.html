@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - เสี่ยงทายธง 5 สี</title>
+    <title>MURDOO K - คำทำนายจากธง 5 สี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.38);
+            --bg-overlay: rgba(0, 0, 0, 0.55);
             --point-gold: #ffd700;
             --text-white: #ffffff;
-            --border-line: rgba(200, 200, 200, 0.8);
+            --border-line: rgba(255, 215, 0, 0.4);
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #f5f5f5;
+            background-color: #0a0a0a;
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
             display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .background-overlay {
@@ -28,101 +28,91 @@
             z-index: -1;
             background-image: url('background.jpg'); 
             background-size: cover; background-position: center;
-            opacity: 0.8; 
+            opacity: 0.6; 
         }
 
         .background-blur {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2;
-            backdrop-filter: blur(10px) brightness(0.7);
+            backdrop-filter: blur(15px) brightness(0.6);
         }
 
         .container {
-            width: 88%; max-width: 440px;
+            width: 90%; max-width: 440px;
             background-color: var(--bg-overlay);
-            border-radius: 30px;
-            padding: 25px 15px 40px 15px;
+            border-radius: 35px;
+            padding: 35px 20px 45px 20px;
             box-sizing: border-box;
-            backdrop-filter: blur(10px);
-            border: 3px solid var(--border-line);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--point-gold);
             text-align: center;
-            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
         }
 
-        .header-title h1 { font-size: 1.6rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; }
-        .header-title p { font-size: 1rem; margin: 8px 0 25px 0; opacity: 0.9; font-weight: 300; }
+        .header-title h1 { font-size: 1.8rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; letter-spacing: 1px; }
+        .header-title p { font-size: 1rem; margin: 10px 0 30px 0; opacity: 0.8; font-weight: 300; line-height: 1.5; }
 
-        /* --- [깃발 무대 영역] --- */
+        /* --- [깃발 스테이지] --- */
         .flag-stage {
-            height: 280px;
+            height: 260px;
             position: relative;
-            margin-bottom: 25px;
-            /* 전체 스테이지가 회전하도록 설정 */
+            margin-bottom: 30px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             transition: all 0.5s ease;
         }
 
-        .flag-row { 
-            display: flex; justify-content: center; gap: 30px; width: 100%; 
-            transition: all 0.5s ease;
-        }
+        .flag-row { display: flex; justify-content: center; gap: 25px; width: 100%; transition: all 0.5s ease; }
 
         .flag-emoji {
-            font-size: 4rem;
+            font-size: 4.5rem;
             display: inline-block;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.4));
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
             transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            z-index: 1;
+            cursor: pointer;
         }
 
-        .f-blue { filter: hue-rotate(190deg) drop-shadow(0 5px 10px rgba(0,0,0,0.4)); }
-        .f-yellow { filter: hue-rotate(50deg) drop-shadow(0 5px 10px rgba(0,0,0,0.4)); }
+        /* 색상 보정 */
+        .f-blue { filter: hue-rotate(190deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
+        .f-yellow { filter: hue-rotate(50deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
 
-        /* --- [강화된 애니메이션] --- */
-        
-        /* 1. 합치기: 깃발들이 중앙으로 어긋나게 모임 (뭉쳐진 느낌) */
-        .merging .flag-emoji {
-            position: absolute;
-            top: 50%; left: 50%;
-        }
-        /* 각 깃발마다 약간씩 다른 위치로 모이게 해서 뭉친 느낌 강조 */
+        /* 애니메이션 효과 */
+        .merging .flag-emoji { position: absolute; top: 50%; left: 50%; }
         .merging .flag-emoji:nth-child(1) { transform: translate(-60%, -55%) rotate(-10deg); }
         .merging .flag-emoji:nth-child(2) { transform: translate(-45%, -50%) rotate(5deg); }
         .merging .flag-emoji:nth-child(3) { transform: translate(-55%, -45%) rotate(15deg); }
         .merging .bottom-row .flag-emoji:nth-child(1) { transform: translate(-50%, -60%) rotate(-5deg); }
         .merging .bottom-row .flag-emoji:nth-child(2) { transform: translate(-40%, -40%) rotate(10deg); }
 
-        /* 2. 회전: 스테이지 전체가 팽이처럼 돔 */
-        .spinning {
-            animation: stage-spin 0.5s linear infinite;
-        }
-
-        @keyframes stage-spin {
-            from { transform: rotate(0deg) scale(1); }
-            to { transform: rotate(360deg) scale(0.95); }
-        }
+        .spinning { animation: stage-spin 0.4s linear infinite; }
+        @keyframes stage-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(0.9); } }
 
         /* --- [결과 화면] --- */
         #result-display {
             display: none;
             flex-direction: column; align-items: center;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .result-emoji { font-size: 7.5rem; margin-bottom: 20px; }
-        .result-title { font-size: 1.8rem; font-weight: 700; color: var(--point-gold); margin-bottom: 10px; }
-        .result-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 25px; }
+        .result-emoji { font-size: 8rem; margin-bottom: 25px; }
+        .result-status { font-size: 2.2rem; font-weight: 800; color: var(--point-gold); margin-bottom: 15px; font-family: 'Nanum Myeongjo', serif; }
+        .result-desc { font-size: 1.1rem; line-height: 1.8; opacity: 0.95; margin-bottom: 35px; word-break: keep-all; padding: 0 10px; }
 
         #pickBtn {
             background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: white; border: none; padding: 15px 45px; border-radius: 30px;
-            font-size: 1.2rem; font-weight: 700; cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-family: 'Kanit', sans-serif;
+            color: #000; border: none; padding: 18px 50px; border-radius: 35px;
+            font-size: 1.3rem; font-weight: 800; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            font-family: 'Kanit', sans-serif; transition: 0.3s;
+        }
+        #pickBtn:active { transform: scale(0.95); }
+
+        .retry-btn {
+            background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.4);
+            padding: 12px 30px; border-radius: 25px; cursor: pointer; font-family: 'Kanit';
+            font-size: 1rem; transition: 0.3s;
         }
 
         .hidden { display: none !important; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -131,8 +121,8 @@
 
     <main class="container">
         <div class="header-title">
-            <h1>เสี่ยงทายธง 5 สี</h1>
-            <p>เลือกธงนำโชคของคุณ</p>
+            <h1>คำทำนายจากธง 5 สี</h1>
+            <p>ตั้งจิตอธิษฐานถึงสิ่งที่คุณปรารถนาอย่างแรงกล้า<br>แล้วให้ธงบอกทางสว่างแก่คุณ</p>
         </div>
 
         <div class="flag-stage" id="flagStage">
@@ -141,7 +131,7 @@
                 <span class="flag-emoji f-blue">🚩</span>
                 <span class="flag-emoji f-yellow">🚩</span>
             </div>
-            <div class="flag-row bottom-row">
+            <div class="flag-row bottom-row" style="margin-top: 20px;">
                 <span class="flag-emoji f-white">🏳️</span>
                 <span class="flag-emoji f-black">🏴</span>
             </div>
@@ -149,23 +139,41 @@
 
         <div id="result-display">
             <div class="result-emoji" id="finalEmoji"></div>
-            <div class="result-title" id="resultTitle"></div>
+            <div class="result-status" id="resultStatus"></div>
             <div class="result-desc" id="resultDesc"></div>
-            <button onclick="location.reload()" style="background:rgba(255,255,255,0.15); color:#fff; border:1px solid #fff; padding:10px 25px; border-radius:20px; cursor:pointer; font-family:'Kanit';">ลองอีกครั้ง</button>
+            <button class="retry-btn" onclick="location.reload()">อธิษฐานใหม่อีกครั้ง</button>
         </div>
 
-        <button id="pickBtn" onclick="startPicking()">เสี่ยงทายธง</button>
+        <button id="pickBtn" onclick="startPicking()">เสี่ยงทายคำตอบ</button>
     </main>
 
     <script>
-        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-
         const flags = [
-            { emoji: '🚩', filter: 'none', title: 'ธงแดง (Red Flag)', desc: 'จะมีโชคลาภก้อนโตและพลังอำนาจ!' },
-            { emoji: '🚩', filter: 'hue-rotate(190deg)', title: 'ธงน้ำเงิน (Blue Flag)', desc: 'ความสำเร็จในหน้าที่การงานจะมาหาคุณ' },
-            { emoji: '🚩', filter: 'hue-rotate(50deg)', title: 'ธงเหลือง (Yellow Flag)', desc: 'ความรักที่รอคอยกำลังจะสมหวัง' },
-            { emoji: '🏳️', filter: 'none', title: 'ธงขาว (White Flag)', desc: 'จะมีความสุข สงบ และสุขภาพที่แข็งแรง' },
-            { emoji: '🏴', filter: 'none', title: 'ธงดำ (Black Flag)', desc: 'การเริ่มต้นใหม่ที่ท้าทายแต่จะสำเร็จ' }
+            { 
+                emoji: '🚩', filter: 'none', 
+                status: 'สำเร็จแน่นอน! (Strong YES)', 
+                desc: 'สวรรค์เปิดทางให้คุณแล้ว! สิ่งที่หวังจะสำเร็จอย่างยิ่งใหญ่ ลุยได้เลยทันทีโดยไม่ต้องลังเล พลังธงแดงจะนำพาชัยชนะมาสู่คุณ' 
+            },
+            { 
+                emoji: '🚩', filter: 'hue-rotate(190deg)', 
+                status: 'เริ่มใหม่ได้ดี (YES, Do it!)', 
+                desc: 'มีโอกาสสำเร็จสูงมาก! แต่คุณต้องกล้าเปลี่ยนและลงมือทำด้วยตัวเอง การเริ่มต้นใหม่หรือการขยับขยายในตอนนี้จะส่งผลดีอย่างคาดไม่ถึง' 
+            },
+            { 
+                emoji: '🚩', filter: 'hue-rotate(50deg)', 
+                status: 'ทำได้แต่ต้องรอ (YES, but Wait)', 
+                desc: 'ทำได้สำเร็จ แต่ห้ามรีบร้อน! ตอนนี้ควรเน้นความมั่นคงและฟังคำแนะนำจากคนรอบข้าง จังหวะที่ช้าลงจะทำให้ผลลัพธ์ออกมาสมบูรณ์แบบที่สุด' 
+            },
+            { 
+                emoji: '🏳️', filter: 'none', 
+                status: 'ราบรื่นไร้อุปสรรค (YES, Smooth)', 
+                desc: 'สิ่งศักดิ์สิทธิ์กำลังคุ้มครองคุณอยู่! สิ่งที่ปรารถนาจะค่อยๆ ปรากฏขึ้นอย่างราบรื่นและสงบสุข ขอให้รักษาจิตใจให้ดี แล้วโชคลาภจะมาหาเอง' 
+            },
+            { 
+                emoji: '🏴', filter: 'none', 
+                status: 'หยุดพักก่อน (NO / STOP)', 
+                desc: 'ตอนนี้ยังไม่ใช่เวลาที่เหมาะสม! 신령님 (เทพเจ้า) เตือนให้คุณหยุดพักและทบทวนให้ดี การฝืนดันต่อไปอาจเกิดผลเสีย รอจังหวะใหม่จะดีกว่า' 
+            }
         ];
 
         function startPicking() {
@@ -173,21 +181,16 @@
             const btn = document.getElementById('pickBtn');
             const resultDisplay = document.getElementById('result-display');
             const finalEmoji = document.getElementById('finalEmoji');
-            const resultTitle = document.getElementById('resultTitle');
+            const resultStatus = document.getElementById('resultStatus');
             const resultDesc = document.getElementById('resultDesc');
 
-            // 1. 버튼 숨기기
             btn.classList.add('hidden');
-
-            // 2. 깃발들 중앙으로 모으기 (어긋나게 겹침)
             stage.classList.add('merging');
 
             setTimeout(() => {
-                // 3. 뭉쳐진 상태로 전체 스테이지 회전 시작
                 stage.classList.add('spinning');
 
                 setTimeout(() => {
-                    // 4. 결과 도출
                     stage.classList.add('hidden');
                     stage.classList.remove('spinning');
                     
@@ -195,12 +198,12 @@
                     
                     finalEmoji.innerText = win.emoji;
                     finalEmoji.style.filter = win.filter;
-                    resultTitle.innerText = win.title;
+                    resultStatus.innerText = win.status;
                     resultDesc.innerText = win.desc;
                     
                     resultDisplay.style.display = 'flex';
-                }, 2000); // 2초간 회전
-            }, 800); // 0.8초간 모이기
+                }, 1800); 
+            }, 600); 
         }
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - คำทำนายจากธง 5 สี</title>
+    <title>MURDOO K - เสี่ยงทายธง 5 สี</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -19,14 +19,14 @@
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+            display: flex; flex-direction: column; align-items: center;
             overflow-x: hidden;
         }
 
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background-image: url('background.jpg'); 
+            background-image: url('/background.jpg'); 
             background-size: cover; background-position: center;
             opacity: 0.6; 
         }
@@ -37,6 +37,22 @@
             backdrop-filter: blur(15px) brightness(0.6);
         }
 
+        /* --- [상단 로고 섹션] --- */
+        .header-logo {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+        .header-logo img {
+            height: 45px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .header-logo img:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- [메인 컨테이너] --- */
         .container {
             width: 90%; max-width: 440px;
             background-color: var(--bg-overlay);
@@ -47,6 +63,7 @@
             border: 2px solid var(--point-gold);
             text-align: center;
             box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            margin-bottom: 40px;
         }
 
         .header-title h1 { font-size: 1.8rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; letter-spacing: 1px; }
@@ -68,10 +85,8 @@
             display: inline-block;
             filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
             transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            cursor: pointer;
         }
 
-        /* 색상 보정 */
         .f-blue { filter: hue-rotate(190deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
         .f-yellow { filter: hue-rotate(50deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
 
@@ -113,15 +128,24 @@
 
         .hidden { display: none !important; }
         @keyframes popIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+        
+        footer { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
     </style>
 </head>
 <body>
+
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
+    <header class="header-logo">
+        <a href="/">
+            <img src="/textlogo.png" alt="MURDOO K Logo">
+        </a>
+    </header>
+
     <main class="container">
         <div class="header-title">
-            <h1>คำทำนายจากธง 5 สี</h1>
+            <h1>เสี่ยงทายธง 5 สี</h1>
             <p>ตั้งจิตอธิษฐานถึงสิ่งที่คุณปรารถนาอย่างแรงกล้า<br>แล้วให้ธงบอกทางสว่างแก่คุณ</p>
         </div>
 
@@ -147,7 +171,10 @@
         <button id="pickBtn" onclick="startPicking()">เสี่ยงทายคำตอบ</button>
     </main>
 
+    <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
+
     <script>
+        // 오방기 점사 결과 데이터
         const flags = [
             { 
                 emoji: '🚩', filter: 'none', 
@@ -194,6 +221,7 @@
                     stage.classList.add('hidden');
                     stage.classList.remove('spinning');
                     
+                    // 무작위 결과 선정
                     const win = flags[Math.floor(Math.random() * flags.length)];
                     
                     finalEmoji.innerText = win.emoji;

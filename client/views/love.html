@@ -91,20 +91,8 @@
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
-        /* 커스텀 모달 스타일 (동적 로드 시 필요) */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85); display: none;
-            align-items: center; justify-content: center; z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            width: 85%; max-width: 320px; background: #1a1a1a;
-            border: 2px solid var(--point-gold); border-radius: 25px;
-            padding: 30px 20px; text-align: center; color: white;
-            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        /* 커스텀 모달 레이아웃 (디자인 유지용) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
 
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -131,7 +119,7 @@
             <section class="hero-section">
                 <span class="main-heart-icon">❤️</span>
                 <h2 class="hero-title">เช็กดวงสมพงษ์ความรัก</h2>
-                <p class="hero-desc">ค้นหาคำตอบว่าคุณและเขาเข้ากันได้แค่ไหน<br>ผ่านศาสตร์การดูดวงเกาหลีที่แม่นยำ</p>
+                <p class="hero-desc">ค้นหาคำตอบว่าคุณ하고เขาเข้ากันได้แค่ไหน<br>ผ่านศาสตร์การดูดวงเกาหลีที่แม่นยำ</p>
             </section>
 
             <div class="benefits-grid">
@@ -155,9 +143,9 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
+                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
@@ -170,7 +158,7 @@
                             <select id="myHour" required><option value="" disabled selected>ชม.</option></select>
                             <select id="myMin" required><option value="" disabled selected>นาที</option></select>
                         </div>
-                        <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบเวลาเกิด</button>
+                        <button type="button" class="unknown-btn" id="myUnknownBtn">ไม่ทราบ시간เกิด</button>
                     </div>
                 </section>
 
@@ -187,7 +175,7 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                                 <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -202,7 +190,7 @@
                             <select id="partnerHour" required><option value="" disabled selected>ชม.</option></select>
                             <select id="partnerMin" required><option value="" disabled selected>นาที</option></select>
                         </div>
-                        <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบเวลาเกิด</button>
+                        <button type="button" class="unknown-btn" id="partnerUnknownBtn">ไม่ทราบ시간เกิด</button>
                     </div>
                 </section>
 
@@ -215,9 +203,9 @@
                             <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
                             <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
                             <option value="fling">กำลังดูใจกัน (썸)</option>
-                            <option value="dating_1yr">คบกันมากกว่า 1 ปี</option>
-                            <option value="dating_3yr">คบกันมากกว่า 3 ปี</option>
-                            <option value="dating_5yr">คบกันมากกว่า 5 ปี</option>
+                            <option value="dating_1yr">คบกัน보다 1 ปี</option>
+                            <option value="dating_3yr">คบกัน보다 3 ปี</option>
+                            <option value="dating_5yr">คบกัน보다 5 ปี</option>
                             <option value="married">แต่งงานแล้ว</option>
                         </select>
                     </div>
@@ -241,6 +229,16 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
+        // ✅ 모달 제어 함수 (HTML을 불러온 뒤 실행될 수 있도록 전역 선언)
+        function openCoinModal() {
+            const modal = document.getElementById('coinModal');
+            if (modal) modal.style.display = 'flex';
+        }
+        function closeCoinModal() {
+            const modal = document.getElementById('coinModal');
+            if (modal) modal.style.display = 'none';
+        }
+
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -249,8 +247,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ✅ 공통 모달 불러오기 (다른 스타일 간섭 없음)
-            fetch('/coin_modal.html')
+            // ✅ 공통 모달 불러오기
+            fetch('/coin-modal.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('modal-container').innerHTML = data;
@@ -341,18 +339,13 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    // ✅ 403 에러 시 화면 복구 후 모달 띄우기
+                    // ✅ 화면 복구 및 모달 팝업 호출
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('inputArea').classList.remove('hidden');
                     subBtn.disabled = false;
                     subBtn.innerText = "ดูผลทำนายความรัก 🪙 2";
                     
-                    if (typeof openCoinModal === 'function') {
-                        openCoinModal();
-                    } else {
-                        // 모달이 아직 로드되지 않았을 경우 대비
-                        alert("เหรียญไม่พอ");
-                    }
+                    openCoinModal(); // 이제 제대로 작동합니다.
                 } else {
                     throw new Error("Server error");
                 }

@@ -1,44 +1,41 @@
 <style>
-    /* 1. 배경 설정: 투명도 조절 (0.85 -> 0.6) */
+    /* 1. 배경 및 위치 설정: 화면 꽉 채움 + 정중앙 정렬 */
     .common-modal-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100vh; /* 100vh로 화면 꽉 채움 */
-        background: rgba(0, 0, 0, 0.6); /* 덜 까맣게 */
-        display: none;
-        align-items: center; 
-        justify-content: center; 
-        z-index: 99999;
-        backdrop-filter: blur(4px);
+        position: fixed; /* 스크롤해도 따라오도록 고정 */
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.75); /* 배경 어둡기 적절하게 조절 */
+        display: none; /* JS로 제어 */
+        align-items: center; /* 수직 중앙 정렬 */
+        justify-content: center; /* 수평 중앙 정렬 */
+        z-index: 99999; /* 제일 위에 */
+        backdrop-filter: blur(4px); /* 배경 블러 처리 */
+        overscroll-behavior: contain; /* 스크롤 체이닝 방지 */
     }
 
-    /* 2. 팝업 박스: 컴팩트하게 축소 및 위치 상향 */
+    /* 2. 팝업 박스 디자인 */
     .common-modal-content {
-        width: 80%; max-width: 300px; /* 폭을 조금 더 좁게 */
+        width: 85%; max-width: 320px;
         background: #1a1a1a;
-        border: 2px solid #ffd700; border-radius: 20px;
-        padding: 25px 15px; /* 내부 여백 축소 */
-        text-align: center; color: white;
-        box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+        border: 2px solid #ffd700; border-radius: 25px;
+        padding: 30px 20px; text-align: center; color: white;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         font-family: 'Kanit', sans-serif;
-        
-        /* 🔥 중요: 화면 중앙보다 살짝 위로 올리기 위한 마진 */
-        margin-bottom: 15vh; 
-        
-        animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative; /* z-index 적용을 위해 */
+        animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-    /* 요소 간 간격 축소 */
-    .common-modal-logo { width: 50px; margin-bottom: 10px; } /* 로고 크기 축소 */
-    .common-modal-title { font-size: 1.25rem; color: #ffd700; margin-bottom: 6px; font-weight: 700; }
-    .common-modal-text { font-size: 0.9rem; opacity: 0.9; margin-bottom: 20px; line-height: 1.4; font-weight: 300; }
+    .common-modal-logo { width: 60px; margin-bottom: 15px; }
+    .common-modal-title { font-size: 1.4rem; color: #ffd700; margin-bottom: 8px; font-weight: 700; }
+    .common-modal-text { font-size: 0.95rem; opacity: 0.9; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
 
     .common-modal-btn {
-        width: 100%; padding: 12px; border-radius: 12px; border: none; /* 버튼 높이 축소 */
-        font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-bottom: 8px; font-family: 'Kanit', sans-serif;
+        width: 100%; padding: 14px; border-radius: 15px; border: none;
+        font-weight: 700; font-size: 1rem; cursor: pointer; margin-bottom: 10px; font-family: 'Kanit', sans-serif;
     }
-    .btn-shop { background: linear-gradient(135deg, #ffd700, #f57c00); color: black; font-weight: 800; }
-    .btn-close { background: transparent; color: #aaa; border: none; font-size: 0.85rem; text-decoration: underline; margin-bottom: 0; padding: 5px; }
+    .btn-shop { background: linear-gradient(135deg, #ffd700, #f57c00); color: black; }
+    .btn-close { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); }
 </style>
 
 <div id="globalCoinModal" class="common-modal-overlay">
@@ -46,11 +43,11 @@
         <img src="/textlogo.png" class="common-modal-logo" alt="Saju">
         <div class="common-modal-title">เหรียญไม่พอ</div>
         <div class="common-modal-text">
-            คุณต้องการเหรียญเพิ่มเติม<br>เพื่อเปิดดูคำทำนายนี้
+            ขออภัย... คุณมีเหรียญไม่เพียงพอ<br>กรุณาเติมเหรียญเพื่อดูคำทำนาย
         </div>
         <div>
             <button class="common-modal-btn btn-shop" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
-            <button class="common-modal-btn btn-close" onclick="document.getElementById('globalCoinModal').style.display='none'">ไว้วันหลัง</button>
+            <button class="common-modal-btn btn-close" onclick="closeCoinModal()">ไว้วันหลัง</button>
         </div>
     </div>
 </div>

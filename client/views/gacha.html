@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ตู้สุ่มดวงเกาหลี (พ.ศ.)</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/coinPopup.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -146,7 +150,7 @@
         }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
 
-        /* ✅ [업그레이드] 다이내믹 로딩 레이어 */
+        /* 다이내믹 로딩 레이어 */
         .effect-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; display: none;
@@ -278,7 +282,6 @@
         const loadingMsg = document.getElementById('loadingMsg');
         const progressBar = document.getElementById('progressBar');
 
-        // 로딩 단계별 메시지 (태국어)
         const steps = [
             "กำลังเชื่อมต่อกับดวงดาว...", 
             "วิเคราะห์พลังงานธาตุทั้งห้า...", 
@@ -294,16 +297,12 @@
             const resultId = generateUUID();
             spinBtn.classList.add('spinning');
             
-            // 1. 공 배출 애니메이션 (0.8초)
+            // 애니메이션 시작
             setTimeout(() => { dispenser.classList.add('drop'); }, 800);
-
-            // 2. 확대 레이어 시작 (1.4초)
             setTimeout(() => {
                 overlay.style.display = 'flex';
                 zoomBall.classList.add('zoom-in');
             }, 1400);
-
-            // 3. 다이내믹 로딩 UI 표시 (2.5초 - 화면이 하얗게 찼을 때)
             setTimeout(() => {
                 analysisInfo.style.display = 'flex';
                 startLoadingUI();
@@ -317,18 +316,28 @@
                 });
 
                 if (response.ok) {
-                    // API 응답 성공 시 로딩 바를 100%로 채우고 이동
                     setTimeout(() => {
                         progressBar.style.width = '100%';
                         loadingMsg.innerText = "เรียบร้อยแล้ว!"; 
                         setTimeout(() => {
                             window.location.href = `/result/gacha/${resultId}`;
                         }, 800);
-                    }, 2000); // 최소 로딩 시간 확보
+                    }, 2000); 
                 } else {
                     const error = await response.json();
-                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ");
-                    location.reload();
+                    
+                    // ✅ 2. 코인 부족 시 팝업 처리 (애니메이션 숨김 후 팝업)
+                    if(response.status === 403 || error.error === 'INSUFFICIENT_COINS') {
+                        overlay.style.display = 'none'; // 로딩 오버레이 끄기
+                        showCoinAlert(); // 공용 코인 팝업 호출
+                        
+                        // 기계 상태 초기화
+                        spinBtn.classList.remove('spinning');
+                        dispenser.classList.remove('drop');
+                        zoomBall.classList.remove('zoom-in');
+                    } else {
+                        location.reload();
+                    }
                 }
             } catch (err) {
                 console.error(err);
@@ -348,7 +357,6 @@
                 }
                 progressBar.style.width = progress + '%';
                 
-                // 메시지 교체 (진행도에 따라)
                 if (progress > (stepIdx + 1) * 23 && stepIdx < steps.length - 1) {
                     stepIdx++;
                     loadingMsg.style.opacity = 0;

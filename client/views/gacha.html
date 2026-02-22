@@ -10,183 +10,41 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --wood-dark: #3e2723;
-            --wood-medium: #5d4037;
-            --wood-grain: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, transparent 2px, rgba(0,0,0,0.02) 5px);
-            --metal-brass: #b5a642;
-            --capsule-gold: #f1c40f;
-            --point-gold: #ffd700;
-        }
-
-        body {
-            margin: 0; padding: 40px 0;
-            background-color: #0a0a0a;
-            font-family: 'Kanit', sans-serif;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        /* --- [배경 설정] --- */
-        .background-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background-image: url('/background.jpg'); background-size: cover; background-position: center;
-        }
-        .background-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5);
-        }
-
-        /* --- [기계 래퍼] --- */
-        .machine-wrapper {
-            position: relative;
-            display: flex; flex-direction: column; align-items: center;
-            transform: scale(0.95);
-            margin: auto;
-        }
-
-        .sign-roof {
-            width: 340px; height: 35px;
-            background: var(--wood-dark); border-radius: 18px 18px 0 0; border-bottom: 4px solid #2c1b15;
-            background-image: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.3) 50%), linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
-            background-size: 18px 100%, 100% 100%; z-index: 6;
-        }
-        .machine-sign {
-            width: 300px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
-            border: 6px solid var(--wood-dark); border-top: none;
-            padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass);
-            position: relative;
-        }
-        .machine-sign::after, .machine-body::after, .control-panel::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: var(--wood-grain); pointer-events: none; opacity: 0.4;
-        }
-        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: var(--point-gold); text-shadow: 1px 1px 2px #000; }
-
-        .machine-body {
-            width: 330px;
-            background: linear-gradient(to right, #4e342e, var(--wood-medium), #4e342e);
-            border-radius: 30px; border: 7px solid var(--wood-dark);
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px rgba(0,0,0,0.7);
-            position: relative; display: flex; flex-direction: column; align-items: center;
-            padding-top: 30px; overflow: hidden;
-        }
-
-        .globe-container {
-            width: 240px; height: 240px; position: relative; margin-bottom: 25px; z-index: 2;
-        }
-        .glass-dome {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.4) 100%);
-            border: 9px solid var(--metal-brass);
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden; backdrop-filter: blur(1.5px);
-        }
-        .glass-reflection {
-            position: absolute; top: 15%; left: 15%; width: 55px; height: 90px;
-            background: rgba(255,255,255,0.2); border-radius: 50%; transform: rotate(20deg); z-index: 10;
-        }
-        .capsule-ball {
-            position: absolute; width: 44px; height: 44px; border-radius: 50%;
-            box-shadow: inset -2px -2px 6px rgba(0,0,0,0.4), 2px 2px 4px rgba(0,0,0,0.3);
-            background-image: linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.2) 55%, transparent 55%);
-        }
-
-        .control-panel {
-            width: 270px; background: linear-gradient(135deg, var(--wood-medium), var(--wood-dark));
-            border: 5px solid #2c1b15; border-radius: 15px; padding: 20px 15px;
-            box-shadow: inset 0 5px 20px rgba(0,0,0,0.7);
-            display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-
+        /* ... (기존 CSS 100% 동일 유지) ... */
+        :root { --wood-dark: #3e2723; --wood-medium: #5d4037; --wood-grain: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, transparent 2px, rgba(0,0,0,0.02) 5px); --metal-brass: #b5a642; --capsule-gold: #f1c40f; --point-gold: #ffd700; }
+        body { margin: 0; padding: 40px 0; background-color: #0a0a0a; font-family: 'Kanit', sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; box-sizing: border-box; }
+        .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('/background.jpg'); background-size: cover; background-position: center; }
+        .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5); }
+        .machine-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; transform: scale(0.95); margin: auto; }
+        .sign-roof { width: 340px; height: 35px; background: var(--wood-dark); border-radius: 18px 18px 0 0; border-bottom: 4px solid #2c1b15; background-image: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.3) 50%), linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); background-size: 18px 100%, 100% 100%; z-index: 6; }
+        .machine-sign { width: 300px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); border: 6px solid var(--wood-dark); border-top: none; padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass); position: relative; }
+        .machine-sign::after, .machine-body::after, .control-panel::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: var(--wood-grain); pointer-events: none; opacity: 0.4; }
+        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; text-shadow: 1px 1px 2px #000; }
+        .machine-body { width: 330px; background: linear-gradient(to right, #4e342e, var(--wood-medium), #4e342e); border-radius: 30px; border: 7px solid var(--wood-dark); box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px rgba(0,0,0,0.7); position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 30px; overflow: hidden; }
+        .globe-container { width: 240px; height: 240px; position: relative; margin-bottom: 25px; z-index: 2; }
+        .glass-dome { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.4) 100%); border: 9px solid var(--metal-brass); box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 10px 25px rgba(0,0,0,0.5); position: relative; overflow: hidden; backdrop-filter: blur(1.5px); }
+        .glass-reflection { position: absolute; top: 15%; left: 15%; width: 55px; height: 90px; background: rgba(255,255,255,0.2); border-radius: 50%; transform: rotate(20deg); z-index: 10; }
+        .capsule-ball { position: absolute; width: 44px; height: 44px; border-radius: 50%; box-shadow: inset -2px -2px 6px rgba(0,0,0,0.4), 2px 2px 4px rgba(0,0,0,0.3); background-image: linear-gradient(to bottom, transparent 45%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0.2) 55%, transparent 55%); }
+        .control-panel { width: 270px; background: linear-gradient(135deg, var(--wood-medium), var(--wood-dark)); border: 5px solid #2c1b15; border-radius: 15px; padding: 20px 15px; box-shadow: inset 0 5px 20px rgba(0,0,0,0.7); display: flex; flex-direction: column; align-items: center; position: relative; }
         .year-select-wrap { width: 100%; margin-bottom: 20px; }
-        .retro-select {
-            width: 100%; padding: 12px; background: #2c1b15;
-            border: 3px solid var(--metal-brass); color: var(--metal-brass);
-            font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.1rem; text-align: center;
-            border-radius: 12px; outline: none; appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b5a642' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 12px center; background-size: 22px;
-        }
-
-        .lever-container {
-            position: relative; width: 115px; height: 115px; cursor: pointer;
-        }
-        .lever-base {
-            position: absolute; width: 100%; height: 100%;
-            background: radial-gradient(circle, var(--metal-brass), #8c7b2d);
-            border: 4px solid #5c501a; border-radius: 50%;
-        }
-        .lever-handle {
-            position: absolute; top: 12%; left: 50%; width: 22px; height: 76%;
-            background: linear-gradient(to right, #d4af37, #fff8e1, #d4af37);
-            transform-origin: center 50px; transform: translateX(-50%) rotate(0deg);
-            border-radius: 6px; border: 2px solid #a68b2b;
-            transition: transform 1.2s cubic-bezier(0.3, -0.2, 0.3, 1.5);
-        }
+        .retro-select { width: 100%; padding: 12px; background: #2c1b15; border: 3px solid var(--metal-brass); color: var(--metal-brass); font-family: 'Kanit', sans-serif; font-weight: 700; font-size: 1.1rem; text-align: center; border-radius: 12px; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b5a642' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 22px; }
+        .lever-container { position: relative; width: 115px; height: 115px; cursor: pointer; }
+        .lever-base { position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, var(--metal-brass), #8c7b2d); border: 4px solid #5c501a; border-radius: 50%; }
+        .lever-handle { position: absolute; top: 12%; left: 50%; width: 22px; height: 76%; background: linear-gradient(to right, #d4af37, #fff8e1, #d4af37); transform-origin: center 50px; transform: translateX(-50%) rotate(0deg); border-radius: 6px; border: 2px solid #a68b2b; transition: transform 1.2s cubic-bezier(0.3, -0.2, 0.3, 1.5); }
         .lever-container.spinning .lever-handle { transform: translateX(-50%) rotate(360deg); }
-
-        .price-text {
-            margin-top: 15px; color: #ffd700; font-size: 1.3rem; font-weight: 700;
-            display: flex; align-items: center; gap: 6px;
-        }
-
+        .price-text { margin-top: 15px; color: #ffd700; font-size: 1.3rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
         .bottom-section { width: 90%; margin-top: 15px; display: flex; justify-content: center; z-index: 2; }
-        .dispenser-slot {
-            width: 110px; height: 45px; background: #1a0f0a;
-            border: 5px solid var(--metal-brass); border-radius: 12px 12px 0 0;
-            border-bottom: none; position: relative; overflow: hidden;
-            box-shadow: inset 0 15px 25px #000;
-        }
-        .dropped-capsule {
-            position: absolute; top: -60px; left: 50%;
-            width: 38px; height: 38px; background: var(--capsule-gold);
-            border-radius: 50%; transform: translateX(-50%);
-            box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4);
-            transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5);
-        }
+        .dispenser-slot { width: 110px; height: 45px; background: #1a0f0a; border: 5px solid var(--metal-brass); border-radius: 12px 12px 0 0; border-bottom: none; position: relative; overflow: hidden; box-shadow: inset 0 15px 25px #000; }
+        .dropped-capsule { position: absolute; top: -60px; left: 50%; width: 38px; height: 38px; background: var(--capsule-gold); border-radius: 50%; transform: translateX(-50%); box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4); transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5); }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
-
-        /* 다이내믹 로딩 레이어 */
-        .effect-layer {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: none;
-            flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
-        }
-        .lucky-ball-zoom {
-            width: 80px; height: 80px; border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.8);
-            transform: scale(0); opacity: 0; z-index: 10000;
-        }
+        .effect-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .lucky-ball-zoom { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b); box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); transform: scale(0); opacity: 0; z-index: 10000; }
         .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
-        @keyframes zoomAndWhite {
-            0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            20% { opacity: 1; transform: scale(1.5); }
-            100% { transform: scale(60); opacity: 1; background: #fffaf0; }
-        }
-
-        .analysis-info {
-            position: absolute; width: 80%; max-width: 300px;
-            bottom: 18%; display: none; flex-direction: column; align-items: center;
-            z-index: 10001; animation: fadeIn 0.5s ease-in forwards;
-        }
-        .loading-msg {
-            color: #5d4037; font-size: 1.3rem; font-weight: 700;
-            margin-bottom: 20px; min-height: 1.5em; text-align: center;
-            transition: opacity 0.3s;
-        }
-        .progress-container {
-            width: 100%; height: 8px; background: rgba(93, 64, 55, 0.15);
-            border-radius: 10px; overflow: hidden;
-        }
-        .progress-bar {
-            width: 0%; height: 100%; background: linear-gradient(90deg, #b8860b, #ffd700);
-            box-shadow: 0 0 12px #ffd700; border-radius: 10px; transition: width 0.4s ease;
-        }
+        @keyframes zoomAndWhite { 0% { transform: scale(0.1) rotate(0deg); opacity: 0; } 20% { opacity: 1; transform: scale(1.5); } 100% { transform: scale(60); opacity: 1; background: #fffaf0; } }
+        .analysis-info { position: absolute; width: 80%; max-width: 300px; bottom: 15%; display: none; flex-direction: column; align-items: center; z-index: 10001; animation: fadeIn 0.5s ease-in forwards; }
+        .loading-msg { color: #5d4037; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.8); min-height: 1.5em; text-align: center; }
+        .progress-container { width: 100%; height: 6px; background: rgba(93, 64, 55, 0.1); border-radius: 10px; overflow: hidden; position: relative; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #b8860b, #ffd700); box-shadow: 0 0 10px #ffd700; border-radius: 10px; transition: width 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
@@ -235,16 +93,13 @@
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
-            <p style="color: #8b4513; font-size: 0.8rem; margin-top: 15px; opacity: 0.7; font-weight: 500;">
-                Master Murdoo K AI Analysis
-            </p>
+            <p style="color: #8b4513; font-size: 0.8rem; margin-top: 10px; opacity: 0.7;">Korean AI Destiny Analysis</p>
         </div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 캡슐 채우기 로직
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
@@ -257,7 +112,6 @@
             glassGlobe.appendChild(capsule);
         }
 
-        // 100% 태국 불기(พ.ศ.) 드롭다운 생성
         const yearSelect = document.getElementById('birthYear');
         const currentYearBE = new Date().getFullYear() + 543; 
         for (let be = currentYearBE; be >= 2483; be--) {
@@ -290,82 +144,88 @@
         ];
 
         spinBtn.addEventListener('click', async () => {
-            const beYear = yearSelect.value;
+            const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
             if (spinBtn.classList.contains('spinning')) return;
 
             const resultId = generateUUID();
+            
+            // ✅ [핵심 1] 레버만 돌림 (아직 캡슐 떨구지 않음)
             spinBtn.classList.add('spinning');
             
-            // 애니메이션 시작
-            setTimeout(() => { dispenser.classList.add('drop'); }, 800);
-            setTimeout(() => {
-                overlay.style.display = 'flex';
-                zoomBall.classList.add('zoom-in');
-            }, 1400);
-            setTimeout(() => {
-                analysisInfo.style.display = 'flex';
-                startLoadingUI();
-            }, 2500);
-
             try {
+                // ✅ [핵심 2] API 먼저 호출해서 코인 여부 확인
                 const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({ resultId: resultId, birthDate: `${beYear}-01-01` })
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
+                    // ✅ [성공 시] 캡슐 떨어지고 화면 전환 시작
+                    setTimeout(() => { dispenser.classList.add('drop'); }, 300); // 약간 딜레이 후 낙하
+
                     setTimeout(() => {
-                        progressBar.style.width = '100%';
-                        loadingMsg.innerText = "เรียบร้อยแล้ว!"; 
-                        setTimeout(() => {
+                        overlay.style.display = 'flex';
+                        zoomBall.classList.add('zoom-in');
+                    }, 900); // 공 떨어지고 난 뒤 줌인
+
+                    setTimeout(() => {
+                        analysisInfo.style.display = 'flex';
+                        startLoadingUI(); // 로딩 바 시작
+                    }, 2000);
+
+                    // 로딩 바가 찰 때까지 기다렸다가 이동
+                    setTimeout(() => {
+                        finishLoading(() => {
                             window.location.href = `/result/gacha/${resultId}`;
-                        }, 800);
-                    }, 2000); 
+                        });
+                    }, 4500); // 4.5초 뒤 이동
+
                 } else {
-                    const error = await response.json();
+                    // ❌ [실패 - 코인 부족] 레버 멈추고 팝업 띄우기
+                    spinBtn.classList.remove('spinning'); // 레버 초기화
                     
-                    // ✅ 2. 코인 부족 시 팝업 처리 (애니메이션 숨김 후 팝업)
-                    if(response.status === 403 || error.error === 'INSUFFICIENT_COINS') {
-                        overlay.style.display = 'none'; // 로딩 오버레이 끄기
-                        showCoinAlert(); // 공용 코인 팝업 호출
-                        
-                        // 기계 상태 초기화
-                        spinBtn.classList.remove('spinning');
-                        dispenser.classList.remove('drop');
-                        zoomBall.classList.remove('zoom-in');
+                    if (response.status === 403 || data.error === 'INSUFFICIENT_COINS') {
+                        showCoinAlert(); // 🔥 공용 팝업 호출
                     } else {
-                        location.reload();
+                        alert("Error: " + (data.message || "Unknown error"));
                     }
                 }
             } catch (err) {
                 console.error(err);
-                location.reload();
+                spinBtn.classList.remove('spinning');
+                alert("เกิดข้อผิดพลาด");
             }
         });
 
         function startLoadingUI() {
             let progress = 0;
             let stepIdx = 0;
-            
             const interval = setInterval(() => {
-                progress += Math.random() * 12;
-                if (progress > 92) {
-                    progress = 92; 
+                progress += Math.random() * 8; 
+                if (progress > 95) {
+                    progress = 95; 
                     clearInterval(interval);
                 }
                 progressBar.style.width = progress + '%';
-                
-                if (progress > (stepIdx + 1) * 23 && stepIdx < steps.length - 1) {
-                    stepIdx++;
+                if (progress > stepIdx * 25) {
                     loadingMsg.style.opacity = 0;
                     setTimeout(() => {
                         loadingMsg.innerText = steps[stepIdx];
                         loadingMsg.style.opacity = 1;
+                        stepIdx = Math.min(stepIdx + 1, steps.length - 1);
                     }, 300);
                 }
-            }, 500);
+            }, 300);
+        }
+
+        function finishLoading(callback) {
+            progressBar.style.width = '100%';
+            loadingMsg.innerText = "เรียบร้อยแล้ว!"; 
+            setTimeout(callback, 800);
         }
     </script>
 </body>

@@ -58,7 +58,7 @@
             width: 160px; height: 100px;
             background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
             border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
-            position: relative; display: flex; justify-content: center;
+            position: relative; display: flex; justify(content): center;
             z-index: 5;
         }
 
@@ -77,30 +77,21 @@
             z-index: 10;
         }
 
-        /* ✅ 0.3초 안에 배출 */
         .drop-anim { animation: ballDrop 0.3s ease-in forwards; }
         @keyframes ballDrop {
             0% { top: -50px; }
             100% { top: 5px; }
         }
 
-        /* ✅ 0.5초 가속 + 0.5초 감속 확대 (총 1초) */
         .zoom-anim { 
             animation: ballZoom 1s ease-in-out forwards; 
             z-index: 10001;
         }
         @keyframes ballZoom {
             0% { transform: translate(-50%, 0) scale(1); top: 5px; }
-            /* ✅ 화면 가로의 70% 크기 (70vw / 원본40px) */
             100% { transform: translate(-50%, -120%) scale(calc(70vw / 40)); top: 50%; }
         }
 
-        .flash-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 10005; display: none;
-        }
-
-        /* --- [결과 페이지] --- */
         .container {
             width: 92%; max-width: 440px; margin: 20px 0 40px 0;
             display: none;
@@ -129,6 +120,28 @@
             word-break: break-word; 
         }
 
+        /* --- [🔥 행운의 숫자 골든볼 스타일] --- */
+        .lucky-numbers-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .golden-ball {
+            width: 60px; height: 60px;
+            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b4513);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset -2px -2px 6px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            animation: ballFloat 2s infinite ease-in-out;
+        }
+        @keyframes ballFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
         .lucky-box {
             background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
             padding: 15px; border-radius: 10px; margin-top: 20px;
@@ -145,7 +158,6 @@
         }
         .btn-home { background: #5d4037; color: white; margin-top: 30px; }
         .btn-main { background: #8b4513; color: white; margin-top: 10px; } 
-        .btn:active { transform: scale(0.98); opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -158,15 +170,13 @@
     </a>
 
     <div id="loadingLayer">
-        <div class="mini-machine-bottom" id="machineBottom">
+        <div class="mini-machine-bottom">
             <div class="dispenser-slot" id="dispenserSlot">
                 <div class="exit-ball" id="gachaBall"></div>
             </div>
         </div>
         <p id="loadingStatus" style="color: gold; margin-top: 40px; font-weight: 500; opacity: 0.8;">กำลังเปิดผลทำนาย...</p>
     </div>
-
-    <div class="flash-overlay" id="flash"></div>
 
     <div class="container" id="resultContent">
         <div class="result-scroll">
@@ -182,6 +192,12 @@
             <div class="section">
                 <div class="section-title">🔮 ดวงวันนี้ของคุณ</div>
                 <div class="section-content" id="today_luck"></div>
+            </div>
+
+            <div class="section" style="text-align: center;">
+                <div class="section-title" style="justify-content: center;">🍀 เลขนำโชคของคุณ (Lucky Numbers)</div>
+                <div class="lucky-numbers-container" id="lucky_balls_container">
+                    </div>
             </div>
 
             <div class="section">
@@ -200,17 +216,9 @@
             </div>
 
             <div class="lucky-box">
-                <div class="lucky-item">
-                    <div class="lucky-label">เลขนำโชค</div>
-                    <div class="lucky-value" id="lucky_number">?</div>
-                </div>
-                <div class="lucky-item">
-                    <div class="lucky-label">สิ่งที่ควรเลี่ยง</div>
-                    <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
-                </div>
                 <div class="lucky-item" style="grid-column: span 2;">
-                    <div class="lucky-label">ไอเทมเสริมดวง</div>
-                    <div class="lucky-value" id="lucky_items">?</div>
+                    <div class="lucky-label">ไอเทมเสริมดวง & สิ่งที่ควรเลี่ยง</div>
+                    <div class="lucky-value" id="lucky_items_combined">?</div>
                 </div>
             </div>
 
@@ -228,16 +236,12 @@
             const gachaBall = document.getElementById('gachaBall');
             const dispenserSlot = document.getElementById('dispenserSlot');
             
-            // 1. 공 배출 애니메이션 시작 (0.3초)
-            setTimeout(() => {
-                gachaBall.classList.add('drop-anim');
-            }, 500);
+            setTimeout(() => { gachaBall.classList.add('drop-anim'); }, 500);
 
             const dataPromise = fetch(`/api/gacha/result/${resultId}`, {
                 headers: { 'x-api-key': API_KEY }
             }).then(res => res.json());
 
-            // 2. 공 확대 애니메이션 시작 (배출 0.3초 완료 후 0.8초 시점)
             setTimeout(() => {
                 dispenserSlot.style.overflow = 'visible'; 
                 gachaBall.classList.remove('drop-anim');
@@ -248,18 +252,29 @@
             try {
                 const data = await dataPromise;
 
-                document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date}`;
+                // 텍스트 매핑
+                document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date} | ปีเกิด พ.ศ. ${data.user_year_be}`;
                 document.getElementById('score').innerText = data.today_luck_score;
                 document.getElementById('summary').innerText = data.summary;
                 document.getElementById('today_luck').innerText = data.today_luck;
                 document.getElementById('zodiac_advice').innerText = data.zodiac_advice;
                 document.getElementById('action_plan').innerText = data.action_plan;
                 document.getElementById('cautions').innerText = data.cautions;
-                document.getElementById('lucky_number').innerText = data.lucky_number;
-                document.getElementById('taboo').innerText = data.taboo;
-                document.getElementById('lucky_items').innerText = data.lucky_items;
+                
+                // ✅ 아이템과 금기 사항 결합 노출
+                document.getElementById('lucky_items_combined').innerText = `${data.lucky_items} / เลี่ยง: ${data.taboo}`;
 
-                // 3. 확대 애니메이션 완료 시점 (0.8초 + 1초 = 1.8초)
+                // ✅ 행운의 숫자(배열)를 골든볼로 생성
+                const ballContainer = document.getElementById('lucky_balls_container');
+                if (data.lucky_numbers && Array.isArray(data.lucky_numbers)) {
+                    data.lucky_numbers.slice(0, 3).forEach(num => {
+                        const ball = document.createElement('div');
+                        ball.className = 'golden-ball';
+                        ball.innerText = num;
+                        ballContainer.appendChild(ball);
+                    });
+                }
+
                 const elapsed = Date.now() - startTime;
                 const waitTime = Math.max(0, 1800 - elapsed);
 

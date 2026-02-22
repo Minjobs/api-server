@@ -92,6 +92,7 @@
             100% { transform: translate(-50%, -120%) scale(calc(70vw / 40)); top: 50%; }
         }
 
+        /* --- [결과 페이지] --- */
         .container {
             width: 92%; max-width: 440px; margin: 20px 0 40px 0;
             display: none;
@@ -111,15 +112,15 @@
 
         /* ✅ 행운의 숫자 골든볼 스타일 */
         .lucky-balls-container {
-            display: flex; justify-content: center; gap: 10px; margin: 15px 0;
+            display: flex; justify-content: center; gap: 10px; margin: 10px 0 0 0;
         }
         .golden-ball {
-            width: 55px; height: 55px;
+            width: 52px; height: 52px;
             background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b4513);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 800; font-size: 1rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset -2px -2px 5px rgba(0,0,0,0.4);
+            color: white; font-weight: 800; font-size: 0.95rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset -1px -1px 4px rgba(0,0,0,0.4);
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             animation: ballPulse 2s infinite ease-in-out;
         }
@@ -139,13 +140,14 @@
             word-break: break-word; 
         }
 
+        /* ✅ 분리된 럭키 박스 스타일 */
         .lucky-box {
-            background: rgba(184, 134, 11, 0.1); border: 1.5px solid var(--point-gold);
-            padding: 15px; border-radius: 10px; margin-top: 20px;
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+            background: rgba(184, 134, 11, 0.08); border: 1.5px solid var(--point-gold);
+            padding: 15px; border-radius: 12px; margin-top: 12px;
+            display: grid; grid-template-columns: 1fr;
         }
         .lucky-item { text-align: center; }
-        .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; }
+        .lucky-label { font-size: 0.75rem; color: #8b4513; margin-bottom: 4px; font-weight: 500; }
         .lucky-value { font-weight: 700; font-size: 1.1rem; }
 
         .btn { 
@@ -182,9 +184,10 @@
                 <div style="font-size: 2.5rem; font-weight: 800; color: var(--point-gold);" id="score">0</div>
                 <div style="font-size: 0.8rem; color: #8b4513;">คะแนนดวงวันนี้</div>
                 
-                <div class="lucky-balls-container" id="lucky_balls_container"></div>
-                
                 <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
+
+                <div style="font-size: 0.85rem; color: #8b4513; font-weight: 700; margin-top: 15px;">🍀 เลขนำโชค</div>
+                <div class="lucky-balls-container" id="lucky_balls_container"></div>
             </div>
 
             <div class="summary-title" id="summary">...</div>
@@ -209,13 +212,16 @@
                 <div class="section-content" id="cautions"></div>
             </div>
 
-            <div class="lucky-box">
+            <div class="lucky-box" style="border-color: #c0392b; background: rgba(192, 57, 43, 0.05);">
                 <div class="lucky-item">
-                    <div class="lucky-label">สิ่งที่ควรเลี่ยง</div>
+                    <div class="lucky-label" style="color: #c0392b;">สิ่งที่ควรเลี่ยง (Taboo)</div>
                     <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
                 </div>
+            </div>
+
+            <div class="lucky-box">
                 <div class="lucky-item">
-                    <div class="lucky-label">ไอเทมเสริมดวง</div>
+                    <div class="lucky-label">ไอเทมเสริมดวง (Lucky Items)</div>
                     <div class="lucky-value" id="lucky_items">?</div>
                 </div>
             </div>
@@ -260,9 +266,9 @@
                 document.getElementById('taboo').innerText = data.taboo;
                 document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // ✅ 행운의 숫자(배열) 매핑 해결
+                // 행운의 숫자 골든볼 매핑
                 const ballContainer = document.getElementById('lucky_balls_container');
-                ballContainer.innerHTML = ''; // 초기화
+                ballContainer.innerHTML = '';
                 if (data.lucky_numbers && Array.isArray(data.lucky_numbers)) {
                     data.lucky_numbers.slice(0, 3).forEach(num => {
                         const ball = document.createElement('div');

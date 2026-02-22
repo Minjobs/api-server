@@ -250,7 +250,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             // ✅ 공통 모달 불러오기 (다른 스타일 간섭 없음)
-            fetch('/coin-modal.html')
+            fetch('/coin_modal.html')
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById('modal-container').innerHTML = data;

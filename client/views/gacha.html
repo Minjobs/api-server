@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ตู้สุ่มดวงเกาหลี</title>
+    <title>ตู้สุ่มดวงเกาหลี (พ.ศ.)</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,7 +20,7 @@
             font-family: 'Kanit', sans-serif;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh;
-            overflow-y: auto; /* 세로 스크롤 허용 */
+            overflow-y: auto;
             box-sizing: border-box;
         }
 
@@ -34,7 +34,7 @@
             backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5);
         }
 
-        /* --- [기계 래퍼: 컴팩트한 사이즈] --- */
+        /* --- [기계 래퍼] --- */
         .machine-wrapper {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
@@ -145,7 +145,6 @@
         }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
 
-        /* 애니메이션 효과 레이어 */
         .effect-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); display: none;
@@ -183,13 +182,13 @@
             <div class="globe-container">
                 <div class="glass-dome" id="glassGlobe">
                     <div class="glass-reflection"></div>
-                    </div>
+                </div>
             </div>
 
             <div class="control-panel">
                 <div class="year-select-wrap">
                     <select id="birthYear" class="retro-select">
-                        <option value="" disabled selected>เลือกปีเกิด</option>
+                        <option value="" disabled selected>เลือกปีเกิด (พ.ศ.)</option>
                     </select>
                 </div>
                 <div class="lever-container" id="spinBtn">
@@ -215,28 +214,28 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 캡슐 꽉 채우기 (85개)
+        // 캡슐 채우기 로직 (생략 없음)
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
             const capsule = document.createElement('div');
             capsule.classList.add('capsule-ball');
             capsule.style.background = colors[Math.floor(Math.random() * colors.length)];
-            const left = Math.random() * 190;
-            const top = Math.random() * 100 + 100; // 하단 밀집
-            const rotate = Math.random() * 360;
-            capsule.style.left = `${left}px`; capsule.style.top = `${top}px`;
-            capsule.style.transform = `rotate(${rotate}deg)`;
-            capsule.style.zIndex = Math.floor(Math.random() * 5);
+            capsule.style.left = `${Math.random() * 190}px`; 
+            capsule.style.top = `${Math.random() * 100 + 100}px`;
+            capsule.style.transform = `rotate(${Math.random() * 360}deg)`;
             glassGlobe.appendChild(capsule);
         }
 
-        // 2. 태국 불기 병기 드롭다운
+        // ✅ [수정] 100% 태국 불기(พ.ศ.) 드롭다운 생성
         const yearSelect = document.getElementById('birthYear');
-        for (let y = 2026; y >= 1940; y--) {
+        const currentYearBE = new Date().getFullYear() + 543; // 2026 + 543 = 2569
+        
+        // 약 80년치 데이터 생성 (2569년부터 2483년까지)
+        for (let be = currentYearBE; be >= 2483; be--) {
             const opt = document.createElement('option');
-            opt.value = y; 
-            opt.innerHTML = `${y} (พ.ศ. ${y + 543})`; 
+            opt.value = be; // 서버로 불기 연도(예: 2541)를 직접 보냄
+            opt.innerHTML = `พ.ศ. ${be}`; 
             yearSelect.appendChild(opt);
         }
 
@@ -254,50 +253,41 @@
         const msg = document.getElementById('msg');
 
         spinBtn.addEventListener('click', async () => {
-            const year = yearSelect.value;
-            if (!year) { alert("กรุณาเลือกปีเกิดของคุณ"); return; }
+            const beYear = yearSelect.value;
+            if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
             if (spinBtn.classList.contains('spinning')) return;
 
             const resultId = generateUUID();
             
-            // 시퀀스 1: 레버 돌리기
             spinBtn.classList.add('spinning');
             
-            // 시퀀스 2: 배출구에서 공 나오기 (0.8초 뒤)
-            setTimeout(() => { 
-                dispenser.classList.add('drop'); 
-            }, 800);
+            setTimeout(() => { dispenser.classList.add('drop'); }, 800);
 
-            // 시퀀스 3: 배출된 공이 커지며 화면 덮기 (1.4초 뒤)
             setTimeout(() => {
                 overlay.style.display = 'flex';
                 zoomBall.classList.add('zoom-in');
             }, 1400);
 
-            // 시퀀스 4: 화면이 다 덮인 후 로딩 문구 표시 (3.5초 뒤)
-            setTimeout(() => {
-                msg.style.display = 'block';
-            }, 3500);
+            setTimeout(() => { msg.style.display = 'block'; }, 3500);
 
-            // API 호출 (gachaController 연결)
             try {
+                // ✅ [수정] birthDate에 불기 연도를 담아 전송
                 const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({
                         resultId: resultId,
-                        birthDate: `${year}-01-01`
+                        birthDate: `${beYear}-01-01` // 예: "2541-01-01"
                     })
                 });
 
                 if (response.ok) {
-                    // 분석 완료 후 결과 페이지로 이동
                     setTimeout(() => {
                         window.location.href = `/result/gacha/${resultId}`;
                     }, 4000);
                 } else {
                     const error = await response.json();
-                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ (코인이 부족합니다)");
+                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ (เหรียญไม่พอ)");
                     location.reload();
                 }
             } catch (err) {

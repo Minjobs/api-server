@@ -91,6 +91,33 @@
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
+        /* 커스텀 모달 스타일 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            width: 85%; max-width: 320px; background: #1a1a1a;
+            border: 2px solid var(--point-gold); border-radius: 25px;
+            padding: 30px 20px; text-align: center; color: white;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-logo { width: 70px; margin-bottom: 15px; }
+        .modal-title { font-size: 1.3rem; color: var(--point-gold); margin-bottom: 10px; font-weight: 700; }
+        .modal-text { font-size: 0.95rem; opacity: 0.8; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
+        .shop-btn {
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: black; border: none; width: 100%; padding: 14px; border-radius: 15px;
+            font-weight: 800; font-size: 1rem; cursor: pointer;
+        }
+        .close-btn {
+            background: transparent; color: #888; border: none; font-size: 0.9rem;
+            text-decoration: underline; cursor: pointer; padding: 5px; margin-top: 10px;
+        }
+
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -123,7 +150,7 @@
                 <div class="benefit-card"><span class="benefit-icon">📊</span><span class="benefit-text">คะแนนความเข้ากัน<br>ของดวงชะตา</span></div>
                 <div class="benefit-card"><span class="benefit-icon">💡</span><span class="benefit-text">วิธีปรับตัวให้<br>รักกันยาวนาน</span></div>
                 <div class="benefit-card"><span class="benefit-icon">🔮</span><span class="benefit-text">อนาคตความรัก<br>ในวันข้างหน้า</span></div>
-                <div class="benefit-card"><span class="benefit-icon">🍀</span><span class="benefit-text">아이템เสริมดวง<br>สำหรับคู่รัก</span></div>
+                <div class="benefit-card"><span class="benefit-icon">🍀</span><span class="benefit-text">ไอเทมเสริมดวง<br>สำหรับคู่รัก</span></div>
             </div>
 
             <form id="loveForm">
@@ -140,9 +167,9 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
@@ -172,9 +199,9 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
@@ -218,7 +245,17 @@
             <p style="font-size: 0.9rem; opacity: 0.8;">ดวงดาวกำลังคำนวณความสมพงษ์ของคุณทั้งคู่</p>
         </div>
 
-        <div id="modal-container"></div>
+        <div class="modal-overlay" id="coinModal">
+            <div class="modal-content">
+                <img src="textlogo.png" class="modal-logo" alt="Saju">
+                <div class="modal-title">เหรียญไม่พอ</div>
+                <div class="modal-text">คุณต้องการเหรียญอีก 2 เหรียญ<br>เพื่อดูโชคชะตาความรักครั้งนี้</div>
+                <div class="modal-btn-group">
+                    <button class="shop-btn" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
+                    <button class="close-btn" onclick="location.reload()">ไว้วันหลัง</button>
+                </div>
+            </div>
+        </div>
 
         <footer>© 2026 Saju. บันทึกโชคชะตาด้วยความใส่ใจ</footer>
     </div>
@@ -234,13 +271,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ✅ 공통 모달 불러오기 로직 추가
-            fetch('/coin-modal.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('modal-container').innerHTML = data;
-                });
-
             const setupSelect = (id, start, end) => {
                 const select = document.getElementById(id);
                 for (let i = start; i <= end; i++) {
@@ -249,10 +279,13 @@
                 }
             };
 
+            // ✅ 수정: 현재 연도를 태국 불기로 계산 (2026 -> 2569)
             const currentYearBE = new Date().getFullYear() + 543;
             
             ['my', 'partner'].forEach(p => {
                 setupSelect(p + 'Day', 1, 31);
+                
+                // ✅ 수정: 불기 연도로 드롭다운 생성 (2569년부터 2473년까지 약 96년치)
                 const yearSelect = document.getElementById(p + 'Year');
                 for (let i = currentYearBE; i >= 2473; i--) {
                     yearSelect.add(new Option(i, i));
@@ -302,11 +335,13 @@
                 resultId: resultId,
                 me: {
                     name: getVal('myName'),
+                    // ✅ 이제 여기서 보내는 연도 값은 불기(B.E.) 연도입니다.
                     birth: `${getVal('myYear')}-${getVal('myMonth')}-${getVal('myDay')}`,
                     time: document.getElementById('myUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('myHour')}:${getVal('myMin')}`
                 },
                 partner: {
                     name: getVal('partnerName'),
+                    // ✅ 이제 여기서 보내는 연도 값은 불기(B.E.) 연도입니다.
                     birth: `${getVal('partnerYear')}-${getVal('partnerMonth')}-${getVal('partnerDay')}`,
                     time: document.getElementById('partnerUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('partnerHour')}:${getVal('partnerMin')}`
                 },
@@ -326,12 +361,8 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    // ✅ 수정: 공통 팝업 함수 호출
                     document.getElementById('loadingLayer').style.display = 'none';
-                    document.getElementById('inputArea').classList.remove('hidden');
-                    subBtn.disabled = false;
-                    subBtn.innerText = "ดูผลทำนายความรัก 🪙 2";
-                    openCoinModal(); 
+                    document.getElementById('coinModal').style.display = 'flex';
                 } else {
                     throw new Error("Server error");
                 }
@@ -339,8 +370,6 @@
                 console.error('Analysis failed:', err);
                 alert("เกิดข้อผิดพลาด กรุณาลองใหม่ภายหลัง");
                 location.reload();
-            } finally {
-                isAnalyzing = false;
             }
         });
     </script>

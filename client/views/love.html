@@ -91,6 +91,21 @@
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
+        /* 커스텀 모달 스타일 (동적 로드 시 필요) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            width: 85%; max-width: 320px; background: #1a1a1a;
+            border: 2px solid var(--point-gold); border-radius: 25px;
+            padding: 30px 20px; text-align: center; color: white;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -200,9 +215,9 @@
                             <option value="crush_me">แอบรัก (เราแอบชอบเขา)</option>
                             <option value="crush_them">แอบรัก (เขาแอบชอบเรา)</option>
                             <option value="fling">กำลังดูใจกัน (썸)</option>
-                            <option value="dating_1yr">คบกัน보다 1 ปี</option>
-                            <option value="dating_3yr">คบกัน보다 3 ปี</option>
-                            <option value="dating_5yr">คบกัน보다 5 ปี</option>
+                            <option value="dating_1yr">คบกันมากกว่า 1 ปี</option>
+                            <option value="dating_3yr">คบกันมากกว่า 3 ปี</option>
+                            <option value="dating_5yr">คบกันมากกว่า 5 ปี</option>
                             <option value="married">แต่งงานแล้ว</option>
                         </select>
                     </div>
@@ -234,7 +249,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ✅ 외부 coin-modal.html 로드
+            // ✅ 공통 모달 불러오기 (다른 스타일 간섭 없음)
             fetch('/coin-modal.html')
                 .then(response => response.text())
                 .then(data => {
@@ -326,7 +341,7 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    // ✅ 403 에러 시 로딩 레이어 끄고 모달 팝업 호출
+                    // ✅ 403 에러 시 화면 복구 후 모달 띄우기
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('inputArea').classList.remove('hidden');
                     subBtn.disabled = false;
@@ -335,7 +350,7 @@
                     if (typeof openCoinModal === 'function') {
                         openCoinModal();
                     } else {
-                        // 모달 로드 전일 경우 대비
+                        // 모달이 아직 로드되지 않았을 경우 대비
                         alert("เหรียญไม่พอ");
                     }
                 } else {

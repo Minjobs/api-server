@@ -4,19 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saju - ดูดวงสมพงษ์ความรัก</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <script src="/coinPopup.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* --- 기존 CSS 100% 동일 (건드리지 않음) --- */
-        :root {
-            --bg-overlay: rgba(0, 0, 0, 0.38); 
-            --text-white: #ffffff;  
-            --point-gold: #ffd700;
-            --heart-pink: #ff4757;
-            --border-line: rgba(200, 200, 200, 0.8); 
-            --input-bg: rgba(255, 255, 255, 0.1);
-        }
+        /* 기존 스타일 100% 동일 (건드리지 않음) */
+        :root { --bg-overlay: rgba(0, 0, 0, 0.38); --text-white: #ffffff; --point-gold: #ffd700; --heart-pink: #ff4757; --border-line: rgba(200, 200, 200, 0.8); --input-bg: rgba(255, 255, 255, 0.1); }
         body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.8; }
         .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(1.0); }
@@ -51,13 +47,6 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
         footer { margin-top: 25px; font-size: 0.75rem; opacity: 0.7; text-align: center; }
         .hidden { display: none !important; }
-        
-        /* ✅ SweetAlert2 커스텀 스타일 (폰트 적용) */
-        .swal2-popup { font-family: 'Kanit', sans-serif !important; border-radius: 20px !important; border: 2px solid #ffd700 !important; background: #1a1a1a !important; color: white !important; }
-        .swal2-title { color: #ffd700 !important; }
-        .swal2-content { color: #eee !important; }
-        .swal2-confirm { background: linear-gradient(135deg, #ffd700, #f57c00) !important; color: black !important; font-weight: 800 !important; border-radius: 12px !important; }
-        .swal2-cancel { background: rgba(255,255,255,0.1) !important; color: #ccc !important; border-radius: 12px !important; }
     </style>
 </head>
 <body>
@@ -274,30 +263,13 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
+                    // ✅ 403 에러 -> 화면 복구 -> 공용 팝업 함수 실행
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('inputArea').classList.remove('hidden');
                     subBtn.disabled = false;
                     subBtn.innerText = "ดูผลทำนายความรัก 🪙 2";
                     
-                    // 🔥 [핵심] SweetAlert2로 아름다운 팝업 띄우기
-                    Swal.fire({
-                        title: 'เหรียญไม่พอ',
-                        text: 'คุณต้องการเหรียญอีก 2 เหรียญเพื่อดูโชคชะตา',
-                        icon: 'warning',
-                        background: '#1a1a1a',
-                        color: '#ffffff',
-                        confirmButtonText: 'ไปที่ร้านค้า (เติมเหรียญ)',
-                        cancelButtonText: 'ไว้วันหลัง',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ffd700',
-                        cancelButtonColor: '#555',
-                        backdrop: `rgba(0,0,0,0.8)`
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            location.href = '/shop';
-                        }
-                    });
-
+                    showCoinAlert(); // 🔥 coinPopup.js에서 불러온 함수
                 } else {
                     throw new Error("Server error");
                 }

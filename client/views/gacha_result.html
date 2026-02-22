@@ -58,7 +58,7 @@
             width: 160px; height: 100px;
             background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark));
             border: 6px solid var(--wood-dark); border-radius: 20px 20px 10px 10px;
-            position: relative; display: flex; justify(content): center;
+            position: relative; display: flex; justify-content: center;
             z-index: 5;
         }
 
@@ -109,6 +109,25 @@
         .score-bar-bg { width: 100%; height: 8px; background: #ddd; border-radius: 4px; margin-top: 10px; overflow: hidden; }
         .score-bar-fill { width: 0; height: 100%; background: var(--point-gold); transition: width 1s; }
 
+        /* ✅ 행운의 숫자 골든볼 스타일 */
+        .lucky-balls-container {
+            display: flex; justify-content: center; gap: 10px; margin: 15px 0;
+        }
+        .golden-ball {
+            width: 55px; height: 55px;
+            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b4513);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-weight: 800; font-size: 1rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset -2px -2px 5px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            animation: ballPulse 2s infinite ease-in-out;
+        }
+        @keyframes ballPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
         .summary-title { font-size: 1.4rem; font-weight: 800; text-align: center; color: #5d4037; margin-bottom: 25px; line-height: 1.4; }
 
         .section { margin-bottom: 25px; border-bottom: 1px dashed rgba(0,0,0,0.1); padding-bottom: 15px; }
@@ -118,28 +137,6 @@
             font-size: 0.95rem; line-height: 1.7; color: #333; 
             text-align: left; 
             word-break: break-word; 
-        }
-
-        /* --- [🔥 행운의 숫자 골든볼 스타일] --- */
-        .lucky-numbers-container {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 15px;
-        }
-        .golden-ball {
-            width: 60px; height: 60px;
-            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b, #8b4513);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: white; font-weight: 800; font-size: 1.1rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), inset -2px -2px 6px rgba(0,0,0,0.4);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-            animation: ballFloat 2s infinite ease-in-out;
-        }
-        @keyframes ballFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
         }
 
         .lucky-box {
@@ -184,6 +181,9 @@
             <div class="score-box">
                 <div style="font-size: 2.5rem; font-weight: 800; color: var(--point-gold);" id="score">0</div>
                 <div style="font-size: 0.8rem; color: #8b4513;">คะแนนดวงวันนี้</div>
+                
+                <div class="lucky-balls-container" id="lucky_balls_container"></div>
+                
                 <div class="score-bar-bg"><div class="score-bar-fill" id="scoreBar"></div></div>
             </div>
 
@@ -192,12 +192,6 @@
             <div class="section">
                 <div class="section-title">🔮 ดวงวันนี้ของคุณ</div>
                 <div class="section-content" id="today_luck"></div>
-            </div>
-
-            <div class="section" style="text-align: center;">
-                <div class="section-title" style="justify-content: center;">🍀 เลขนำโชคของคุณ (Lucky Numbers)</div>
-                <div class="lucky-numbers-container" id="lucky_balls_container">
-                    </div>
             </div>
 
             <div class="section">
@@ -216,9 +210,13 @@
             </div>
 
             <div class="lucky-box">
-                <div class="lucky-item" style="grid-column: span 2;">
-                    <div class="lucky-label">ไอเทมเสริมดวง & สิ่งที่ควรเลี่ยง</div>
-                    <div class="lucky-value" id="lucky_items_combined">?</div>
+                <div class="lucky-item">
+                    <div class="lucky-label">สิ่งที่ควรเลี่ยง</div>
+                    <div class="lucky-value" style="color: #c0392b;" id="taboo">?</div>
+                </div>
+                <div class="lucky-item">
+                    <div class="lucky-label">ไอเทมเสริมดวง</div>
+                    <div class="lucky-value" id="lucky_items">?</div>
                 </div>
             </div>
 
@@ -252,7 +250,6 @@
             try {
                 const data = await dataPromise;
 
-                // 텍스트 매핑
                 document.getElementById('analysis_date').innerText = `📅 ${data.analysis_date} | ปีเกิด พ.ศ. ${data.user_year_be}`;
                 document.getElementById('score').innerText = data.today_luck_score;
                 document.getElementById('summary').innerText = data.summary;
@@ -260,12 +257,12 @@
                 document.getElementById('zodiac_advice').innerText = data.zodiac_advice;
                 document.getElementById('action_plan').innerText = data.action_plan;
                 document.getElementById('cautions').innerText = data.cautions;
-                
-                // ✅ 아이템과 금기 사항 결합 노출
-                document.getElementById('lucky_items_combined').innerText = `${data.lucky_items} / เลี่ยง: ${data.taboo}`;
+                document.getElementById('taboo').innerText = data.taboo;
+                document.getElementById('lucky_items').innerText = data.lucky_items;
 
-                // ✅ 행운의 숫자(배열)를 골든볼로 생성
+                // ✅ 행운의 숫자(배열) 매핑 해결
                 const ballContainer = document.getElementById('lucky_balls_container');
+                ballContainer.innerHTML = ''; // 초기화
                 if (data.lucky_numbers && Array.isArray(data.lucky_numbers)) {
                     data.lucky_numbers.slice(0, 3).forEach(num => {
                         const ball = document.createElement('div');

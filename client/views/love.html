@@ -173,7 +173,7 @@
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
-                            <select id="myYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
+                            <select id="myYear" required><option value="" disabled selected>ปี พ.ศ.</option></select>
                         </div>
                     </div>
                     <div class="input-group">
@@ -199,13 +199,13 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
-                                <option value="07">ก.ค.</option><option value="08">스.ค.</option>
+                                <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                                 <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                             </select>
-                            <select id="partnerYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
+                            <select id="partnerYear" required><option value="" disabled selected>ปี พ.ศ.</option></select>
                         </div>
                     </div>
                     <div class="input-group">
@@ -265,7 +265,7 @@
 
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+                const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         }
@@ -278,10 +278,19 @@
                     select.add(new Option(val, val));
                 }
             };
-            const currentYear = new Date().getFullYear();
+
+            // ✅ 수정: 현재 연도를 태국 불기로 계산 (2026 -> 2569)
+            const currentYearBE = new Date().getFullYear() + 543;
+            
             ['my', 'partner'].forEach(p => {
                 setupSelect(p + 'Day', 1, 31);
-                for (let i = currentYear; i >= 1930; i--) document.getElementById(p + 'Year').add(new Option(i, i));
+                
+                // ✅ 수정: 불기 연도로 드롭다운 생성 (2569년부터 2473년까지 약 96년치)
+                const yearSelect = document.getElementById(p + 'Year');
+                for (let i = currentYearBE; i >= 2473; i--) {
+                    yearSelect.add(new Option(i, i));
+                }
+
                 setupSelect(p + 'Hour', 0, 23);
                 setupSelect(p + 'Min', 0, 59);
 
@@ -326,11 +335,13 @@
                 resultId: resultId,
                 me: {
                     name: getVal('myName'),
+                    // ✅ 이제 여기서 보내는 연도 값은 불기(B.E.) 연도입니다.
                     birth: `${getVal('myYear')}-${getVal('myMonth')}-${getVal('myDay')}`,
                     time: document.getElementById('myUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('myHour')}:${getVal('myMin')}`
                 },
                 partner: {
                     name: getVal('partnerName'),
+                    // ✅ 이제 여기서 보내는 연도 값은 불기(B.E.) 연도입니다.
                     birth: `${getVal('partnerYear')}-${getVal('partnerMonth')}-${getVal('partnerDay')}`,
                     time: document.getElementById('partnerUnknownBtn').classList.contains('active') ? "unknown" : `${getVal('partnerHour')}:${getVal('partnerMin')}`
                 },

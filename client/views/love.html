@@ -91,8 +91,32 @@
         #loadingLayer { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 0; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,215,0,0.2); border-top: 5px solid var(--point-gold); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
 
-        /* 커스텀 모달 레이아웃 (디자인 유지용) */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(5px); }
+        /* 커스텀 모달 스타일 */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            width: 85%; max-width: 320px; background: #1a1a1a;
+            border: 2px solid var(--point-gold); border-radius: 25px;
+            padding: 30px 20px; text-align: center; color: white;
+            animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-logo { width: 70px; margin-bottom: 15px; }
+        .modal-title { font-size: 1.3rem; color: var(--point-gold); margin-bottom: 10px; font-weight: 700; }
+        .modal-text { font-size: 0.95rem; opacity: 0.8; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
+        .shop-btn {
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: black; border: none; width: 100%; padding: 14px; border-radius: 15px;
+            font-weight: 800; font-size: 1rem; cursor: pointer;
+        }
+        .close-btn {
+            background: transparent; color: #888; border: none; font-size: 0.9rem;
+            text-decoration: underline; cursor: pointer; padding: 5px; margin-top: 10px;
+        }
 
         @keyframes heartbeat { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -143,7 +167,7 @@
                             <select id="myMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                                 <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -175,7 +199,7 @@
                             <select id="partnerMonth" required>
                                 <option value="" disabled selected>เดือน</option>
                                 <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                                <option value="03">미.ค.</option><option value="04">메.ย.</option>
+                                <option value="03">มี.ค.</option><option value="04">메.ย.</option>
                                 <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                                 <option value="07">ก.ค.</option><option value="08">스.ค.</option>
                                 <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -229,14 +253,15 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // ✅ 모달 제어 함수 (HTML을 불러온 뒤 실행될 수 있도록 전역 선언)
+        // ✅ 2. 모달 제어 함수를 전역에 정의 (alert이 뜨지 않도록)
         function openCoinModal() {
             const modal = document.getElementById('coinModal');
-            if (modal) modal.style.display = 'flex';
-        }
-        function closeCoinModal() {
-            const modal = document.getElementById('coinModal');
-            if (modal) modal.style.display = 'none';
+            if (modal) {
+                modal.style.display = 'flex';
+            } else {
+                // 혹시 파일 로드가 늦어질 경우를 대비해 0.1초 뒤 다시 시도
+                setTimeout(openCoinModal, 100);
+            }
         }
 
         function generateUUID() {
@@ -247,11 +272,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // ✅ 공통 모달 불러오기
-            fetch('/coin-modal.html')
-                .then(response => response.text())
-                .then(data => {
-                    document.getElementById('modal-container').innerHTML = data;
+            // ✅ 3. 페이지 로드 시 외부 coin_modal.html 불러오기
+            fetch('/coin_modal.html')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('modal-container').innerHTML = html;
                 });
 
             const setupSelect = (id, start, end) => {
@@ -339,13 +364,13 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    // ✅ 화면 복구 및 모달 팝업 호출
+                    // ✅ 4. 403 에러 발생 시 UI 복구 후 팝업 함수 실행
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('inputArea').classList.remove('hidden');
                     subBtn.disabled = false;
                     subBtn.innerText = "ดูผลทำนายความรัก 🪙 2";
                     
-                    openCoinModal(); // 이제 제대로 작동합니다.
+                    openCoinModal(); 
                 } else {
                     throw new Error("Server error");
                 }

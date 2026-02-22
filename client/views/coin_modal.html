@@ -1,59 +1,39 @@
 <style>
-    .modal-overlay {
+    /* 공용 모달 스타일 */
+    .common-modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0, 0, 0, 0.85); display: none;
+        background: rgba(0, 0, 0, 0.85); display: none; /* 기본 숨김 */
         align-items: center; justify-content: center; z-index: 99999;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(5px);
     }
-    .modal-content {
-        width: 85%; max-width: 340px; background: #1a1a1a;
+    .common-modal-content {
+        width: 85%; max-width: 320px; background: #1a1a1a;
         border: 2px solid #ffd700; border-radius: 25px;
         padding: 35px 20px; text-align: center; color: white;
         box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
-        animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        font-family: 'Kanit', sans-serif;
     }
-    @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    
-    .modal-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
-    .modal-title { font-size: 1.4rem; color: #ffd700; margin-bottom: 10px; font-weight: 700; font-family: 'Kanit'; }
-    .modal-text { font-size: 0.95rem; opacity: 0.9; margin-bottom: 25px; line-height: 1.6; font-weight: 300; font-family: 'Kanit'; }
-    
-    .modal-btn-group { display: flex; flex-direction: column; gap: 10px; }
-    .shop-btn {
-        background: linear-gradient(135deg, #ffd700, #f57c00);
-        color: black; border: none; width: 100%; padding: 16px; border-radius: 15px;
-        font-weight: 800; font-size: 1.1rem; cursor: pointer; font-family: 'Kanit';
+    .common-modal-logo { width: 60px; margin-bottom: 15px; }
+    .common-modal-title { font-size: 1.4rem; color: #ffd700; margin-bottom: 10px; font-weight: 700; }
+    .common-modal-text { font-size: 0.95rem; opacity: 0.9; margin-bottom: 25px; line-height: 1.5; font-weight: 300; }
+    .common-modal-btn {
+        width: 100%; padding: 14px; border-radius: 15px; border: none;
+        font-weight: 700; font-size: 1rem; cursor: pointer; margin-bottom: 10px; font-family: 'Kanit', sans-serif;
     }
-    .close-btn {
-        background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2);
-        width: 100%; padding: 12px; border-radius: 15px;
-        font-size: 0.9rem; cursor: pointer; font-family: 'Kanit';
-    }
+    .btn-shop { background: linear-gradient(135deg, #ffd700, #f57c00); color: black; }
+    .btn-close { background: rgba(255,255,255,0.1); color: #ccc; border: 1px solid rgba(255,255,255,0.2); }
 </style>
 
-<div class="modal-overlay" id="coinModal">
-    <div class="modal-content">
-        <span class="modal-icon">🪙</span>
-        <div class="modal-title">เหรียญไม่พอ</div>
-        <div class="modal-text">ขอ 아ภัย... คุณมีเหรียญไม่เพียงพอ<br>กรุณาเติมเหรียญเพื่อเปิดดูโชคชะตา</div>
-        <div class="modal-btn-group">
-            <button class="shop-btn" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
-            <button class="close-btn" onclick="closeCoinModal()">ไว้คราวหน้า</button>
+<div id="globalCoinModal" class="common-modal-overlay">
+    <div class="common-modal-content">
+        <img src="/textlogo.png" class="common-modal-logo" alt="Saju">
+        <div class="common-modal-title">เหรียญไม่พอ</div>
+        <div class="common-modal-text">
+            คุณต้องการเหรียญเพิ่มเติม<br>เพื่อเปิดดูคำทำนายนี้
+        </div>
+        <div>
+            <button class="common-modal-btn btn-shop" onclick="location.href='/shop'">ไปที่ร้านค้า (เติมเหรียญ)</button>
+            <button class="common-modal-btn btn-close" onclick="document.getElementById('globalCoinModal').style.display='none'">ไว้วันหลัง</button>
         </div>
     </div>
 </div>
-
-<script>
-    function openCoinModal() {
-        document.getElementById('coinModal').style.display = 'flex';
-    }
-    function closeCoinModal() {
-        document.getElementById('coinModal').style.display = 'none';
-        // 분석 중이었다면 페이지 새로고침하여 상태 초기화
-        if (typeof isAnalyzing !== 'undefined') isAnalyzing = false;
-        if (document.getElementById('loadingLayer')) {
-            document.getElementById('loadingLayer').style.display = 'none';
-            document.getElementById('inputArea').classList.remove('hidden');
-        }
-    }
-</script>

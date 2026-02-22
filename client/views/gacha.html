@@ -12,6 +12,7 @@
             --wood-grain: repeating-linear-gradient(45deg, rgba(0,0,0,0.05) 0px, transparent 2px, rgba(0,0,0,0.02) 5px);
             --metal-brass: #b5a642;
             --capsule-gold: #f1c40f;
+            --point-gold: #ffd700;
         }
 
         body {
@@ -59,7 +60,7 @@
             content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
             background: var(--wood-grain); pointer-events: none; opacity: 0.4;
         }
-        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; text-shadow: 1px 1px 2px #000; }
+        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: var(--point-gold); text-shadow: 1px 1px 2px #000; }
 
         .machine-body {
             width: 330px;
@@ -145,28 +146,44 @@
         }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
 
+        /* ✅ [업그레이드] 다이내믹 로딩 레이어 */
         .effect-layer {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); display: none;
-            justify-content: center; align-items: center; z-index: 9999;
+            background: #000; display: none;
+            flex-direction: column; justify-content: center; align-items: center; z-index: 9999;
         }
         .lucky-ball-zoom {
-            width: 65px; height: 65px; border-radius: 50%;
+            width: 80px; height: 80px; border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.9); transform: scale(0.1); opacity: 0;
+            box-shadow: 0 0 80px rgba(255, 215, 0, 0.8);
+            transform: scale(0); opacity: 0; z-index: 10000;
         }
-        .lucky-ball-zoom.zoom-in { animation: zoomAndFill 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
-        @keyframes zoomAndFill {
+        .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+        @keyframes zoomAndWhite {
             0% { transform: scale(0.1) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; transform: scale(1); }
-            100% { transform: scale(75); opacity: 1; background: #fffaf0; }
+            20% { opacity: 1; transform: scale(1.5); }
+            100% { transform: scale(60); opacity: 1; background: #fffaf0; }
         }
 
-        .loading-msg {
-            position: absolute; bottom: 20%; width: 100%; text-align: center;
-            color: var(--metal-brass); font-size: 1.6rem; font-weight: 700;
-            display: none;
+        .analysis-info {
+            position: absolute; width: 80%; max-width: 300px;
+            bottom: 18%; display: none; flex-direction: column; align-items: center;
+            z-index: 10001; animation: fadeIn 0.5s ease-in forwards;
         }
+        .loading-msg {
+            color: #5d4037; font-size: 1.3rem; font-weight: 700;
+            margin-bottom: 20px; min-height: 1.5em; text-align: center;
+            transition: opacity 0.3s;
+        }
+        .progress-container {
+            width: 100%; height: 8px; background: rgba(93, 64, 55, 0.15);
+            border-radius: 10px; overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%; height: 100%; background: linear-gradient(90deg, #b8860b, #ffd700);
+            box-shadow: 0 0 12px #ffd700; border-radius: 10px; transition: width 0.4s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -208,13 +225,22 @@
 
     <div class="effect-layer" id="overlay">
         <div class="lucky-ball-zoom" id="zoomBall"></div>
-        <div class="loading-msg" id="msg">กำลังเปิดเผยโชคชะตา...</div>
+        
+        <div class="analysis-info" id="analysisInfo">
+            <div class="loading-msg" id="loadingMsg">กำลังเชื่อมต่อกับดวงดาว...</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p style="color: #8b4513; font-size: 0.8rem; margin-top: 15px; opacity: 0.7; font-weight: 500;">
+                Master Murdoo K AI Analysis
+            </p>
+        </div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 캡슐 채우기 로직 (생략 없음)
+        // 캡슐 채우기 로직
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
@@ -227,14 +253,12 @@
             glassGlobe.appendChild(capsule);
         }
 
-        // ✅ [수정] 100% 태국 불기(พ.ศ.) 드롭다운 생성
+        // 100% 태국 불기(พ.ศ.) 드롭다운 생성
         const yearSelect = document.getElementById('birthYear');
-        const currentYearBE = new Date().getFullYear() + 543; // 2026 + 543 = 2569
-        
-        // 약 80년치 데이터 생성 (2569년부터 2483년까지)
+        const currentYearBE = new Date().getFullYear() + 543; 
         for (let be = currentYearBE; be >= 2483; be--) {
             const opt = document.createElement('option');
-            opt.value = be; // 서버로 불기 연도(예: 2541)를 직접 보냄
+            opt.value = be;
             opt.innerHTML = `พ.ศ. ${be}`; 
             yearSelect.appendChild(opt);
         }
@@ -250,7 +274,17 @@
         const dispenser = document.getElementById('dispenser');
         const overlay = document.getElementById('overlay');
         const zoomBall = document.getElementById('zoomBall');
-        const msg = document.getElementById('msg');
+        const analysisInfo = document.getElementById('analysisInfo');
+        const loadingMsg = document.getElementById('loadingMsg');
+        const progressBar = document.getElementById('progressBar');
+
+        // 로딩 단계별 메시지 (태국어)
+        const steps = [
+            "กำลังเชื่อมต่อกับดวงดาว...", 
+            "วิเคราะห์พลังงานธาตุทั้งห้า...", 
+            "อ่านคำทำนายจากเกาหลี...", 
+            "เกือบเสร็จแล้ว... โปรดรอสักครู่" 
+        ];
 
         spinBtn.addEventListener('click', async () => {
             const beYear = yearSelect.value;
@@ -258,44 +292,73 @@
             if (spinBtn.classList.contains('spinning')) return;
 
             const resultId = generateUUID();
-            
             spinBtn.classList.add('spinning');
             
+            // 1. 공 배출 애니메이션 (0.8초)
             setTimeout(() => { dispenser.classList.add('drop'); }, 800);
 
+            // 2. 확대 레이어 시작 (1.4초)
             setTimeout(() => {
                 overlay.style.display = 'flex';
                 zoomBall.classList.add('zoom-in');
             }, 1400);
 
-            setTimeout(() => { msg.style.display = 'block'; }, 3500);
+            // 3. 다이내믹 로딩 UI 표시 (2.5초 - 화면이 하얗게 찼을 때)
+            setTimeout(() => {
+                analysisInfo.style.display = 'flex';
+                startLoadingUI();
+            }, 2500);
 
             try {
-                // ✅ [수정] birthDate에 불기 연도를 담아 전송
                 const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-                    body: JSON.stringify({
-                        resultId: resultId,
-                        birthDate: `${beYear}-01-01` // 예: "2541-01-01"
-                    })
+                    body: JSON.stringify({ resultId: resultId, birthDate: `${beYear}-01-01` })
                 });
 
                 if (response.ok) {
+                    // API 응답 성공 시 로딩 바를 100%로 채우고 이동
                     setTimeout(() => {
-                        window.location.href = `/result/gacha/${resultId}`;
-                    }, 4000);
+                        progressBar.style.width = '100%';
+                        loadingMsg.innerText = "เรียบร้อยแล้ว!"; 
+                        setTimeout(() => {
+                            window.location.href = `/result/gacha/${resultId}`;
+                        }, 800);
+                    }, 2000); // 최소 로딩 시간 확보
                 } else {
                     const error = await response.json();
-                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ (เหรียญไม่พอ)");
+                    if(error.error === 'INSUFFICIENT_COINS') alert("เหรียญไม่พอ");
                     location.reload();
                 }
             } catch (err) {
                 console.error(err);
-                alert("เกิดข้อผิดพลาด");
                 location.reload();
             }
         });
+
+        function startLoadingUI() {
+            let progress = 0;
+            let stepIdx = 0;
+            
+            const interval = setInterval(() => {
+                progress += Math.random() * 12;
+                if (progress > 92) {
+                    progress = 92; 
+                    clearInterval(interval);
+                }
+                progressBar.style.width = progress + '%';
+                
+                // 메시지 교체 (진행도에 따라)
+                if (progress > (stepIdx + 1) * 23 && stepIdx < steps.length - 1) {
+                    stepIdx++;
+                    loadingMsg.style.opacity = 0;
+                    setTimeout(() => {
+                        loadingMsg.innerText = steps[stepIdx];
+                        loadingMsg.style.opacity = 1;
+                    }, 300);
+                }
+            }, 500);
+        }
     </script>
 </body>
 </html>

@@ -128,8 +128,6 @@
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
 
-        <div id="modal-container"></div>
-
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
         </footer>
@@ -150,12 +148,7 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
 
-            // 공용 모달 불러오기
-            fetch('/coin_modal.html')
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById('modal-container').innerHTML = html;
-                });
+            // ❌ [삭제됨] fetch('/coin_modal.html')... 코드는 제거했습니다.
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -194,6 +187,7 @@
                 } catch (e) { console.log("분석 진행 중..."); }
             };
 
+            // 프로필 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -204,6 +198,7 @@
                 }
             } catch (e) { console.error(e); }
 
+            // ✅ 불기 연도 적용 (현재 연도 + 543)
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             
@@ -229,13 +224,13 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // ✅ [추가됨] 태국어 입력 경고 메시지 강제 설정 (다른 로직은 건드리지 않음)
+            // ✅ [추가됨] 입력란 빈값 경고 메시지 태국어로 강제 설정
             const requiredInputs = document.querySelectorAll('input[required], select[required]');
             requiredInputs.forEach(input => {
                 input.oninvalid = function(e) {
                     e.target.setCustomValidity("");
                     if (!e.target.validity.valid) {
-                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
+                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"); // 태국어 메시지
                     }
                 };
                 input.oninput = function(e) {
@@ -243,12 +238,14 @@
                 };
             });
 
+            // 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (isPolling) return;
 
                 currentAnalysisId = generateUUID();
                 
+                // 버튼 비활성화 및 텍스트 변경
                 submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
@@ -270,6 +267,7 @@
                     });
 
                     if (res.ok) {
+                        // 성공 시 로딩 화면 전환 및 폴링 시작
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
@@ -287,10 +285,12 @@
                         }, 5000);
 
                     } else if (res.status === 403) {
+                        // ❌ 코인 부족 시 -> 버튼 복구 후 팝업 띄우기
                         isPolling = false;
                         submitBtn.disabled = false;
                         submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
-                        showCoinAlert(); 
+                        
+                        showCoinAlert(); // coinPopup.js 사용
                     } else {
                         throw new Error("Analysis request failed");
                     }

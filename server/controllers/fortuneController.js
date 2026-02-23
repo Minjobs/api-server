@@ -1,20 +1,20 @@
 import OpenAI from 'openai';
 import db from '../config/db.js';
+import { SAJU_ASSET } from '../utils/promptTemplates.js'; // ✅ 가져오기
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /**
  * 1. [POST] /api/fortune/analyze
- * 수정사항: 코인 잔액 확인 및 트랜잭션(차감+저장) 적용
+ * 사주 분석 및 결과 저장 (SAJU_ASSET 활용)
  */
 export const analyzeFortune = async (req, res) => {
     console.log("--- [START] 사주 분석 시작 ---");
     
-    // Passport 인증 미들웨어 통과 후 req.user에 userId가 있다고 가정
     const line_user_id = req.user ? req.user.userId : null;
     const { resultId, type, realName, nickName, birthDate, birthTime, gender } = req.body;
     
-    // ✅ 가격 설정 (사주 분석 코인 비용)
+    // ✅ 가격 설정
     const COST = 3; 
 
     console.log(`📥 요청 데이터: [ID: ${resultId}] [User: ${line_user_id}]`);
@@ -39,54 +39,28 @@ export const analyzeFortune = async (req, res) => {
         const currentCoins = userRows[0].coins;
         console.log(`💰 보유 코인: ${currentCoins} / 필요 코인: ${COST}`);
 
-        // ❌ 코인 부족 시 403 리턴
         if (currentCoins < COST) {
             console.warn(`⚠️ 코인 부족!`);
             conn.release();
             return res.status(403).json({ error: 'INSUFFICIENT_COINS' });
         }
 
-        // --- [Step 2] AI 분석 요청 ---
-        const systemPrompt = `
-            You are 'Murdoo K', a mystical and highly professional master of astrology. 
-            Analyze the user's fate by perfectly integrating Korean Saju (Four Pillars of Destiny) and Thai Astrology.
-
-            [Operational Guidelines]
-            1. Language: MUST write exclusively in Thai.
-            2. Tone: Mystical, deep, and authoritative.
-            3. Length: Each sector detailed (approx. 500-700 characters).
-            4. Address: Use "คุณ" to refer to the user.
-
-            [JSON Structure - STRICT]
-            {
-                "summary": "One-line essence of fate (Thai)",
-                "outward": "...",
-                "inward": "...",
-                "strengths": "...",
-                "weaknesses": "...",
-                "cautions": "...",
-                "boosters": "..."
-            }
-        `;
-
-        const userPrompt = `
-            [User Data]
-            - Name: ${realName} (Nickname: ${nickName})
-            - Birth: ${birthDate} at ${birthTime}
-            - Gender: ${gender}
-            
-            [Request]
-            Premium-grade personality analysis in Thai following the 7-sector JSON structure.
-        `;
+        // --- [Step 2] AI 분석 요청 (SAJU_ASSET 활용) ---
+        // ✅ 템플릿에서 프롬프트 가져오기
+        const { system, user } = SAJU_ASSET.getPrompts(realName, nickName, birthDate, birthTime, gender);
 
         console.log("🤖 GPT-4o-mini 분석 요청 중...");
         const completion = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: userPrompt }
+                { role: "system", content: system },
+                { role: "user", content: user }
             ],
-            response_format: { type: "json_object" },
+            // ✅ Structured Outputs (JSON Schema) 적용
+            response_format: {
+                type: "json_schema",
+                json_schema: SAJU_ASSET.schema
+            },
             temperature: 0.7 
         });
 
@@ -109,13 +83,13 @@ export const analyzeFortune = async (req, res) => {
             [COST, line_user_id]
         );
 
-        await conn.commit(); // ✅ 커밋
+        await conn.commit();
         console.log("🎉 사주 분석 완료 및 저장 성공");
         
         res.json({ resultId });
 
     } catch (err) {
-        await conn.rollback(); // ❌ 에러 시 롤백
+        await conn.rollback();
         console.error('❌ 분석 실패 상세 로그:', err);
         res.status(500).json({ error: 'Failed to analyze fortune', message: err.message });
     } finally {
@@ -123,9 +97,9 @@ export const analyzeFortune = async (req, res) => {
     }
 };
 
-// ... (getFortuneResult, getFortuneHistory는 기존과 동일하므로 생략하거나 그대로 두시면 됩니다)
 /**
  * 2. [GET] /api/fortune/result/:id
+ * 결과 조회 (변경 없음)
  */
 export const getFortuneResult = async (req, res) => {
     try {
@@ -149,6 +123,37 @@ export const getFortuneResult = async (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: 'Database error' });
+    }
+};
+
+/**
+ * 3. [GET] /api/fortune/history
+ * 기록 조회 (변경 없음)
+ */
+export const getFortuneHistory = async (req, res) => {
+    try {
+        const line_user_id = req.user.userId;
+        const [rows] = await db.execute(
+            `SELECT result_id, fortune_type, detail_data, created_at 
+             FROM fortune_results 
+             WHERE line_user_id = ? 
+             ORDER BY created_at DESC`,
+            [line_user_id]
+        );
+
+        const history = rows.map(row => {
+            const details = typeof row.detail_data === 'string' ? JSON.parse(row.detail_data) : row.detail_data;
+            return {
+                result_id: row.result_id,
+                fortune_type: row.fortune_type,
+                summary: details.summary || "ดูดวงส่วนตัว",
+                created_at: row.created_at
+            };
+        });
+
+        res.json(history);
+    } catch (err) {
+        res.status(500).json({ error: 'Database error', message: err.message });
     }
 };
 

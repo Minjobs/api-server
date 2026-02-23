@@ -10,6 +10,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        /* 승민님의 원본 CSS 그대로 유지 */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -90,7 +91,7 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">미.ค.</option><option value="04">메.ย.</option>
+                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                             <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
@@ -115,7 +116,7 @@
                         <option value="lgbt">LGBTQ+</option><option value="other">อื่นๆ (Other)</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ (🪙 3)</button>
+                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ</button>
             </form>
         </main>
 
@@ -127,8 +128,6 @@
             <h2 class="loading-title">Reading Destiny</h2>
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
-
-        <div id="modal-container"></div>
 
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
@@ -149,13 +148,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
-
-            // ✅ 공용 모달 불러오기
-            fetch('/coin_modal.html')
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById('modal-container').innerHTML = html;
-                });
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -194,7 +186,7 @@
                 } catch (e) { console.log("분석 진행 중..."); }
             };
 
-            // 프로필 로드
+            // 프로필 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -222,15 +214,15 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // 폼 제출 핸들러 (수정됨)
+            // ✅ 폼 제출 핸들러 (수정됨)
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (isPolling) return;
+                if (isPolling) return; // 중복 클릭 방지
 
                 currentAnalysisId = generateUUID();
                 
-                // ✅ [수정] 먼저 버튼만 비활성화 (로딩화면 전환 X)
-                submitBtn.disabled = true;
+                // ✅ [변경점 1] 버튼만 먼저 비활성화 (로딩화면 전환 X)
+                submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
                 const payload = {
@@ -244,6 +236,7 @@
                 };
 
                 try {
+                    // API 호출
                     const res = await fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
@@ -251,7 +244,7 @@
                     });
 
                     if (res.ok) {
-                        // ✅ [성공 시] 이제 로딩 화면으로 전환하고 폴링 시작
+                        // ✅ [변경점 2] 성공(200) 시에만 로딩 화면으로 전환 및 폴링 시작
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
@@ -264,17 +257,19 @@
                             dynamicText.innerText = loadingMessages[msgIdx];
                         }, 5000);
 
-                        // 폴링 시작
+                        // 결과 확인 폴링 시작
                         const pollInterval = setInterval(() => {
                             if (!isPolling) { clearInterval(pollInterval); return; }
                             pollResult(currentAnalysisId, type);
                         }, 5000);
 
                     } else if (res.status === 403) {
-                        // ❌ [코인 부족] 팝업 띄우고 버튼 복구
+                        // ✅ [변경점 3] 403(코인부족) 시 버튼 복구 및 공용 팝업 띄우기
+                        isPolling = false;
                         submitBtn.disabled = false;
                         submitBtn.innerText = "ดูคำทำนายของคุณ";
-                        showCoinAlert(); // 🔥 공용 팝업 호출
+                        
+                        showCoinAlert(); // coinPopup.js의 함수 호출
                     } else {
                         throw new Error("Analysis request failed");
                     }
@@ -282,6 +277,9 @@
                 } catch (err) {
                     console.error(err);
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+                    isPolling = false;
+                    
+                    // 에러 시 버튼 복구
                     submitBtn.disabled = false;
                     submitBtn.innerText = "ดูคำทำนายของคุณ";
                 }

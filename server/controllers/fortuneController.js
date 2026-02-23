@@ -157,29 +157,3 @@ export const getFortuneHistory = async (req, res) => {
     }
 };
 
-export const getFortuneHistory = async (req, res) => {
-    try {
-        const line_user_id = req.user.userId;
-        const [rows] = await db.execute(
-            `SELECT result_id, fortune_type, detail_data, created_at 
-             FROM fortune_results 
-             WHERE line_user_id = ? 
-             ORDER BY created_at DESC`,
-            [line_user_id]
-        );
-
-        const history = rows.map(row => {
-            const details = typeof row.detail_data === 'string' ? JSON.parse(row.detail_data) : row.detail_data;
-            return {
-                result_id: row.result_id,
-                fortune_type: row.fortune_type,
-                summary: details.summary || "ดูดวงส่วนตัว",
-                created_at: row.created_at
-            };
-        });
-
-        res.json(history);
-    } catch (err) {
-        res.status(500).json({ error: 'Database error', message: err.message });
-    }
-};

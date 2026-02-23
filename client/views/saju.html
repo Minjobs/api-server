@@ -10,6 +10,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
+        /* 기존 CSS 100% 유지 */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -115,7 +116,7 @@
                         <option value="lgbt">LGBTQ+</option><option value="other">อื่นๆ (Other)</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ</button>
+                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ (🪙 3)</button>
             </form>
         </main>
 
@@ -127,8 +128,6 @@
             <h2 class="loading-title">Reading Destiny</h2>
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
-
-        <div id="modal-container"></div>
 
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
@@ -150,12 +149,7 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
 
-            // 공용 모달 불러오기
-            fetch('/coin_modal.html')
-                .then(res => res.text())
-                .then(html => {
-                    document.getElementById('modal-container').innerHTML = html;
-                });
+            // ❌ [삭제됨] fetch('/coin_modal.html')... 이 부분 때문에 404 에러가 났던 겁니다.
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -205,19 +199,17 @@
                 }
             } catch (e) { console.error(e); }
 
-            // ✅ [수정] 태국 불기(B.E.) 연도 적용
+            // ✅ 태국 불기 연도 적용
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
 
-            // 태국 불기는 서기 + 543년 (예: 2026년 -> 2569년)
             const currentYearAD = new Date().getFullYear();
-            const startYearBE = currentYearAD + 543; // 현재 불기 연도
-            const endYearBE = 1930 + 543; // 2473년까지
+            const startYearBE = currentYearAD + 543; 
+            const endYearBE = 1930 + 543; 
             
             for(let i = startYearBE; i >= endYearBE; i--) {
-                // 보여주는 값(Text): "พ.ศ. 2569", 실제 값(Value): 2569
                 yearSel.add(new Option(`พ.ศ. ${i}`, i));
             }
 
@@ -233,14 +225,14 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // 폼 제출 핸들러 (코인 부족 팝업 포함)
+            // 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (isPolling) return;
 
                 currentAnalysisId = generateUUID();
                 
-                // 먼저 버튼만 비활성화
+                // 버튼만 비활성화 (로딩화면 전환 X)
                 submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
@@ -262,7 +254,7 @@
                     });
 
                     if (res.ok) {
-                        // 성공 시 로딩 화면 전환 및 폴링
+                        // 성공 시 로딩 화면 전환
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
@@ -280,11 +272,11 @@
                         }, 5000);
 
                     } else if (res.status === 403) {
-                        // ❌ 코인 부족 시 팝업 띄우기
+                        // ❌ 코인 부족 -> 팝업 실행
                         isPolling = false;
                         submitBtn.disabled = false;
-                        submitBtn.innerText = "ดูคำทำนายของคุณ";
-                        showCoinAlert(); 
+                        submitBtn.innerText = "ดูคำทำนายของคุณ (🪙 3)";
+                        showCoinAlert(); // coinPopup.js 사용
                     } else {
                         throw new Error("Analysis request failed");
                     }
@@ -294,7 +286,7 @@
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                     isPolling = false;
                     submitBtn.disabled = false;
-                    submitBtn.innerText = "ดูคำทำนายของคุณ";
+                    submitBtn.innerText = "ดูคำทำนายของคุณ (🪙 3)";
                 }
             });
         });

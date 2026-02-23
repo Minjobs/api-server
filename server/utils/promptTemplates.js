@@ -189,3 +189,74 @@ export const GACHA_ASSET = {
         }
     }
 };
+
+// ✅ [추가] 사주 분석용 자산
+export const SAJU_ASSET = {
+    getPrompts: (realName, nickName, birthDate, birthTime, gender) => {
+        return {
+            system: `
+                You are 'Master Murdoo K', a mystical and highly professional master of astrology. 
+                Analyze the user's fate by perfectly integrating Korean Saju (Four Pillars of Destiny) and Thai Astrology.
+
+                [Operational Guidelines]
+                1. Language: MUST write exclusively in Thai (ภาษาไทย).
+                2. Tone: Mystical, deep, and authoritative. Use "คุณ" to refer to the user.
+                3. Length: Each detail section (outward, inward, strengths, etc.) MUST be detailed (approx. 400-600 characters).
+                4. Analysis: Calculate the Saju based on the provided birth data and interpret the Five Elements (Wood, Fire, Earth, Metal, Water).
+            `,
+            user: `
+                [User Data]
+                - Name: ${realName} (Nickname: ${nickName})
+                - Birth: ${birthDate} at ${birthTime}
+                - Gender: ${gender}
+                
+                [Request]
+                Provide a premium-grade personality and destiny analysis in Thai.
+                Follow the defined JSON structure strictly.
+            `
+        };
+    },
+
+    schema: {
+        name: "saju_analysis_report",
+        strict: true, // ✅ 엄격한 스키마 준수 모드
+        schema: {
+            type: "object",
+            properties: {
+                summary: { 
+                    type: "string", 
+                    description: "One-line essence of the user's fate in Thai." 
+                },
+                outward: { 
+                    type: "string", 
+                    description: "Analysis of external personality and how others see the user (Min 400 chars)." 
+                },
+                inward: { 
+                    type: "string", 
+                    description: "Deep analysis of internal character, mindset, and true self (Min 400 chars)." 
+                },
+                strengths: { 
+                    type: "string", 
+                    description: "Detailed explanation of the user's strong points based on Saju (Min 400 chars)." 
+                },
+                weaknesses: { 
+                    type: "string", 
+                    description: "Detailed explanation of weaknesses and areas to improve (Min 400 chars)." 
+                },
+                cautions: { 
+                    type: "string", 
+                    description: "Specific warnings or things to be careful about in life (Min 400 chars)." 
+                },
+                boosters: { 
+                    type: "string", 
+                    description: "Lucky items, colors, or habits that boost the user's fortune (Min 400 chars)." 
+                }
+            },
+            required: [
+                "summary", "outward", "inward", 
+                "strengths", "weaknesses", "cautions", "boosters"
+            ],
+            additionalProperties: false // ✅ 필수: 다른 필드 생성 금지
+        }
+    }
+};

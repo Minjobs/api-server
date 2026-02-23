@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import db from '../config/db.js';
-import { SAJU_ASSET } from '../utils/promptTemplates.js'; // ✅ 가져오기
+import { SAJU_ASSET } from '../utils/promptTemplates.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -14,8 +14,8 @@ export const analyzeFortune = async (req, res) => {
     const line_user_id = req.user ? req.user.userId : null;
     const { resultId, type, realName, nickName, birthDate, birthTime, gender } = req.body;
     
-    // ✅ 가격 설정
-    const COST = 3; 
+    // ✅ [수정] 가격 변경 (3 -> 2)
+    const COST = 2; 
 
     console.log(`📥 요청 데이터: [ID: ${resultId}] [User: ${line_user_id}]`);
 
@@ -46,7 +46,6 @@ export const analyzeFortune = async (req, res) => {
         }
 
         // --- [Step 2] AI 분석 요청 (SAJU_ASSET 활용) ---
-        // ✅ 템플릿에서 프롬프트 가져오기
         const { system, user } = SAJU_ASSET.getPrompts(realName, nickName, birthDate, birthTime, gender);
 
         console.log("🤖 GPT-4o-mini 분석 요청 중...");
@@ -56,7 +55,6 @@ export const analyzeFortune = async (req, res) => {
                 { role: "system", content: system },
                 { role: "user", content: user }
             ],
-            // ✅ Structured Outputs (JSON Schema) 적용
             response_format: {
                 type: "json_schema",
                 json_schema: SAJU_ASSET.schema
@@ -99,7 +97,6 @@ export const analyzeFortune = async (req, res) => {
 
 /**
  * 2. [GET] /api/fortune/result/:id
- * 결과 조회 (변경 없음)
  */
 export const getFortuneResult = async (req, res) => {
     try {
@@ -128,7 +125,6 @@ export const getFortuneResult = async (req, res) => {
 
 /**
  * 3. [GET] /api/fortune/history
- * 기록 조회 (변경 없음)
  */
 export const getFortuneHistory = async (req, res) => {
     try {
@@ -156,4 +152,3 @@ export const getFortuneHistory = async (req, res) => {
         res.status(500).json({ error: 'Database error', message: err.message });
     }
 };
-

@@ -1,5 +1,5 @@
 /**
- * 코인 부족 팝업을 띄우는 공용 함수 (심플 & 컴팩트 디자인)
+ * 코인 부족 팝업을 띄우는 공용 함수 (심플 & 투명 배경 & 아이콘 정렬 수정)
  * 사용법: HTML에 이 파일을 연결하고 showCoinAlert() 호출
  */
 function showCoinAlert() {
@@ -14,24 +14,22 @@ function showCoinAlert() {
         const style = document.createElement('style');
         style.id = 'coin-popup-style';
         style.innerHTML = `
-            /* 팝업 박스 스타일: 사이즈 대폭 축소 */
+            /* 팝업 박스 스타일 */
             .swal2-popup { 
                 font-family: 'Kanit', sans-serif !important; 
                 border-radius: 20px !important; 
                 border: 2px solid #ffd700 !important; 
                 background: #1a1a1a !important; 
                 color: white !important;
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
-                
-                /* 🔥 핵심: 너비 고정 및 패딩 축소 */
-                width: 280px !important; 
+                box-shadow: 0 0 25px rgba(255, 215, 0, 0.15) !important;
+                width: 280px !important; /* 컴팩트한 너비 */
                 padding: 20px 15px !important;
             }
             
             /* 제목 스타일 */
             .swal2-title { 
                 color: #ffd700 !important; 
-                font-size: 1.3rem !important; /* 폰트 줄임 */
+                font-size: 1.3rem !important; 
                 margin-top: 5px !important; 
             }
             
@@ -40,7 +38,7 @@ function showCoinAlert() {
                 color: #ddd !important; 
                 font-weight: 300 !important; 
                 opacity: 0.9; 
-                font-size: 0.9rem !important; /* 폰트 줄임 */
+                font-size: 0.9rem !important; 
                 margin: 10px 0 15px 0 !important;
             }
             
@@ -50,7 +48,7 @@ function showCoinAlert() {
                 color: black !important; 
                 font-weight: 800 !important; 
                 border-radius: 12px !important;
-                padding: 10px 0 !important; /* 버튼 높이 축소 */
+                padding: 10px 0 !important; 
                 box-shadow: 0 4px 10px rgba(255, 124, 0, 0.3) !important;
                 width: 100% !important; 
                 font-size: 0.95rem !important;
@@ -66,17 +64,21 @@ function showCoinAlert() {
                 padding: 5px !important;
             }
             
-            /* 버튼 컨테이너 여백 축소 */
+            /* 버튼 컨테이너 여백 */
             .swal2-actions { 
                 width: 100%; 
                 margin-top: 10px !important;
             }
 
-            /* 코인 아이콘 스타일 */
+            /* 🔥 [수정] 코인 아이콘 스타일: 중앙 정렬 & 크기 축소 */
             .swal2-icon.swal2-custom-icon {
                 border: none !important; 
-                font-size: 3.5rem !important; /* 아이콘 크기 약간 축소 */
-                margin: 10px auto 0 auto !important;
+                font-size: 2.8rem !important; /* 크기 축소 (3.5 -> 2.8) */
+                margin: 10px auto 5px auto !important; /* 상하 여백 조정 */
+                display: flex !important; /* 중앙 정렬을 위한 Flex */
+                justify-content: center !important;
+                align-items: center !important;
+                width: 100% !important; /* 가로 꽉 채워서 중앙 정렬 유도 */
             }
         `;
         document.head.appendChild(style);
@@ -95,7 +97,7 @@ function showCoinAlert() {
         cancelButtonText: 'ไว้วันหลัง',
         reverseButtons: false, 
         focusConfirm: false,
-        backdrop: `rgba(0,0,0,0.85)` 
+        backdrop: `rgba(0,0,0,0.6)` // 🔥 배경 투명도 조절 (0.85 -> 0.6)
     }).then((result) => {
         if (result.isConfirmed) {
             window.location.href = '/shop';

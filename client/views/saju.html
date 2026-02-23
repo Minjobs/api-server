@@ -10,7 +10,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* 기존 CSS 100% 유지 */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -116,7 +115,7 @@
                         <option value="lgbt">LGBTQ+</option><option value="other">อื่นๆ (Other)</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ (🪙 3)</button>
+                <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ 🪙 2</button>
             </form>
         </main>
 
@@ -128,6 +127,8 @@
             <h2 class="loading-title">Reading Destiny</h2>
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
+
+        <div id="modal-container"></div>
 
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
@@ -148,8 +149,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
-
-            // ❌ [삭제됨] fetch('/coin_modal.html')... 이 부분 때문에 404 에러가 났던 겁니다.
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -199,7 +198,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            // ✅ 태국 불기 연도 적용
+            // 태국 불기(B.E.) 연도 적용
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             
@@ -232,7 +231,6 @@
 
                 currentAnalysisId = generateUUID();
                 
-                // 버튼만 비활성화 (로딩화면 전환 X)
                 submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
@@ -254,7 +252,6 @@
                     });
 
                     if (res.ok) {
-                        // 성공 시 로딩 화면 전환
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
@@ -272,11 +269,11 @@
                         }, 5000);
 
                     } else if (res.status === 403) {
-                        // ❌ 코인 부족 -> 팝업 실행
                         isPolling = false;
                         submitBtn.disabled = false;
-                        submitBtn.innerText = "ดูคำทำนายของคุณ (🪙 3)";
-                        showCoinAlert(); // coinPopup.js 사용
+                        // ✅ [수정] 텍스트 변경
+                        submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
+                        showCoinAlert(); 
                     } else {
                         throw new Error("Analysis request failed");
                     }
@@ -286,7 +283,8 @@
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                     isPolling = false;
                     submitBtn.disabled = false;
-                    submitBtn.innerText = "ดูคำทำนายของคุณ (🪙 3)";
+                    // ✅ [수정] 텍스트 변경
+                    submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
                 }
             });
         });

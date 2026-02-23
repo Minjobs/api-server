@@ -10,7 +10,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* 승민님의 원본 CSS 그대로 유지 */
         :root {
             --bg-overlay: rgba(0, 0, 0, 0.38); 
             --text-white: #ffffff;  
@@ -91,13 +90,13 @@
                         <select id="birthMonth" required>
                             <option value="" disabled selected>เดือน</option>
                             <option value="01">ม.ค.</option><option value="02">ก.พ.</option>
-                            <option value="03">미.ค.</option><option value="04">เม.ย.</option>
+                            <option value="03">มี.ค.</option><option value="04">เม.ย.</option>
                             <option value="05">พ.ค.</option><option value="06">มิ.ย.</option>
                             <option value="07">ก.ค.</option><option value="08">ส.ค.</option>
                             <option value="09">ก.ย.</option><option value="10">ต.ค.</option>
                             <option value="11">พ.ย.</option><option value="12">ธ.ค.</option>
                         </select>
-                        <select id="birthYear" required><option value="" disabled selected>ปี ค.ศ.</option></select>
+                        <select id="birthYear" required><option value="" disabled selected>ปี พ.ศ.</option></select>
                     </div>
                 </div>
                 <div class="field">
@@ -129,6 +128,8 @@
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
 
+        <div id="modal-container"></div>
+
         <footer>
             <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
         </footer>
@@ -148,6 +149,13 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
+
+            // 공용 모달 불러오기
+            fetch('/coin_modal.html')
+                .then(res => res.text())
+                .then(html => {
+                    document.getElementById('modal-container').innerHTML = html;
+                });
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -197,11 +205,22 @@
                 }
             } catch (e) { console.error(e); }
 
-            // 드롭다운 생성
+            // ✅ [수정] 태국 불기(B.E.) 연도 적용
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
+            
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
-            for(let i=new Date().getFullYear(); i>=1930; i--) yearSel.add(new Option(i, i));
+
+            // 태국 불기는 서기 + 543년 (예: 2026년 -> 2569년)
+            const currentYearAD = new Date().getFullYear();
+            const startYearBE = currentYearAD + 543; // 현재 불기 연도
+            const endYearBE = 1930 + 543; // 2473년까지
+            
+            for(let i = startYearBE; i >= endYearBE; i--) {
+                // 보여주는 값(Text): "พ.ศ. 2569", 실제 값(Value): 2569
+                yearSel.add(new Option(`พ.ศ. ${i}`, i));
+            }
+
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
@@ -214,14 +233,14 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // ✅ 폼 제출 핸들러 (수정됨)
+            // 폼 제출 핸들러 (코인 부족 팝업 포함)
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (isPolling) return; // 중복 클릭 방지
+                if (isPolling) return;
 
                 currentAnalysisId = generateUUID();
                 
-                // ✅ [변경점 1] 버튼만 먼저 비활성화 (로딩화면 전환 X)
+                // 먼저 버튼만 비활성화
                 submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
@@ -236,7 +255,6 @@
                 };
 
                 try {
-                    // API 호출
                     const res = await fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
@@ -244,12 +262,11 @@
                     });
 
                     if (res.ok) {
-                        // ✅ [변경점 2] 성공(200) 시에만 로딩 화면으로 전환 및 폴링 시작
+                        // 성공 시 로딩 화면 전환 및 폴링
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
 
-                        // 로딩 텍스트 애니메이션
                         let msgIdx = 0;
                         const interval = setInterval(() => {
                             if (!isPolling) { clearInterval(interval); return; }
@@ -257,19 +274,17 @@
                             dynamicText.innerText = loadingMessages[msgIdx];
                         }, 5000);
 
-                        // 결과 확인 폴링 시작
                         const pollInterval = setInterval(() => {
                             if (!isPolling) { clearInterval(pollInterval); return; }
                             pollResult(currentAnalysisId, type);
                         }, 5000);
 
                     } else if (res.status === 403) {
-                        // ✅ [변경점 3] 403(코인부족) 시 버튼 복구 및 공용 팝업 띄우기
+                        // ❌ 코인 부족 시 팝업 띄우기
                         isPolling = false;
                         submitBtn.disabled = false;
                         submitBtn.innerText = "ดูคำทำนายของคุณ";
-                        
-                        showCoinAlert(); // coinPopup.js의 함수 호출
+                        showCoinAlert(); 
                     } else {
                         throw new Error("Analysis request failed");
                     }
@@ -278,8 +293,6 @@
                     console.error(err);
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                     isPolling = false;
-                    
-                    // 에러 시 버튼 복구
                     submitBtn.disabled = false;
                     submitBtn.innerText = "ดูคำทำนายของคุณ";
                 }

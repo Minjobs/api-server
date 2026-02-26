@@ -12,9 +12,8 @@
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
             --line-green: #06C755;
-            /* 버튼 그라데이션을 더 진하게 변경 */
-            --btn-gradient: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-            --card-gradient: linear-gradient(145deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+            --card-bg: rgba(20, 20, 20, 0.75);
+            --highlight-bg: linear-gradient(135deg, #ffd700 0%, #ffab00 100%);
         }
 
         body {
@@ -69,109 +68,96 @@
             display: flex; align-items: center; gap: 5px;
         }
 
-        .shop-title { margin-bottom: 25px; }
-        .shop-title h2 { font-size: 1.6rem; color: var(--point-gold); margin: 0; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .shop-title p { font-size: 0.95rem; opacity: 0.9; font-weight: 300; margin-top: 8px; }
+        .shop-title { margin-bottom: 30px; text-align: left; padding-left: 10px; }
+        .shop-title h2 { font-size: 1.8rem; color: var(--point-gold); margin: 0; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .shop-title p { font-size: 0.9rem; opacity: 0.8; font-weight: 300; margin-top: 5px; color: #ddd; }
 
-        /* ✅ 카드 디자인 개선: 그라데이션 배경 + 테두리 강화 + 그림자 */
+        /* ✅ 카드 공통 스타일 (전체 클릭 가능) */
         .coin-card {
-            background: var(--card-gradient);
-            border: 1px solid rgba(255, 215, 0, 0.3); /* 금색 테두리 은은하게 */
-            border-radius: 22px;
-            margin-bottom: 20px;
-            padding: 18px 20px; /* 패딩을 좀 더 넓게 */
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            margin-bottom: 18px;
+            padding: 20px;
             display: flex; justify-content: space-between; align-items: center;
             position: relative;
             box-sizing: border-box;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* 입체감 추가 */
-            transition: transform 0.2s;
+            cursor: pointer; /* 클릭 가능 표시 */
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
-        .coin-card:active { transform: scale(0.98); }
+        
+        /* 눌렀을 때 효과 */
+        .coin-card:active { transform: scale(0.97); filter: brightness(0.9); }
 
-        .coin-info { display: flex; align-items: center; gap: 15px; }
-        .coin-icon { 
-            font-size: 2.2rem; /* 아이콘 크기 확대 */
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+        /* 내부 정보 레이아웃 */
+        .coin-info { display: flex; align-items: center; gap: 15px; z-index: 2; }
+        .coin-icon-circle {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
         }
         .coin-text { text-align: left; }
-        .coin-text .amount { 
-            font-size: 1.3rem; /* 폰트 확대 */
-            font-weight: 800; 
-            color: #fff; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .coin-text .sub { font-size: 0.85rem; opacity: 0.9; font-weight: 300; color: #ddd; }
+        .coin-text .amount { font-size: 1.4rem; font-weight: 800; color: #fff; line-height: 1.1; }
+        .coin-text .sub { font-size: 0.8rem; opacity: 0.7; font-weight: 300; margin-top: 3px; }
 
-        /* ✅ 버튼 디자인 개선: 명확한 '구매' 텍스트 추가 */
-        .buy-button {
-            background: var(--btn-gradient);
-            color: #222; /* 텍스트 색상을 진하게 */
-            padding: 8px 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 15px rgba(255, 165, 0, 0.4);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer;
-            border: 2px solid rgba(255,255,255,0.2);
-            min-width: 95px;
-            transition: all 0.2s;
+        /* 가격 태그 디자인 */
+        .price-tag {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 8px 16px;
+            text-align: center;
+            min-width: 70px;
+            z-index: 2;
         }
-        .buy-button:active { transform: scale(0.95); filter: brightness(0.9); }
+        .price-tag .price-val { font-size: 1.2rem; font-weight: 800; color: #fff; }
+        .price-tag .price-unit { font-size: 0.75rem; font-weight: 400; color: #ccc; }
 
-        .buy-button .action-text { 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            margin-bottom: 2px;
-            opacity: 0.9;
+        /* 🔥 [Highlight] 5코인 (인기) - 금색 배경 */
+        .coin-card.popular {
+            background: var(--highlight-bg);
+            border: none;
+            box-shadow: 0 8px 25px rgba(255, 171, 0, 0.4);
         }
-        .buy-button .price-group { 
-            display: flex; align-items: baseline; gap: 3px; 
+        .coin-card.popular .coin-text .amount { color: #222; text-shadow: none; }
+        .coin-card.popular .coin-text .sub { color: #444; opacity: 1; font-weight: 500; }
+        .coin-card.popular .coin-icon-circle { background: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.1); }
+        .coin-card.popular .price-tag { 
+            background: #fff; 
+            border: none;
+            color: #d35400;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .buy-button .price { 
-            font-size: 1.3rem; 
-            font-weight: 800; 
-            line-height: 1; 
-        }
-        .buy-button .unit { 
-            font-size: 0.8rem; 
-            font-weight: 700; 
-        }
+        .coin-card.popular .price-tag .price-val { color: #d35400; }
+        .coin-card.popular .price-tag .price-unit { color: #d35400; font-weight: 700; }
 
-        .promo-badge {
+        /* [Badge] 배지 스타일 */
+        .badge {
+            position: absolute; top: 0; right: 0;
             background: #ff4757; color: white;
-            font-size: 0.75rem; font-weight: 700;
-            padding: 5px 12px; border-radius: 20px;
-            position: absolute; top: -12px; right: 15px;
-            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.4);
-            z-index: 10;
-            border: 1px solid rgba(255,255,255,0.3);
+            font-size: 0.7rem; font-weight: 700;
+            padding: 4px 12px;
+            border-bottom-left-radius: 15px;
+            box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
+            z-index: 3;
         }
+        .badge.best { background: #2ed573; }
 
-        /* 강조 카드 (중간) */
-        .coin-card.highlight {
-            background: linear-gradient(145deg, rgba(255, 215, 0, 0.15) 0%, rgba(0, 0, 0, 0.2) 100%);
-            border: 2px solid var(--point-gold);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.15);
-        }
-
+        /* 문의 섹션 */
         .contact-section { 
-            width: 100%;
-            margin-top: 35px; 
-            border-top: 1px solid rgba(255,255,255,0.2); 
-            padding-top: 25px; 
-            box-sizing: border-box;
+            width: 100%; margin-top: 35px; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            padding-top: 25px; box-sizing: border-box;
         }
-        .contact-section p { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; font-weight: 300; }
-        
         .line-link {
-            background-color: var(--line-green);
-            color: white; border: none; 
-            width: 100%; 
-            padding: 14px;
-            border-radius: 18px; font-size: 1rem; font-weight: 700;
+            background-color: var(--line-green); color: white; border: none; width: 100%; 
+            padding: 14px; border-radius: 18px; font-size: 1rem; font-weight: 700;
             display: flex; justify-content: center; align-items: center; gap: 10px;
-            text-decoration: none; 
-            box-sizing: border-box;
-            transition: filter 0.2s;
+            text-decoration: none; box-sizing: border-box; transition: filter 0.2s;
             box-shadow: 0 5px 15px rgba(6, 199, 85, 0.3);
         }
         .line-link:active { filter: brightness(0.9); }
@@ -198,64 +184,55 @@
         <main>
             <section class="shop-title">
                 <h2>เติมคอยน์</h2>
-                <p>คอยน์สำหรับใช้บริการพยากรณ์ศาสตร์เกาหลี</p>
+                <p>เลือกแพ็กเกจที่คุณต้องการ</p>
             </section>
 
             <div class="coin-card" onclick="startPaymentProcess(3, 30)">
                 <div class="coin-info">
-                    <div class="coin-icon">🪙</div>
+                    <div class="coin-icon-circle">🪙</div>
                     <div class="coin-text">
                         <div class="amount">3 คอยน์</div>
-                        <div class="sub">เริ่มต้นโชคชะตา</div>
+                        <div class="sub">สำหรับผู้เริ่มต้น</div>
                     </div>
                 </div>
-                <button class="buy-button">
-                    <span class="action-text">ซื้อ</span>
-                    <div class="price-group">
-                        <span class="price">30</span>
-                        <span class="unit">฿</span>
-                    </div>
-                </button>
+                <div class="price-tag">
+                    <div class="price-val">30</div>
+                    <div class="price-unit">บาท</div>
+                </div>
             </div>
 
-            <div class="coin-card highlight" onclick="startPaymentProcess(5, 45)">
-                <span class="promo-badge">🔥 ยอดนิยม (ลด 10%)</span>
+            <div class="coin-card popular" onclick="startPaymentProcess(5, 45)">
+                <div class="badge">🔥 ขายดี (ลด 10%)</div>
                 <div class="coin-info">
-                    <div class="coin-icon">🪙</div>
+                    <div class="coin-icon-circle">🪙</div>
                     <div class="coin-text">
                         <div class="amount">5 คอยน์</div>
-                        <div class="sub">คุ้มค่าแนะนำ</div>
+                        <div class="sub">คุ้มค่าแนะนำ!</div>
                     </div>
                 </div>
-                <button class="buy-button" style="background: linear-gradient(135deg, #fff, #eee);">
-                    <span class="action-text">ซื้อ</span>
-                    <div class="price-group">
-                        <span class="price">45</span>
-                        <span class="unit">฿</span>
-                    </div>
-                </button>
+                <div class="price-tag">
+                    <div class="price-val">45</div>
+                    <div class="price-unit">บาท</div>
+                </div>
             </div>
 
             <div class="coin-card" onclick="startPaymentProcess(10, 80)">
-                <span class="promo-badge">💎 คุ้มที่สุด (ลด 20%)</span>
+                <div class="badge best">💎 คุ้มที่สุด (ลด 20%)</div>
                 <div class="coin-info">
-                    <div class="coin-icon">🪙</div>
+                    <div class="coin-icon-circle" style="border-color: #2ed573; background: rgba(46, 213, 115, 0.1);">💰</div>
                     <div class="coin-text">
                         <div class="amount">10 คอยน์</div>
-                        <div class="sub">สำหรับคนรักดูดวง</div>
+                        <div class="sub">ดูดวงจุใจ</div>
                     </div>
                 </div>
-                <button class="buy-button">
-                    <span class="action-text">ซื้อ</span>
-                    <div class="price-group">
-                        <span class="price">80</span>
-                        <span class="unit">฿</span>
-                    </div>
-                </button>
+                <div class="price-tag">
+                    <div class="price-val">80</div>
+                    <div class="price-unit">บาท</div>
+                </div>
             </div>
 
             <section class="contact-section">
-                <p>หากมีข้อสงสัยหรือพบปัญหาในการใช้งาน</p>
+                <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">พบปัญหา? ติดต่อแอดมินได้ตลอด 24 ชม.</p>
                 <a href="https://line.me/ti/p/@your_id" class="line-link">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line">
                     ติดต่อแอดมินทาง Line
@@ -286,6 +263,10 @@
         }
 
         async function goToPayment(coinAmount, bahtAmount) {
+            // 버튼 중복 클릭 방지를 위해 잠깐 로딩 표시를 해주면 좋습니다 (선택사항)
+            const originalBodyCursor = document.body.style.cursor;
+            document.body.style.cursor = 'wait';
+
             try {
                 const res = await fetch('/api/payment/intent', {
                     method: 'POST',
@@ -303,6 +284,8 @@
             } catch (err) {
                 console.error(err);
                 alert("ขออภัยค่ะ ระบบขัดข้องชั่วคราว");
+            } finally {
+                document.body.style.cursor = originalBodyCursor;
             }
         }
     </script>

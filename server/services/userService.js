@@ -17,7 +17,7 @@ export const handleUserLogin = async (userId, displayName, profileImg, isFriend)
             // [A] 신규 유저: 최초 등록 (기본 코인 0개, safeProfileImg 사용)
             await db.execute(
                 `INSERT INTO users (line_user_id, display_name, profile_img, coins) VALUES (?, ?, ?, ?)`,
-                [userId, displayName, safeProfileImg, 0]
+                [userId, displayName, safeProfileImg, 2]
             );
             isNew = true;
             console.log(`✨ 신규 신도 등록: ${displayName}`);

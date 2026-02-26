@@ -11,9 +11,9 @@
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
+            --card-bg: rgba(255, 255, 255, 0.12);
             --line-green: #06C755;
-            --card-bg: rgba(20, 20, 20, 0.75);
-            --highlight-bg: linear-gradient(135deg, #ffd700 0%, #ffab00 100%);
+            --btn-gradient: linear-gradient(135deg, #ffd700, #f57c00);
         }
 
         body {
@@ -59,8 +59,18 @@
             box-sizing: border-box;
         }
 
-        .logo-container { cursor: pointer; display: flex; align-items: center; }
-        .logo-img { height: 38px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); }
+        /* 이미지 로고 스타일 */
+        .logo-container {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .logo-img {
+            height: 38px; /* 헤더 높이에 맞게 조절 */
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+        }
 
         .user-coins {
             background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold);
@@ -68,100 +78,75 @@
             display: flex; align-items: center; gap: 5px;
         }
 
-        .shop-title { margin-bottom: 30px; text-align: left; padding-left: 10px; }
-        .shop-title h2 { font-size: 1.8rem; color: var(--point-gold); margin: 0; font-weight: 800; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .shop-title p { font-size: 0.9rem; opacity: 0.8; font-weight: 300; margin-top: 5px; color: #ddd; }
+        .shop-title { margin-bottom: 25px; }
+        .shop-title h2 { font-size: 1.6rem; color: var(--point-gold); margin: 0; font-weight: 700; }
+        .shop-title p { font-size: 0.95rem; opacity: 0.9; font-weight: 300; margin-top: 8px; }
 
-        /* ✅ 카드 공통 스타일 (전체 클릭 가능) */
         .coin-card {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            margin-bottom: 18px;
-            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 22px;
+            margin-bottom: 20px;
+            padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
             position: relative;
             box-sizing: border-box;
-            cursor: pointer; /* 클릭 가능 표시 */
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
         }
-        
-        /* 눌렀을 때 효과 */
-        .coin-card:active { transform: scale(0.97); filter: brightness(0.9); }
 
-        /* 내부 정보 레이아웃 */
-        .coin-info { display: flex; align-items: center; gap: 15px; z-index: 2; }
-        .coin-icon-circle {
-            width: 50px; height: 50px; border-radius: 50%;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem;
-        }
+        .coin-info { display: flex; align-items: center; gap: 12px; }
+        .coin-icon { font-size: 1.8rem; }
         .coin-text { text-align: left; }
-        .coin-text .amount { font-size: 1.4rem; font-weight: 800; color: #fff; line-height: 1.1; }
-        .coin-text .sub { font-size: 0.8rem; opacity: 0.7; font-weight: 300; margin-top: 3px; }
+        .coin-text .amount { font-size: 1.15rem; font-weight: 700; color: #fff; }
+        .coin-text .sub { font-size: 0.8rem; opacity: 0.8; font-weight: 300; }
 
-        /* 가격 태그 디자인 */
-        .price-tag {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 8px 16px;
-            text-align: center;
-            min-width: 70px;
-            z-index: 2;
-        }
-        .price-tag .price-val { font-size: 1.2rem; font-weight: 800; color: #fff; }
-        .price-tag .price-unit { font-size: 0.75rem; font-weight: 400; color: #ccc; }
-
-        /* 🔥 [Highlight] 5코인 (인기) - 금색 배경 */
-        .coin-card.popular {
-            background: var(--highlight-bg);
+        .buy-button {
+            background: var(--btn-gradient);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 14px;
+            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer;
             border: none;
-            box-shadow: 0 8px 25px rgba(255, 171, 0, 0.4);
+            min-width: 85px;
+            transition: transform 0.1s;
         }
-        .coin-card.popular .coin-text .amount { color: #222; text-shadow: none; }
-        .coin-card.popular .coin-text .sub { color: #444; opacity: 1; font-weight: 500; }
-        .coin-card.popular .coin-icon-circle { background: rgba(0,0,0,0.1); border-color: rgba(0,0,0,0.1); }
-        .coin-card.popular .price-tag { 
-            background: #fff; 
-            border: none;
-            color: #d35400;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .coin-card.popular .price-tag .price-val { color: #d35400; }
-        .coin-card.popular .price-tag .price-unit { color: #d35400; font-weight: 700; }
+        .buy-button:active { transform: scale(0.95); }
 
-        /* [Badge] 배지 스타일 */
-        .badge {
-            position: absolute; top: 0; right: 0;
+        .buy-button .price { font-size: 1.25rem; font-weight: 800; line-height: 1; }
+        .buy-button .unit { font-size: 0.75rem; margin-top: 2px; font-weight: 700; }
+
+        .promo-badge {
             background: #ff4757; color: white;
             font-size: 0.7rem; font-weight: 700;
-            padding: 4px 12px;
-            border-bottom-left-radius: 15px;
-            box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
-            z-index: 3;
+            padding: 4px 10px; border-radius: 10px;
+            position: absolute; top: -10px; right: 15px;
+            box-shadow: 0 4px 8px rgba(255, 71, 87, 0.3);
+            z-index: 10;
         }
-        .badge.best { background: #2ed573; }
 
-        /* 문의 섹션 */
         .contact-section { 
-            width: 100%; margin-top: 35px; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            padding-top: 25px; box-sizing: border-box;
+            width: 100%;
+            margin-top: 35px; 
+            border-top: 1px solid rgba(255,255,255,0.2); 
+            padding-top: 25px; 
+            box-sizing: border-box;
         }
+        .contact-section p { font-size: 0.85rem; opacity: 0.9; margin-bottom: 15px; font-weight: 300; }
+        
         .line-link {
-            background-color: var(--line-green); color: white; border: none; width: 100%; 
-            padding: 14px; border-radius: 18px; font-size: 1rem; font-weight: 700;
+            background-color: var(--line-green);
+            color: white; border: none; 
+            width: 100%; 
+            padding: 14px;
+            border-radius: 18px; font-size: 1rem; font-weight: 700;
             display: flex; justify-content: center; align-items: center; gap: 10px;
-            text-decoration: none; box-sizing: border-box; transition: filter 0.2s;
-            box-shadow: 0 5px 15px rgba(6, 199, 85, 0.3);
+            text-decoration: none; 
+            box-sizing: border-box;
+            transition: filter 0.2s;
         }
         .line-link:active { filter: brightness(0.9); }
-        .line-link img { width: 24px; height: 24px; }
+        .line-link img { width: 20px; height: 20px; }
 
         footer { margin-top: 30px; font-size: 0.75rem; opacity: 0.7; font-weight: 300; }
     </style>
@@ -184,55 +169,55 @@
         <main>
             <section class="shop-title">
                 <h2>เติมคอยน์</h2>
-                <p>เลือกแพ็กเกจที่คุณต้องการ</p>
+                <p>คอยน์สำหรับใช้บริการพยากรณ์ศาสตร์เกาหลี</p>
             </section>
 
-            <div class="coin-card" onclick="startPaymentProcess(3, 30)">
+            <div class="coin-card">
                 <div class="coin-info">
-                    <div class="coin-icon-circle">🪙</div>
+                    <div class="coin-icon">🪙</div>
                     <div class="coin-text">
                         <div class="amount">3 คอยน์</div>
-                        <div class="sub">สำหรับผู้เริ่มต้น</div>
+                        <div class="sub">เริ่มต้นโชคชะตา</div>
                     </div>
                 </div>
-                <div class="price-tag">
-                    <div class="price-val">30</div>
-                    <div class="price-unit">บาท</div>
-                </div>
+                <button class="buy-button" onclick="startPaymentProcess(3, 30)">
+                    <span class="price">30</span>
+                    <span class="unit">บาท</span>
+                </button>
             </div>
 
-            <div class="coin-card popular" onclick="startPaymentProcess(5, 45)">
-                <div class="badge">🔥 ขายดี (ลด 10%)</div>
+            <div class="coin-card" style="border: 1px solid var(--point-gold);">
+                <span class="promo-badge">ประหยัด ลด 10%</span>
                 <div class="coin-info">
-                    <div class="coin-icon-circle">🪙</div>
+                    <div class="coin-icon">🪙</div>
                     <div class="coin-text">
                         <div class="amount">5 คอยน์</div>
-                        <div class="sub">คุ้มค่าแนะนำ!</div>
+                        <div class="sub">ยอดนิยมที่สุด</div>
                     </div>
                 </div>
-                <div class="price-tag">
-                    <div class="price-val">45</div>
-                    <div class="price-unit">บาท</div>
-                </div>
+                <button class="buy-button" onclick="startPaymentProcess(5, 45)">
+                    <span class="price">45</span>
+                    <span class="unit">บาท</span>
+                </button>
             </div>
 
-            <div class="coin-card" onclick="startPaymentProcess(10, 80)">
-                <div class="badge best">💎 คุ้มที่สุด (ลด 20%)</div>
+            <div class="coin-card">
+                <span class="promo-badge">คุ้มค่าที่สุด ลด 20%</span>
                 <div class="coin-info">
-                    <div class="coin-icon-circle" style="border-color: #2ed573; background: rgba(46, 213, 115, 0.1);">💰</div>
+                    <div class="coin-icon">🪙</div>
                     <div class="coin-text">
                         <div class="amount">10 คอยน์</div>
-                        <div class="sub">ดูดวงจุใจ</div>
+                        <div class="sub">เพื่อความคุ้มค่าสูงสุด</div>
                     </div>
                 </div>
-                <div class="price-tag">
-                    <div class="price-val">80</div>
-                    <div class="price-unit">บาท</div>
-                </div>
+                <button class="buy-button" onclick="startPaymentProcess(10, 80)">
+                    <span class="price">80</span>
+                    <span class="unit">บาท</span>
+                </button>
             </div>
 
             <section class="contact-section">
-                <p style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">พบปัญหา? ติดต่อแอดมินได้ตลอด 24 ชม.</p>
+                <p>หากมีข้อสงสัยหรือพบปัญหาในการใช้งาน</p>
                 <a href="https://line.me/ti/p/@your_id" class="line-link">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" alt="Line">
                     ติดต่อแอดมินทาง Line
@@ -263,10 +248,6 @@
         }
 
         async function goToPayment(coinAmount, bahtAmount) {
-            // 버튼 중복 클릭 방지를 위해 잠깐 로딩 표시를 해주면 좋습니다 (선택사항)
-            const originalBodyCursor = document.body.style.cursor;
-            document.body.style.cursor = 'wait';
-
             try {
                 const res = await fetch('/api/payment/intent', {
                     method: 'POST',
@@ -284,8 +265,6 @@
             } catch (err) {
                 console.error(err);
                 alert("ขออภัยค่ะ ระบบขัดข้องชั่วคราว");
-            } finally {
-                document.body.style.cursor = originalBodyCursor;
             }
         }
     </script>

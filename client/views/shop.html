@@ -11,7 +11,7 @@
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
-            /* ✅ 카드 배경을 진하게 변경 (흰색 0.12 -> 검정 0.6) */
+            /* 타일 배경색: 진하게 유지 */
             --card-bg: rgba(0, 0, 0, 0.6);
             --line-green: #06C755;
             --btn-gradient: linear-gradient(135deg, #ffd700, #f57c00);
@@ -49,8 +49,8 @@
             padding: 20px 15px 35px 15px;
             box-sizing: border-box;
             backdrop-filter: blur(7px); 
-            /* ✅ [수정] 테두리 색상을 회색(--border-line)에서 금색(--point-gold)으로 변경 */
-            border: 3px solid var(--point-gold); 
+            /* ✅ [원복] 큰 박스 테두리는 다시 회색으로 */
+            border: 3px solid var(--border-line); 
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             text-align: center;
         }
@@ -85,7 +85,8 @@
 
         .coin-card {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            /* ✅ [수정] 상품 타일에 금색 테두리 적용 */
+            border: 1px solid var(--point-gold);
             border-radius: 22px;
             margin-bottom: 20px;
             padding: 15px;
@@ -95,7 +96,6 @@
         }
 
         .coin-info { display: flex; align-items: center; gap: 12px; }
-        .coin-icon { font-size: 1.8rem; }
         .coin-icon { font-size: 1.8rem; }
         .coin-text { text-align: left; }
         .coin-text .amount { font-size: 1.15rem; font-weight: 700; color: #fff; }
@@ -262,7 +262,7 @@
                 if (data.transactionId) {
                     window.location.href = `/checkout/${data.transactionId}`;
                 } else {
-                    alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหมีกครั้งค่ะ");
+                    alert("เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้งค่ะ");
                 }
             } catch (err) {
                 console.error(err);

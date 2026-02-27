@@ -11,7 +11,6 @@
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
-            /* 타일 배경색: 진하게 유지 */
             --card-bg: rgba(0, 0, 0, 0.6);
             --line-green: #06C755;
             --btn-gradient: linear-gradient(135deg, #ffd700, #f57c00);
@@ -49,7 +48,6 @@
             padding: 20px 15px 35px 15px;
             box-sizing: border-box;
             backdrop-filter: blur(7px); 
-            /* ✅ [원복] 큰 박스 테두리는 다시 회색으로 */
             border: 3px solid var(--border-line); 
             box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             text-align: center;
@@ -85,17 +83,26 @@
 
         .coin-card {
             background: var(--card-bg);
-            /* ✅ [수정] 상품 타일에 금색 테두리 적용 */
-            border: 1px solid var(--point-gold);
+            /* 금색 테두리 유지 */
+            border: 1px solid var(--point-gold); 
             border-radius: 22px;
             margin-bottom: 20px;
             padding: 15px;
             display: flex; justify-content: space-between; align-items: center;
             position: relative;
             box-sizing: border-box;
+            /* ✅ [추가] 클릭 가능 표시 및 애니메이션 */
+            cursor: pointer; 
+            transition: transform 0.1s ease, background 0.2s;
         }
 
-        .coin-info { display: flex; align-items: center; gap: 12px; }
+        /* ✅ [추가] 타일 눌렀을 때 효과 */
+        .coin-card:active {
+            transform: scale(0.97); /* 살짝 축소 */
+            background: rgba(255, 215, 0, 0.1); /* 배경 살짝 밝아짐 */
+        }
+
+        .coin-info { display: flex; align-items: center; gap: 12px; pointer-events: none; /* 텍스트 클릭 방해 방지 */ }
         .coin-icon { font-size: 1.8rem; }
         .coin-text { text-align: left; }
         .coin-text .amount { font-size: 1.15rem; font-weight: 700; color: #fff; }
@@ -111,9 +118,8 @@
             cursor: pointer;
             border: none;
             min-width: 85px;
-            transition: transform 0.1s;
+            /* 버튼 자체 클릭 이벤트는 부모로 위임되므로 포인터 이벤트 제거 가능하지만 유지 */
         }
-        .buy-button:active { transform: scale(0.95); }
 
         .buy-button .price { font-size: 1.25rem; font-weight: 800; line-height: 1; }
         .buy-button .unit { font-size: 0.75rem; margin-top: 2px; font-weight: 700; }
@@ -174,7 +180,7 @@
                 <p>คอยน์สำหรับใช้บริการพยากรณ์ศาสตร์เกาหลี</p>
             </section>
 
-            <div class="coin-card">
+            <div class="coin-card" onclick="startPaymentProcess(3, 30)">
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
                     <div class="coin-text">
@@ -182,13 +188,13 @@
                         <div class="sub">เริ่มต้นโชคชะตา</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess(3, 30)">
+                <button class="buy-button">
                     <span class="price">30</span>
                     <span class="unit">บาท</span>
                 </button>
             </div>
 
-            <div class="coin-card">
+            <div class="coin-card" onclick="startPaymentProcess(5, 45)">
                 <span class="promo-badge">ประหยัด ลด 10%</span>
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
@@ -197,13 +203,13 @@
                         <div class="sub">ยอดนิยมที่สุด</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess(5, 45)">
+                <button class="buy-button">
                     <span class="price">45</span>
                     <span class="unit">บาท</span>
                 </button>
             </div>
 
-            <div class="coin-card">
+            <div class="coin-card" onclick="startPaymentProcess(10, 80)">
                 <span class="promo-badge">คุ้มค่าที่สุด ลด 20%</span>
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>
@@ -212,7 +218,7 @@
                         <div class="sub">เพื่อความคุ้มค่าสูงสุด</div>
                     </div>
                 </div>
-                <button class="buy-button" onclick="startPaymentProcess(10, 80)">
+                <button class="buy-button">
                     <span class="price">80</span>
                     <span class="unit">บาท</span>
                 </button>

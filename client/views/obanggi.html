@@ -37,22 +37,10 @@
             backdrop-filter: blur(15px) brightness(0.6);
         }
 
-        /* --- [상단 로고 섹션] --- */
-        .header-logo {
-            margin-top: 30px;
-            margin-bottom: 20px;
-            z-index: 10;
-        }
-        .header-logo img {
-            height: 45px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .header-logo img:hover {
-            transform: scale(1.05);
-        }
+        .header-logo { margin-top: 30px; margin-bottom: 20px; z-index: 10; }
+        .header-logo img { height: 45px; cursor: pointer; transition: transform 0.3s ease; }
+        .header-logo img:hover { transform: scale(1.05); }
 
-        /* --- [메인 컨테이너] --- */
         .container {
             width: 90%; max-width: 440px;
             background-color: var(--bg-overlay);
@@ -69,7 +57,7 @@
         .header-title h1 { font-size: 1.8rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; letter-spacing: 1px; }
         .header-title p { font-size: 1rem; margin: 10px 0 30px 0; opacity: 0.8; font-weight: 300; line-height: 1.5; }
 
-        /* --- [깃발 스테이지] --- */
+        /* --- [깃발 스테이지 수정됨] --- */
         .flag-stage {
             height: 260px;
             position: relative;
@@ -78,36 +66,43 @@
             transition: all 0.5s ease;
         }
 
-        .flag-row { display: flex; justify-content: center; gap: 25px; width: 100%; transition: all 0.5s ease; }
+        .flag-row { display: flex; justify-content: center; gap: 20px; width: 100%; transition: all 0.5s ease; }
 
-        .flag-emoji {
-            font-size: 4.5rem;
+        /* ✅ 이모지 대신 이미지 스타일 적용 */
+        .flag-img {
+            width: 70px; /* 깃발 이미지 크기 */
+            height: auto;
             display: inline-block;
-            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.5));
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.6));
             transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        .f-blue { filter: hue-rotate(190deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
-        .f-yellow { filter: hue-rotate(50deg) drop-shadow(0 8px 15px rgba(0,0,0,0.5)); }
-
-        /* 애니메이션 효과 */
-        .merging .flag-emoji { position: absolute; top: 50%; left: 50%; }
-        .merging .flag-emoji:nth-child(1) { transform: translate(-60%, -55%) rotate(-10deg); }
-        .merging .flag-emoji:nth-child(2) { transform: translate(-45%, -50%) rotate(5deg); }
-        .merging .flag-emoji:nth-child(3) { transform: translate(-55%, -45%) rotate(15deg); }
-        .merging .bottom-row .flag-emoji:nth-child(1) { transform: translate(-50%, -60%) rotate(-5deg); }
-        .merging .bottom-row .flag-emoji:nth-child(2) { transform: translate(-40%, -40%) rotate(10deg); }
+        /* 애니메이션 효과 (이미지 기준) */
+        .merging .flag-img { position: absolute; top: 50%; left: 50%; }
+        /* 5개가 한 점으로 모일 때 각도와 위치 미세 조정 */
+        .merging .flag-img:nth-child(1) { transform: translate(-60%, -55%) rotate(-10deg); }
+        .merging .flag-img:nth-child(2) { transform: translate(-45%, -50%) rotate(5deg); }
+        .merging .flag-img:nth-child(3) { transform: translate(-55%, -45%) rotate(15deg); }
+        /* 아래 줄 */
+        .merging .bottom-row .flag-img:nth-child(1) { transform: translate(-50%, -60%) rotate(-5deg); }
+        .merging .bottom-row .flag-img:nth-child(2) { transform: translate(-40%, -40%) rotate(10deg); }
 
         .spinning { animation: stage-spin 0.4s linear infinite; }
         @keyframes stage-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(0.9); } }
 
-        /* --- [결과 화면] --- */
+        /* --- [결과 화면 수정됨] --- */
         #result-display {
             display: none;
             flex-direction: column; align-items: center;
             animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .result-emoji { font-size: 8rem; margin-bottom: 25px; }
+        /* 결과 이미지 크기 */
+        .result-img { 
+            width: 160px; 
+            height: auto; 
+            margin-bottom: 25px; 
+            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
+        }
         .result-status { font-size: 2.2rem; font-weight: 800; color: var(--point-gold); margin-bottom: 15px; font-family: 'Nanum Myeongjo', serif; }
         .result-desc { font-size: 1.1rem; line-height: 1.8; opacity: 0.95; margin-bottom: 35px; word-break: keep-all; padding: 0 10px; }
 
@@ -151,18 +146,19 @@
 
         <div class="flag-stage" id="flagStage">
             <div class="flag-row top-row">
-                <span class="flag-emoji f-red">🚩</span>
-                <span class="flag-emoji f-blue">🚩</span>
-                <span class="flag-emoji f-yellow">🚩</span>
+                <img src="/flag/flag_red.png" class="flag-img" alt="Red">
+                <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
+                <img src="/flag/flag_yellow.png" class="flag-img" alt="Yellow">
             </div>
             <div class="flag-row bottom-row" style="margin-top: 20px;">
-                <span class="flag-emoji f-white">🏳️</span>
-                <span class="flag-emoji f-black">🏴</span>
+                <img src="/flag/flag_white.png" class="flag-img" alt="White">
+                <img src="/flag/flag_black.png" class="flag-img" alt="Black">
             </div>
         </div>
 
         <div id="result-display">
-            <div class="result-emoji" id="finalEmoji"></div>
+            <img src="" id="finalImg" class="result-img" alt="Result Flag">
+            
             <div class="result-status" id="resultStatus"></div>
             <div class="result-desc" id="resultDesc"></div>
             <button class="retry-btn" onclick="location.reload()">อธิษฐานใหม่อีกครั้ง</button>
@@ -174,30 +170,30 @@
     <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
 
     <script>
-        // 오방기 점사 결과 데이터
+        // ✅ 이미지 경로(src)로 데이터 수정
         const flags = [
             { 
-                emoji: '🚩', filter: 'none', 
+                src: '/flag/flag_red.png', // 빨간색 (재수, 행운)
                 status: 'สำเร็จแน่นอน! (Strong YES)', 
                 desc: 'สวรรค์เปิดทางให้คุณแล้ว! สิ่งที่หวังจะสำเร็จอย่างยิ่งใหญ่ ลุยได้เลยทันทีโดยไม่ต้องลังเล พลังธงแดงจะนำพาชัยชนะมาสู่คุณ' 
             },
             { 
-                emoji: '🚩', filter: 'hue-rotate(190deg)', 
+                src: '/flag/flag_blue.png', // 파란색/녹색 (우환, 근심 혹은 변동) - 보통 오방기에서 근심이나 조심
                 status: 'เริ่มใหม่ได้ดี (YES, Do it!)', 
                 desc: 'มีโอกาสสำเร็จสูงมาก! แต่คุณต้องกล้าเปลี่ยนและลงมือทำด้วยตัวเอง การเริ่มต้นใหม่หรือการขยับขยายในตอนนี้จะส่งผลดีอย่างคาดไม่ถึง' 
             },
             { 
-                emoji: '🚩', filter: 'hue-rotate(50deg)', 
+                src: '/flag/flag_yellow.png', // 노란색 (조상, 도움)
                 status: 'ทำได้แต่ต้องรอ (YES, but Wait)', 
                 desc: 'ทำได้สำเร็จ แต่ห้ามรีบร้อน! ตอนนี้ควรเน้นความมั่นคงและฟังคำแนะนำจากคนรอบข้าง จังหวะที่ช้าลงจะทำให้ผลลัพธ์ออกมาสมบูรณ์แบบที่สุด' 
             },
             { 
-                emoji: '🏳️', filter: 'none', 
+                src: '/flag/flag_white.png', // 흰색 (천신, 명복)
                 status: 'ราบรื่นไร้อุปสรรค (YES, Smooth)', 
                 desc: 'สิ่งศักดิ์สิทธิ์กำลังคุ้มครองคุณอยู่! สิ่งที่ปรารถนาจะค่อยๆ ปรากฏขึ้นอย่างราบรื่นและสงบสุข ขอให้รักษาจิตใจให้ดี แล้วโชคลาภจะมาหาเอง' 
             },
             { 
-                emoji: '🏴', filter: 'none', 
+                src: '/flag/flag_black.png', // 검정색/남색 (죽음, 사고, 중지) - 강력한 NO
                 status: 'หยุดพักก่อน (NO / STOP)', 
                 desc: 'ตอนนี้ยังไม่ใช่เวลาที่เหมาะสม! 신령님 (เทพเจ้า) เตือนให้คุณหยุดพักและทบทวนให้ดี การฝืนดันต่อไปอาจเกิดผลเสีย รอจังหวะใหม่จะดีกว่า' 
             }
@@ -207,7 +203,9 @@
             const stage = document.getElementById('flagStage');
             const btn = document.getElementById('pickBtn');
             const resultDisplay = document.getElementById('result-display');
-            const finalEmoji = document.getElementById('finalEmoji');
+            
+            // 이미지 엘리먼트 가져오기
+            const finalImg = document.getElementById('finalImg');
             const resultStatus = document.getElementById('resultStatus');
             const resultDesc = document.getElementById('resultDesc');
 
@@ -224,8 +222,8 @@
                     // 무작위 결과 선정
                     const win = flags[Math.floor(Math.random() * flags.length)];
                     
-                    finalEmoji.innerText = win.emoji;
-                    finalEmoji.style.filter = win.filter;
+                    // 결과 적용 (innerText 대신 src 변경)
+                    finalImg.src = win.src;
                     resultStatus.innerText = win.status;
                     resultDesc.innerText = win.desc;
                     

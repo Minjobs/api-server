@@ -11,7 +11,8 @@
             --text-white: #ffffff;  
             --point-gold: #ffd700;
             --border-line: rgba(200, 200, 200, 0.8); 
-            --card-bg: rgba(255, 255, 255, 0.12);
+            /* ✅ [수정] 카드 배경을 진하게 변경 (흰색 0.12 -> 검정 0.6) */
+            --card-bg: rgba(0, 0, 0, 0.6);
             --line-green: #06C755;
             --btn-gradient: linear-gradient(135deg, #ffd700, #f57c00);
         }
@@ -59,14 +60,13 @@
             box-sizing: border-box;
         }
 
-        /* 이미지 로고 스타일 */
         .logo-container {
             cursor: pointer;
             display: flex;
             align-items: center;
         }
         .logo-img {
-            height: 38px; /* 헤더 높이에 맞게 조절 */
+            height: 38px; 
             width: auto;
             object-fit: contain;
             filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
@@ -186,7 +186,7 @@
                 </button>
             </div>
 
-            <div class="coin-card" style="border: 1px solid var(--point-gold);">
+            <div class="coin-card">
                 <span class="promo-badge">ประหยัด ลด 10%</span>
                 <div class="coin-info">
                     <div class="coin-icon">🪙</div>

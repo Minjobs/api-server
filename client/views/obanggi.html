@@ -2,25 +2,27 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MURDOO K - เสี่ยงทายธง 5 สี</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.55);
+            --bg-overlay: rgba(0, 0, 0, 0.7);
             --point-gold: #ffd700;
+            --point-red: #ff4757;
             --text-white: #ffffff;
-            --border-line: rgba(255, 215, 0, 0.4);
+            --glow-gold: 0 0 15px rgba(255, 215, 0, 0.6);
         }
 
         body {
             margin: 0; padding: 0;
-            background-color: #0a0a0a;
+            background-color: #050505;
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
             overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .background-overlay {
@@ -28,208 +30,339 @@
             z-index: -1;
             background-image: url('/background.jpg'); 
             background-size: cover; background-position: center;
-            opacity: 0.6; 
+            opacity: 0.5; 
         }
 
-        .background-blur {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2;
-            backdrop-filter: blur(15px) brightness(0.6);
-        }
-
-        .header-logo { margin-top: 30px; margin-bottom: 20px; z-index: 10; }
-        .header-logo img { height: 45px; cursor: pointer; transition: transform 0.3s ease; }
-        .header-logo img:hover { transform: scale(1.05); }
+        .header-logo { margin-top: 25px; margin-bottom: 15px; z-index: 10; transition: 0.3s; }
+        .header-logo img { height: 40px; }
 
         .container {
-            width: 90%; max-width: 440px;
-            background-color: var(--bg-overlay);
-            border-radius: 35px;
-            padding: 35px 20px 45px 20px;
-            box-sizing: border-box;
-            backdrop-filter: blur(20px);
-            border: 2px solid var(--point-gold);
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
-            margin-bottom: 40px;
-        }
-
-        .header-title h1 { font-size: 1.8rem; margin: 0; color: var(--point-gold); font-family: 'Nanum Myeongjo', serif; letter-spacing: 1px; }
-        .header-title p { font-size: 1rem; margin: 10px 0 30px 0; opacity: 0.8; font-weight: 300; line-height: 1.5; }
-
-        /* --- [깃발 스테이지 수정됨] --- */
-        .flag-stage {
-            height: 260px;
+            width: 90%; max-width: 400px;
             position: relative;
-            margin-bottom: 30px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: all 0.5s ease;
+            z-index: 2;
+            text-align: center;
+            padding-bottom: 40px;
         }
 
-        .flag-row { display: flex; justify-content: center; gap: 20px; width: 100%; transition: all 0.5s ease; }
+        .intro-text h1 { 
+            font-family: 'Nanum Myeongjo', serif; 
+            font-size: 2rem; color: var(--point-gold); 
+            text-shadow: var(--glow-gold); margin: 0 0 10px 0; 
+        }
+        .intro-text p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; line-height: 1.6; margin: 0; }
 
-        /* ✅ 이모지 대신 이미지 스타일 적용 */
+        /* --- [깃발 애니메이션 스테이지] --- */
+        .stage-wrapper {
+            height: 320px;
+            display: flex; justify-content: center; align-items: center;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .flag-bundle {
+            position: relative;
+            width: 200px; height: 200px;
+            transition: transform 0.1s;
+        }
+
         .flag-img {
-            width: 70px; /* 깃발 이미지 크기 */
-            height: auto;
-            display: inline-block;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.6));
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: absolute;
+            width: 80px; height: auto;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.7));
+            transition: all 0.5s ease;
+            transform-origin: bottom center;
         }
 
-        /* 애니메이션 효과 (이미지 기준) */
-        .merging .flag-img { position: absolute; top: 50%; left: 50%; }
-        /* 5개가 한 점으로 모일 때 각도와 위치 미세 조정 */
-        .merging .flag-img:nth-child(1) { transform: translate(-60%, -55%) rotate(-10deg); }
-        .merging .flag-img:nth-child(2) { transform: translate(-45%, -50%) rotate(5deg); }
-        .merging .flag-img:nth-child(3) { transform: translate(-55%, -45%) rotate(15deg); }
-        /* 아래 줄 */
-        .merging .bottom-row .flag-img:nth-child(1) { transform: translate(-50%, -60%) rotate(-5deg); }
-        .merging .bottom-row .flag-img:nth-child(2) { transform: translate(-40%, -40%) rotate(10deg); }
+        /* 초기 배치 (부채꼴) */
+        .flag-img:nth-child(1) { transform: translate(0, 0) rotate(0deg); z-index: 3; } /* 노랑(중앙) */
+        .flag-img:nth-child(2) { transform: translate(-40px, 10px) rotate(-15deg); z-index: 2; } /* 파랑 */
+        .flag-img:nth-child(3) { transform: translate(40px, 10px) rotate(15deg); z-index: 2; } /* 빨강 */
+        .flag-img:nth-child(4) { transform: translate(-70px, 30px) rotate(-30deg); z-index: 1; } /* 흰색 */
+        .flag-img:nth-child(5) { transform: translate(70px, 30px) rotate(30deg); z-index: 1; } /* 검정 */
 
-        .spinning { animation: stage-spin 0.4s linear infinite; }
-        @keyframes stage-spin { from { transform: rotate(0deg) scale(1); } to { transform: rotate(360deg) scale(0.9); } }
+        /* 흔들기 애니메이션 */
+        .shaking .flag-bundle {
+            animation: violent-shake 0.15s infinite;
+        }
+        .shaking .flag-img {
+            left: 50%; top: 50%;
+            margin-left: -40px; margin-top: -60px;
+            transform: translate(0,0) rotate(0deg) !important;
+        }
 
-        /* --- [결과 화면 수정됨] --- */
-        #result-display {
+        @keyframes violent-shake {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-2deg); }
+            20% { transform: translate(-3px, 0px) rotate(3deg); }
+            30% { transform: translate(0px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(2px, 1px) rotate(-2deg); }
+            80% { transform: translate(-1px, -1px) rotate(4deg); }
+            90% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        /* --- [결과 카드] --- */
+        #result-modal {
             display: none;
-            flex-direction: column; align-items: center;
-            animation: popIn 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 100;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
+            opacity: 0; transition: opacity 0.3s;
         }
-        /* 결과 이미지 크기 */
-        .result-img { 
-            width: 160px; 
-            height: auto; 
-            margin-bottom: 25px; 
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.4));
-        }
-        .result-status { font-size: 2.2rem; font-weight: 800; color: var(--point-gold); margin-bottom: 15px; font-family: 'Nanum Myeongjo', serif; }
-        .result-desc { font-size: 1.1rem; line-height: 1.8; opacity: 0.95; margin-bottom: 35px; word-break: keep-all; padding: 0 10px; }
+        #result-modal.show { opacity: 1; }
 
-        #pickBtn {
+        .fate-card {
+            width: 85%; max-width: 320px;
+            background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+            border: 2px solid var(--point-gold);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+            transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #result-modal.show .fate-card { transform: scale(1); }
+
+        .result-flag-img { 
+            width: 120px; margin-bottom: 20px; 
+            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .fate-title { font-size: 1.8rem; font-weight: 800; color: var(--point-gold); margin-bottom: 10px; line-height: 1.2; }
+        .fate-desc { font-size: 1rem; font-weight: 300; line-height: 1.6; color: #ddd; margin-bottom: 25px; }
+
+        /* 흉(검정)일 때 스타일 */
+        .fate-card.bad-luck {
+            border-color: var(--point-red);
+            box-shadow: 0 0 40px rgba(255, 71, 87, 0.3);
+        }
+        .fate-card.bad-luck .fate-title { color: var(--point-red); }
+
+        .action-btn {
+            width: 100%; padding: 15px; border: none; border-radius: 30px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer; font-family: 'Kanit';
+            transition: 0.2s;
+        }
+        .btn-gold { background: linear-gradient(135deg, #ffd700, #ffa500); color: #000; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3); }
+        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #aaa; margin-top: 10px; font-size: 0.9rem; }
+        .btn-red { background: var(--point-red); color: white; box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4); }
+
+        /* --- [메인 버튼] --- */
+        #shakeBtn {
             background: linear-gradient(135deg, var(--point-gold), #f57c00);
-            color: #000; border: none; padding: 18px 50px; border-radius: 35px;
-            font-size: 1.3rem; font-weight: 800; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
-            font-family: 'Kanit', sans-serif; transition: 0.3s;
+            color: #000; border: none; width: 80%; padding: 18px; border-radius: 50px;
+            font-size: 1.4rem; font-weight: 800; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+            animation: pulse-btn 2s infinite;
+            font-family: 'Kanit';
         }
-        #pickBtn:active { transform: scale(0.95); }
+        #shakeBtn:active { transform: scale(0.95); }
+        @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
 
-        .retry-btn {
-            background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.4);
-            padding: 12px 30px; border-radius: 25px; cursor: pointer; font-family: 'Kanit';
-            font-size: 1rem; transition: 0.3s;
+        /* 진동 효과 중일 때 오버레이 */
+        #ritual-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.2); z-index: 50;
+            pointer-events: none;
         }
+        .vibrating-text {
+            position: absolute; top: 65%; width: 100%; text-align: center;
+            font-size: 1.2rem; color: var(--point-gold); font-weight: 600;
+            text-shadow: 0 0 10px #000;
+            animation: text-blink 0.2s infinite;
+        }
+        @keyframes text-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-        .hidden { display: none !important; }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
-        
-        footer { text-align: center; margin-top: 20px; color: rgba(255,255,255,0.4); font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
     <div class="background-overlay"></div>
-    <div class="background-blur"></div>
+    <div id="ritual-overlay"><div class="vibrating-text">กำลังสื่อสารกับเทพเจ้า...<br>(Connecting to Spirits...)</div></div>
 
-    <header class="header-logo">
-        <a href="/">
-            <img src="/textlogo.png" alt="MURDOO K Logo">
-        </a>
+    <audio id="sfx-shake" src="/sound/shake.mp3" loop></audio>
+    <audio id="sfx-result" src="/sound/result.mp3"></audio>
+
+    <header class="header-logo" onclick="location.href='/'">
+        <img src="/textlogo.png" alt="MURDOO K">
     </header>
 
     <main class="container">
-        <div class="header-title">
+        <div class="intro-text">
             <h1>เสี่ยงทายธง 5 สี</h1>
-            <p>ตั้งจิตอธิษฐานถึงสิ่งที่คุณปรารถนาอย่างแรงกล้า<br>แล้วให้ธงบอกทางสว่างแก่คุณ</p>
+            <p>ตั้งจิตให้มั่น นึกถึงคำถามของคุณ<br>แล้วเขย่าธงเพื่อรับคำทำนาย</p>
         </div>
 
-        <div class="flag-stage" id="flagStage">
-            <div class="flag-row top-row">
-                <img src="/flag/flag_red.png" class="flag-img" alt="Red">
-                <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
+        <div class="stage-wrapper" id="stage">
+            <div class="flag-bundle" id="flagBundle">
                 <img src="/flag/flag_yellow.png" class="flag-img" alt="Yellow">
-            </div>
-            <div class="flag-row bottom-row" style="margin-top: 20px;">
+                <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
+                <img src="/flag/flag_red.png" class="flag-img" alt="Red">
                 <img src="/flag/flag_white.png" class="flag-img" alt="White">
                 <img src="/flag/flag_black.png" class="flag-img" alt="Black">
             </div>
         </div>
 
-        <div id="result-display">
-            <img src="" id="finalImg" class="result-img" alt="Result Flag">
-            
-            <div class="result-status" id="resultStatus"></div>
-            <div class="result-desc" id="resultDesc"></div>
-            <button class="retry-btn" onclick="location.reload()">อธิษฐานใหม่อีกครั้ง</button>
-        </div>
-
-        <button id="pickBtn" onclick="startPicking()">เสี่ยงทายคำตอบ</button>
+        <button id="shakeBtn" onclick="startRitual()">เขย่าธง (Shake)</button>
     </main>
 
-    <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
+    <div id="result-modal">
+        <div class="fate-card" id="fateCard">
+            <img src="" id="resImg" class="result-flag-img">
+            <div class="fate-title" id="resTitle"></div>
+            <div class="fate-desc" id="resDesc"></div>
+            
+            <div id="btn-group-normal">
+                <button class="action-btn btn-gold" onclick="closeModal()">รับคำทำนาย (Accept)</button>
+                <button class="action-btn btn-outline" onclick="location.reload()">ถามเรื่องอื่น (Ask Another)</button>
+            </div>
+
+            <div id="btn-group-bad" style="display:none;">
+                <button class="action-btn btn-red" onclick="doAekDaem()">สะเดาะเคราะห์ (Ward off Bad Luck)</button>
+                <button class="action-btn btn-outline" onclick="closeModal()">ยอมรับความจริง</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // ✅ 이미지 경로(src)로 데이터 수정
+        // ✅ 1. 태국 문화에 맞춘 오방기 해석 데이터 (현지화 강화)
         const flags = [
             { 
-                src: '/flag/flag_red.png', // 빨간색 (재수, 행운)
-                status: 'สำเร็จแน่นอน! (Strong YES)', 
-                desc: 'สวรรค์เปิดทางให้คุณแล้ว! สิ่งที่หวังจะสำเร็จอย่างยิ่งใหญ่ ลุยได้เลยทันทีโดยไม่ต้องลังเล พลังธงแดงจะนำพาชัยชนะมาสู่คุณ' 
+                color: 'red',
+                src: '/flag/flag_red.png',
+                title: 'มหาโชค (Great Luck)', 
+                desc: 'ธงแดงแห่งชัยชนะ! สิ่งศักดิ์สิทธิ์เปิดทางให้แล้ว สิ่งที่หวังจะสำเร็จอย่างรวดเร็วและยิ่งใหญ่ เป็นจังหวะที่ดีที่สุดในการลงมือทำ!',
+                isBad: false
             },
             { 
-                src: '/flag/flag_blue.png', // 파란색/녹색 (우환, 근심 혹은 변동) - 보통 오방기에서 근심이나 조심
-                status: 'เริ่มใหม่ได้ดี (YES, Do it!)', 
-                desc: 'มีโอกาสสำเร็จสูงมาก! แต่คุณต้องกล้าเปลี่ยนและลงมือทำด้วยตัวเอง การเริ่มต้นใหม่หรือการขยับขยายในตอนนี้จะส่งผลดีอย่างคาดไม่ถึง' 
+                color: 'white',
+                src: '/flag/flag_white.png',
+                title: 'เทพประทาน (Divine Blessing)', 
+                desc: 'ธงขาวแห่งความบริสุทธิ์! เทวดาคุ้มครองและชี้ทางสว่าง ปัญหาที่มืดมนจะคลี่คลาย จะมีผู้ใหญ่หรือกัลยาณมิตรยื่นมือเข้ามาช่วย',
+                isBad: false
             },
             { 
-                src: '/flag/flag_yellow.png', // 노란색 (조상, 도움)
-                status: 'ทำได้แต่ต้องรอ (YES, but Wait)', 
-                desc: 'ทำได้สำเร็จ แต่ห้ามรีบร้อน! ตอนนี้ควรเน้นความมั่นคงและฟังคำแนะนำจากคนรอบข้าง จังหวะที่ช้าลงจะทำให้ผลลัพธ์ออกมาสมบูรณ์แบบที่สุด' 
+                color: 'yellow',
+                src: '/flag/flag_yellow.png',
+                title: 'ลาภบรรพบุรุษ (Ancestral Favor)', 
+                desc: 'ธงเหลืองแห่งบรรพชน! จะมีโชคลาภทางการเงินหรือของกินเข้ามา แต่อย่าลืมทำบุญอุทิศส่วนกุศลให้เจ้าที่เจ้าทางแล้วจะดียิ่งขึ้น',
+                isBad: false
             },
             { 
-                src: '/flag/flag_white.png', // 흰색 (천신, 명복)
-                status: 'ราบรื่นไร้อุปสรรค (YES, Smooth)', 
-                desc: 'สิ่งศักดิ์สิทธิ์กำลังคุ้มครองคุณอยู่! สิ่งที่ปรารถนาจะค่อยๆ ปรากฏขึ้นอย่างราบรื่นและสงบสุข ขอให้รักษาจิตใจให้ดี แล้วโชคลาภจะมาหาเอง' 
+                color: 'blue',
+                src: '/flag/flag_blue.png',
+                title: 'ลมแห่งการเปลี่ยนแปลง (Winds of Change)', 
+                desc: 'ธงเขียวแห่งลมพายุ! จิตใจว้าวุ่นหรือไม่ก็มีเรื่องต้องเดินทาง/โยกย้าย ระวังความเครียดและอุบัติเหตุเล็กน้อย ให้ระวังคำพูดและอารมณ์',
+                isBad: false 
             },
             { 
-                src: '/flag/flag_black.png', // 검정색/남색 (죽음, 사고, 중지) - 강력한 NO
-                status: 'หยุดพักก่อน (NO / STOP)', 
-                desc: 'ตอนนี้ยังไม่ใช่เวลาที่เหมาะสม! 신령님 (เทพเจ้า) เตือนให้คุณหยุดพักและทบทวนให้ดี การฝืนดันต่อไปอาจเกิดผลเสีย รอจังหวะใหม่จะดีกว่า' 
+                color: 'black',
+                src: '/flag/flag_black.png',
+                title: 'เตือนภัย! (Warning)', 
+                desc: 'ธงดำแห่งความมืด... หยุดก่อน! ตอนนี้ไม่ใช่จังหวะที่ดี ระวังโดนหลอก ปัญหาสุขภาพ หรืออุปสรรคใหญ่ อย่าเพิ่งเสี่ยงทำอะไรตอนนี้',
+                isBad: true // 흉
             }
         ];
 
-        function startPicking() {
-            const stage = document.getElementById('flagStage');
-            const btn = document.getElementById('pickBtn');
-            const resultDisplay = document.getElementById('result-display');
-            
-            // 이미지 엘리먼트 가져오기
-            const finalImg = document.getElementById('finalImg');
-            const resultStatus = document.getElementById('resultStatus');
-            const resultDesc = document.getElementById('resultDesc');
+        const shakeBtn = document.getElementById('shakeBtn');
+        const stage = document.getElementById('stage');
+        const overlay = document.getElementById('ritual-overlay');
+        const sfxShake = document.getElementById('sfx-shake');
+        const sfxResult = document.getElementById('sfx-result');
 
-            btn.classList.add('hidden');
-            stage.classList.add('merging');
+        let isShaking = false;
 
+        function startRitual() {
+            if (isShaking) return;
+            isShaking = true;
+
+            // 1. UI 변경
+            shakeBtn.innerText = "กำลังเขย่า...";
+            shakeBtn.disabled = true;
+            stage.classList.add('shaking'); // CSS 애니메이션 시작
+            overlay.style.display = 'block';
+
+            // 2. 햅틱 & 사운드 (사용자 인터랙션 필요)
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]); // 진동 패턴
+            try { sfxShake.play().catch(() => {}); } catch(e){} // 소리 재생 시도
+
+            // 3. 2.5초 후 결과 공개
             setTimeout(() => {
-                stage.classList.add('spinning');
+                stopRitual();
+            }, 2500);
+        }
 
-                setTimeout(() => {
-                    stage.classList.add('hidden');
-                    stage.classList.remove('spinning');
-                    
-                    // 무작위 결과 선정
-                    const win = flags[Math.floor(Math.random() * flags.length)];
-                    
-                    // 결과 적용 (innerText 대신 src 변경)
-                    finalImg.src = win.src;
-                    resultStatus.innerText = win.status;
-                    resultDesc.innerText = win.desc;
-                    
-                    resultDisplay.style.display = 'flex';
-                }, 1800); 
-            }, 600); 
+        function stopRitual() {
+            stage.classList.remove('shaking');
+            overlay.style.display = 'none';
+            try { 
+                sfxShake.pause(); 
+                sfxShake.currentTime = 0;
+                sfxResult.play().catch(() => {}); 
+            } catch(e){}
+
+            if (navigator.vibrate) navigator.vibrate(50); // 짧은 진동 (끝)
+
+            // 결과 뽑기 (확률 조작 없음, 완전 랜덤)
+            const result = flags[Math.floor(Math.random() * flags.length)];
+            showResult(result);
+
+            // 버튼 초기화
+            shakeBtn.innerText = "เขย่าธง (Shake)";
+            shakeBtn.disabled = false;
+            isShaking = false;
+        }
+
+        function showResult(data) {
+            const modal = document.getElementById('result-modal');
+            const card = document.getElementById('fateCard');
+            
+            document.getElementById('resImg').src = data.src;
+            document.getElementById('resTitle').innerText = data.title;
+            document.getElementById('resDesc').innerText = data.desc;
+
+            // 흉(검정)일 때 스타일 및 버튼 변경
+            if (data.isBad) {
+                card.classList.add('bad-luck');
+                document.getElementById('btn-group-normal').style.display = 'none';
+                document.getElementById('btn-group-bad').style.display = 'block';
+                // 배경을 붉게 깜빡이는 효과를 줄 수도 있음
+            } else {
+                card.classList.remove('bad-luck');
+                document.getElementById('btn-group-normal').style.display = 'block';
+                document.getElementById('btn-group-bad').style.display = 'none';
+            }
+
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('result-modal');
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        // 액땜하기 (재미 요소: 그냥 팝업 닫아주거나, 코인샵으로 유도 가능)
+        function doAekDaem() {
+            Swal.fire({
+                title: 'ปัดเป่าสิ่งชั่วร้าย!',
+                text: 'คุณได้ทำการสะเดาะเคราะห์แล้ว ขอให้โชคร้ายกลายเป็นดี',
+                icon: 'success',
+                confirmButtonText: 'สาธุ (Amen)',
+                confirmButtonColor: '#ff4757',
+                background: '#1a1a1a',
+                color: '#fff'
+            }).then(() => {
+                closeModal();
+            });
         }
     </script>
 </body>

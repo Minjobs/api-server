@@ -58,8 +58,8 @@
         
         .floating-logo {
             position: absolute;
-            /* ✅ [수정] 로고 크기 확대 (140px -> 200px) */
-            width: 200px; 
+            /* ✅ [수정] 로고 크기 확대 (200px -> 300px, 50% increase) */
+            width: 300px; 
             height: auto;
             top: 38%; 
             left: 50%;
@@ -82,8 +82,8 @@
             position: absolute;
             width: 80%;
             max-width: 300px;
-            /* ✅ [수정] 위치를 위로 조금 이동 (bottom 15% -> 20%) */
-            bottom: 20%; 
+            /* ✅ [수정] 위치를 더 위로 이동 (bottom 20% -> 30%) */
+            bottom: 30%; 
             display: none;
             flex-direction: column;
             align-items: center;
@@ -229,14 +229,17 @@
 
             setTimeout(() => { dispenser.classList.add('drop'); }, 300);
 
+            // ✅ [수정] 900ms 타임아웃에서 로고 클래스 추가 제거 (공 커질 때 안 나타나게)
             setTimeout(() => {
                 overlay.style.display = 'flex';
-                loadingLogo.classList.add('visible'); 
+                // loadingLogo.classList.add('visible');  <-- This line removed
                 zoomBall.classList.add('zoom-in');
             }, 900);
 
+            // ✅ [수정] 2000ms 타임아웃으로 로고 클래스 추가 이동 (로딩 게이지 나타날 때 나타나게)
             setTimeout(() => {
                 analysisInfo.style.display = 'flex';
+                loadingLogo.classList.add('visible'); // <-- This line added
                 startFakeLoading(); 
             }, 2000);
 

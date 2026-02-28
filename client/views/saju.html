@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MURDOO K - วิเคราะห์ดวงชะตาเกาหลี</title>
+    <title>Saju - วิเคราะห์ดวงชะตาเกาหลี</title>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/coinPopup.js"></script>
@@ -22,8 +22,11 @@
         .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(0.9); -webkit-backdrop-filter: blur(7px) brightness(0.9); }
         .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 15px 15px 30px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
-        .logo { font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; font-weight: 800; color: var(--text-white); cursor: pointer; }
-        .logo span { color: var(--point-gold); }
+        
+        /* ✅ [수정] 텍스트 로고 대신 이미지 로고 스타일 적용 */
+        .logo { cursor: pointer; display: flex; align-items: center; }
+        .logo img { height: 35px; width: auto; object-fit: contain; }
+
         .user-nav { display: flex; align-items: center; gap: 10px; }
         #coinBox { background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; color: var(--point-gold); display: flex; align-items: center; gap: 5px; }
         .profile-circle { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid var(--point-gold); }
@@ -59,7 +62,9 @@
 
     <div class="container">
         <header>
-            <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
+            <div class="logo" onclick="location.href='/'">
+                <img src="/textlogo.png" alt="Saju Logo">
+            </div>
             <div class="user-nav">
                 <div id="coinBox" class="hidden"><span id="userCoins">0</span> 🪙</div>
                 <div class="profile-circle" onclick="location.href='/profile'">
@@ -76,15 +81,15 @@
 
             <form id="fortuneForm">
                 <div class="field">
-                    <label>ชื่อจริง (Real Name)</label>
+                    <label>ชื่อจริง</label>
                     <input type="text" id="realName" placeholder="ระบุชื่อจริง" required>
                 </div>
                 <div class="field">
-                    <label>ชื่อเล่น (Nickname)</label>
+                    <label>ชื่อเล่น</label>
                     <input type="text" id="nickName" placeholder="ระบุชื่อเล่น" required>
                 </div>
                 <div class="field">
-                    <label>วันเดือนปีเกิด (Date of Birth)</label>
+                    <label>วันเดือนปีเกิด</label>
                     <div class="dropdown-group">
                         <select id="birthDay" required><option value="" disabled selected>วันที่</option></select>
                         <select id="birthMonth" required>
@@ -100,7 +105,7 @@
                     </div>
                 </div>
                 <div class="field">
-                    <label>เวลาเกิด (Birth Time)</label>
+                    <label>เวลาเกิด</label>
                     <div class="dropdown-group">
                         <select id="birthHour" required><option value="" disabled selected>ชม.</option></select>
                         <select id="birthMin" required><option value="" disabled selected>นาที</option></select>
@@ -108,11 +113,13 @@
                     <button type="button" id="unknownTimeBtn" class="unknown-btn">ไม่ทราบเวลาเกิด</button>
                 </div>
                 <div class="field">
-                    <label>เพศ (Gender Identity)</label>
+                    <label>เพศ</label>
                     <select id="gender" required>
                         <option value="" disabled selected>เลือกเพศ</option>
-                        <option value="male">ชาย (Male)</option><option value="female">หญิง (Female)</option>
-                        <option value="lgbt">LGBTQ+</option><option value="other">อื่นๆ (Other)</option>
+                        <option value="male">ชาย</option>
+                        <option value="female">หญิง</option>
+                        <option value="lgbt">LGBTQ+</option>
+                        <option value="other">อื่นๆ</option>
                     </select>
                 </div>
                 <button type="submit" class="submit-btn" id="submitBtn">ดูคำทำนายของคุณ 🪙 2</button>
@@ -124,12 +131,12 @@
                 <div class="orb"></div>
                 <div class="mystic-spinner"></div>
             </div>
-            <h2 class="loading-title">Reading Destiny</h2>
+            <h2 class="loading-title">กำลังอ่านโชคชะตา</h2>
             <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
         </div>
 
         <footer>
-            <p>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</p>
+            <p>© 2026 Saju. บันทึกแห่งโชคชะตา</p>
         </footer>
     </div>
 
@@ -148,18 +155,17 @@
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             const type = window.location.pathname.split('/').pop() || 'saju';
 
-            // ❌ [삭제됨] fetch('/coin_modal.html')... 코드는 제거했습니다.
-
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
             const loadingSection = document.getElementById('loadingSection');
             const inputSection = document.getElementById('inputSection');
             const dynamicText = document.getElementById('dynamicText');
 
+            // ✅ [수정] 페이지 타이틀 설정값 영문 제거 (키 값은 로직상 유지)
             const config = {
-                saju: { title: "Saju", desc: "วิเคราะห์ตัวตนและโชคชะตาเกาหลีแบบแม่นยำ" },
-                gacha: { title: "Gacha", desc: "สุ่มโชคชะตาประจำวันของคุณ" },
-                love: { title: "Love", desc: "ตามหาเนื้อคู่และเส้นทางความรักของคุณ" }
+                saju: { title: "ซาจู (Saju)", desc: "วิเคราะห์ตัวตนและโชคชะตาเกาหลีแบบแม่นยำ" },
+                gacha: { title: "เสี่ยงทาย (Gacha)", desc: "สุ่มโชคชะตาประจำวันของคุณ" },
+                love: { title: "ความรัก (Love)", desc: "ตามหาเนื้อคู่และเส้นทางความรักของคุณ" }
             };
             
             const loadingMessages = [
@@ -198,7 +204,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            // ✅ 불기 연도 적용 (현재 연도 + 543)
+            // 연도 설정
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             
@@ -224,13 +230,13 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // ✅ [추가됨] 입력란 빈값 경고 메시지 태국어로 강제 설정
+            // 입력값 검증 (태국어 메시지)
             const requiredInputs = document.querySelectorAll('input[required], select[required]');
             requiredInputs.forEach(input => {
                 input.oninvalid = function(e) {
                     e.target.setCustomValidity("");
                     if (!e.target.validity.valid) {
-                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้"); // 태국어 메시지
+                        e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
                     }
                 };
                 input.oninput = function(e) {
@@ -245,7 +251,6 @@
 
                 currentAnalysisId = generateUUID();
                 
-                // 버튼 비활성화 및 텍스트 변경
                 submitBtn.disabled = true; 
                 submitBtn.innerText = "กำลังตรวจสอบ...";
 
@@ -267,7 +272,6 @@
                     });
 
                     if (res.ok) {
-                        // 성공 시 로딩 화면 전환 및 폴링 시작
                         isPolling = true;
                         inputSection.classList.add('hidden');
                         loadingSection.style.display = 'flex';
@@ -285,12 +289,11 @@
                         }, 5000);
 
                     } else if (res.status === 403) {
-                        // ❌ 코인 부족 시 -> 버튼 복구 후 팝업 띄우기
                         isPolling = false;
                         submitBtn.disabled = false;
                         submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
                         
-                        showCoinAlert(); // coinPopup.js 사용
+                        showCoinAlert(); 
                     } else {
                         throw new Error("Analysis request failed");
                     }

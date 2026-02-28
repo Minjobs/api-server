@@ -10,7 +10,8 @@
 
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.75); /* 배경 박스 더 진하게 */
+            /* ✅ [수정] 밝기 조절: 0.75 -> 0.55 (훨씬 밝게) */
+            --bg-overlay: rgba(0, 0, 0, 0.55); 
             --point-gold: #ffd700;
             --point-red: #ff4757;
             --text-white: #ffffff;
@@ -20,7 +21,7 @@
 
         body {
             margin: 0; padding: 0;
-            background-color: #050505;
+            background-color: #1a1a1a; /* 배경색도 살짝 밝게 */
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
@@ -34,24 +35,24 @@
             z-index: -1;
             background-image: url('/background.jpg'); 
             background-size: cover; background-position: center;
-            opacity: 0.5; 
+            opacity: 0.7; /* ✅ 배경 이미지 더 잘 보이게 (0.5 -> 0.7) */
         }
 
         .header-logo { margin-top: 25px; margin-bottom: 20px; z-index: 10; cursor: pointer; transition: 0.3s; }
         .header-logo img { height: 40px; }
         .header-logo:active { transform: scale(0.95); }
 
-        /* --- [메인 컨테이너: 유리 박스 스타일] --- */
+        /* --- [메인 컨테이너] --- */
         .container {
             width: 90%; max-width: 440px;
             background-color: var(--bg-overlay);
             border-radius: 35px;
             padding: 35px 20px 45px 20px;
             box-sizing: border-box;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px); /* 블러 조금 줄임 */
             border: 2px solid var(--border-line);
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             margin-bottom: 40px;
             position: relative;
             overflow: hidden;
@@ -62,57 +63,54 @@
             font-size: 1.9rem; color: var(--point-gold); 
             text-shadow: var(--glow-gold); margin: 0 0 10px 0; 
         }
-        .intro-text p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; line-height: 1.6; margin: 0 0 15px 0; }
+        .intro-text p { font-size: 0.95rem; opacity: 0.9; font-weight: 300; line-height: 1.6; margin: 0 0 15px 0; }
 
-        /* --- [깃발 애니메이션 스테이지] --- */
+        /* --- [깃발 스테이지 수정] --- */
         .stage-wrapper {
-            height: 280px;
-            display: flex; justify-content: center; align-items: center;
+            /* 높이 자동 조정 */
+            min-height: 280px; 
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
             position: relative;
-            margin: 0 auto;
+            margin: 20px auto;
             width: 100%;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
+            padding-bottom: 20px;
         }
 
-        .flag-bundle {
-            position: relative;
-            width: 200px; height: 180px;
-            transition: transform 0.1s;
+        /* ✅ [수정] 깃발 정렬 (Grid/Flex) */
+        .flag-rows {
+            display: flex; flex-direction: column; gap: 15px; /* 줄 간격 */
+            align-items: center;
+            width: 100%;
+        }
+
+        .flag-row {
+            display: flex; justify-content: center; gap: 20px; /* 깃발 간격 */
+            width: 100%;
         }
 
         .flag-img {
-            position: absolute;
-            width: 75px; height: auto;
-            filter: drop-shadow(0 5px 12px rgba(0,0,0,0.6));
-            transition: all 0.6s ease;
-            transform-origin: bottom center;
+            /* ✅ [수정] 크기 20% 확대 (75px -> 90px) */
+            width: 90px; 
+            height: auto;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+            position: relative; /* absolute 제거 */
         }
 
-        /* 깃발 초기 배치 (부채꼴) */
-        .flag-img:nth-child(1) { transform: translate(0, 0) rotate(0deg); z-index: 3; } /* 노랑 */
-        .flag-img:nth-child(2) { transform: translate(-35px, 10px) rotate(-15deg); z-index: 2; } /* 파랑 */
-        .flag-img:nth-child(3) { transform: translate(35px, 10px) rotate(15deg); z-index: 2; } /* 빨강 */
-        .flag-img:nth-child(4) { transform: translate(-65px, 25px) rotate(-30deg); z-index: 1; } /* 흰색 */
-        .flag-img:nth-child(5) { transform: translate(65px, 25px) rotate(30deg); z-index: 1; } /* 검정 */
-
-        /* ✅ [애니메이션 수정] 어지럽지 않게 천천히 부드럽게 섞임 */
-        .shaking .flag-bundle {
-            animation: gentle-mix 1.5s ease-in-out infinite;
-        }
+        /* ✅ [애니메이션] 제자리에서 흔들리는 효과 */
         .shaking .flag-img {
-            left: 50%; top: 50%;
-            margin-left: -37.5px; margin-top: -60px;
-            transform: translate(0,0) rotate(0deg) !important;
-            opacity: 0.9;
+            animation: shake-flag 0.2s infinite ease-in-out alternate;
         }
+        
+        /* 짝수/홀수 번째 깃발을 엇박자로 흔들어서 더 역동적이게 */
+        .shaking .flag-img:nth-child(odd) { animation-delay: 0s; }
+        .shaking .flag-img:nth-child(even) { animation-delay: 0.1s; }
 
-        @keyframes gentle-mix {
-            0% { transform: rotate(0deg) translate(0px, 0px); }
-            25% { transform: rotate(5deg) translate(-8px, 5px); }
-            50% { transform: rotate(0deg) translate(0px, 10px); }
-            75% { transform: rotate(-5deg) translate(8px, 5px); }
-            100% { transform: rotate(0deg) translate(0px, 0px); }
+        @keyframes shake-flag {
+            0% { transform: rotate(-5deg) translateY(0); }
+            100% { transform: rotate(5deg) translateY(-2px); }
         }
 
         /* --- [결과 화면] --- */
@@ -143,7 +141,7 @@
         .fate-title { font-size: 1.8rem; font-weight: 800; color: var(--point-gold); margin-bottom: 10px; line-height: 1.2; }
         .fate-desc { font-size: 1rem; font-weight: 300; line-height: 1.7; color: #eee; margin-bottom: 15px; word-break: break-word; }
 
-        /* 흉(검정)일 때 스타일 */
+        /* 흉(검정) 스타일 */
         .container.bad-luck { border-color: var(--point-red); box-shadow: 0 20px 60px rgba(255, 71, 87, 0.2); }
         .bad-luck .result-stage { border-color: var(--point-red); box-shadow: inset 0 0 20px rgba(255, 71, 87, 0.2); }
         .bad-luck .fate-title { color: var(--point-red); }
@@ -198,12 +196,16 @@
             </div>
 
             <div class="stage-wrapper" id="stage">
-                <div class="flag-bundle" id="flagBundle">
-                    <img src="/flag/flag_yellow.png" class="flag-img" alt="Yellow">
-                    <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
-                    <img src="/flag/flag_red.png" class="flag-img" alt="Red">
-                    <img src="/flag/flag_white.png" class="flag-img" alt="White">
-                    <img src="/flag/flag_black.png" class="flag-img" alt="Black">
+                <div class="flag-rows">
+                    <div class="flag-row">
+                        <img src="/flag/flag_red.png" class="flag-img" alt="Red">
+                        <img src="/flag/flag_white.png" class="flag-img" alt="White">
+                        <img src="/flag/flag_yellow.png" class="flag-img" alt="Yellow">
+                    </div>
+                    <div class="flag-row">
+                        <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
+                        <img src="/flag/flag_black.png" class="flag-img" alt="Black">
+                    </div>
                 </div>
             </div>
 
@@ -232,8 +234,7 @@
     <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
 
     <script>
-        // ✅ 1. 오방기 해석 데이터 (태국 현지화 + 상세 설명)
-        // 확률: Math.random() 사용으로 각 20% 균등 확률
+        // ✅ 오방기 데이터 (20% 확률)
         const flags = [
             { 
                 src: '/flag/flag_red.png', 
@@ -283,14 +284,12 @@
 
             shakeBtn.innerText = "กำลังสื่อสาร...";
             shakeBtn.disabled = true;
-            stage.classList.add('shaking'); // 부드러운 섞기 모션 시작
+            stage.classList.add('shaking'); 
 
-            // 모바일 진동 (부드러운 패턴)
-            if (navigator.vibrate) navigator.vibrate([100, 200, 100, 200]); 
-            
+            if (navigator.vibrate) navigator.vibrate([100, 100, 100, 100, 200]); 
             try { sfxShake.play().catch(() => {}); } catch(e){}
 
-            // 2.5초 동안 섞기
+            // 2.5초 후 결과
             setTimeout(() => {
                 stopRitual();
             }, 2500);
@@ -304,7 +303,6 @@
                 sfxResult.play().catch(() => {}); 
             } catch(e){}
 
-            // ✅ 결과 추첨 (20% 확률)
             const result = flags[Math.floor(Math.random() * flags.length)];
             showResult(result);
 
@@ -313,7 +311,6 @@
         }
 
         function showResult(data) {
-            // 화면 전환
             ritualView.classList.add('hidden');
             resultDisplay.style.display = 'flex';
 
@@ -321,13 +318,12 @@
             document.getElementById('resTitle').innerText = data.status;
             document.getElementById('resDesc').innerText = data.desc;
 
-            // 흉(검정)일 경우 스타일 변경
             const mainContainer = document.querySelector('.container');
             if (data.isBad) {
                 mainContainer.classList.add('bad-luck');
                 document.getElementById('btn-group-normal').style.display = 'none';
                 document.getElementById('btn-group-bad').style.display = 'block';
-                if (navigator.vibrate) navigator.vibrate(500); // 흉일 때 긴 진동
+                if (navigator.vibrate) navigator.vibrate(500); 
             } else {
                 mainContainer.classList.remove('bad-luck');
                 document.getElementById('btn-group-normal').style.display = 'block';
@@ -347,7 +343,6 @@
             location.reload();
         }
 
-        // 액땜하기 (SweetAlert2 사용)
         function doAekDaem() {
             Swal.fire({
                 title: 'สะเดาะเคราะห์สำเร็จ!',
@@ -357,9 +352,7 @@
                 confirmButtonColor: '#ff4757',
                 background: '#1a1a1a',
                 color: '#fff',
-                customClass: {
-                    popup: 'swal-custom'
-                }
+                customClass: { popup: 'swal-custom' }
             }).then(() => {
                 closeResultView();
             });

@@ -48,28 +48,25 @@
         .bottom-section { width: 90%; margin-top: 15px; display: flex; justify-content: center; z-index: 2; }
         .dispenser-slot { width: 110px; height: 45px; background: #1a0f0a; border: 5px solid var(--metal-brass); border-radius: 12px 12px 0 0; border-bottom: none; position: relative; overflow: hidden; box-shadow: inset 0 15px 25px #000; }
         
-        /* 떨어진 캡슐 스타일 */
         .dropped-capsule { position: absolute; top: -60px; left: 50%; width: 38px; height: 38px; background: var(--capsule-gold); border-radius: 50%; transform: translateX(-50%); box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4); transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5); }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
         
-        /* 로딩 레이어 */
         .effect-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
         
-        /* 줌인 볼 스타일 (색상은 JS로 랜덤 적용) */
         .lucky-ball-zoom { width: 80px; height: 80px; border-radius: 50%; background: #ffd700; box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); transform: scale(0); opacity: 0; z-index: 10000; }
         .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
         
-        /* 로고 스타일 (둥둥 떠다니기) */
         .floating-logo {
             position: absolute;
-            width: 140px; /* 로고 크기 */
+            /* ✅ [수정] 로고 크기 확대 (140px -> 200px) */
+            width: 200px; 
             height: auto;
-            top: 38%; /* 위치 조정 */
+            top: 38%; 
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 10002; /* 공보다 위에 */
+            z-index: 10002; 
             animation: floatLogo 3s ease-in-out infinite;
-            opacity: 0; /* 초기엔 안 보임 */
+            opacity: 0; 
             transition: opacity 0.5s;
         }
         .floating-logo.visible { opacity: 1; }
@@ -81,7 +78,18 @@
         
         @keyframes zoomAndWhite { 0% { transform: scale(0.1) rotate(0deg); opacity: 0; } 20% { opacity: 1; transform: scale(1.5); } 100% { transform: scale(60); opacity: 1; background: #fffaf0; } }
         
-        .analysis-info { position: absolute; width: 80%; max-width: 300px; bottom: 15%; display: none; flex-direction: column; align-items: center; z-index: 10001; animation: fadeIn 0.5s ease-in forwards; }
+        .analysis-info {
+            position: absolute;
+            width: 80%;
+            max-width: 300px;
+            /* ✅ [수정] 위치를 위로 조금 이동 (bottom 15% -> 20%) */
+            bottom: 20%; 
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10001;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
         .loading-msg { color: #5d4037; font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.8); min-height: 1.5em; text-align: center; }
         .progress-container { width: 100%; height: 6px; background: rgba(93, 64, 55, 0.1); border-radius: 10px; overflow: hidden; position: relative; }
         .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #b8860b, #ffd700); box-shadow: 0 0 10px #ffd700; border-radius: 10px; transition: width 0.3s ease; }
@@ -142,7 +150,6 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 캡슐볼 생성 (비주얼)
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
@@ -155,7 +162,6 @@
             glassGlobe.appendChild(capsule);
         }
 
-        // 2. 연도 선택
         const yearSelect = document.getElementById('birthYear');
         const currentYearBE = new Date().getFullYear() + 543; 
         for (let be = currentYearBE; be >= 2483; be--) {
@@ -172,7 +178,6 @@
             });
         }
 
-        // 3. UI 요소
         const spinBtn = document.getElementById('spinBtn');
         const dispenser = document.getElementById('dispenser');
         const overlay = document.getElementById('overlay');
@@ -192,7 +197,6 @@
             "เกือบเสร็จแล้ว... โปรดรอสักครู่" 
         ];
 
-        // ✅ [추가] 랜덤 공 색상 리스트 (10가지)
         const ballColors = [
             ['#ffd700', '#b8860b'], // Yellow (Gold)
             ['#e74c3c', '#c0392b'], // Red
@@ -208,7 +212,6 @@
 
         let fakeProgressInterval = null;
 
-        // 4. 클릭 핸들러
         spinBtn.addEventListener('click', async () => {
             const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
@@ -216,36 +219,27 @@
 
             const resultId = generateUUID();
             
-            // ✅ [색상 랜덤 적용]
             const randomColor = ballColors[Math.floor(Math.random() * ballColors.length)];
-            // 1. 떨어지는 캡슐 색상 변경
             droppedCapsule.style.background = randomColor[0]; 
-            // 2. 커지는 공(줌인) 색상 변경 (그라디언트)
             zoomBall.style.background = `radial-gradient(circle at 30% 30%, ${randomColor[0]}, ${randomColor[1]})`;
 
-            // --- [1단계] 즉각적인 시각 피드백 ---
             spinBtn.classList.add('spinning');
             signText.innerText = "กำลังวิเคราะห์...";
             signText.style.color = "#fff";
 
-            // 0.3초 후 캡슐 낙하
             setTimeout(() => { dispenser.classList.add('drop'); }, 300);
 
-            // 0.9초 후 로딩 화면 진입 (줌인)
             setTimeout(() => {
                 overlay.style.display = 'flex';
-                // 로고 표시
                 loadingLogo.classList.add('visible'); 
                 zoomBall.classList.add('zoom-in');
             }, 900);
 
-            // 2초 후 로딩 바 및 텍스트 표시 & 게이지 시작
             setTimeout(() => {
                 analysisInfo.style.display = 'flex';
                 startFakeLoading(); 
             }, 2000);
 
-            // --- [2단계] 백그라운드에서 API 호출 ---
             try {
                 console.log("🚀 API Request Start...");
                 const response = await fetch('/api/gacha/analyze', {
@@ -301,7 +295,7 @@
             const errData = await response.json().catch(() => ({}));
             overlay.style.display = 'none';
             zoomBall.classList.remove('zoom-in');
-            loadingLogo.classList.remove('visible'); // 로고 숨김
+            loadingLogo.classList.remove('visible'); 
             
             if (response.status === 403) {
                 showCoinAlert(); 
@@ -319,7 +313,7 @@
             overlay.style.display = 'none';
             analysisInfo.style.display = 'none';
             zoomBall.classList.remove('zoom-in');
-            loadingLogo.classList.remove('visible'); // 로고 숨김
+            loadingLogo.classList.remove('visible'); 
             signText.innerText = "ตู้สุ่มดวงเกาหลี";
             signText.style.color = "#ffd700";
             progressBar.style.width = '0%';

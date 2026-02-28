@@ -10,7 +10,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS는 기존과 동일 (밝기 보정 버전 유지) */
         :root { 
             --wood-dark: #3e2723; 
             --wood-medium: #5d4037; 
@@ -48,13 +47,37 @@
         
         .bottom-section { width: 90%; margin-top: 15px; display: flex; justify-content: center; z-index: 2; }
         .dispenser-slot { width: 110px; height: 45px; background: #1a0f0a; border: 5px solid var(--metal-brass); border-radius: 12px 12px 0 0; border-bottom: none; position: relative; overflow: hidden; box-shadow: inset 0 15px 25px #000; }
+        
+        /* 떨어진 캡슐 스타일 */
         .dropped-capsule { position: absolute; top: -60px; left: 50%; width: 38px; height: 38px; background: var(--capsule-gold); border-radius: 50%; transform: translateX(-50%); box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4); transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5); }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
         
-        /* 로딩 레이어 스타일 */
+        /* 로딩 레이어 */
         .effect-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
-        .lucky-ball-zoom { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b); box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); transform: scale(0); opacity: 0; z-index: 10000; }
+        
+        /* 줌인 볼 스타일 (색상은 JS로 랜덤 적용) */
+        .lucky-ball-zoom { width: 80px; height: 80px; border-radius: 50%; background: #ffd700; box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); transform: scale(0); opacity: 0; z-index: 10000; }
         .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+        
+        /* 로고 스타일 (둥둥 떠다니기) */
+        .floating-logo {
+            position: absolute;
+            width: 140px; /* 로고 크기 */
+            height: auto;
+            top: 38%; /* 위치 조정 */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10002; /* 공보다 위에 */
+            animation: floatLogo 3s ease-in-out infinite;
+            opacity: 0; /* 초기엔 안 보임 */
+            transition: opacity 0.5s;
+        }
+        .floating-logo.visible { opacity: 1; }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-15px); }
+        }
         
         @keyframes zoomAndWhite { 0% { transform: scale(0.1) rotate(0deg); opacity: 0; } 20% { opacity: 1; transform: scale(1.5); } 100% { transform: scale(60); opacity: 1; background: #fffaf0; } }
         
@@ -96,7 +119,7 @@
 
             <div class="bottom-section">
                 <div class="dispenser-slot" id="dispenser">
-                    <div class="dropped-capsule"></div>
+                    <div class="dropped-capsule" id="droppedCapsule"></div>
                 </div>
             </div>
         </div>
@@ -104,6 +127,8 @@
 
     <div class="effect-layer" id="overlay">
         <div class="lucky-ball-zoom" id="zoomBall"></div>
+        
+        <img src="logo.png" class="floating-logo" id="loadingLogo" alt="Loading Logo">
         
         <div class="analysis-info" id="analysisInfo">
             <div class="loading-msg" id="loadingMsg">กำลังเชื่อมต่อกับดวงดาว...</div>
@@ -157,6 +182,8 @@
         const progressBar = document.getElementById('progressBar');
         const signText = document.getElementById('signText');
         const machineWrapper = document.getElementById('machineWrapper');
+        const loadingLogo = document.getElementById('loadingLogo');
+        const droppedCapsule = document.getElementById('droppedCapsule');
 
         const steps = [
             "กำลังเชื่อมต่อกับดวงดาว...", 
@@ -165,9 +192,23 @@
             "เกือบเสร็จแล้ว... โปรดรอสักครู่" 
         ];
 
+        // ✅ [추가] 랜덤 공 색상 리스트 (10가지)
+        const ballColors = [
+            ['#ffd700', '#b8860b'], // Yellow (Gold)
+            ['#e74c3c', '#c0392b'], // Red
+            ['#3498db', '#2980b9'], // Blue
+            ['#2ecc71', '#27ae60'], // Green
+            ['#9b59b6', '#8e44ad'], // Purple
+            ['#e67e22', '#d35400'], // Orange
+            ['#1abc9c', '#16a085'], // Teal
+            ['#ff7979', '#eb4d4b'], // Pink
+            ['#ecf0f1', '#bdc3c7'], // White
+            ['#95a5a6', '#7f8c8d']  // Gray
+        ];
+
         let fakeProgressInterval = null;
 
-        // 4. [핵심] 클릭 핸들러: 즉시 애니메이션 실행 후 API 대기
+        // 4. 클릭 핸들러
         spinBtn.addEventListener('click', async () => {
             const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
@@ -175,7 +216,14 @@
 
             const resultId = generateUUID();
             
-            // --- [1단계] 즉각적인 시각 피드백 (API 대기 전) ---
+            // ✅ [색상 랜덤 적용]
+            const randomColor = ballColors[Math.floor(Math.random() * ballColors.length)];
+            // 1. 떨어지는 캡슐 색상 변경
+            droppedCapsule.style.background = randomColor[0]; 
+            // 2. 커지는 공(줌인) 색상 변경 (그라디언트)
+            zoomBall.style.background = `radial-gradient(circle at 30% 30%, ${randomColor[0]}, ${randomColor[1]})`;
+
+            // --- [1단계] 즉각적인 시각 피드백 ---
             spinBtn.classList.add('spinning');
             signText.innerText = "กำลังวิเคราะห์...";
             signText.style.color = "#fff";
@@ -183,16 +231,18 @@
             // 0.3초 후 캡슐 낙하
             setTimeout(() => { dispenser.classList.add('drop'); }, 300);
 
-            // 0.9초 후 로딩 화면 진입 (줌인 효과)
+            // 0.9초 후 로딩 화면 진입 (줌인)
             setTimeout(() => {
                 overlay.style.display = 'flex';
+                // 로고 표시
+                loadingLogo.classList.add('visible'); 
                 zoomBall.classList.add('zoom-in');
             }, 900);
 
             // 2초 후 로딩 바 및 텍스트 표시 & 게이지 시작
             setTimeout(() => {
                 analysisInfo.style.display = 'flex';
-                startFakeLoading(); // 90%까지 천천히 차오르는 가짜 로딩 시작
+                startFakeLoading(); 
             }, 2000);
 
             // --- [2단계] 백그라운드에서 API 호출 ---
@@ -207,12 +257,8 @@
                 if (response.ok) {
                     const data = await response.json(); 
                     console.log("✅ API Success:", data);
-
-                    // API 완료 시: 로딩바 100%로 채우고 이동
                     completeLoadingAndRedirect(resultId);
-
                 } else {
-                    // 실패 시 (코인 부족 등): 로딩 취소 및 복구
                     handleError(response);
                 }
             } catch (err) {
@@ -221,20 +267,12 @@
             }
         });
 
-        // 90%까지만 천천히 차오르는 함수 (API 응답 대기용)
         function startFakeLoading() {
             let progress = 0;
             let stepIdx = 0;
-            
             fakeProgressInterval = setInterval(() => {
-                // 90%에서 멈춤 (API가 늦어질 경우를 대비)
-                if (progress < 90) {
-                    progress += Math.random() * 2; 
-                }
-                
+                if (progress < 90) progress += Math.random() * 2; 
                 progressBar.style.width = progress + '%';
-                
-                // 텍스트 순환
                 if (progress > (stepIdx + 1) * 20 && stepIdx < steps.length - 1) {
                     stepIdx++;
                     updateLoadingText(steps[stepIdx]);
@@ -242,19 +280,15 @@
             }, 150);
         }
 
-        // 로딩 완료 후 이동
         function completeLoadingAndRedirect(resultId) {
-            clearInterval(fakeProgressInterval); // 가짜 로딩 중단
-            progressBar.style.width = '100%'; // 100% 채움
+            clearInterval(fakeProgressInterval); 
+            progressBar.style.width = '100%'; 
             updateLoadingText("เรียบร้อยแล้ว!"); 
-
-            // 0.5초 뒤 페이지 이동
             setTimeout(() => {
                 window.location.href = `/result/gacha/${resultId}`;
             }, 500);
         }
 
-        // 텍스트 부드럽게 변경
         function updateLoadingText(text) {
             loadingMsg.style.opacity = 0;
             setTimeout(() => {
@@ -263,26 +297,20 @@
             }, 300);
         }
 
-        // 에러 처리 핸들러
         async function handleError(response) {
             const errData = await response.json().catch(() => ({}));
-            
-            // 로딩 화면 숨김
             overlay.style.display = 'none';
             zoomBall.classList.remove('zoom-in');
+            loadingLogo.classList.remove('visible'); // 로고 숨김
             
-            // 코인 부족 팝업
             if (response.status === 403) {
                 showCoinAlert(); 
             } else {
                 alert("Error: " + (errData.message || "Server Error"));
             }
-            
-            // UI 초기화
             resetUI();
         }
 
-        // UI 초기화 (실패 시)
         function resetUI(alertMsg) {
             if(alertMsg) alert(alertMsg);
             clearInterval(fakeProgressInterval);
@@ -291,6 +319,7 @@
             overlay.style.display = 'none';
             analysisInfo.style.display = 'none';
             zoomBall.classList.remove('zoom-in');
+            loadingLogo.classList.remove('visible'); // 로고 숨김
             signText.innerText = "ตู้สุ่มดวงเกาหลี";
             signText.style.color = "#ffd700";
             progressBar.style.width = '0%';

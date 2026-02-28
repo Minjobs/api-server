@@ -10,6 +10,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS는 기존과 동일 (밝기 보정 버전 유지) */
         :root { 
             --wood-dark: #3e2723; 
             --wood-medium: #5d4037; 
@@ -22,7 +23,7 @@
         .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background-image: url('/background.jpg'); background-size: cover; background-position: center; }
         .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; backdrop-filter: blur(10px) brightness(0.7); background: rgba(0,0,0,0.5); }
         
-        .machine-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; transform: scale(0.95); margin: auto; }
+        .machine-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; transform: scale(0.95); margin: auto; transition: opacity 0.5s; }
         .sign-roof { width: 340px; height: 35px; background: var(--wood-dark); border-radius: 18px 18px 0 0; border-bottom: 4px solid #2c1b15; background-image: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.3) 50%), linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); background-size: 18px 100%, 100% 100%; z-index: 6; }
         .machine-sign { width: 300px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); border: 6px solid var(--wood-dark); border-top: none; padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass); position: relative; }
         .machine-sign::after, .machine-body::after, .control-panel::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: var(--wood-grain); pointer-events: none; opacity: 0.4; }
@@ -50,6 +51,7 @@
         .dropped-capsule { position: absolute; top: -60px; left: 50%; width: 38px; height: 38px; background: var(--capsule-gold); border-radius: 50%; transform: translateX(-50%); box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4); transition: top 0.6s cubic-bezier(0.5, 0.1, 0.3, 1.5); }
         .dispenser-slot.drop .dropped-capsule { top: 4px; }
         
+        /* 로딩 레이어 스타일 */
         .effect-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
         .lucky-ball-zoom { width: 80px; height: 80px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b); box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); transform: scale(0); opacity: 0; z-index: 10000; }
         .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
@@ -68,7 +70,7 @@
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
-    <div class="machine-wrapper">
+    <div class="machine-wrapper" id="machineWrapper">
         <div class="sign-roof"></div>
         <div class="machine-sign"><h1 id="signText">ตู้สุ่มดวงเกาหลี</h1></div>
 
@@ -115,7 +117,7 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 캡슐볼 생성
+        // 1. 캡슐볼 생성 (비주얼)
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
@@ -153,7 +155,8 @@
         const analysisInfo = document.getElementById('analysisInfo');
         const loadingMsg = document.getElementById('loadingMsg');
         const progressBar = document.getElementById('progressBar');
-        const signText = document.getElementById('signText'); // 간판 텍스트
+        const signText = document.getElementById('signText');
+        const machineWrapper = document.getElementById('machineWrapper');
 
         const steps = [
             "กำลังเชื่อมต่อกับดวงดาว...", 
@@ -162,7 +165,9 @@
             "เกือบเสร็จแล้ว... โปรดรอสักครู่" 
         ];
 
-        // 4. 클릭 핸들러
+        let fakeProgressInterval = null;
+
+        // 4. [핵심] 클릭 핸들러: 즉시 애니메이션 실행 후 API 대기
         spinBtn.addEventListener('click', async () => {
             const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
@@ -170,99 +175,125 @@
 
             const resultId = generateUUID();
             
-            // ✅ [즉각 반응 1] 레버 돌리기 & 텍스트 변경 (사용자에게 처리 중임을 알림)
+            // --- [1단계] 즉각적인 시각 피드백 (API 대기 전) ---
             spinBtn.classList.add('spinning');
-            signText.innerText = "กำลังวิเคราะห์..."; // 분석 중...
-            signText.style.color = "#fff"; // 색상 변경으로 눈에 띄게
+            signText.innerText = "กำลังวิเคราะห์...";
+            signText.style.color = "#fff";
 
-            console.log("🚀 [Step 1] Request Start - ID:", resultId);
-            
+            // 0.3초 후 캡슐 낙하
+            setTimeout(() => { dispenser.classList.add('drop'); }, 300);
+
+            // 0.9초 후 로딩 화면 진입 (줌인 효과)
+            setTimeout(() => {
+                overlay.style.display = 'flex';
+                zoomBall.classList.add('zoom-in');
+            }, 900);
+
+            // 2초 후 로딩 바 및 텍스트 표시 & 게이지 시작
+            setTimeout(() => {
+                analysisInfo.style.display = 'flex';
+                startFakeLoading(); // 90%까지 천천히 차오르는 가짜 로딩 시작
+            }, 2000);
+
+            // --- [2단계] 백그라운드에서 API 호출 ---
             try {
-                // ✅ [Step 2] API 호출 (5~10초 소요)
+                console.log("🚀 API Request Start...");
                 const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({ resultId: resultId, birthDate: `${beYear}-01-01` })
                 });
 
-                console.log("📩 [Step 2] Response Status:", response.status);
-
                 if (response.ok) {
                     const data = await response.json(); 
-                    console.log("✅ [Step 3] Success Data:", data);
+                    console.log("✅ API Success:", data);
 
-                    // 성공 시 애니메이션 시퀀스
-                    setTimeout(() => { dispenser.classList.add('drop'); }, 300); // 캡슐 낙하
-
-                    setTimeout(() => {
-                        overlay.style.display = 'flex'; // 오버레이 표시
-                        // requestAnimationFrame을 써서 display 적용 후 클래스 추가 보장
-                        requestAnimationFrame(() => {
-                            zoomBall.classList.add('zoom-in');
-                        });
-                    }, 900); 
-
-                    setTimeout(() => {
-                        analysisInfo.style.display = 'flex';
-                        startLoadingUI(); 
-                    }, 2000);
-
-                    // 4.5초 뒤 페이지 이동
-                    setTimeout(() => {
-                        finishLoading(() => {
-                            console.log("🌏 [Step 4] Redirecting...");
-                            window.location.href = `/result/gacha/${resultId}`;
-                        });
-                    }, 4500);
+                    // API 완료 시: 로딩바 100%로 채우고 이동
+                    completeLoadingAndRedirect(resultId);
 
                 } else {
-                    // 실패 시 복구
-                    spinBtn.classList.remove('spinning');
-                    signText.innerText = "ตู้สุ่มดวงเกาหลี"; // 텍스트 원복
-                    signText.style.color = "#ffd700";
-
-                    if (response.status === 403) {
-                        showCoinAlert(); 
-                    } else {
-                        const errData = await response.json().catch(() => ({}));
-                        alert("Error: " + (errData.message || "Server Error"));
-                    }
+                    // 실패 시 (코인 부족 등): 로딩 취소 및 복구
+                    handleError(response);
                 }
             } catch (err) {
-                console.error("🔥 [Error]:", err);
-                spinBtn.classList.remove('spinning');
-                signText.innerText = "ตู้สุ่มดวงเกาหลี";
-                signText.style.color = "#ffd700";
-                alert("เกิดข้อผิดพลาดในการเชื่อมต่อ (Connection Error)");
+                console.error("🔥 API Error:", err);
+                resetUI("เกิดข้อผิดพลาดในการเชื่อมต่อ");
             }
         });
 
-        function startLoadingUI() {
+        // 90%까지만 천천히 차오르는 함수 (API 응답 대기용)
+        function startFakeLoading() {
             let progress = 0;
             let stepIdx = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 8; 
-                if (progress > 95) {
-                    progress = 95; 
-                    clearInterval(interval);
+            
+            fakeProgressInterval = setInterval(() => {
+                // 90%에서 멈춤 (API가 늦어질 경우를 대비)
+                if (progress < 90) {
+                    progress += Math.random() * 2; 
                 }
+                
                 progressBar.style.width = progress + '%';
                 
+                // 텍스트 순환
                 if (progress > (stepIdx + 1) * 20 && stepIdx < steps.length - 1) {
                     stepIdx++;
-                    loadingMsg.style.opacity = 0;
-                    setTimeout(() => {
-                        loadingMsg.innerText = steps[stepIdx];
-                        loadingMsg.style.opacity = 1;
-                    }, 300);
+                    updateLoadingText(steps[stepIdx]);
                 }
+            }, 150);
+        }
+
+        // 로딩 완료 후 이동
+        function completeLoadingAndRedirect(resultId) {
+            clearInterval(fakeProgressInterval); // 가짜 로딩 중단
+            progressBar.style.width = '100%'; // 100% 채움
+            updateLoadingText("เรียบร้อยแล้ว!"); 
+
+            // 0.5초 뒤 페이지 이동
+            setTimeout(() => {
+                window.location.href = `/result/gacha/${resultId}`;
+            }, 500);
+        }
+
+        // 텍스트 부드럽게 변경
+        function updateLoadingText(text) {
+            loadingMsg.style.opacity = 0;
+            setTimeout(() => {
+                loadingMsg.innerText = text;
+                loadingMsg.style.opacity = 1;
             }, 300);
         }
 
-        function finishLoading(callback) {
-            progressBar.style.width = '100%';
-            loadingMsg.innerText = "เรียบร้อยแล้ว!"; 
-            setTimeout(callback, 500);
+        // 에러 처리 핸들러
+        async function handleError(response) {
+            const errData = await response.json().catch(() => ({}));
+            
+            // 로딩 화면 숨김
+            overlay.style.display = 'none';
+            zoomBall.classList.remove('zoom-in');
+            
+            // 코인 부족 팝업
+            if (response.status === 403) {
+                showCoinAlert(); 
+            } else {
+                alert("Error: " + (errData.message || "Server Error"));
+            }
+            
+            // UI 초기화
+            resetUI();
+        }
+
+        // UI 초기화 (실패 시)
+        function resetUI(alertMsg) {
+            if(alertMsg) alert(alertMsg);
+            clearInterval(fakeProgressInterval);
+            spinBtn.classList.remove('spinning');
+            dispenser.classList.remove('drop');
+            overlay.style.display = 'none';
+            analysisInfo.style.display = 'none';
+            zoomBall.classList.remove('zoom-in');
+            signText.innerText = "ตู้สุ่มดวงเกาหลี";
+            signText.style.color = "#ffd700";
+            progressBar.style.width = '0%';
         }
     </script>
 </body>

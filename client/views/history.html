@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* ✅ 홈페이지와 동일한 깊은 검은색 톤으로 수정 */
             --bg-overlay: rgba(0, 0, 0, 0.85); 
             --text-white: #ffffff;  
             --point-gold: #ffd700;
@@ -38,7 +37,6 @@
             backdrop-filter: blur(15px) brightness(0.6);
         }
 
-        /* --- [메인 컨테이너: 홈페이지와 동일한 묵직함 적용] --- */
         .container {
             width: 90%; max-width: 440px; 
             margin: 40px 0;
@@ -47,7 +45,7 @@
             padding: 30px 20px 45px 20px;
             box-sizing: border-box;
             backdrop-filter: blur(20px); 
-            border: 2px solid var(--point-gold); /* 금색 테두리로 포인트 */
+            border: 2px solid var(--point-gold); 
             box-shadow: 0 20px 60px rgba(0,0,0,0.8);
             text-align: center;
         }
@@ -56,11 +54,10 @@
             width: 100%; display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 30px; padding: 0 10px;
         }
-        .logo {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.5rem; font-weight: 800;
-            color: var(--text-white); cursor: pointer;
-        }
-        .logo span { color: var(--point-gold); }
+
+        /* ✅ [수정] 텍스트 스타일 제거 및 이미지 로고 스타일 적용 */
+        .logo { cursor: pointer; display: flex; align-items: center; }
+        .logo img { height: 35px; width: auto; object-fit: contain; }
 
         .back-btn {
             font-size: 0.9rem; color: var(--point-gold); text-decoration: none;
@@ -75,7 +72,6 @@
             width: 100%; display: flex; flex-direction: column; gap: 12px;
         }
 
-        /* 히스토리 카드 디자인 강화 */
         .history-card {
             background: var(--card-glass);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -133,7 +129,9 @@
 
     <div class="container">
         <header>
-            <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
+            <div class="logo" onclick="location.href='/'">
+                <img src="/textlogo.png" alt="Saju Logo">
+            </div>
             <a href="/profile" class="back-btn">← กลับ (Back)</a>
         </header>
 

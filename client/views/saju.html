@@ -17,13 +17,37 @@
             --border-line: rgba(200, 200, 200, 0.8); 
             --input-bg: rgba(255, 255, 255, 0.1);
         }
-        body { margin: 0; padding: 0; background-color: #0a0a0a; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
-        .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.8; }
-        .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(0.9); -webkit-backdrop-filter: blur(7px) brightness(0.9); }
+        
+        body { 
+            margin: 0; padding: 0; 
+            /* ✅ [수정] 배경색을 검정(#0a0a0a)에서 밝은 톤(#f5f5f5)으로 변경 */
+            background-color: #f5f5f5; 
+            font-family: 'Kanit', sans-serif; 
+            color: var(--text-white); 
+            min-height: 100vh; 
+            display: flex; flex-direction: column; align-items: center; 
+            overflow-x: hidden; 
+        }
+
+        .background-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; 
+            background-image: url('/background.jpg'); 
+            background-size: cover; background-position: center; 
+            background-attachment: fixed; 
+            /* ✅ [수정] 오버레이 투명도 조절 (밝은 배경과 섞여서 더 화사해짐) */
+            opacity: 0.6; 
+        }
+
+        .background-blur { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
+            /* ✅ [수정] 밝기 필터 원상복구 (0.9 -> 1.0) */
+            backdrop-filter: blur(7px) brightness(1.0); 
+            -webkit-backdrop-filter: blur(7px) brightness(1.0); 
+        }
+
         .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 15px 15px 30px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
         
-        /* ✅ [수정] 텍스트 로고 대신 이미지 로고 스타일 적용 */
         .logo { cursor: pointer; display: flex; align-items: center; }
         .logo img { height: 35px; width: auto; object-fit: contain; }
 
@@ -161,7 +185,6 @@
             const inputSection = document.getElementById('inputSection');
             const dynamicText = document.getElementById('dynamicText');
 
-            // ✅ [수정] 페이지 타이틀 설정값 영문 제거 (키 값은 로직상 유지)
             const config = {
                 saju: { title: "ซาจู", desc: "วิเคราะห์ตัวตนและโชคชะตาเกาหลีแบบแม่นยำ" },
                 gacha: { title: "เสี่ยงทาย (Gacha)", desc: "สุ่มโชคชะตาประจำวันของคุณ" },
@@ -193,7 +216,6 @@
                 } catch (e) { console.log("분석 진행 중..."); }
             };
 
-            // 프로필 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -204,7 +226,6 @@
                 }
             } catch (e) { console.error(e); }
 
-            // 연도 설정
             const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
             const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
             
@@ -230,7 +251,6 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
-            // 입력값 검증 (태국어 메시지)
             const requiredInputs = document.querySelectorAll('input[required], select[required]');
             requiredInputs.forEach(input => {
                 input.oninvalid = function(e) {
@@ -244,7 +264,6 @@
                 };
             });
 
-            // 폼 제출 핸들러
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (isPolling) return;

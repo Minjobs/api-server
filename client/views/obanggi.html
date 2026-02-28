@@ -223,7 +223,6 @@
     <footer>© 2026 เมอร์ดู เค. บันทึกแห่งดวงดาว</footer>
 
     <script>
-        // ✅ 데이터 내 영문 제거 및 100% 태국어화
         const flags = [
             { 
                 src: '/flag/flag_red.png', 
@@ -257,6 +256,10 @@
             }
         ];
 
+        // ✅ [확률 보정] 덱 시스템 (Bag System) 변수 추가
+        // 5개 중 하나씩 뽑아 쓰다가 다 쓰면 다시 채우는 방식
+        let flagPool = [];
+
         const shakeBtn = document.getElementById('shakeBtn');
         const stage = document.getElementById('stage');
         const ritualView = document.getElementById('ritual-view');
@@ -266,6 +269,25 @@
         const sfxResult = document.getElementById('sfx-result');
 
         let isShaking = false;
+
+        // ✅ 덱 초기화 및 셔플 함수
+        function fillFlagPool() {
+            flagPool = [0, 1, 2, 3, 4]; // 5개 인덱스 충전
+            // 피셔-예이츠 셔플 (랜덤 섞기)
+            for (let i = flagPool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [flagPool[i], flagPool[j]] = [flagPool[j], flagPool[i]];
+            }
+        }
+
+        // ✅ 공정한 랜덤 뽑기 함수 (20% 확률 보장)
+        function getFairFlag() {
+            if (flagPool.length === 0) {
+                fillFlagPool();
+            }
+            const index = flagPool.pop(); // 하나 꺼내기
+            return flags[index];
+        }
 
         function startRitual() {
             if (isShaking) return;
@@ -291,7 +313,8 @@
                 sfxResult.play().catch(() => {}); 
             } catch(e){}
 
-            const result = flags[Math.floor(Math.random() * flags.length)];
+            // ✅ 기존 Math.random() 대신 보정된 함수 사용
+            const result = getFairFlag();
             showResult(result);
 
             shakeBtn.disabled = false;
@@ -324,7 +347,7 @@
             mainContainer.classList.remove('bad-luck');
             resultDisplay.style.display = 'none';
             ritualView.classList.remove('hidden');
-            shakeBtn.innerText = "เขย่าธง"; // ✅ [수정] 영문 제거
+            shakeBtn.innerText = "เขย่าธง"; 
         }
 
         function resetAndReload() {
@@ -336,7 +359,7 @@
                 title: 'สะเดาะเคราะห์สำเร็จ!',
                 html: 'ได้ทำการขอขมาต่อสิ่งศักดิ์สิทธิ์แล้ว<br>ร้ายจะกลายเป็นดี หนักจะกลายเป็นเบา',
                 icon: 'success',
-                confirmButtonText: 'สาธุ', // ✅ [수정] 영문 제거
+                confirmButtonText: 'สาธุ', 
                 confirmButtonColor: '#ff4757',
                 background: '#1a1a1a',
                 color: '#fff',

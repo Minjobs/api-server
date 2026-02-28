@@ -6,19 +6,21 @@
     <title>Saju - ดูดวงสมพงษ์ความรัก</title>
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <script src="/coinPopup.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
-        /* 기존 스타일 100% 동일 (건드리지 않음) */
+        /* 기존 스타일 100% 동일 유지 */
         :root { --bg-overlay: rgba(0, 0, 0, 0.38); --text-white: #ffffff; --point-gold: #ffd700; --heart-pink: #ff4757; --border-line: rgba(200, 200, 200, 0.8); --input-bg: rgba(255, 255, 255, 0.1); }
         body { margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Kanit', sans-serif; color: var(--text-white); min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; background-position: center; background-attachment: fixed; opacity: 0.8; }
         .background-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; backdrop-filter: blur(7px) brightness(1.0); }
         .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 20px 15px 40px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
         header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; box-sizing: border-box; }
-        .logo img { height: 55px; width: auto; cursor: pointer; }
+        
+        /* ✅ [수정] 로고 이미지 높이를 55px -> 35px로 변경 (다른 페이지와 통일) */
+        .logo img { height: 35px; width: auto; cursor: pointer; object-fit: contain; }
+        
         .back-link { font-size: 0.9rem; color: var(--point-gold); text-decoration: none; font-weight: 500; }
         .hero-section { text-align: center; margin-bottom: 30px; }
         .main-heart-icon { font-size: 4rem; filter: drop-shadow(0 0 15px var(--heart-pink)); animation: heartbeat 1.5s infinite ease-in-out; margin-bottom: 10px; display: block; }
@@ -263,13 +265,13 @@
                 if (response.ok) {
                     window.location.href = `/result/love/${resultId}`;
                 } else if (response.status === 403) {
-                    // ✅ 403 에러 -> 화면 복구 -> 공용 팝업 함수 실행
+                    // ✅ 코인 부족 시 복구 및 팝업
                     document.getElementById('loadingLayer').style.display = 'none';
                     document.getElementById('inputArea').classList.remove('hidden');
                     subBtn.disabled = false;
                     subBtn.innerText = "ดูผลทำนายความรัก 🪙 2";
                     
-                    showCoinAlert(); // 🔥 coinPopup.js에서 불러온 함수
+                    showCoinAlert(); 
                 } else {
                     throw new Error("Server error");
                 }

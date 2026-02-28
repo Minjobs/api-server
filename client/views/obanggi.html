@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MURDOO K - เสี่ยงทายธง 5 สี</title>
+    <title>เมอร์ดู เค - เสี่ยงทายธง 5 สี</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600;800&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         :root {
-            --bg-overlay: rgba(0, 0, 0, 0.75); 
+            --bg-overlay: rgba(0, 0, 0, 0.55); 
             --point-gold: #ffd700;
             --point-red: #ff4757;
             --text-white: #ffffff;
@@ -20,7 +20,7 @@
 
         body {
             margin: 0; padding: 0;
-            background-color: #050505;
+            background-color: #1a1a1a; 
             font-family: 'Kanit', sans-serif;
             color: var(--text-white);
             min-height: 100vh;
@@ -34,7 +34,7 @@
             z-index: -1;
             background-image: url('/background.jpg'); 
             background-size: cover; background-position: center;
-            opacity: 0.5; 
+            opacity: 0.7; 
         }
 
         .header-logo { margin-top: 25px; margin-bottom: 20px; z-index: 10; cursor: pointer; transition: 0.3s; }
@@ -47,10 +47,10 @@
             border-radius: 35px;
             padding: 35px 20px 45px 20px;
             box-sizing: border-box;
-            backdrop-filter: blur(15px);
+            backdrop-filter: blur(10px); 
             border: 2px solid var(--border-line);
             text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             margin-bottom: 40px;
             position: relative;
             overflow: hidden;
@@ -61,55 +61,48 @@
             font-size: 1.9rem; color: var(--point-gold); 
             text-shadow: var(--glow-gold); margin: 0 0 10px 0; 
         }
-        .intro-text p { font-size: 0.95rem; opacity: 0.8; font-weight: 300; line-height: 1.6; margin: 0 0 15px 0; }
+        .intro-text p { font-size: 0.95rem; opacity: 0.9; font-weight: 300; line-height: 1.6; margin: 0 0 15px 0; }
 
         .stage-wrapper {
-            height: 280px;
-            display: flex; justify-content: center; align-items: center;
+            min-height: 280px; 
+            display: flex; flex-direction: column; 
+            justify-content: center; align-items: center;
             position: relative;
-            margin: 0 auto;
+            margin: 20px auto;
             width: 100%;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
+            padding-bottom: 20px;
         }
 
-        .flag-bundle {
-            position: relative;
-            width: 200px; height: 180px;
-            transition: transform 0.1s;
+        .flag-rows {
+            display: flex; flex-direction: column; gap: 15px; 
+            align-items: center;
+            width: 100%;
+        }
+
+        .flag-row {
+            display: flex; justify-content: center; gap: 20px; 
+            width: 100%;
         }
 
         .flag-img {
-            position: absolute;
-            width: 75px; height: auto;
-            filter: drop-shadow(0 5px 12px rgba(0,0,0,0.6));
-            transition: all 0.6s ease;
-            transform-origin: bottom center;
+            width: 90px; 
+            height: auto;
+            filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+            position: relative; 
         }
 
-        /* 깃발 배치 */
-        .flag-img:nth-child(1) { transform: translate(0, 0) rotate(0deg); z-index: 3; } 
-        .flag-img:nth-child(2) { transform: translate(-35px, 10px) rotate(-15deg); z-index: 2; } 
-        .flag-img:nth-child(3) { transform: translate(35px, 10px) rotate(15deg); z-index: 2; } 
-        .flag-img:nth-child(4) { transform: translate(-65px, 25px) rotate(-30deg); z-index: 1; } 
-        .flag-img:nth-child(5) { transform: translate(65px, 25px) rotate(30deg); z-index: 1; } 
-
-        .shaking .flag-bundle {
-            animation: gentle-mix 1.5s ease-in-out infinite;
-        }
         .shaking .flag-img {
-            left: 50%; top: 50%;
-            margin-left: -37.5px; margin-top: -60px;
-            transform: translate(0,0) rotate(0deg) !important;
-            opacity: 0.9;
+            animation: shake-flag 0.2s infinite ease-in-out alternate;
         }
+        
+        .shaking .flag-img:nth-child(odd) { animation-delay: 0s; }
+        .shaking .flag-img:nth-child(even) { animation-delay: 0.1s; }
 
-        @keyframes gentle-mix {
-            0% { transform: rotate(0deg) translate(0px, 0px); }
-            25% { transform: rotate(5deg) translate(-8px, 5px); }
-            50% { transform: rotate(0deg) translate(0px, 10px); }
-            75% { transform: rotate(-5deg) translate(8px, 5px); }
-            100% { transform: rotate(0deg) translate(0px, 0px); }
+        @keyframes shake-flag {
+            0% { transform: rotate(-5deg) translateY(0); }
+            100% { transform: rotate(5deg) translateY(-2px); }
         }
 
         #result-display {
@@ -170,8 +163,6 @@
         @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
         
         footer { text-align: center; margin-top: 25px; color: rgba(255,255,255,0.3); font-size: 0.75rem; }
-        
-        #ritual-overlay { display: none; } /* 오버레이 제거 (디자인 깔끔하게) */
     </style>
 </head>
 <body>
@@ -182,7 +173,7 @@
     <audio id="sfx-result" src="/sound/result.mp3"></audio>
 
     <header class="header-logo" onclick="location.href='/'">
-        <img src="/textlogo.png" alt="MURDOO K">
+        <img src="/textlogo.png" alt="เมอร์ดู เค">
     </header>
 
     <main class="container">
@@ -194,12 +185,16 @@
             </div>
 
             <div class="stage-wrapper" id="stage">
-                <div class="flag-bundle" id="flagBundle">
-                    <img src="/flag/flag_yellow.png" class="flag-img" alt="Yellow">
-                    <img src="/flag/flag_blue.png" class="flag-img" alt="Blue">
-                    <img src="/flag/flag_red.png" class="flag-img" alt="Red">
-                    <img src="/flag/flag_white.png" class="flag-img" alt="White">
-                    <img src="/flag/flag_black.png" class="flag-img" alt="Black">
+                <div class="flag-rows">
+                    <div class="flag-row">
+                        <img src="/flag/flag_red.png" class="flag-img" alt="สีแดง">
+                        <img src="/flag/flag_white.png" class="flag-img" alt="สีขาว">
+                        <img src="/flag/flag_yellow.png" class="flag-img" alt="สีเหลือง">
+                    </div>
+                    <div class="flag-row">
+                        <img src="/flag/flag_blue.png" class="flag-img" alt="สีน้ำเงิน">
+                        <img src="/flag/flag_black.png" class="flag-img" alt="สีดำ">
+                    </div>
                 </div>
             </div>
 
@@ -225,10 +220,10 @@
 
     </main>
 
-    <footer>© 2026 MURDOO K. บันทึกแห่งดวงดาว</footer>
+    <footer>© 2026 เมอร์ดู เค. บันทึกแห่งดวงดาว</footer>
 
     <script>
-        // ✅ 영어 제거 및 태국어 최적화 완료
+        // ✅ 데이터 내 영문 제거 및 100% 태국어화
         const flags = [
             { 
                 src: '/flag/flag_red.png', 
@@ -329,7 +324,7 @@
             mainContainer.classList.remove('bad-luck');
             resultDisplay.style.display = 'none';
             ritualView.classList.remove('hidden');
-            shakeBtn.innerText = "เขย่าธง";
+            shakeBtn.innerText = "เขย่าธง"; // ✅ [수정] 영문 제거
         }
 
         function resetAndReload() {
@@ -341,7 +336,7 @@
                 title: 'สะเดาะเคราะห์สำเร็จ!',
                 html: 'ได้ทำการขอขมาต่อสิ่งศักดิ์สิทธิ์แล้ว<br>ร้ายจะกลายเป็นดี หนักจะกลายเป็นเบา',
                 icon: 'success',
-                confirmButtonText: 'สาธุ',
+                confirmButtonText: 'สาธุ', // ✅ [수정] 영문 제거
                 confirmButtonColor: '#ff4757',
                 background: '#1a1a1a',
                 color: '#fff',

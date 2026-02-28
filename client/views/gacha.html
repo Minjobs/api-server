@@ -26,7 +26,7 @@
         .sign-roof { width: 340px; height: 35px; background: var(--wood-dark); border-radius: 18px 18px 0 0; border-bottom: 4px solid #2c1b15; background-image: linear-gradient(to right, transparent 50%, rgba(0,0,0,0.3) 50%), linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); background-size: 18px 100%, 100% 100%; z-index: 6; }
         .machine-sign { width: 300px; background: linear-gradient(to bottom, var(--wood-medium), var(--wood-dark)); border: 6px solid var(--wood-dark); border-top: none; padding: 12px; border-radius: 0 0 12px 12px; margin-bottom: -15px; z-index: 5; box-shadow: 0 10px 20px rgba(0,0,0,0.6); text-align: center; color: var(--metal-brass); position: relative; }
         .machine-sign::after, .machine-body::after, .control-panel::after { content: ''; position: absolute; top:0; left:0; width:100%; height:100%; background: var(--wood-grain); pointer-events: none; opacity: 0.4; }
-        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; text-shadow: 1px 1px 2px #000; }
+        .machine-sign h1 { margin: 0; font-size: 1.6rem; color: #ffd700; text-shadow: 1px 1px 2px #000; transition: color 0.3s; }
         
         .machine-body { width: 330px; background: linear-gradient(to right, #4e342e, var(--wood-medium), #4e342e); border-radius: 30px; border: 7px solid var(--wood-dark); box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 25px 50px rgba(0,0,0,0.7); position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 30px; overflow: hidden; }
         .globe-container { width: 240px; height: 240px; position: relative; margin-bottom: 25px; z-index: 2; }
@@ -70,7 +70,7 @@
 
     <div class="machine-wrapper">
         <div class="sign-roof"></div>
-        <div class="machine-sign"><h1>ตู้สุ่มดวงเกาหลี</h1></div>
+        <div class="machine-sign"><h1 id="signText">ตู้สุ่มดวงเกาหลี</h1></div>
 
         <div class="machine-body">
             <div class="globe-container">
@@ -115,7 +115,7 @@
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
-        // 1. 캡슐볼 생성 (비주얼)
+        // 1. 캡슐볼 생성
         const glassGlobe = document.getElementById('glassGlobe');
         const colors = ['#c0392b', '#2980b9', '#f1c40f', '#27ae60', '#8e44ad', '#d35400'];
         for (let i = 0; i < 85; i++) { 
@@ -128,7 +128,7 @@
             glassGlobe.appendChild(capsule);
         }
 
-        // 2. 연도 선택 셀렉트박스 생성 (태국 불기)
+        // 2. 연도 선택
         const yearSelect = document.getElementById('birthYear');
         const currentYearBE = new Date().getFullYear() + 543; 
         for (let be = currentYearBE; be >= 2483; be--) {
@@ -145,7 +145,7 @@
             });
         }
 
-        // 3. 요소 가져오기
+        // 3. UI 요소
         const spinBtn = document.getElementById('spinBtn');
         const dispenser = document.getElementById('dispenser');
         const overlay = document.getElementById('overlay');
@@ -153,6 +153,7 @@
         const analysisInfo = document.getElementById('analysisInfo');
         const loadingMsg = document.getElementById('loadingMsg');
         const progressBar = document.getElementById('progressBar');
+        const signText = document.getElementById('signText'); // 간판 텍스트
 
         const steps = [
             "กำลังเชื่อมต่อกับดวงดาว...", 
@@ -161,71 +162,81 @@
             "เกือบเสร็จแล้ว... โปรดรอสักครู่" 
         ];
 
-        // 4. 레버 클릭 이벤트 핸들러
+        // 4. 클릭 핸들러
         spinBtn.addEventListener('click', async () => {
             const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
-            if (spinBtn.classList.contains('spinning')) return; // 중복 클릭 방지
+            if (spinBtn.classList.contains('spinning')) return; 
 
             const resultId = generateUUID();
             
-            // 시각적 효과: 레버 돌리기
+            // ✅ [즉각 반응 1] 레버 돌리기 & 텍스트 변경 (사용자에게 처리 중임을 알림)
             spinBtn.classList.add('spinning');
+            signText.innerText = "กำลังวิเคราะห์..."; // 분석 중...
+            signText.style.color = "#fff"; // 색상 변경으로 눈에 띄게
+
+            console.log("🚀 [Step 1] Request Start - ID:", resultId);
             
             try {
-                // API 호출 (코인 확인 및 분석 요청)
+                // ✅ [Step 2] API 호출 (5~10초 소요)
                 const response = await fetch('/api/gacha/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
                     body: JSON.stringify({ resultId: resultId, birthDate: `${beYear}-01-01` })
                 });
 
-                if (response.ok) {
-                    const data = await response.json(); // 데이터 수신 대기
+                console.log("📩 [Step 2] Response Status:", response.status);
 
-                    // 성공 시 애니메이션 시퀀스 실행
-                    setTimeout(() => { dispenser.classList.add('drop'); }, 300); // 1. 캡슐 낙하
+                if (response.ok) {
+                    const data = await response.json(); 
+                    console.log("✅ [Step 3] Success Data:", data);
+
+                    // 성공 시 애니메이션 시퀀스
+                    setTimeout(() => { dispenser.classList.add('drop'); }, 300); // 캡슐 낙하
 
                     setTimeout(() => {
-                        overlay.style.display = 'flex';
-                        zoomBall.classList.add('zoom-in');
-                    }, 900); // 2. 줌인 효과
+                        overlay.style.display = 'flex'; // 오버레이 표시
+                        // requestAnimationFrame을 써서 display 적용 후 클래스 추가 보장
+                        requestAnimationFrame(() => {
+                            zoomBall.classList.add('zoom-in');
+                        });
+                    }, 900); 
 
                     setTimeout(() => {
                         analysisInfo.style.display = 'flex';
-                        startLoadingUI(); // 3. 로딩바 시작
+                        startLoadingUI(); 
                     }, 2000);
 
-                    // 로딩바가 다 찰 때쯤 페이지 이동
+                    // 4.5초 뒤 페이지 이동
                     setTimeout(() => {
                         finishLoading(() => {
+                            console.log("🌏 [Step 4] Redirecting...");
                             window.location.href = `/result/gacha/${resultId}`;
                         });
                     }, 4500);
 
                 } else {
-                    // 실패 시 (코인 부족 등)
-                    spinBtn.classList.remove('spinning'); // 레버 멈춤
-                    
+                    // 실패 시 복구
+                    spinBtn.classList.remove('spinning');
+                    signText.innerText = "ตู้สุ่มดวงเกาหลี"; // 텍스트 원복
+                    signText.style.color = "#ffd700";
+
                     if (response.status === 403) {
-                        if (typeof showCoinAlert === 'function') {
-                            showCoinAlert(); 
-                        } else {
-                            alert("คอยน์ไม่พอ (Insufficient Coins)");
-                        }
+                        showCoinAlert(); 
                     } else {
                         const errData = await response.json().catch(() => ({}));
                         alert("Error: " + (errData.message || "Server Error"));
                     }
                 }
             } catch (err) {
-                console.error("Fetch Error:", err);
+                console.error("🔥 [Error]:", err);
                 spinBtn.classList.remove('spinning');
+                signText.innerText = "ตู้สุ่มดวงเกาหลี";
+                signText.style.color = "#ffd700";
                 alert("เกิดข้อผิดพลาดในการเชื่อมต่อ (Connection Error)");
             }
         });
 
-        // 로딩바 진행 함수
         function startLoadingUI() {
             let progress = 0;
             let stepIdx = 0;
@@ -248,7 +259,6 @@
             }, 300);
         }
 
-        // 로딩 완료 후 이동 처리
         function finishLoading(callback) {
             progressBar.style.width = '100%';
             loadingMsg.innerText = "เรียบร้อยแล้ว!"; 

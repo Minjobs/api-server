@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import db from '../config/db.js';
-import { LOVE_ASSET } from '../utils/promptTemplates.js'; // 👈 에셋 임포트
+import { LOVE_ASSET } from '../utils/promptTemplates.js'; 
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -62,7 +62,7 @@ export const analyzeLove = async (req, res) => {
             ],
             response_format: {
                 type: "json_schema",
-                json_schema: LOVE_ASSET.schema // 👈 에셋에 정의된 고퀄리티 스키마 적용
+                json_schema: LOVE_ASSET.schema 
             },
             temperature: 0.7
         });
@@ -75,7 +75,7 @@ export const analyzeLove = async (req, res) => {
         try {
             await conn.beginTransaction();
 
-            // 결과 저장 (세부 점수들이 포함된 loveResult 전체가 JSON으로 저장됨)
+            // 결과 저장
             await conn.execute(
                 `INSERT IGNORE INTO fortune_results 
                 (result_id, line_user_id, fortune_type, detail_data) 
@@ -83,9 +83,11 @@ export const analyzeLove = async (req, res) => {
                 [resultId, line_user_id, 'love', JSON.stringify(loveResult)]
             );
 
-            // 코인 2개 차감
+            // ✅ [수정] 코인 2개 차감 AND 사주 본 횟수(+1) 증가
             await conn.execute(
-                `UPDATE users SET coins = coins - 2 WHERE line_user_id = ?`,
+                `UPDATE users 
+                 SET coins = coins - 2, total_readings = total_readings + 1 
+                 WHERE line_user_id = ?`,
                 [line_user_id]
             );
 

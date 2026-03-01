@@ -37,10 +37,17 @@
 
         header { width: 100%; display: flex; justify-content: center; margin-bottom: 25px; }
         
-        /* ✅ [수정] 로고에 커서 스타일 추가 */
         .logo { cursor: pointer; transition: transform 0.2s; }
         .logo:active { transform: scale(0.95); }
         .logo img { height: 45px; }
+
+        /* ✅ [추가] 커플 닉네임 스타일 */
+        .couple-names {
+            text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--point-gold);
+            margin-bottom: 30px; font-family: 'Nanum Myeongjo', serif;
+            text-shadow: 0 2px 10px rgba(255, 71, 87, 0.4);
+        }
+        .couple-names span { color: var(--heart-pink); margin: 0 8px; font-size: 1.2rem; }
 
         /* --- 총점 원형 게이지 --- */
         .score-section { text-align: center; margin-bottom: 40px; }
@@ -113,6 +120,8 @@
                     <img src="/textlogo.png" alt="Saju">
                 </div>
             </header>
+
+            <h2 class="couple-names" id="coupleNames">...</h2>
 
             <section class="score-section">
                 <div class="score-circle-wrapper">
@@ -216,15 +225,20 @@
                 if (!response.ok) throw new Error("Result not found");
                 const data = await response.json();
 
-                // 1. 텍스트 매핑
+                // ✅ [추가] 닉네임 표시 로직
+                const myName = data.my_name || "คุณ";
+                const partnerName = data.partner_name || "คนรัก";
+                document.getElementById('coupleNames').innerHTML = `${myName} <span>♡</span> ${partnerName}`;
+
+                // 텍스트 매핑
                 const fields = ['chemistry', 'strengths', 'challenges', 'status_advice', 'future', 'boosters'];
                 fields.forEach(f => document.getElementById(f).innerText = data[f]);
 
-                // 2. 화면 전환
+                // 화면 전환
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('resultContent').classList.remove('hidden');
 
-                // 3. 메인 스코어 애니메이션
+                // 메인 스코어 애니메이션
                 setTimeout(() => {
                     const circumference = 502.4;
                     const offset = circumference - (data.score / 100) * circumference;
@@ -232,7 +246,7 @@
                     animateNumber('score', data.score);
                 }, 300);
 
-                // 4. 개별 항목 게이지 애니메이션
+                // 개별 항목 게이지 애니메이션
                 fields.forEach((f, i) => {
                     const score = data[`${f}_score`];
                     setTimeout(() => {

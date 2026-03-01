@@ -9,7 +9,7 @@ const activeLoveJobs = new Map();
 
 /**
  * 1. [POST] /api/love/analyze
- * LOVE_ASSET을 사용하여 AI 분석 및 코인 차감 진행
+ * LOVE_ASSET을 사용하여 AI 분석, 결과 저장(닉네임 포함), 코인 차감, 횟수 증가
  */
 export const analyzeLove = async (req, res) => {
     const { resultId, me, partner, relationship } = req.body;
@@ -69,7 +69,7 @@ export const analyzeLove = async (req, res) => {
 
         const aiResult = JSON.parse(completion.choices[0].message.content);
         
-        // ✅ [핵심 수정] AI 결과에 입력받은 닉네임을 확실하게 병합 (오류 방지)
+        // ✅ [핵심] AI 결과에 입력받은 닉네임을 확실하게 병합 (히스토리 표시에 사용)
         const loveResult = {
             ...aiResult,
             my_name: me.name,       // 입력받은 내 닉네임 강제 주입
@@ -90,7 +90,7 @@ export const analyzeLove = async (req, res) => {
                 [resultId, line_user_id, 'love', JSON.stringify(loveResult)]
             );
 
-            // 코인 2개 차감 AND 사주 본 횟수(+1) 증가
+            // ✅ [수정] 코인 2개 차감 AND 사주 본 횟수(+1) 증가
             await conn.execute(
                 `UPDATE users 
                  SET coins = coins - 2, total_readings = total_readings + 1 
@@ -119,6 +119,7 @@ export const analyzeLove = async (req, res) => {
 
 /**
  * 2. [GET] /api/love/result/:id
+ * 특정 결과 조회
  */
 export const getLoveResult = async (req, res) => {
     try {
@@ -142,5 +143,38 @@ export const getLoveResult = async (req, res) => {
     } catch (err) {
         console.error('❌ 결과 조회 실패:', err);
         res.status(500).json({ error: 'Database error' });
+    }
+};
+
+/**
+ * 3. [GET] /api/fortune/history
+ * 전체 히스토리 목록 조회 (닉네임 표시를 위해 details 포함)
+ */
+export const getFortuneHistory = async (req, res) => {
+    try {
+        const line_user_id = req.user.userId;
+        const [rows] = await db.execute(
+            `SELECT result_id, fortune_type, detail_data, created_at 
+             FROM fortune_results 
+             WHERE line_user_id = ? 
+             ORDER BY created_at DESC`,
+            [line_user_id]
+        );
+
+        const history = rows.map(row => {
+            const details = typeof row.detail_data === 'string' ? JSON.parse(row.detail_data) : row.detail_data;
+            return {
+                result_id: row.result_id,
+                fortune_type: row.fortune_type,
+                summary: details.summary || "ดูดวงส่วนตัว", // 기본 요약 텍스트
+                created_at: row.created_at,
+                details: details // ✅ [핵심] 프론트엔드에서 닉네임을 꺼낼 수 있도록 전체 데이터 포함
+            };
+        });
+
+        res.json(history);
+    } catch (err) {
+        console.error('❌ 히스토리 조회 실패:', err);
+        res.status(500).json({ error: 'Database error', message: err.message });
     }
 };

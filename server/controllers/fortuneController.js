@@ -64,7 +64,7 @@ export const analyzeFortune = async (req, res) => {
 
         const fortuneData = JSON.parse(completion.choices[0].message.content);
 
-        // --- [Step 3] 트랜잭션 시작 (DB 저장 + 코인 차감) ---
+        // --- [Step 3] 트랜잭션 시작 (DB 저장 + 코인 차감 + 횟수 증가) ---
         await conn.beginTransaction();
 
         // 1. 결과 저장
@@ -75,9 +75,11 @@ export const analyzeFortune = async (req, res) => {
             [resultId, line_user_id, type, JSON.stringify(fortuneData)]
         );
 
-        // 2. 코인 차감
+        // 2. 코인 차감 및 사주 본 횟수(+1) 증가
         await conn.execute(
-            `UPDATE users SET coins = coins - ? WHERE line_user_id = ?`,
+            `UPDATE users 
+             SET coins = coins - ?, total_readings = total_readings + 1 
+             WHERE line_user_id = ?`,
             [COST, line_user_id]
         );
 

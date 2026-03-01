@@ -160,21 +160,23 @@
                     list.forEach(item => {
                         const date = new Date(item.created_at);
                         
-                        // ✅ [수정] 날짜와 시간(시:분)까지 표시하도록 변경
+                        // ✅ [핵심 수정] timeZone: 'UTC' 옵션을 사용해
+                        // 브라우저가 시차를 계산하지 않고 DB에 저장된 시간 그대로 출력하게 함
                         const thaiDate = date.toLocaleString('th-TH', { 
+                            timeZone: 'UTC', 
                             day: 'numeric', 
                             month: 'short', 
                             year: 'numeric',
                             hour: '2-digit', 
                             minute: '2-digit',
-                            hour12: false // 24시간제 사용
+                            hour12: false // 24시간제
                         });
 
                         const card = document.createElement('div');
                         card.className = 'history-card';
                         card.onclick = () => location.href = `/result/${item.fortune_type}/${item.result_id}`;
                         
-                        // 타입 영문 -> 태국어 변환 (선택사항, 필요 없으면 제거 가능)
+                        // 타입 영문 -> 태국어 변환
                         let typeLabel = item.fortune_type.toUpperCase();
                         if(item.fortune_type === 'gacha') typeLabel = 'GACHA (สุ่มดวง)';
                         else if(item.fortune_type === 'saju') typeLabel = 'SAJU (ซาจู)';
@@ -184,7 +186,8 @@
                             <div class="info-area">
                                 <div class="fortune-type">${typeLabel}</div>
                                 <div class="fortune-summary">${item.summary || "บันทึกโชคชะตา"}</div>
-                                <div class="date-area">${thaiDate}</div> </div>
+                                <div class="date-area">${thaiDate}</div>
+                            </div>
                             <div class="arrow-icon">❯</div>
                         `;
                         container.appendChild(card);

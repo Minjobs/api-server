@@ -26,7 +26,6 @@
             overflow-x: hidden;
         }
 
-        /* --- [배경 레이어] --- */
         .background-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
@@ -42,7 +41,6 @@
             -webkit-backdrop-filter: blur(8px) brightness(0.9);
         }
 
-        /* --- [메인 컨테이너] --- */
         .container {
             width: 88%; max-width: 440px; 
             margin: 20px 0;
@@ -60,11 +58,10 @@
             width: 100%; display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 25px; padding: 0 5px;
         }
-        .logo {
-            font-family: 'Nanum Myeongjo', serif; font-size: 1.4rem; font-weight: 800;
-            color: var(--text-white); cursor: pointer;
-        }
-        .logo span { color: #ffd700; }
+
+        /* ✅ [수정] 텍스트 스타일 제거 -> 이미지 로고 스타일 적용 */
+        .logo { cursor: pointer; display: flex; align-items: center; }
+        .logo img { height: 32px; width: auto; object-fit: contain; }
 
         .profile-circle { 
             width: 40px; height: 40px; border-radius: 50%; overflow: hidden; 
@@ -72,7 +69,6 @@
         }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* --- [결과 요약 박스: 흰색 배경 + 검은 글씨] --- */
         .summary-box {
             background-color: var(--card-white);
             border-radius: 25px;
@@ -91,7 +87,6 @@
             color: var(--text-black);
         }
 
-        /* --- [상세 카드: 흰색 배경 + 검은 글씨] --- */
         .detail-list { display: flex; flex-direction: column; gap: 15px; }
 
         .detail-item {
@@ -120,7 +115,6 @@
             font-weight: 400; white-space: pre-wrap;
         }
 
-        /* --- [하단 버튼] --- */
         .action-group { margin-top: 30px; display: flex; flex-direction: column; gap: 12px; }
         .btn {
             width: 100%; padding: 16px; border-radius: 20px; border: none;
@@ -165,7 +159,9 @@
 
     <div class="container">
         <header>
-            <div class="logo" onclick="location.href='/'">MURDOO <span>K</span></div>
+            <div class="logo" onclick="location.href='/'">
+                <img src="/textlogo.png" alt="Saju Logo">
+            </div>
             <div class="profile-circle" onclick="location.href='/profile'">
                 <img id="userAvatar" src="/avatar.png" alt="Profile">
             </div>
@@ -180,8 +176,8 @@
             <div class="detail-list" id="detailContainer"></div>
 
             <div class="action-group">
-                <button class="btn btn-main" onclick="location.href='/'">ดูดวงอื่นต่</button>
-                <button class="btn btn-sub" onclick="shareResult()">แชร์ผลทำนาย </button>
+                <button class="btn btn-main" onclick="location.href='/'">ดูดวงอื่นต่อ</button>
+                <button class="btn btn-sub" onclick="shareResult()">แชร์ผลทำนาย</button>
             </div>
         </main>
 
@@ -241,25 +237,22 @@
             }
         });
 
-        // [핵심] 모바일 전용 앱 공유 기능
         async function shareResult() {
             const shareData = {
                 title: 'MURDOO K - บันทึกโชคชะตาของคุณ',
-                text: 'มาดูผลทำนายดวงชะตาเกาหลี의 내 결과 확인해봐! ✨',
+                text: 'มาดูผลทำนายดวงชะตาเกาหลีของฉันสิ! ✨',
                 url: window.location.href
             };
 
             try {
-                // 브라우저가 시스템 공유 기능을 지원하는지 확인 (대부분의 최신 모바일 브라우저 지원)
                 if (navigator.share) {
                     await navigator.share(shareData);
                 } else {
-                    // PC 등 미지원 브라우저일 경우에만 링크 복사로 보조
                     await navigator.clipboard.writeText(window.location.href);
-                    alert("เบราว์เซอร์นี้ไม่รองรับการแชร์โดยตรง ระบบได้คัดลอกลิงก์ให้คุณแล้ว!");
+                    alert("คัดลอกลิงก์เรียบร้อยแล้ว!");
                 }
             } catch (err) {
-                console.log('Share failed or cancelled:', err);
+                console.log('Share failed:', err);
             }
         }
     </script>

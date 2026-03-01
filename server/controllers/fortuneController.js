@@ -14,7 +14,7 @@ export const analyzeFortune = async (req, res) => {
     const line_user_id = req.user ? req.user.userId : null;
     const { resultId, type, realName, nickName, birthDate, birthTime, gender } = req.body;
     
-    // ✅ [수정] 가격 변경 (3 -> 2)
+    // ✅ 가격 (2코인)
     const COST = 2; 
 
     console.log(`📥 요청 데이터: [ID: ${resultId}] [User: ${line_user_id}]`);
@@ -127,6 +127,7 @@ export const getFortuneResult = async (req, res) => {
 
 /**
  * 3. [GET] /api/fortune/history
+ * ✅ 프론트엔드에서 닉네임을 표시할 수 있도록 details 필드 추가됨
  */
 export const getFortuneHistory = async (req, res) => {
     try {
@@ -145,7 +146,8 @@ export const getFortuneHistory = async (req, res) => {
                 result_id: row.result_id,
                 fortune_type: row.fortune_type,
                 summary: details.summary || "ดูดวงส่วนตัว",
-                created_at: row.created_at
+                created_at: row.created_at,
+                details: details // ✅ [핵심 추가] 이 부분이 있어야 프론트에서 닉네임을 꺼낼 수 있음
             };
         });
 

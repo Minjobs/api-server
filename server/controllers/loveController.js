@@ -67,7 +67,14 @@ export const analyzeLove = async (req, res) => {
             temperature: 0.7
         });
 
-        const loveResult = JSON.parse(completion.choices[0].message.content);
+        const aiResult = JSON.parse(completion.choices[0].message.content);
+        
+        // ✅ [핵심 수정] AI 결과에 입력받은 닉네임을 확실하게 병합 (오류 방지)
+        const loveResult = {
+            ...aiResult,
+            my_name: me.name,       // 입력받은 내 닉네임 강제 주입
+            partner_name: partner.name // 입력받은 상대 닉네임 강제 주입
+        };
         // ------------------------------------------
 
         // [5] DB 저장 및 코인 차감 (트랜잭션)
@@ -83,7 +90,7 @@ export const analyzeLove = async (req, res) => {
                 [resultId, line_user_id, 'love', JSON.stringify(loveResult)]
             );
 
-            // ✅ [수정] 코인 2개 차감 AND 사주 본 횟수(+1) 증가
+            // 코인 2개 차감 AND 사주 본 횟수(+1) 증가
             await conn.execute(
                 `UPDATE users 
                  SET coins = coins - 2, total_readings = total_readings + 1 

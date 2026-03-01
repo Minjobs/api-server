@@ -21,7 +21,7 @@ export const LOVE_ASSET = {
                 3. Accessibility: Explain harmony using natural flow metaphors (e.g., "Water nourishing a tree") to make it intuitive for Thai users.
                 4. Addressing: Use "คุณ" for the user and refer to the partner's nickname naturally.
                 5. Context: Provide deeply personalized advice tailored to their current relationship status: ${relationship}.
-                6. Quality & Volume: This is a premium paid service. Each text section (chemistry, strengths, challenges, status_advice, future, boosters) MUST be very detailed and contain **AT LEAST 400 characters** to ensure high value for the customer.
+                6. Quality & Volume: This is a premium paid service. Each text section MUST be very detailed (Min 400 chars).
             `,
             user: `
                 [Korean Saju Destiny Data - Years in Buddhist Era (พ.ศ.)]
@@ -30,10 +30,9 @@ export const LOVE_ASSET = {
                 - Current Relationship Status: ${relationship}
 
                 [Request]
-                1. Convert the B.E. years to A.D. and analyze the interaction of their 5 Elements based on authentic Korean Saju principles.
-                2. Focus on spiritual synchronicity, energy flow, and their future path as a couple.
-                3. Provide a quality score (0-100) for each individual section.
-                4. Return the analysis strictly following the provided JSON schema.
+                1. Convert the B.E. years to A.D. and analyze the interaction of their 5 Elements.
+                2. Return the analysis strictly following the provided JSON schema.
+                3. IMPORTANT: Include the provided names in the 'my_name' and 'partner_name' fields exactly as they are.
             `
         };
     },
@@ -45,42 +44,26 @@ export const LOVE_ASSET = {
         schema: {
             type: "object",
             properties: {
-                score: { 
-                    type: "number", 
-                    description: "Overall compatibility score from 0 to 100" 
-                },
-                chemistry: { 
-                    type: "string", 
-                    description: "Overall harmony and energy flow analysis (Min 400 chars, in Thai)" 
-                },
+                // ✅ [추가] 닉네임 필드 추가
+                my_name: { type: "string", description: "User's nickname provided in input" },
+                partner_name: { type: "string", description: "Partner's nickname provided in input" },
+                
+                score: { type: "number", description: "Overall compatibility score from 0 to 100" },
+                chemistry: { type: "string", description: "Overall harmony and energy flow analysis (Min 400 chars, in Thai)" },
                 chemistry_score: { type: "number" },
-                strengths: { 
-                    type: "string", 
-                    description: "Positive aspects and strengths of the couple (Min 400 chars, in Thai)" 
-                },
+                strengths: { type: "string", description: "Positive aspects and strengths of the couple (Min 400 chars, in Thai)" },
                 strengths_score: { type: "number" },
-                challenges: { 
-                    type: "string", 
-                    description: "Potential conflicts or lessons to learn (Min 400 chars, in Thai)" 
-                },
+                challenges: { type: "string", description: "Potential conflicts or lessons to learn (Min 400 chars, in Thai)" },
                 challenges_score: { type: "number" },
-                status_advice: { 
-                    type: "string", 
-                    description: "Tailored advice based on current status (Min 400 chars, in Thai)" 
-                },
+                status_advice: { type: "string", description: "Tailored advice based on current status (Min 400 chars, in Thai)" },
                 status_advice_score: { type: "number" },
-                future: { 
-                    type: "string", 
-                    description: "Predicted future path (Min 400 chars, in Thai)" 
-                },
+                future: { type: "string", description: "Predicted future path (Min 400 chars, in Thai)" },
                 future_score: { type: "number" },
-                boosters: { 
-                    type: "string", 
-                    description: "Lucky items, colors, or actions (Min 400 chars, in Thai)" 
-                },
+                boosters: { type: "string", description: "Lucky items, colors, or actions (Min 400 chars, in Thai)" },
                 boosters_score: { type: "number" }
             },
             required: [
+                "my_name", "partner_name", // ✅ 필수 항목 추가
                 "score", "chemistry", "chemistry_score", "strengths", "strengths_score", 
                 "challenges", "challenges_score", "status_advice", "status_advice_score", 
                 "future", "future_score", "boosters", "boosters_score"
@@ -89,6 +72,7 @@ export const LOVE_ASSET = {
         }
     }
 };
+
 
 
 /**

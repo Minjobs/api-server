@@ -20,7 +20,6 @@
         
         body { 
             margin: 0; padding: 0; 
-            /* home.html과 동일한 배경색 */
             background-color: #f5f5f5; 
             font-family: 'Kanit', sans-serif; 
             color: var(--text-white); 
@@ -34,18 +33,23 @@
             background-image: url('/background.jpg'); 
             background-size: cover; background-position: center; 
             background-attachment: fixed; 
-            /* ✅ [수정] home.html과 동일하게 0.8로 변경 (기존 0.6) */
             opacity: 0.8; 
         }
 
         .background-blur { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; 
-            /* home.html과 동일한 필터 설정 */
             backdrop-filter: blur(7px) brightness(1.0); 
             -webkit-backdrop-filter: blur(7px) brightness(1.0); 
         }
 
-        .container { width: 88%; max-width: 440px; margin: 20px 0; background-color: var(--bg-overlay); border-radius: 30px; padding: 15px 15px 30px 15px; box-sizing: border-box; backdrop-filter: blur(7px); border: 3px solid var(--border-line); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .container { 
+            width: 88%; max-width: 440px; margin: 20px 0; 
+            background-color: var(--bg-overlay); border-radius: 30px; 
+            padding: 15px 15px 30px 15px; box-sizing: border-box; 
+            backdrop-filter: blur(7px); border: 3px solid var(--border-line); 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); 
+        }
+
         header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px; }
         
         .logo { cursor: pointer; display: flex; align-items: center; }
@@ -55,26 +59,35 @@
         #coinBox { background: rgba(255, 215, 0, 0.2); border: 1px solid var(--point-gold); padding: 4px 10px; border-radius: 15px; font-size: 0.85rem; font-weight: 700; color: var(--point-gold); display: flex; align-items: center; gap: 5px; }
         .profile-circle { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid var(--point-gold); }
         .profile-circle img { width: 100%; height: 100%; object-fit: cover; }
+        
         .intro-section { text-align: center; margin-bottom: 25px; }
         #pageTitle { font-family: 'Nanum Myeongjo', serif; font-size: 1.8rem; color: var(--point-gold); margin: 0; }
         #pageDesc { font-size: 0.9rem; opacity: 0.9; margin-top: 8px; font-weight: 300; }
+        
         .field { margin-bottom: 18px; text-align: left; }
         label { display: block; font-size: 0.85rem; margin-bottom: 6px; color: var(--point-gold); font-weight: 500; }
         input, select { width: 100%; background: var(--input-bg); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 12px; padding: 12px; color: white; font-size: 0.95rem; box-sizing: border-box; outline: none; }
         input::placeholder { color: rgba(255,255,255,0.4); }
+        
         .dropdown-group { display: flex; gap: 8px; }
+        
         .unknown-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ccc; padding: 6px 14px; border-radius: 20px; font-size: 0.75rem; cursor: pointer; margin-top: 8px; transition: 0.3s; }
         .unknown-btn.active { background: var(--point-gold); color: #000; border-color: var(--point-gold); font-weight: 700; }
+        
         .submit-btn { width: 100%; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #fff; border: none; padding: 16px; border-radius: 20px; font-weight: 700; font-size: 1.1rem; margin-top: 10px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.3s ease; }
+        
+        /* 로딩 섹션 스타일 */
         #loadingSection { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 10px; animation: fadeIn 0.5s ease; }
         .orb-wrapper { position: relative; width: 100px; height: 100px; margin-bottom: 30px; }
         .orb { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%); filter: blur(10px); animation: pulse 2s infinite ease-in-out; }
         .mystic-spinner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid transparent; border-top: 3px solid var(--point-gold); border-radius: 50%; animation: spin 1.2s linear infinite; }
         .loading-title { font-family: 'Nanum Myeongjo', serif; color: var(--point-gold); font-size: 1.6rem; margin-bottom: 15px; }
         #dynamicText { font-size: 1rem; min-height: 1.5em; transition: opacity 0.5s; font-weight: 300; }
+        
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
         .hidden { display: none !important; }
         footer { text-align: center; margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 0.75rem; }
     </style>
@@ -105,7 +118,7 @@
 
             <form id="fortuneForm">
                 <div class="field">
-                    <label>ชื่อจริง</label>
+                    <label>ชื่อจริง (ชื่อ-นามสกุล)</label>
                     <input type="text" id="realName" placeholder="ระบุชื่อจริง" required>
                 </div>
                 <div class="field">
@@ -165,9 +178,6 @@
     </div>
 
     <script>
-        let currentAnalysisId = null;
-        let isPolling = false;
-
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -177,7 +187,10 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-            const type = window.location.pathname.split('/').pop() || 'saju';
+            
+            // URL 파싱 (예: /input/saju)
+            const pathParts = window.location.pathname.split('/');
+            const type = pathParts[pathParts.length - 1] || 'saju';
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -186,9 +199,9 @@
             const dynamicText = document.getElementById('dynamicText');
 
             const config = {
-                saju: { title: "ซาจู", desc: "วิเคราะห์ตัวตนและโชคชะตาเกาหลีแบบแม่นยำ" },
+                saju: { title: "ซาจู (Saju)", desc: "วิเคราะห์ดวงชะตาเกาหลีแบบเจาะลึก" },
                 gacha: { title: "เสี่ยงทาย (Gacha)", desc: "สุ่มโชคชะตาประจำวันของคุณ" },
-                love: { title: "ความรัก (Love)", desc: "ตามหาเนื้อคู่และเส้นทางความรักของคุณ" }
+                love: { title: "ความรัก (Love)", desc: "วิเคราะห์เนื้อคู่และความสมพงษ์" }
             };
             
             const loadingMessages = [
@@ -202,20 +215,7 @@
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            const pollResult = async (resultId, fortuneType) => {
-                if (!isPolling) return;
-                try {
-                    const res = await fetch(`/api/fortune/result/${resultId}`, {
-                        headers: { 'x-api-key': API_KEY }
-                    });
-                    if (res.ok) {
-                        isPolling = false;
-                        currentAnalysisId = null;
-                        window.location.replace(`/result/${fortuneType}/${resultId}`);
-                    }
-                } catch (e) { console.log("분석 진행 중..."); }
-            };
-
+            // 유저 코인 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -226,15 +226,18 @@
                 }
             } catch (e) { console.error(e); }
 
-            const daySel = document.getElementById('birthDay'), yearSel = document.getElementById('birthYear');
-            const hourSel = document.getElementById('birthHour'), minSel = document.getElementById('birthMin');
+            // 날짜 셀렉트 박스 생성
+            const daySel = document.getElementById('birthDay');
+            const monthSel = document.getElementById('birthMonth');
+            const yearSel = document.getElementById('birthYear');
+            const hourSel = document.getElementById('birthHour');
+            const minSel = document.getElementById('birthMin');
             
             for(let i=1; i<=31; i++) daySel.add(new Option(i, i < 10 ? `0${i}` : i));
 
             const currentYearAD = new Date().getFullYear();
             const startYearBE = currentYearAD + 543; 
             const endYearBE = 1930 + 543; 
-            
             for(let i = startYearBE; i >= endYearBE; i--) {
                 yearSel.add(new Option(`พ.ศ. ${i}`, i));
             }
@@ -242,6 +245,7 @@
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
+            // 시간 모름 버튼
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -251,6 +255,7 @@
                 if(isTimeUnknown) { hourSel.value = ""; minSel.value = ""; }
             });
 
+            // 폼 검증
             const requiredInputs = document.querySelectorAll('input[required], select[required]');
             requiredInputs.forEach(input => {
                 input.oninvalid = function(e) {
@@ -264,26 +269,34 @@
                 };
             });
 
+            // ✅ [수정된 부분] 폼 제출 처리
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                if (isPolling) return;
 
-                currentAnalysisId = generateUUID();
-                
-                submitBtn.disabled = true; 
-                submitBtn.innerText = "กำลังตรวจสอบ...";
+                // 1. 즉시 화면 전환 (입력 숨김 -> 로딩 보임)
+                inputSection.classList.add('hidden');
+                loadingSection.style.display = 'flex';
 
+                // 로딩 멘트 롤링 시작
+                let msgIdx = 0;
+                const msgInterval = setInterval(() => {
+                    msgIdx = (msgIdx + 1) % loadingMessages.length;
+                    dynamicText.innerText = loadingMessages[msgIdx];
+                }, 3000);
+
+                const resultId = generateUUID();
                 const payload = {
-                    resultId: currentAnalysisId,
+                    resultId: resultId,
                     type: type,
                     realName: document.getElementById('realName').value,
                     nickName: document.getElementById('nickName').value,
-                    birthDate: `${yearSel.value}-${document.getElementById('birthMonth').value}-${daySel.value}`,
+                    birthDate: `${yearSel.value}-${monthSel.value}-${daySel.value}`,
                     birthTime: isTimeUnknown ? "unknown" : `${hourSel.value}:${minSel.value}`,
                     gender: document.getElementById('gender').value
                 };
 
                 try {
+                    // 2. 백그라운드 API 요청
                     const res = await fetch('/api/fortune/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
@@ -291,38 +304,29 @@
                     });
 
                     if (res.ok) {
-                        isPolling = true;
-                        inputSection.classList.add('hidden');
-                        loadingSection.style.display = 'flex';
-
-                        let msgIdx = 0;
-                        const interval = setInterval(() => {
-                            if (!isPolling) { clearInterval(interval); return; }
-                            msgIdx = (msgIdx + 1) % loadingMessages.length;
-                            dynamicText.innerText = loadingMessages[msgIdx];
-                        }, 5000);
-
-                        const pollInterval = setInterval(() => {
-                            if (!isPolling) { clearInterval(pollInterval); return; }
-                            pollResult(currentAnalysisId, type);
-                        }, 5000);
-
+                        // 3. 성공 시 결과 페이지 이동
+                        clearInterval(msgInterval);
+                        // 잠시 대기 후 이동 (로딩 애니메이션을 최소한의 시간 보여주기 위함)
+                        setTimeout(() => {
+                            window.location.replace(`/result/${type}/${resultId}`);
+                        }, 500); 
                     } else if (res.status === 403) {
-                        isPolling = false;
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
-                        
+                        // 코인 부족 시 복구
+                        clearInterval(msgInterval);
+                        loadingSection.style.display = 'none';
+                        inputSection.classList.remove('hidden');
                         showCoinAlert(); 
                     } else {
-                        throw new Error("Analysis request failed");
+                        // 기타 에러
+                        throw new Error("Server Error");
                     }
-
                 } catch (err) {
+                    // 에러 발생 시 UI 복구
                     console.error(err);
+                    clearInterval(msgInterval);
+                    loadingSection.style.display = 'none';
+                    inputSection.classList.remove('hidden');
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-                    isPolling = false;
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "ดูคำทำนายของคุณ 🪙 2";
                 }
             });
         });

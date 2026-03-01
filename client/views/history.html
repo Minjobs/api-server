@@ -55,7 +55,6 @@
             margin-bottom: 30px; padding: 0 10px;
         }
 
-        /* ✅ [수정] 텍스트 스타일 제거 및 이미지 로고 스타일 적용 */
         .logo { cursor: pointer; display: flex; align-items: center; }
         .logo img { height: 35px; width: auto; object-fit: contain; }
 
@@ -160,20 +159,32 @@
                 if (res.ok && list.length > 0) {
                     list.forEach(item => {
                         const date = new Date(item.created_at);
-                        const thaiDate = date.toLocaleDateString('th-TH', { 
-                            day: 'numeric', month: 'short', year: 'numeric' 
+                        
+                        // ✅ [수정] 날짜와 시간(시:분)까지 표시하도록 변경
+                        const thaiDate = date.toLocaleString('th-TH', { 
+                            day: 'numeric', 
+                            month: 'short', 
+                            year: 'numeric',
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            hour12: false // 24시간제 사용
                         });
 
                         const card = document.createElement('div');
                         card.className = 'history-card';
                         card.onclick = () => location.href = `/result/${item.fortune_type}/${item.result_id}`;
                         
+                        // 타입 영문 -> 태국어 변환 (선택사항, 필요 없으면 제거 가능)
+                        let typeLabel = item.fortune_type.toUpperCase();
+                        if(item.fortune_type === 'gacha') typeLabel = 'GACHA (สุ่มดวง)';
+                        else if(item.fortune_type === 'saju') typeLabel = 'SAJU (ซาจู)';
+                        else if(item.fortune_type === 'love') typeLabel = 'LOVE (เนื้อคู่)';
+
                         card.innerHTML = `
                             <div class="info-area">
-                                <div class="fortune-type">${item.fortune_type}</div>
+                                <div class="fortune-type">${typeLabel}</div>
                                 <div class="fortune-summary">${item.summary || "บันทึกโชคชะตา"}</div>
-                                <div class="date-area">${thaiDate}</div>
-                            </div>
+                                <div class="date-area">${thaiDate}</div> </div>
                             <div class="arrow-icon">❯</div>
                         `;
                         container.appendChild(card);

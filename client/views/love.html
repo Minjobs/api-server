@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ซาจู - ดูดวงสมพงษ์ความรัก</title>
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -236,6 +238,8 @@
         </div>
     </div>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
@@ -247,6 +251,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // ✅ [추가] 페이지 조회 추적 (서비스명: love)
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackViewService('love');
+            }
+
             const setupSelect = (id, start, end) => {
                 const select = document.getElementById(id);
                 for (let i = start; i <= end; i++) {
@@ -295,6 +304,11 @@
             if (!e.target.checkValidity()) return;
             if (isAnalyzing) return;
             
+            // ✅ [추가] 분석 시작(결제 시도) 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackBeginCheckout('love');
+            }
+
             isAnalyzing = true;
             const subBtn = document.getElementById('subBtn');
             const resultId = generateUUID(); 
@@ -365,6 +379,11 @@
                 });
 
                 if (response.ok) {
+                    // ✅ [추가] 성공 시 코인 사용 추적
+                    if (typeof Analytics !== 'undefined') {
+                        Analytics.trackSpendCoin('love', 2);
+                    }
+
                     // 완료 처리
                     clearInterval(fakeProgressInterval);
                     progressBar.style.width = '100%';

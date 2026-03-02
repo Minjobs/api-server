@@ -2,18 +2,18 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ตู้สุ่มดวงเกาหลี</title
-        <link rel="icon" type="image/png" href="/favicon.png">
+    <title>ตู้สุ่มดวงเกาหลี</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
->
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="/coinPopup.js"></script>
@@ -68,7 +68,6 @@
         
         .floating-logo {
             position: absolute;
-            /* ✅ [수정] 로고 크기 확대 (200px -> 300px, 50% increase) */
             width: 300px; 
             height: auto;
             top: 38%; 
@@ -92,7 +91,6 @@
             position: absolute;
             width: 80%;
             max-width: 300px;
-            /* ✅ [수정] 위치를 더 위로 이동 (bottom 20% -> 30%) */
             bottom: 30%; 
             display: none;
             flex-direction: column;
@@ -156,6 +154,8 @@
             <p style="color: #8b4513; font-size: 0.8rem; margin-top: 10px; opacity: 0.7;">ซาจู : ศาสตร์แห่งดวงดาวและธาตุทั้งห้า</p>
         </div>
     </div>
+
+    <script src="/js/analytics.js"></script>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
@@ -222,10 +222,22 @@
 
         let fakeProgressInterval = null;
 
+        // ✅ [추가] 페이지 로드 시 '가챠 조회' 이벤트 전송
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackViewService('gacha');
+            }
+        });
+
         spinBtn.addEventListener('click', async () => {
             const beYear = document.getElementById('birthYear').value;
             if (!beYear) { alert("กรุณาเลือกปีเกิดของคุณ (พ.ศ.)"); return; }
             if (spinBtn.classList.contains('spinning')) return; 
+
+            // ✅ [추가] 레버 당김(결제 시도) 이벤트 전송
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackBeginCheckout('gacha');
+            }
 
             const resultId = generateUUID();
             
@@ -239,17 +251,14 @@
 
             setTimeout(() => { dispenser.classList.add('drop'); }, 300);
 
-            // ✅ [수정] 900ms 타임아웃에서 로고 클래스 추가 제거 (공 커질 때 안 나타나게)
             setTimeout(() => {
                 overlay.style.display = 'flex';
-                // loadingLogo.classList.add('visible');  <-- This line removed
                 zoomBall.classList.add('zoom-in');
             }, 900);
 
-            // ✅ [수정] 2000ms 타임아웃으로 로고 클래스 추가 이동 (로딩 게이지 나타날 때 나타나게)
             setTimeout(() => {
                 analysisInfo.style.display = 'flex';
-                loadingLogo.classList.add('visible'); // <-- This line added
+                loadingLogo.classList.add('visible'); 
                 startFakeLoading(); 
             }, 2000);
 
@@ -264,6 +273,12 @@
                 if (response.ok) {
                     const data = await response.json(); 
                     console.log("✅ API Success:", data);
+
+                    // ✅ [추가] API 성공 시 코인 사용 완료 이벤트 전송
+                    if (typeof Analytics !== 'undefined') {
+                        Analytics.trackSpendCoin('gacha', 1);
+                    }
+
                     completeLoadingAndRedirect(resultId);
                 } else {
                     handleError(response);

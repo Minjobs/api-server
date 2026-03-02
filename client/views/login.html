@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ซาจู - ศาสตร์ดูดวงเกาหลีแท้</title>
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -174,8 +176,15 @@
         <p id="loadText" style="color: var(--point-gold); font-weight: 300;">กำลังเข้าสู่ระบบ...</p>
     </div>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         function startLineLogin() {
+            // ✅ [추가] 로그인 버튼 클릭 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackLogin();
+            }
+
             // 1. 로딩 화면 표시
             const loadingScreen = document.getElementById('loading');
             loadingScreen.style.display = 'flex';

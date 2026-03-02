@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
     
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ซาจู - ดูดวงเกาหลี</title>
     <meta name="google-site-verification" content="RLSiVXHDLm8tKBxNldO4deaoSu2fCmvaNge6szxubdo" />
-        <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
 
-    
     <meta name="description" content="ซาจู ดูดวงเกาหลี บริการดูดวงเกาหลี ออนไลน์ ดูดวงแม่นๆ จากวันเดือนปีเกิด วิเคราะห์ดวงชะตา ความรัก การงาน ด้วยศาสตร์เกาหลีโบราณ">
     <meta name="keywords" content="ดูดวง, ดูดวงเกาหลี, ซาจู, Saju, ดูดวงแม่นๆ, ดูดวงวันเดือนปีเกิด, หมอดูเกาหลี, ดวงความรัก">
     
@@ -142,12 +141,11 @@
             animation: float 3s ease-in-out infinite;
         }
         
-        /* ✅ [SEO] h1 태그 스타일 (기존 main-title 클래스 유지) */
         h1.main-title {
-            font-size: 1.6rem; /* h1이라 살짝 키움 */
+            font-size: 1.6rem; 
             font-weight: 700; margin: 0;
             text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-            color: var(--point-gold); /* 금색으로 강조 */
+            color: var(--point-gold);
         }
         .sub-title {
             font-size: 0.95rem; color: #fff; margin-top: 8px;
@@ -285,6 +283,8 @@
         </footer>
     </main>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         let isLoggedIn = false;
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
@@ -316,6 +316,11 @@
         });
 
         function handleMenuClick(category) {
+            // ✅ [추가] 메뉴 클릭 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackViewService(category.includes('love') ? 'love' : category);
+            }
+
             if (!isLoggedIn) {
                 window.location.href = '/login';
                 return;

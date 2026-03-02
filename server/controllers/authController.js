@@ -31,7 +31,7 @@ export const redirectToLine = (req, res) => {
 export const logout = (req, res) => {
     res.clearCookie('auth_token', {
         path: '/',
-        domain: '.sajuhorokorea.com'
+        domain: '.murdoo-k.com'
     });
 
     console.log('👋 로그아웃 완료: 신전을 떠납니다.');
@@ -101,7 +101,7 @@ export const handleCallback = async (req, res) => {
             httpOnly: true,
             secure: true, // HTTPS 필수
             sameSite: 'lax',
-            domain: '.sajuhorokorea.com', 
+            domain: '.murdoo-k.com', 
             path: '/',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });

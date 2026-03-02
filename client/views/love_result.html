@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saju - ผลทำนายความรัก</title>
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -99,7 +101,6 @@
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
         
-        /* ✅ [추가] 공유 버튼 스타일 */
         .share-btn {
             width: 100%; padding: 16px; border-radius: 20px; border: none;
             background: linear-gradient(135deg, var(--point-gold), #f57c00);
@@ -226,6 +227,8 @@
         </div>
     </div>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
         const resultId = window.location.pathname.split('/').pop();
@@ -287,6 +290,11 @@
 
         // ✅ [추가] 공유하기 기능
         async function shareResult() {
+            // 📊 공유 버튼 클릭 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackShare('love');
+            }
+
             const shareData = {
                 title: 'ซาจู - ดวงสมพงษ์ความรัก',
                 text: `มาดูผลทำนายความรักของฉันสิ! 💖 (เช็กดวงฟรีได้ที่นี่)`,

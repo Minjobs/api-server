@@ -1,274 +1,173 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+Import db from '../config/db.js';
+import axios from 'axios';
+import FormData from 'form-data';
 
-      gtag('config', 'G-X0NBJELTKD'); 
-    </script>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ซาจู - ชำระเงิน</title>
-        <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-overlay: rgba(0, 0, 0, 0.6); 
-            --point-gold: #ffd700;
-            --text-white: #ffffff;
-            --card-white: #ffffff;
-            --btn-disabled: #444444;
-            --text-disabled: #888888;
-            --error-red: #ff4757;
-        }
-        body { margin: 0; padding: 0; background: #000; font-family: 'Kanit', sans-serif; color: #fff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .background-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: url('/background.jpg'); background-size: cover; opacity: 0.7; }
+/**
+ * [1] 결제 의도 생성 (shop.html 호출)
+ */
+export const createIntent = async (req, res) => {
+    try {
+        const { coinAmount, bahtAmount } = req.body;
+        const transactionId = `ORD-${Date.now()}`;
         
-        .container { 
-            width: 90%; max-width: 400px; 
-            margin: 30px 0 10px 0; 
-            background: var(--bg-overlay); 
-            border-radius: 30px; 
-            padding: 30px 20px; 
-            border: 2px solid rgba(255,215,0,0.3); 
-            text-align: center; 
-            backdrop-filter: blur(15px); 
-            box-sizing: border-box; 
+        await db.execute(
+            `INSERT INTO payment_transactions (id, line_user_id, coin_amount, baht_amount, status) 
+            VALUES (?, ?, ?, ?, 'pending')`,
+            [transactionId, req.user.userId, coinAmount, bahtAmount]
+        );
+        res.json({ transactionId });
+    } catch (err) {
+        console.error('Intent Error:', err);
+        res.status(500).json({ error: 'Failed to create payment intent' });
+    }
+};
+
+/**
+ * [2] 결제 상세 정보 조회 (checkout.html 호출)
+ */
+export const getDetail = async (req, res) => {
+    try {
+        const [rows] = await db.execute(
+            `SELECT * FROM payment_transactions WHERE id = ?`, 
+            [req.params.id]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'ORDER_NOT_FOUND', message: '주문을 찾을 수 없습니다.' });
         }
+
+        const order = rows[0];
+
+        if (order.status !== 'pending') {
+            return res.status(403).json({ 
+                error: 'INVALID_STATUS', 
+                message: '이미 완료되었거나 취소된 주문입니다.',
+                status: order.status 
+            });
+        }
+
+        res.json(order);
+    } catch (err) {
+        res.status(500).json({ error: 'SERVER_ERROR' });
+    }
+};
+
+/**
+ * [3] 영수증 검증 및 코인 자동 지급 (핵심 로직)
+ */
+// ... (createIntent, getDetail 생략)
+
+export const verifySlip = async (req, res) => {
+    const { transactionId } = req.body;
+    const slipFile = req.file;
+
+    console.log(`\n--- [시작] 결제 검증 (ID: ${transactionId}) ---`);
+
+    if (!slipFile) {
+        console.error("❌ 에러: 파일이 전송되지 않았습니다.");
+        return res.status(400).json({ code: 'NO_FILE', error: '영수증 파일을 업로드해주세요.' });
+    }
+
+    try {
+        // [1] DB 주문 정보 확인
+        const [orders] = await db.execute(`SELECT * FROM payment_transactions WHERE id = ?`, [transactionId]);
+        if (orders.length === 0) {
+            console.error(`❌ 에러: DB에 주문번호 ${transactionId} 가 없습니다.`);
+            return res.status(404).json({ code: 'NOT_FOUND', error: '주문을 찾을 수 없습니다.' });
+        }
+        const order = orders[0];
+        console.log(`✅ [1단계] DB 주문 확인 성공. 기대 금액: ${order.baht_amount} THB`);
+
+        // [2] SlipOK API 호출
+        console.log(`📡 [2단계] SlipOK API 요청 전송 중...`);
+        const formData = new FormData();
+        formData.append('files', slipFile.buffer, { filename: 'slip.jpg' });
+        formData.append('log', 'false'); 
+        formData.append('amount', order.baht_amount);
+
+        const slipRes = await axios.post(
+            `https://api.slipok.com/api/line/apikey/${process.env.SLIPOK_BRANCH_ID}`, 
+            formData, 
+            { headers: { ...formData.getHeaders(), 'x-authorization': process.env.SLIPOK_API_KEY } }
+        );
+
+        const slipData = slipRes.data;
+        console.log(`📥 SlipOK 응답 데이터:`, JSON.stringify(slipData, null, 2));
+
+        if (!slipData.success) {
+            console.error(`❌ 에러: SlipOK 분석 실패. 코드: ${slipData.code}, 메시지: ${slipData.message}`);
+            return res.status(400).json({ code: `SLIPOK_${slipData.code}`, error: slipData.message });
+        }
+
+        const { transRef, amount, receiver } = slipData.data;
+
+        // [3] 수취인 이름 체크 (가장 유력한 에러 지점)
+        // [주의] SlipOK의 receiver.name은 영어인 경우가 많습니다! 
+        const OWNER_NAME_THAI = "THANYAPHAT M";
         
-        .qr-card { background: var(--card-white); border-radius: 25px; padding: 20px; margin: 20px 0; color: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .qr-card img.qr-main { width: 100%; border-radius: 15px; margin-bottom: 15px; }
-        .item-info { font-size: 1.2rem; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .price-display { font-size: 1.8rem; font-weight: 700; color: #d32f2f; margin: 5px 0; }
-        .receiver-info { font-size: 0.85rem; color: #666; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px; }
+        console.log(`🧐 [3단계] 이름 대조 시작`);
+        console.log(`- 영수증상 수취인(English): [${receiver.name}]`);
+        console.log(`- 영수증상 수취인(Thai): [${receiver.displayName}]`);
+        console.log(`- 설정된 기준 이름: [${OWNER_NAME_THAI}]`);
 
-        .steps { text-align: left; background: rgba(255,255,255,0.05); padding: 18px; border-radius: 20px; margin-bottom: 25px; }
-        .step-item { font-size: 0.85rem; margin-bottom: 10px; display: flex; gap: 10px; line-height: 1.4; opacity: 0.9; }
-        .step-num { background: var(--point-gold); color: #000; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size: 0.75rem; }
+        // 만약 영어 name 필드에 태국어 이름을 비교하면 무조건 false가 납니다.
+        // displayName과 name 중 어디에 태국어가 들어오는지 로그로 꼭 확인하세요!
+        if (!receiver.displayName.includes(OWNER_NAME_THAI) && !receiver.name.includes(OWNER_NAME_THAI)) {
+            console.error(`❌ 에러: 수취인 이름 불일치!`);
+            return res.status(400).json({ code: 'INVALID_RECEIVER', error: '수취인이 올바르지 않습니다.' });
+        }
+        console.log(`✅ [3단계] 이름 대조 통과!`);
 
-        .upload-area { margin-bottom: 25px; }
-        #slipInput { display: none; }
-        .upload-label { display: block; background: rgba(255,215,0,0.1); border: 2px dashed var(--point-gold); padding: 15px; border-radius: 15px; cursor: pointer; color: var(--point-gold); font-weight: 500; transition: 0.3s; }
+        // [4] 금액 체크
+        console.log(`🧐 [4단계] 금액 대조 시작: 영수증(${amount}) vs 주문(${order.baht_amount})`);
+        if (parseFloat(amount) !== parseFloat(order.baht_amount)) {
+            console.error(`❌ 에러: 금액 불일치!`);
+            return res.status(400).json({ code: 'AMOUNT_MISMATCH', error: '입금 금액이 다릅니다.' });
+        }
+        console.log(`✅ [4단계] 금액 대조 통과!`);
+
+        // [5] 트랜잭션 및 코인 지급
+        const connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        try {
+            console.log(`🏦 [5단계] DB 트랜잭션 시작 (Atomic Update)`);
+            const [result] = await connection.execute(
+                `UPDATE payment_transactions SET status = 'success', trans_ref = ? WHERE id = ? AND status = 'pending'`,
+                [transRef, transactionId]
+            );
+
+            if (result.affectedRows === 0) {
+                console.warn(`⚠️ 경고: 이미 처리된 주문이거나 상태가 pending이 아님.`);
+                await connection.rollback();
+                return res.status(400).json({ code: 'ALREADY_PROCESSED', error: '이미 처리된 주문입니다.' });
+            }
+
+            console.log(`💰 [6단계] 코인 지급 중... 유저ID: ${order.line_user_id}, 수량: ${order.coin_amount}`);
+            await connection.execute(
+                `UPDATE users SET coins = coins + ? WHERE line_user_id = ?`,
+                [order.coin_amount, order.line_user_id]
+            );
+
+            await connection.commit();
+            console.log(`🎉 [완료] 결제 및 코인 지급이 최종 성공했습니다!`);
+            res.json({ success: true });
+
+        } catch (innerErr) {
+            console.error(`❌ DB 트랜잭션 에러:`, innerErr);
+            await connection.rollback();
+            throw innerErr;
+        } finally {
+            connection.release();
+        }
+
+    } catch (err) {
+        const apiError = err.response?.data;
+        console.error(`🚨 심각한 서버 에러:`, apiError || err.message);
         
-        #previewContainer { margin-top: 15px; position: relative; display: none; }
-        #slipPreview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 15px; border: 2px solid var(--point-gold); box-shadow: 0 0 15px rgba(255,215,0,0.3); }
-        .preview-tag { position: absolute; top: 10px; left: 10px; background: var(--point-gold); color: #000; padding: 2px 8px; border-radius: 5px; font-size: 0.7rem; font-weight: 700; }
-
-        .btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; cursor: pointer; transition: 0.4s; }
-        .btn-main { background: var(--btn-disabled); color: var(--text-disabled); cursor: not-allowed; pointer-events: none; }
-        .btn-main.active { background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #000; box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4); cursor: pointer; pointer-events: auto; }
-
-        .hidden { display: none; }
-        footer { width: 100%; text-align: center; padding: 20px 0; font-size: 0.75rem; opacity: 0.6; font-weight: 300; }
-    </style>
-</head>
-<body>
-    <div class="background-overlay"></div>
-    
-    <div class="container">
-        <div id="paymentUI">
-            <h2 style="color: var(--point-gold); margin-bottom: 5px; font-weight: 700;">ชำระเงิน (Checkout)</h2>
-            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 20px;">สแกน QR และอัปโหลดสลิปเพื่อรับเหรียญ</p>
-
-            <div class="qr-card">
-                <div class="item-info">
-                    <span id="coinAmountText">--</span> 
-                    <span style="font-size: 1.4rem;">🪙</span> 
-                </div>
-                <div class="price-display" id="bahtAmount">-- THB</div>
-                <img src="/qrcode.jpg" class="qr-main" alt="PromptPay QR">
-                <div class="receiver-info">ผู้รธัญญพัทธ์ THANYAPHAT M</div>
-            </div>
-
-            <div class="steps">
-                <div class="step-item"><div class="step-num">1</div><span><b>สแกน:</b> สแกน QR Code ด้วยแอปธนาคารของคุณเพื่อโอนเงิน</span></div>
-                <div class="step-item"><div class="step-num">2</div><span><b>บันทึก:</b> บันทึกรูปภาพสลิปหลังจากโอนเงินสำเร็จ</span></div>
-                <div class="step-item"><div class="step-num">3</div><span><b>อัปโหลด:</b> เลือกรูปภาพสลิปด้วยปุ่มด้านล่าง</span></div>
-            </div>
-
-            <div class="upload-area">
-                <input type="file" id="slipInput" accept="image/*" onchange="handleFileSelect(this)">
-                <label for="slipInput" class="upload-label" id="uploadLabel">📸 เลือกรูปภาพสลิป</label>
-                
-                <div id="previewContainer">
-                    <span class="preview-tag">ตัวอย่าง</span>
-                    <img id="slipPreview" src="" alt="Slip Preview">
-                </div>
-            </div>
-
-            <button class="btn btn-main" id="verifyBtn" onclick="processPayment()">ยืนยันและตรวจสอบเหรียญ</button>
-        </div>
-
-        <div id="successUI" class="hidden">
-            <div style="font-size: 4rem; margin-bottom: 20px;">🎉</div>
-            <h2 style="color: var(--point-gold);">เติมเหรียญสำเร็จ!</h2>
-            <p>ระบบยืนยันการฝากเงินเรียบร้อยแล้ว<br>เหรียญของคุณถูกเติมเข้าบัญชีสำเร็จ</p>
-            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px;">เริ่มดูดวง</button>
-        </div>
-
-        <div id="errorUI" class="hidden">
-            <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
-            <h2 style="color: var(--error-red);">เข้าถึงไม่ได้</h2>
-            <p id="errorMsg">รายการนี้ไม่ถูกต้องหรือชำระเงินเรียบร้อยแล้ว</p>
-            <button class="btn btn-main active" onclick="location.href='/'" style="margin-top: 20px; background: #555;">กลับหน้าหลัก</button>
-        </div>
-    </div>
-
-    <footer>© 2026 MURDOO K. บันทึกแห่งโชคชะตา</footer>
-
-    <script src="/js/analytics.js"></script>
-
-    <script>
-        const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
-        const transactionId = window.location.pathname.split('/').pop();
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ✅ [추가] 결제 대기 화면(Checkout) 조회 이벤트
-            if (typeof Analytics !== 'undefined') {
-                Analytics.log('view_item', {
-                    item_id: 'checkout_page',
-                    item_name: 'Payment Verification'
-                });
-            }
-
-            try {
-                const payRes = await fetch(`/api/payment/detail/${transactionId}`, { headers: { 'x-api-key': API_KEY } });
-                
-                if (!payRes.ok) {
-                    const errData = await payRes.json();
-                    throw new Error(errData.message || "Invalid Access");
-                }
-
-                const payData = await payRes.json();
-                document.getElementById('coinAmountText').innerText = `${payData.coin_amount} เหรียญ`;
-                document.getElementById('bahtAmount').innerText = `${payData.baht_amount} THB`;
-
-            } catch (err) {
-                console.error("Access Error:", err);
-                document.getElementById('paymentUI').classList.add('hidden');
-                document.getElementById('errorUI').classList.remove('hidden');
-            }
-        });
-
-        function handleFileSelect(input) {
-            const file = input.files[0];
-            const previewContainer = document.getElementById('previewContainer');
-            const previewImg = document.getElementById('slipPreview');
-            const verifyBtn = document.getElementById('verifyBtn');
-            const uploadLabel = document.getElementById('uploadLabel');
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImg.src = e.target.result;
-                    previewContainer.style.display = 'block';
-                    verifyBtn.classList.add('active');
-                    uploadLabel.innerText = "✅ เปลี่ยนรูปภาพ";
-                }
-                reader.readAsDataURL(file);
-            } else {
-                previewContainer.style.display = 'none';
-                verifyBtn.classList.remove('active');
-            }
+        if (apiError?.code === 1009) {
+            return res.status(503).json({ code: 'BANK_MAINTENANCE', error: '은행 점검 중' });
         }
-
-        async function processPayment() {
-            const fileInput = document.getElementById('slipInput');
-            const btn = document.getElementById('verifyBtn');
-
-            if (!fileInput.files[0]) {
-                alert("📸 กรุณาเลือกรูปภาพสลิป");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "กำลังตรวจสอบ...";
-
-            const formData = new FormData();
-            formData.append('slip', fileInput.files[0]);
-            formData.append('transactionId', transactionId);
-
-            try {
-                const res = await fetch('/api/payment/verify-slip', {
-                    method: 'POST',
-                    headers: { 'x-api-key': API_KEY },
-                    body: formData
-                });
-
-                const result = await res.json();
-
-                if (res.ok) {
-                    // ✅ [추가] 결제 성공 이벤트 (Purchase - Revenue 발생)
-                    if (typeof Analytics !== 'undefined') {
-                        const coinText = document.getElementById('coinAmountText').innerText;
-                        const bahtText = document.getElementById('bahtAmount').innerText;
-                        const coins = parseInt(coinText) || 0;
-                        const price = parseFloat(bahtText) || 0;
-
-                        Analytics.log('purchase', {
-                            transaction_id: transactionId,
-                            value: price,
-                            currency: 'THB',
-                            items: [{
-                                item_id: `coin_pack_${coins}`,
-                                item_name: `${coins} Coins Pack`,
-                                price: price,
-                                quantity: 1
-                            }]
-                        });
-                    }
-
-                    document.getElementById('paymentUI').classList.add('hidden');
-                    document.getElementById('successUI').classList.remove('hidden');
-                } else {
-                    // ✅ [추가] 결제 검증 실패 이벤트
-                    if (typeof Analytics !== 'undefined') {
-                        Analytics.log('payment_failure', {
-                            transaction_id: transactionId,
-                            error_type: result.code || 'unknown_error'
-                        });
-                    }
-
-                    let message = "";
-                    switch (result.code) {
-                        case 'SLIPOK_1014':
-                        case 'INVALID_RECEIVER':
-                            message = "❌ บัญชีผู้รับไม่ถูกต้อง\nกรุณาตรวจสอบว่าคุณได้โอนเงินไปยังบัญชี THANYAPHAT M หรือไม่";
-                            break;
-                        case 'SLIPOK_1009':
-                        case 'BANK_MAINTENANCE':
-                            message = "⏳ ระบบธนาคารขัดข้องชั่วคราว\nธนาคารกำลังปิดปรับปรุงระบบ กรุณาลองใหม่ในอีก 15 นาที";
-                            break;
-                        case 'DUPLICATE_SLIP':
-                            message = "🚫 สลิปนี้ถูกใช้งานแล้ว\nกรุณาอัปโหลดสลิปใบใหม่";
-                            break;
-                        case 'SLIPOK_1002':
-                            message = "🔑 การตรวจสอบล้มเหลว\nกรุณาติดต่อผู้ดูแลระบบ";
-                            break;
-                        default:
-                            message = `⚠️ ข้อผิดพลาด: ${result.error}\nกรุณาลองใหม่อีกครั้งหรือตรวจสอบรูปภาพสลิปของคุณ`;
-                    }
-                    alert(message);
-                    btn.disabled = false;
-                    btn.innerText = "ยืนยันและตรวจสอบเหรียญ";
-                }
-            } catch (e) {
-                // ✅ [추가] 네트워크 에러 추적
-                if (typeof Analytics !== 'undefined') {
-                    Analytics.trackError('Payment Network Error', e.message);
-                }
-
-                alert("🚀 เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตของคุณ");
-                btn.disabled = false;
-                btn.innerText = "ยืนยันและตรวจสอบเหรียญ";
-            }
-        }
-    </script>
-</body>
-</html>
+        res.status(500).json({ code: 'SERVER_ERROR', error: '서버 오류' });
+    }
+};

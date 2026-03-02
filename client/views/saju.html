@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ซาจู - วิเคราะห์ดวงชะตาเกาหลี</title>
-            <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Saju - วิเคราะห์ดวงชะตาเกาหลี</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
     
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -78,20 +78,70 @@
         
         .submit-btn { width: 100%; background: linear-gradient(135deg, var(--point-gold), #f57c00); color: #fff; border: none; padding: 16px; border-radius: 20px; font-weight: 700; font-size: 1.1rem; margin-top: 10px; cursor: pointer; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: all 0.3s ease; }
         
-        /* 로딩 섹션 스타일 */
-        #loadingSection { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 10px; animation: fadeIn 0.5s ease; }
-        .orb-wrapper { position: relative; width: 100px; height: 100px; margin-bottom: 30px; }
-        .orb { width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.6) 0%, transparent 70%); filter: blur(10px); animation: pulse 2s infinite ease-in-out; }
-        .mystic-spinner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 3px solid transparent; border-top: 3px solid var(--point-gold); border-radius: 50%; animation: spin 1.2s linear infinite; }
-        .loading-title { font-family: 'Nanum Myeongjo', serif; color: var(--point-gold); font-size: 1.6rem; margin-bottom: 15px; }
-        #dynamicText { font-size: 1rem; min-height: 1.5em; transition: opacity 0.5s; font-weight: 300; }
-        
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { transform: scale(0.85); opacity: 0.4; } 50% { transform: scale(1.1); opacity: 0.8; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
         .hidden { display: none !important; }
         footer { text-align: center; margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 0.75rem; }
+
+        /* ✅ [추가] 가챠 스타일 로딩 오버레이 CSS */
+        .effect-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #000; 
+            display: none; /* JS로 제어 */
+            flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 9999; 
+        }
+        
+        /* 줌 효과용 공 (초기 연출) */
+        .lucky-ball-zoom { 
+            width: 80px; height: 80px; border-radius: 50%; 
+            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
+            box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); 
+            transform: scale(0); opacity: 0; z-index: 10000; 
+        }
+        .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+        
+        /* 둥둥 떠다니는 로고 */
+        .floating-logo {
+            position: absolute;
+            width: 300px; height: auto;
+            top: 38%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10002; 
+            animation: floatLogo 3s ease-in-out infinite;
+            opacity: 0; transition: opacity 0.5s;
+        }
+        .floating-logo.visible { opacity: 1; }
+
+        /* 로딩 텍스트 및 게이지 바 컨테이너 */
+        .analysis-info {
+            position: absolute;
+            width: 80%; max-width: 300px;
+            bottom: 30%; 
+            display: none;
+            flex-direction: column; align-items: center;
+            z-index: 10001;
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+        .loading-msg { 
+            color: #ffd700; /* 어두운 배경이라 금색으로 변경 */
+            font-size: 1.3rem; font-weight: 700; 
+            margin-bottom: 20px; text-align: center; 
+            text-shadow: 0 0 10px rgba(255,215,0,0.5); 
+            min-height: 1.5em; 
+        }
+        .progress-container { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.2); border-radius: 10px; overflow: hidden; position: relative; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #b8860b, #ffd700); box-shadow: 0 0 10px #ffd700; border-radius: 10px; transition: width 0.3s ease; }
+        
+        @keyframes floatLogo {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-15px); }
+        }
+        @keyframes zoomAndWhite { 
+            0% { transform: scale(0.1) rotate(0deg); opacity: 0; } 
+            20% { opacity: 1; transform: scale(1.5); } 
+            100% { transform: scale(60); opacity: 1; background: #0a0a0a; /* 배경색에 맞춰 조정 */ } 
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
     </style>
 </head>
 <body>
@@ -99,7 +149,7 @@
     <div class="background-overlay"></div>
     <div class="background-blur"></div>
 
-    <div class="container">
+    <div class="container" id="mainContainer">
         <header>
             <div class="logo" onclick="location.href='/'">
                 <img src="/textlogo.png" alt="Saju Logo">
@@ -165,18 +215,23 @@
             </form>
         </main>
 
-        <div id="loadingSection">
-            <div class="orb-wrapper">
-                <div class="orb"></div>
-                <div class="mystic-spinner"></div>
-            </div>
-            <h2 class="loading-title">กำลังอ่านโชคชะตา</h2>
-            <div id="dynamicText">กำลังเริ่มวิเคราะห์...</div>
-        </div>
-
         <footer>
             <p>© 2026 Saju. บันทึกแห่งโชคชะตา</p>
         </footer>
+    </div>
+
+    <div class="effect-layer" id="loadingOverlay">
+        <div class="lucky-ball-zoom" id="zoomBall"></div>
+        
+        <img src="/logo.png" class="floating-logo" id="loadingLogo" alt="Loading Logo">
+        
+        <div class="analysis-info" id="analysisInfo">
+            <div class="loading-msg" id="loadingMsg">กำลังเชื่อมต่อกับดวงดาว...</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <p style="color: #ffd700; font-size: 0.8rem; margin-top: 10px; opacity: 0.7;">ซาจู : ศาสตร์แห่งดวงดาวและธาตุทั้งห้า</p>
+        </div>
     </div>
 
     <script>
@@ -190,15 +245,20 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
             
-            // URL 파싱 (예: /input/saju)
             const pathParts = window.location.pathname.split('/');
             const type = pathParts[pathParts.length - 1] || 'saju';
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
-            const loadingSection = document.getElementById('loadingSection');
             const inputSection = document.getElementById('inputSection');
-            const dynamicText = document.getElementById('dynamicText');
+            
+            // 로딩 엘리먼트들
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const zoomBall = document.getElementById('zoomBall');
+            const loadingLogo = document.getElementById('loadingLogo');
+            const analysisInfo = document.getElementById('analysisInfo');
+            const progressBar = document.getElementById('progressBar');
+            const loadingMsg = document.getElementById('loadingMsg');
 
             const config = {
                 saju: { title: "ซาจู (Saju)", desc: "วิเคราะห์ดวงชะตาเกาหลีแบบเจาะลึก" },
@@ -217,7 +277,7 @@
             document.getElementById('pageTitle').innerText = page.title;
             document.getElementById('pageDesc').innerText = page.desc;
 
-            // 유저 코인 정보 로드
+            // 유저 정보 로드
             try {
                 const res = await fetch('/api/user/profile', { headers: { 'x-api-key': API_KEY } });
                 if (res.ok) {
@@ -228,7 +288,7 @@
                 }
             } catch (e) { console.error(e); }
 
-            // 날짜 셀렉트 박스 생성
+            // 날짜/시간 생성
             const daySel = document.getElementById('birthDay');
             const monthSel = document.getElementById('birthMonth');
             const yearSel = document.getElementById('birthYear');
@@ -247,7 +307,6 @@
             for(let i=0; i<24; i++) hourSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
             for(let i=0; i<60; i++) minSel.add(new Option(i<10?`0${i}`:i, i<10?`0${i}`:i));
 
-            // 시간 모름 버튼
             let isTimeUnknown = false;
             document.getElementById('unknownTimeBtn').addEventListener('click', function() {
                 isTimeUnknown = !isTimeUnknown;
@@ -266,25 +325,45 @@
                         e.target.setCustomValidity("กรุณากรอกข้อมูลในช่องนี้");
                     }
                 };
-                input.oninput = function(e) {
-                    e.target.setCustomValidity("");
-                };
+                input.oninput = function(e) { e.target.setCustomValidity(""); };
             });
 
-            // ✅ [수정된 부분] 폼 제출 처리
+            // ✅ [수정된 부분] 폼 제출 및 가챠 스타일 로딩 실행
+            let fakeProgressInterval = null;
+
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // 1. 즉시 화면 전환 (입력 숨김 -> 로딩 보임)
-                inputSection.classList.add('hidden');
-                loadingSection.style.display = 'flex';
+                // 1. 화면 전환 (컨테이너 숨기지 않고 오버레이를 덮음)
+                loadingOverlay.style.display = 'flex';
+                
+                // 줌 애니메이션 시작
+                setTimeout(() => { zoomBall.classList.add('zoom-in'); }, 100);
 
-                // 로딩 멘트 롤링 시작
-                let msgIdx = 0;
-                const msgInterval = setInterval(() => {
-                    msgIdx = (msgIdx + 1) % loadingMessages.length;
-                    dynamicText.innerText = loadingMessages[msgIdx];
-                }, 3000);
+                // 로고 및 정보 표시 (줌 효과 후)
+                setTimeout(() => {
+                    analysisInfo.style.display = 'flex';
+                    loadingLogo.classList.add('visible');
+                    
+                    // 게이지 바 애니메이션 시작
+                    let progress = 0;
+                    let msgIdx = 0;
+                    fakeProgressInterval = setInterval(() => {
+                        if (progress < 90) progress += Math.random() * 3; // 조금 더 빠르게
+                        progressBar.style.width = progress + '%';
+                        
+                        // 텍스트 변경
+                        if (progress > (msgIdx + 1) * 25 && msgIdx < loadingMessages.length - 1) {
+                            msgIdx++;
+                            loadingMsg.style.opacity = 0;
+                            setTimeout(() => {
+                                loadingMsg.innerText = loadingMessages[msgIdx];
+                                loadingMsg.style.opacity = 1;
+                            }, 300);
+                        }
+                    }, 200);
+
+                }, 1500); // 줌 애니메이션 얼추 진행 후
 
                 const resultId = generateUUID();
                 const payload = {
@@ -306,31 +385,36 @@
                     });
 
                     if (res.ok) {
-                        // 3. 성공 시 결과 페이지 이동
-                        clearInterval(msgInterval);
-                        // 잠시 대기 후 이동 (로딩 애니메이션을 최소한의 시간 보여주기 위함)
+                        // 3. 성공 시 완료 처리 및 이동
+                        clearInterval(fakeProgressInterval);
+                        progressBar.style.width = '100%';
+                        loadingMsg.innerText = "วิเคราะห์เสร็จสิ้น!";
+                        
                         setTimeout(() => {
                             window.location.replace(`/result/${type}/${resultId}`);
-                        }, 500); 
+                        }, 800); 
                     } else if (res.status === 403) {
-                        // 코인 부족 시 복구
-                        clearInterval(msgInterval);
-                        loadingSection.style.display = 'none';
-                        inputSection.classList.remove('hidden');
+                        // 실패 시 리셋
+                        resetLoading();
                         showCoinAlert(); 
                     } else {
-                        // 기타 에러
                         throw new Error("Server Error");
                     }
                 } catch (err) {
-                    // 에러 발생 시 UI 복구
                     console.error(err);
-                    clearInterval(msgInterval);
-                    loadingSection.style.display = 'none';
-                    inputSection.classList.remove('hidden');
+                    resetLoading();
                     alert("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
                 }
             });
+
+            function resetLoading() {
+                clearInterval(fakeProgressInterval);
+                loadingOverlay.style.display = 'none';
+                zoomBall.classList.remove('zoom-in');
+                loadingLogo.classList.remove('visible');
+                analysisInfo.style.display = 'none';
+                progressBar.style.width = '0%';
+            }
         });
     </script>
 </body>

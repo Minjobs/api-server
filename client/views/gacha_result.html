@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ซาจู - ดูดวงเกาหลี</title>
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -45,7 +47,7 @@
             backdrop-filter: blur(12px) brightness(0.5); background: rgba(0,0,0,0.4);
         }
 
-        /* --- [수정] 상단 이미지 로고 스타일 --- */
+        /* --- [상단 이미지 로고 스타일] --- */
         .logo { 
             cursor: pointer; margin-top: 20px; z-index: 10; 
             transition: transform 0.2s;
@@ -53,7 +55,7 @@
         .logo:active { transform: scale(0.95); }
         .logo img { 
             height: 45px; width: auto; object-fit: contain; 
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); /* 가독성을 위한 그림자 */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
         /* --- [로딩 레이어] --- */
@@ -151,7 +153,6 @@
         .btn-home { background: #5d4037; color: white; margin-top: 10px; }
         .btn-main { background: #8b4513; color: white; margin-top: 10px; }
         
-        /* ✅ [추가] 공유 버튼 스타일 */
         .btn-share {
             background: linear-gradient(135deg, #ffd700, #f57c00);
             color: #2c1b15; margin-top: 30px;
@@ -239,6 +240,8 @@
         </div>
     </div>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
 
@@ -303,9 +306,15 @@
             }
         });
 
-        // ✅ [추가] 공유 기능 함수
+        // ✅ [추가] 공유 기능 함수 + 애널리틱스 추적
         async function shareResult() {
             const score = document.getElementById('score').innerText;
+
+            // 📊 공유 버튼 클릭 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackShare('gacha');
+            }
+
             const shareData = {
                 title: 'ซาจู- ตู้สุ่มดวงเกาหลี',
                 text: `มาดูดวงรายวันของฉันสิ! 🔮 คะแนนวันนี้: ${score} คะแนน (เช็กดวงฟรีได้ที่นี่)`,

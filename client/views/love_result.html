@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ซาจู - ผลทำนายความรัก</title>
-        <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Saju - ผลทำนายความรัก</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/favicon.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/coinPopup.js"></script>
 
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
     <style>
@@ -44,7 +47,6 @@
         .logo:active { transform: scale(0.95); }
         .logo img { height: 45px; }
 
-        /* ✅ [추가] 커플 닉네임 스타일 */
         .couple-names {
             text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--point-gold);
             margin-bottom: 30px; font-family: 'Nanum Myeongjo', serif;
@@ -52,7 +54,6 @@
         }
         .couple-names span { color: var(--heart-pink); margin: 0 8px; font-size: 1.2rem; }
 
-        /* --- 총점 원형 게이지 --- */
         .score-section { text-align: center; margin-bottom: 40px; }
         .score-circle-wrapper {
             position: relative; width: 180px; height: 180px; margin: 0 auto;
@@ -73,7 +74,6 @@
         .score-value { font-family: 'Nanum Myeongjo', serif; font-size: 3.5rem; color: var(--point-gold); line-height: 1; }
         .score-label { margin-top: 15px; font-size: 1.1rem; color: white; font-weight: 500; }
 
-        /* --- 결과 카드 --- */
         .result-card {
             background: rgba(255, 255, 255, 0.05); border-radius: 22px;
             padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255, 127, 157, 0.2);
@@ -91,10 +91,24 @@
         .card-content { font-size: 0.95rem; line-height: 1.8; color: rgba(255,255,255,0.9); font-weight: 300; text-align: left; }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 30px; }
+        
+        /* ✅ [추가] 공유 버튼 스타일 */
+        .share-btn {
+            width: 100%; padding: 16px; border-radius: 20px; border: none;
+            background: linear-gradient(135deg, var(--point-gold), #f57c00);
+            color: #000; font-weight: 700; cursor: pointer; font-family: 'Kanit';
+            font-size: 1.1rem; box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.2s;
+        }
+        .share-btn:active { transform: scale(0.97); }
+
         .home-btn {
             width: 100%; padding: 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3);
             background: transparent; color: white; font-weight: 700; cursor: pointer; font-family: 'Kanit';
+            transition: background 0.2s;
         }
+        .home-btn:hover { background: rgba(255,255,255,0.1); }
 
         #loading { text-align: center; padding: 100px 0; }
         .spinner { 
@@ -195,13 +209,19 @@
             </div>
 
             <div class="btn-group">
-                <button class="home-btn" onclick="location.href='/'">กลับหน้าหลัก (Home)</button>
+                <button class="share-btn" onclick="shareResult()">
+                    📤 แชร์ผลทำนาย (Share)
+                </button>
+                <button class="home-btn" onclick="location.href='/'">
+                    กลับหน้าหลัก (Home)
+                </button>
             </div>
         </div>
     </div>
 
     <script>
         const API_KEY = 'wodmfjc8202oj4tnguf9wo2k2jrnjdwow0011k2k2n3nfnnfndsiow901o2kkemrx999dej3j';
+        const resultId = window.location.pathname.split('/').pop();
 
         function animateNumber(id, target) {
             let current = 0;
@@ -219,8 +239,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            const resultId = window.location.pathname.split('/').pop();
-
             try {
                 const response = await fetch(`/api/love/result/${resultId}`, {
                     headers: { 'x-api-key': API_KEY }
@@ -228,20 +246,16 @@
                 if (!response.ok) throw new Error("Result not found");
                 const data = await response.json();
 
-                // ✅ [추가] 닉네임 표시 로직
                 const myName = data.my_name || "คุณ";
                 const partnerName = data.partner_name || "คนรัก";
                 document.getElementById('coupleNames').innerHTML = `${myName} <span>♡</span> ${partnerName}`;
 
-                // 텍스트 매핑
                 const fields = ['chemistry', 'strengths', 'challenges', 'status_advice', 'future', 'boosters'];
                 fields.forEach(f => document.getElementById(f).innerText = data[f]);
 
-                // 화면 전환
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('resultContent').classList.remove('hidden');
 
-                // 메인 스코어 애니메이션
                 setTimeout(() => {
                     const circumference = 502.4;
                     const offset = circumference - (data.score / 100) * circumference;
@@ -249,7 +263,6 @@
                     animateNumber('score', data.score);
                 }, 300);
 
-                // 개별 항목 게이지 애니메이션
                 fields.forEach((f, i) => {
                     const score = data[`${f}_score`];
                     setTimeout(() => {
@@ -264,6 +277,34 @@
                 location.href = '/';
             }
         });
+
+        // ✅ [추가] 공유하기 기능
+        async function shareResult() {
+            const shareData = {
+                title: 'MURDOO K - ดวงสมพงษ์ความรัก',
+                text: `มาดูผลทำนายความรักของฉันสิ! 💖 (เช็กดวงฟรีได้ที่นี่)`,
+                url: window.location.href
+            };
+
+            try {
+                if (navigator.share) {
+                    // 모바일 네이티브 공유 (라인, 페북, 인스타 등 선택창 뜸)
+                    await navigator.share(shareData);
+                } else {
+                    // PC 등 미지원 시 링크 복사
+                    await navigator.clipboard.writeText(window.location.href);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'คัดลอกลิงก์เรียบร้อย!',
+                        text: 'ส่งลิงก์นี้ให้เพื่อนได้เลย',
+                        confirmButtonColor: '#ffd700',
+                        confirmButtonText: 'ตกลง'
+                    });
+                }
+            } catch (err) {
+                console.log('Share failed:', err);
+            }
+        }
     </script>
 </body>
 </html>

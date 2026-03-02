@@ -81,7 +81,7 @@
         .hidden { display: none !important; }
         footer { text-align: center; margin-top: 25px; color: rgba(255,255,255,0.6); font-size: 0.75rem; }
 
-        /* ✅ [추가] 가챠 스타일 로딩 오버레이 CSS */
+        /* ✅ [수정] 로딩 오버레이 CSS (공 관련 제거 및 간격 조정) */
         .effect-layer { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000; 
@@ -90,20 +90,13 @@
             z-index: 9999; 
         }
         
-        /* 줌 효과용 공 (초기 연출) */
-        .lucky-ball-zoom { 
-            width: 80px; height: 80px; border-radius: 50%; 
-            background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b);
-            box-shadow: 0 0 80px rgba(255, 215, 0, 0.8); 
-            transform: scale(0); opacity: 0; z-index: 10000; 
-        }
-        .lucky-ball-zoom.zoom-in { animation: zoomAndWhite 2.5s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
-        
         /* 둥둥 떠다니는 로고 */
         .floating-logo {
             position: absolute;
             width: 300px; height: auto;
-            top: 38%; left: 50%;
+            /* ✅ [수정] 로고 위치를 38% -> 35%로 약간 올려 간격 확보 */
+            top: 35%; 
+            left: 50%;
             transform: translate(-50%, -50%);
             z-index: 10002; 
             animation: floatLogo 3s ease-in-out infinite;
@@ -115,14 +108,15 @@
         .analysis-info {
             position: absolute;
             width: 80%; max-width: 300px;
-            bottom: 30%; 
+            /* ✅ [수정] 텍스트 위치를 30% -> 25%로 내려서 로고와 더 멀어지게 함 */
+            bottom: 25%; 
             display: none;
             flex-direction: column; align-items: center;
             z-index: 10001;
             animation: fadeIn 0.5s ease-in forwards;
         }
         .loading-msg { 
-            color: #ffd700; /* 어두운 배경이라 금색으로 변경 */
+            color: #ffd700; 
             font-size: 1.3rem; font-weight: 700; 
             margin-bottom: 20px; text-align: center; 
             text-shadow: 0 0 10px rgba(255,215,0,0.5); 
@@ -134,11 +128,6 @@
         @keyframes floatLogo {
             0%, 100% { transform: translate(-50%, -50%) translateY(0); }
             50% { transform: translate(-50%, -50%) translateY(-15px); }
-        }
-        @keyframes zoomAndWhite { 
-            0% { transform: scale(0.1) rotate(0deg); opacity: 0; } 
-            20% { opacity: 1; transform: scale(1.5); } 
-            100% { transform: scale(60); opacity: 1; background: #0a0a0a; /* 배경색에 맞춰 조정 */ } 
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
@@ -221,7 +210,6 @@
     </div>
 
     <div class="effect-layer" id="loadingOverlay">
-        <div class="lucky-ball-zoom" id="zoomBall"></div>
         
         <img src="/logo.png" class="floating-logo" id="loadingLogo" alt="Loading Logo">
         
@@ -254,7 +242,7 @@
             
             // 로딩 엘리먼트들
             const loadingOverlay = document.getElementById('loadingOverlay');
-            const zoomBall = document.getElementById('zoomBall');
+            // zoomBall 변수 삭제됨
             const loadingLogo = document.getElementById('loadingLogo');
             const analysisInfo = document.getElementById('analysisInfo');
             const progressBar = document.getElementById('progressBar');
@@ -328,19 +316,16 @@
                 input.oninput = function(e) { e.target.setCustomValidity(""); };
             });
 
-            // ✅ [수정된 부분] 폼 제출 및 가챠 스타일 로딩 실행
+            // ✅ [수정된 부분] 공 줌 애니메이션 로직 제거
             let fakeProgressInterval = null;
 
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // 1. 화면 전환 (컨테이너 숨기지 않고 오버레이를 덮음)
+                // 1. 화면 전환
                 loadingOverlay.style.display = 'flex';
                 
-                // 줌 애니메이션 시작
-                setTimeout(() => { zoomBall.classList.add('zoom-in'); }, 100);
-
-                // 로고 및 정보 표시 (줌 효과 후)
+                // 공 애니메이션 없이 바로 로고와 게이지 표시 (짧은 지연시간으로 부드럽게)
                 setTimeout(() => {
                     analysisInfo.style.display = 'flex';
                     loadingLogo.classList.add('visible');
@@ -363,7 +348,7 @@
                         }
                     }, 200);
 
-                }, 1500); // 줌 애니메이션 얼추 진행 후
+                }, 100); // 1.5초 대기 제거 -> 0.1초 후 바로 시작
 
                 const resultId = generateUUID();
                 const payload = {
@@ -410,7 +395,7 @@
             function resetLoading() {
                 clearInterval(fakeProgressInterval);
                 loadingOverlay.style.display = 'none';
-                zoomBall.classList.remove('zoom-in');
+                // zoomBall 관련 코드 삭제됨
                 loadingLogo.classList.remove('visible');
                 analysisInfo.style.display = 'none';
                 progressBar.style.width = '0%';

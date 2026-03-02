@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Saju - วิเคราะห์ดวงชะตาเกาหลี</title>
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -229,6 +231,8 @@
         </div>
     </div>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         function generateUUID() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -242,6 +246,11 @@
             
             const pathParts = window.location.pathname.split('/');
             const type = pathParts[pathParts.length - 1] || 'saju';
+
+            // ✅ [추가] 페이지 조회 추적 (서비스명: saju)
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackViewService('saju');
+            }
 
             const fortuneForm = document.getElementById('fortuneForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -329,6 +338,11 @@
             fortuneForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
+                // ✅ [추가] 분석 시작(결제 시도) 추적
+                if (typeof Analytics !== 'undefined') {
+                    Analytics.trackBeginCheckout('saju');
+                }
+
                 // 1. 화면 전환
                 loadingOverlay.style.display = 'flex';
                 
@@ -377,6 +391,11 @@
                     });
 
                     if (res.ok) {
+                        // ✅ [추가] 성공 시 코인 사용 추적
+                        if (typeof Analytics !== 'undefined') {
+                            Analytics.trackSpendCoin('saju', 2);
+                        }
+
                         // 3. 성공 시 완료 처리 및 이동
                         clearInterval(fakeProgressInterval);
                         progressBar.style.width = '100%';

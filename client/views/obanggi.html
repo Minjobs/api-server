@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X0NBJELTKD"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
 
-  gtag('config', 'G-X0NBJELTKD'); </script>
+      gtag('config', 'G-X0NBJELTKD'); 
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ซาจู - เสี่ยงทายธง 5 สี</title>
         <link rel="icon" type="image/png" href="/favicon.png">
@@ -232,6 +234,8 @@
 
     <footer>© 2026 เมอร์ดู เค. บันทึกแห่งดวงดาว</footer>
 
+    <script src="/js/analytics.js"></script>
+
     <script>
         const flags = [
             { src: '/flag/flag_red.png', status: '🚩 ธงแดง: มหาโชค', desc: 'ดวงเปิด ฟ้าเปิด! สิ่งศักดิ์สิทธิ์ให้พรคุณแล้ว สิ่งที่คุณคิดหรือหวังไว้จะสำเร็จอย่างปาฏิหาริย์ การเงินคล่องตัว การงานก้าวหน้า เป็นจังหวะที่ดีที่สุดในการเริ่มต้นทำสิ่งใหม่ๆ ลุยได้เลย!', isBad: false },
@@ -241,6 +245,13 @@
             { src: '/flag/flag_black.png', status: '🏴 ธงดำ: อันตราย!', desc: 'หยุดเดี๋ยวนี้! ท่านเตือนแรงๆ ว่าอย่าเพิ่งเสี่ยง! สถานการณ์ตอนนี้ไม่ดีเลย ระวังโดนหลอก ปัญหาสุขภาพ หรืออุบัติเหตุ แนะนำให้ไปทำบุญปล่อยปลา หรือบริจาคทานเพื่อแก้เคล็ด (สะเดาะเคราะห์) โดยด่วน', isBad: true }
         ];
 
+        // ✅ [추가] 페이지 로드 시 '오방기 조회' 이벤트 전송
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackViewService('obanggi');
+            }
+        });
+
         const shakeBtn = document.getElementById('shakeBtn');
         const stage = document.getElementById('stage');
         const ritualView = document.getElementById('ritual-view');
@@ -249,7 +260,6 @@
         const sfxShake = document.getElementById('sfx-shake');
         const sfxResult = document.getElementById('sfx-result');
 
-        // ✅ [확률 보정 변수]
         let lastResultIndex = -1;
         let streakCount = 0;
 
@@ -258,6 +268,11 @@
         function startRitual() {
             if (isShaking) return;
             isShaking = true;
+
+            // ✅ [추가] 깃발 흔들기 시작 (분석 시도) 추적
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackBeginCheckout('obanggi');
+            }
 
             shakeBtn.innerText = "กำลังสื่อสาร...";
             shakeBtn.disabled = true;
@@ -279,8 +294,6 @@
                 sfxResult.play().catch(() => {}); 
             } catch(e){}
 
-            // ✅ [수정] 확률 로직: 3회 이상 연속 방지
-            // 기본은 20% 랜덤이지만, 직전 결과와 같다면 streak을 체크합니다.
             let resultIndex = Math.floor(Math.random() * flags.length);
 
             if (resultIndex === lastResultIndex) {
@@ -290,7 +303,6 @@
                 lastResultIndex = resultIndex;
             }
 
-            // 3번 연속 같은 색이면 강제로 다시 뽑음 (무한 루프 방지 포함)
             if (streakCount >= 3) {
                 let newIndex = resultIndex;
                 while (newIndex === resultIndex) {
@@ -298,11 +310,16 @@
                 }
                 resultIndex = newIndex;
                 lastResultIndex = resultIndex;
-                streakCount = 1; // 스트릭 초기화
+                streakCount = 1; 
             }
 
             const result = flags[resultIndex];
             showResult(result);
+
+            // ✅ [추가] 결과 확인 완료 (무료 서비스 완주 - 0코인 사용으로 기록)
+            if (typeof Analytics !== 'undefined') {
+                Analytics.trackSpendCoin('obanggi', 0);
+            }
 
             shakeBtn.disabled = false;
             isShaking = false;
@@ -337,12 +354,19 @@
             shakeBtn.innerText = "เขย่าธง"; 
         }
 
-        // ✅ [수정] 페이지 새로고침 제거 (필요 시 삭제 가능 함수)
         function resetAndReload() {
             closeResultView();
         }
 
         function doAekDaem() {
+            // ✅ [추가] 액댐(สะเดาะเคราะห์) 버튼 클릭 추적 (선택 사항)
+            if (typeof Analytics !== 'undefined') {
+                Analytics.log('select_content', {
+                    content_type: 'obanggi_action',
+                    item_id: 'aekdaem'
+                });
+            }
+
             Swal.fire({
                 title: 'สะเดาะเคราะห์สำเร็จ!',
                 html: 'ได้ทำการขอขมาต่อสิ่งศักดิ์สิทธิ์แล้ว<br>ร้ายจะกลายเป็นดี หนักจะกลายเป็นเบา',
